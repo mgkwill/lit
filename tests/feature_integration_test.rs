@@ -108,6 +108,7 @@ mod core_objects_tests {
             message: "Initial commit".to_string(),
             pq_signature: None,
             metadata: None,
+            git_source: None,
         };
 
         assert_eq!(commit.tree.as_str(), tree_hash.as_str());
@@ -130,6 +131,7 @@ mod core_objects_tests {
             message: "Merge commit".to_string(),
             pq_signature: None,
             metadata: None,
+            git_source: None,
         };
 
         assert_eq!(commit.parents.len(), 2);

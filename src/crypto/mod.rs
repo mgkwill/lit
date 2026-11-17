@@ -1,5 +1,6 @@
 pub mod encryption;
 pub mod fips;
+mod key_state;
 /// Cryptographic primitives module
 /// Implements NIST-approved post-quantum cryptography standards
 /// Cryptographic operations for Lit version control

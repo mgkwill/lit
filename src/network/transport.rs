@@ -106,7 +106,9 @@ pub fn walk_commit_graph(
             }
             Object::Tree(tree) => {
                 for entry in &tree.entries {
-                    to_visit.push(entry.hash.clone());
+                    if entry.mode != "160000" {
+                        to_visit.push(entry.hash.clone());
+                    }
                 }
             }
             Object::Tag(tag) => {
@@ -199,8 +201,49 @@ pub fn update_remote_branch_ref(
     remote_path: &Path,
     branch: &str,
     hash: &str,
+    force: bool,
 ) -> Result<(), String> {
-    crate::core::refs::write_ref(remote_path, &format!("heads/{}", branch), hash)
+    let _lock = crate::commands::transaction::lock_writes(remote_path).map_err(|e| e.to_string())?;
+    let store = ObjectStore::new(remote_path);
+    let next = ObjectHash::from_hex(hash.to_owned());
+    if !matches!(store.read_verified(&next), Ok(Object::Commit(_))) {
+        return Err("Push rejected: branch tip must name an existing commit".into());
+    }
+    let reference = format!("heads/{branch}");
+    if !force {
+        if let Ok(old) = crate::core::read_ref(remote_path, &reference) {
+            if !is_fast_forward_push(
+                &store, &next, &ObjectHash::from_hex(old),
+            )? {
+                return Err("Push rejected: non-fast-forward update".into());
+            }
+        }
+    }
+    // Preserve an inferred default on older bare repositories. For a new
+    // repository the first successfully published branch becomes its default.
+    let initialize_head = if !remote_path.join(".lit/HEAD").exists() {
+        let branches = list_remote_branches(remote_path)?;
+        if branches.is_empty() {
+            Some(format!("ref: refs/heads/{branch}"))
+        } else {
+            read_remote_head(remote_path).ok()
+        }
+    } else {
+        None
+    };
+    crate::core::refs::write_ref(remote_path, &reference, hash)?;
+    if let Some(head) = initialize_head {
+        use std::io::Write;
+        let dir = remote_path.join(".lit");
+        let mut prepared = tempfile::NamedTempFile::new_in(&dir).map_err(|e| e.to_string())?;
+        writeln!(prepared, "{head}").map_err(|e| e.to_string())?;
+        if let Err(error) = prepared.persist_noclobber(dir.join("HEAD")) {
+            if error.error.kind() != std::io::ErrorKind::AlreadyExists {
+                return Err(format!("Initialize remote HEAD: {}", error.error));
+            }
+        }
+    }
+    Ok(())
 }
 
 /// Check if a push would be a fast-forward
@@ -215,12 +258,19 @@ pub fn is_fast_forward_push(
 /// Read HEAD from a remote repo (for clone)
 pub fn read_remote_head(remote_path: &Path) -> Result<String, String> {
     let head_path = remote_path.join(".lit").join("HEAD");
-    if !head_path.exists() {
-        return Err("Remote HEAD not found".to_string());
+    match fs::read_to_string(head_path) {
+        Ok(content) => Ok(content.trim().to_string()),
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => {
+            let branches = list_remote_branches(remote_path)?;
+            match branches.as_slice() {
+                [] => Ok("ref: refs/heads/main".to_owned()),
+                [(branch, _)] => Ok(format!("ref: refs/heads/{branch}")),
+                _ if branches.iter().any(|(branch, _)| branch == "main") => Ok("ref: refs/heads/main".to_owned()),
+                _ => Err("Remote HEAD is missing and its default branch is ambiguous".to_owned()),
+            }
+        }
+        Err(e) => Err(format!("Failed to read remote HEAD: {e}")),
     }
-    let content =
-        fs::read_to_string(&head_path).map_err(|e| format!("Failed to read remote HEAD: {}", e))?;
-    Ok(content.trim().to_string())
 }
 
 // ── RemoteRepo — unified abstraction for file and HTTP remotes ──
@@ -365,7 +415,7 @@ impl RemoteRepo {
     /// Update a branch ref on the remote
     pub fn update_branch_ref(&self, branch: &str, hash: &str, force: bool) -> Result<(), String> {
         match self {
-            RemoteRepo::File { path } => update_remote_branch_ref(path, branch, hash),
+            RemoteRepo::File { path } => update_remote_branch_ref(path, branch, hash, force),
             RemoteRepo::Http { base_url, token } => crate::network::https::update_ref_http(
                 base_url,
                 branch,

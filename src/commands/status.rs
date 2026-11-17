@@ -1,74 +1,96 @@
-use crate::core::{find_repo_root, get_current_branch};
+use crate::core::{find_repo_root, Blob, Object, ObjectHash, TreeEntry};
 use crate::response::StatusResponse;
-use crate::storage::Index;
-use std::collections::HashSet;
+use crate::storage::{Index, ObjectStore};
+use std::collections::{HashMap, HashSet};
 use std::fs;
+use std::io::ErrorKind;
 use std::path::Path;
 use walkdir::WalkDir;
 
-/// Maximum files to visit during the untracked-file walk before stopping.
 const MAX_WALK_FILES: usize = 50_000;
 
 pub fn execute() -> Result<StatusResponse, crate::errors::LitError> {
     let repo_root = find_repo_root()?;
     let index = Index::load(&repo_root)?;
-
-    let branch = get_current_branch(&repo_root).ok();
+    let branch = crate::core::get_current_branch(&repo_root).ok();
+    let head = crate::core::read_head(&repo_root).ok();
+    let committed = head_entries(&repo_root, head.as_deref())?;
     let ignore_dirs = load_ignore_dirs(&repo_root);
 
-    // Phase 1: Check index entries for modifications (no filesystem walk needed)
-    let staged_set: HashSet<String> = index.entries.keys().cloned().collect();
+    let mut staged = Vec::new();
     let mut modified = Vec::new();
-    for file in &staged_set {
-        if is_modified(&repo_root, file, &index)? {
-            modified.push(file.clone());
+    for (path, entry) in &index.entries {
+        if committed
+            .get(path)
+            .is_none_or(|old| old.hash.as_str() != entry.hash || old.mode != entry.mode)
+        {
+            staged.push(path.clone());
+        }
+        let path_on_disk = repo_root.join(path);
+        let changed = if entry.mode == "120000" {
+            super::worktree::working_bytes(&path_on_disk, &entry.mode)
+                .map(|bytes| Object::Blob(Blob::new(bytes)).hash().as_str() != entry.hash)
+                .unwrap_or(true)
+        } else {
+            match fs::metadata(&path_on_disk) {
+                Ok(meta) if meta.is_file() => {
+                    let blob = Object::Blob(Blob::new(
+                        fs::read(&path_on_disk).map_err(|e| e.to_string())?,
+                    ));
+                    blob.hash().as_str() != entry.hash || mode_changed(&meta, &entry.mode)
+                }
+                Ok(_) => true,
+                Err(e) if matches!(e.kind(), ErrorKind::NotFound | ErrorKind::NotADirectory) => {
+                    true
+                }
+                Err(e) => return Err(format!("Failed to inspect {path}: {e}").into()),
+            }
+        };
+        if changed {
+            modified.push(path.clone());
         }
     }
-
-    // Phase 2: Walk for untracked files.
-    // Walk from CWD if it's inside repo_root (scopes the search to what the
-    // user is actually working on), otherwise fall back to repo_root.
-    let cwd = std::env::current_dir().unwrap_or_else(|_| repo_root.clone());
-    let walk_root = if cwd.starts_with(&repo_root) {
-        &cwd
-    } else {
-        &repo_root
-    };
+    staged.extend(
+        committed
+            .into_keys()
+            .filter(|path| !index.entries.contains_key(path)),
+    );
 
     let mut untracked = Vec::new();
-    let mut visited: usize = 0;
-    for entry in WalkDir::new(walk_root)
+    let mut scan_complete = true;
+    let mut visited = 0;
+    for entry in WalkDir::new(&repo_root)
         .into_iter()
-        .filter_entry(|e| !should_skip_entry(e, &ignore_dirs))
+        .filter_entry(|entry| entry.depth() == 0 || !should_skip_entry(entry, &ignore_dirs))
     {
         let entry = match entry {
-            Ok(e) => e,
-            Err(_) => continue,
+            Ok(entry) => entry,
+            Err(_) => {
+                scan_complete = false;
+                continue;
+            }
         };
-
-        if entry.file_type().is_file() {
+        if entry.file_type().is_file() || entry.file_type().is_symlink() {
             visited += 1;
             if visited > MAX_WALK_FILES {
+                scan_complete = false;
                 break;
             }
-            if let Ok(rel_path) = entry.path().strip_prefix(&repo_root) {
-                let path_str = rel_path.to_string_lossy().replace('\\', "/");
-                if !staged_set.contains(&path_str) {
-                    untracked.push(path_str);
-                }
+            let path = entry
+                .path()
+                .strip_prefix(&repo_root)
+                .expect("walk starts at repo root");
+            let path = path.to_string_lossy().replace('\\', "/");
+            if !index.entries.contains_key(&path) {
+                untracked.push(path);
             }
         }
     }
 
+    staged.sort();
     modified.sort();
     untracked.sort();
-    let mut staged: Vec<String> = staged_set.into_iter().collect();
-    staged.sort();
-
-    let clean = staged.is_empty() && modified.is_empty() && untracked.is_empty();
-
-    let head = crate::core::read_head(&repo_root).ok();
-
+    let clean = scan_complete && staged.is_empty() && modified.is_empty() && untracked.is_empty();
     Ok(StatusResponse {
         branch,
         head,
@@ -76,7 +98,43 @@ pub fn execute() -> Result<StatusResponse, crate::errors::LitError> {
         modified,
         untracked,
         clean,
+        scan_complete,
     })
+}
+
+pub(crate) fn head_entries(
+    repo_root: &Path,
+    head: Option<&str>,
+) -> Result<HashMap<String, TreeEntry>, crate::errors::LitError> {
+    let Some(head) = head else {
+        return Ok(HashMap::new());
+    };
+    let store = ObjectStore::new(repo_root);
+    let Object::Commit(commit) = store.read(&ObjectHash::from_hex(head.to_owned()))? else {
+        return Err("HEAD does not reference a commit".into());
+    };
+    let Object::Tree(tree) = store.read(&commit.tree)? else {
+        return Err("HEAD commit does not reference a tree".into());
+    };
+    Ok(crate::core::diff::collect_tree_entries(&tree, &store, "")?
+        .into_iter()
+        .collect())
+}
+
+pub(crate) fn regular_file_mode(meta: &fs::Metadata) -> &'static str {
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        if meta.permissions().mode() & 0o100 != 0 {
+            return "100755";
+        }
+    }
+    let _ = meta;
+    "100644"
+}
+
+fn mode_changed(meta: &fs::Metadata, indexed: &str) -> bool {
+    cfg!(unix) && matches!(indexed, "100644" | "100755") && regular_file_mode(meta) != indexed
 }
 
 /// Load directory names to ignore from built-in defaults + .litignore file.
@@ -154,31 +212,4 @@ fn should_skip_entry(entry: &walkdir::DirEntry, ignore_dirs: &HashSet<String>) -
 
     // Skip directories by name
     entry.file_type().is_dir() && ignore_dirs.contains(name.as_ref())
-}
-
-fn is_modified(
-    repo_root: &Path,
-    file: &str,
-    index: &Index,
-) -> Result<bool, crate::errors::LitError> {
-    let file_path = repo_root.join(file);
-
-    if let Some(entry) = index.entries.get(file) {
-        // Fast path: if file was deleted, it's modified
-        if !file_path.exists() {
-            return Ok(true);
-        }
-
-        let current_content =
-            fs::read(&file_path).map_err(|e| format!("Failed to read file {}: {}", file, e))?;
-
-        use crate::core::{Blob, Object};
-        let blob = Blob::new(current_content);
-        let object = Object::Blob(blob);
-        let current_hash = object.hash();
-
-        Ok(current_hash.to_string() != entry.hash)
-    } else {
-        Ok(false)
-    }
 }

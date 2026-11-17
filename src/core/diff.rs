@@ -390,6 +390,18 @@ pub fn collect_tree_files(
     store: &crate::storage::ObjectStore,
     prefix: &str,
 ) -> Result<Vec<(String, crate::core::ObjectHash)>, String> {
+    Ok(collect_tree_entries(tree, store, prefix)?
+        .into_iter()
+        .map(|(path, entry)| (path, entry.hash))
+        .collect())
+}
+
+/// Collect file entries with their modes, including nested trees.
+pub(crate) fn collect_tree_entries(
+    tree: &crate::core::Tree,
+    store: &crate::storage::ObjectStore,
+    prefix: &str,
+) -> Result<Vec<(String, crate::core::TreeEntry)>, String> {
     let mut files = Vec::new();
 
     for entry in &tree.entries {
@@ -401,14 +413,14 @@ pub fn collect_tree_files(
 
         match entry.object_type.as_str() {
             "blob" => {
-                files.push((path, entry.hash.clone()));
+                files.push((path, entry.clone()));
             }
             "tree" => {
                 let subtree = match store.read(&entry.hash)? {
                     crate::core::Object::Tree(t) => t,
                     _ => return Err(format!("Expected tree at {}", path)),
                 };
-                files.extend(collect_tree_files(&subtree, store, &path)?);
+                files.extend(collect_tree_entries(&subtree, store, &path)?);
             }
             _ => {}
         }

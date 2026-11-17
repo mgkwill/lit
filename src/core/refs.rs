@@ -1,4 +1,4 @@
-use crate::crypto::encryption::EncryptionManager;
+use crate::crypto::encryption::{require_rotation_complete, EncryptionManager, ENCRYPTION_VERSION};
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -37,6 +37,42 @@ pub fn find_repo_root() -> Result<PathBuf, String> {
     }
 }
 
+pub(crate) fn read_ref_file(repo: &Path, path: &Path) -> std::io::Result<String> {
+    let invalid = |e| std::io::Error::new(std::io::ErrorKind::InvalidData, e);
+    require_rotation_complete(repo).map_err(invalid)?;
+    let bytes = fs::read(path)?;
+    let result = if is_encrypted_ref(&bytes) {
+        let manager = EncryptionManager::for_repository(repo, None, false).map_err(invalid)?;
+        if !manager.is_enabled() {
+            return Err(invalid("Encrypted ref requires repository encryption".into()));
+        }
+        manager.decrypt(&bytes).map_err(invalid)?
+    } else {
+        bytes
+    };
+    String::from_utf8(result).map_err(|e| invalid(e.to_string()))
+}
+
+pub(crate) fn is_encrypted_ref(bytes: &[u8]) -> bool {
+    bytes.first() == Some(&ENCRYPTION_VERSION)
+}
+
+pub(crate) fn encode_ref_file(repo: &Path, destination: &Path, text: &str) -> Result<Vec<u8>, String> {
+    require_rotation_complete(repo)?;
+    match fs::read(destination) {
+        Ok(bytes) if is_encrypted_ref(&bytes) => {
+            let manager = EncryptionManager::for_repository(repo, None, false)?;
+            if !manager.is_enabled() {
+                return Err("Encrypted ref requires repository encryption".into());
+            }
+            manager.encrypt(text.as_bytes())
+        }
+        Ok(_) => Ok(text.as_bytes().to_owned()),
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(text.as_bytes().to_owned()),
+        Err(e) => Err(format!("Cannot inspect existing ref: {e}")),
+    }
+}
+
 /// Read a reference file
 pub fn read_ref(repo_path: &Path, ref_name: &str) -> Result<String, String> {
     let ref_path = get_lit_dir(repo_path).join("refs").join(ref_name);
@@ -45,7 +81,7 @@ pub fn read_ref(repo_path: &Path, ref_name: &str) -> Result<String, String> {
         return Err(format!("Reference '{}' not found", ref_name));
     }
 
-    fs::read_to_string(&ref_path)
+    read_ref_file(repo_path, &ref_path)
         .map_err(|e| format!("Failed to read reference: {}", e))
         .map(|s| s.trim().to_string())
 }
@@ -84,8 +120,8 @@ pub fn write_ref(repo_path: &Path, ref_name: &str, hash: &str) -> Result<(), Str
         fs::create_dir_all(parent).map_err(|e| format!("Failed to create ref directory: {}", e))?;
     }
 
-    fs::write(&ref_path, format!("{}\n", hash))
-        .map_err(|e| format!("Failed to write reference: {}", e))
+    let bytes = encode_ref_file(repo_path, &ref_path, &format!("{hash}\n"))?;
+    fs::write(&ref_path, bytes).map_err(|e| format!("Failed to write reference: {e}"))
 }
 
 /// Write an encrypted reference file
@@ -115,6 +151,7 @@ pub fn write_ref_encrypted(
 
 /// Delete a reference
 pub fn delete_ref(repo_path: &Path, ref_name: &str) -> Result<(), String> {
+    require_rotation_complete(repo_path)?;
     let ref_path = get_lit_dir(repo_path).join("refs").join(ref_name);
 
     if !ref_path.exists() {
@@ -144,8 +181,10 @@ pub fn list_refs(repo_path: &Path, prefix: &str) -> Result<Vec<Reference>, Strin
                 .map_err(|e| format!("Path error: {}", e))?
                 .to_string_lossy()
                 .to_string();
+            #[cfg(windows)]
+            let name = name.replace('\\', "/");
 
-            let hash = fs::read_to_string(path)
+            let hash = read_ref_file(repo_path, path)
                 .map_err(|e| format!("Failed to read ref: {}", e))?
                 .trim()
                 .to_string();
@@ -166,7 +205,7 @@ pub fn read_head(repo_path: &Path) -> Result<String, String> {
     }
 
     let content =
-        fs::read_to_string(&head_path).map_err(|e| format!("Failed to read HEAD: {}", e))?;
+        read_ref_file(repo_path, &head_path).map_err(|e| format!("Failed to read HEAD: {}", e))?;
 
     let content = content.trim();
 
@@ -187,7 +226,7 @@ pub fn get_current_branch(repo_path: &Path) -> Result<String, String> {
     let head_path = get_lit_dir(repo_path).join("HEAD");
 
     let content =
-        fs::read_to_string(&head_path).map_err(|e| format!("Failed to read HEAD: {}", e))?;
+        read_ref_file(repo_path, &head_path).map_err(|e| format!("Failed to read HEAD: {}", e))?;
 
     let content = content.trim();
 
@@ -202,8 +241,8 @@ pub fn get_current_branch(repo_path: &Path) -> Result<String, String> {
 pub fn update_head(repo_path: &Path, branch: &str) -> Result<(), String> {
     let head_path = get_lit_dir(repo_path).join("HEAD");
 
-    fs::write(&head_path, format!("ref: refs/heads/{}\n", branch))
-        .map_err(|e| format!("Failed to update HEAD: {}", e))
+    let bytes = encode_ref_file(repo_path, &head_path, &format!("ref: refs/heads/{branch}\n"))?;
+    fs::write(&head_path, bytes).map_err(|e| format!("Failed to update HEAD: {e}"))
 }
 
 /// Update HEAD to point to a branch (encrypted)
@@ -230,7 +269,8 @@ pub fn update_head_encrypted(
 pub fn set_head_detached(repo_path: &Path, hash: &str) -> Result<(), String> {
     let head_path = get_lit_dir(repo_path).join("HEAD");
 
-    fs::write(&head_path, format!("{}\n", hash)).map_err(|e| format!("Failed to set HEAD: {}", e))
+    let bytes = encode_ref_file(repo_path, &head_path, &format!("{hash}\n"))?;
+    fs::write(&head_path, bytes).map_err(|e| format!("Failed to set HEAD: {e}"))
 }
 
 /// Set HEAD to a specific commit (detached, encrypted)
@@ -341,7 +381,7 @@ mod tests {
         };
 
         let mut enc_manager = EncryptionManager::new(config);
-        enc_manager.initialize("test-passphrase-refs").unwrap();
+        enc_manager.initialize("test-passphrase-refs-A1!").unwrap();
         let encryption = Arc::new(Mutex::new(enc_manager));
 
         let test_hash = "abc123def456";
@@ -372,7 +412,7 @@ mod tests {
         };
 
         let mut enc_manager = EncryptionManager::new(config);
-        enc_manager.initialize("test-passphrase-head").unwrap();
+        enc_manager.initialize("test-passphrase-head-A1!").unwrap();
         let encryption = Arc::new(Mutex::new(enc_manager));
 
         let branch_name = "main";
@@ -409,7 +449,7 @@ mod tests {
         };
 
         let mut enc_manager = EncryptionManager::new(config);
-        enc_manager.initialize("test-passphrase-detached").unwrap();
+        enc_manager.initialize("test-passphrase-detached-A1!").unwrap();
         let encryption = Arc::new(Mutex::new(enc_manager));
 
         let commit_hash = "cafebabe987654";
@@ -441,7 +481,7 @@ mod tests {
         };
 
         let mut enc_manager = EncryptionManager::new(config);
-        enc_manager.initialize("test-passphrase-tamper").unwrap();
+        enc_manager.initialize("test-passphrase-tamper-A1!").unwrap();
         let encryption = Arc::new(Mutex::new(enc_manager));
 
         let test_hash = "original123";

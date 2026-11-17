@@ -15,7 +15,7 @@ use formatter::Format;
 use std::process;
 
 #[derive(Parser)]
-#[command(name = "lit")]
+#[command(name = "lit", version)]
 #[command(about = "Lit - The agentic-first distributed version control system", long_about = None)]
 struct Cli {
     /// Enable airgap mode (blocks all network protocols, allows only physical transports)
@@ -116,11 +116,16 @@ enum Commands {
     /// Join two or more development histories together
     Merge {
         /// Branch to merge into current branch
-        branch: String,
+        #[arg(required_unless_present = "abort")]
+        branch: Option<String>,
 
         /// Merge strategy (recursive, ours, theirs)
         #[arg(long, default_value = "recursive")]
         strategy: Option<String>,
+
+        /// Abort the active merge and restore its changes
+        #[arg(long, conflicts_with_all = ["branch", "strategy"])]
+        abort: bool,
     },
 
     /// Resolve merge conflicts
@@ -137,8 +142,12 @@ enum Commands {
         all: bool,
 
         /// Finalize merge after resolving all conflicts
-        #[arg(long, name = "continue")]
+        #[arg(long = "continue", visible_alias = "finish")]
         finish: bool,
+
+        /// Abort the active merge and restore its changes
+        #[arg(long, conflicts_with_all = ["file", "strategy", "all", "finish"])]
+        abort: bool,
     },
 
     /// Show various types of objects
@@ -147,13 +156,13 @@ enum Commands {
         object: String,
     },
 
-    /// Manage set of tracked repositories (LAN only)
+    /// Manage set of tracked repositories
     Remote {
         #[command(subcommand)]
         command: Option<RemoteCommands>,
     },
 
-    /// Update remote refs along with associated objects (LAN only)
+    /// Update remote refs along with associated objects
     Push {
         /// Remote name
         remote: String,
@@ -166,7 +175,7 @@ enum Commands {
         force: bool,
     },
 
-    /// Fetch from and integrate with another repository (LAN only)
+    /// Fetch from and integrate with another repository
     Pull {
         /// Remote name
         remote: String,
@@ -175,7 +184,7 @@ enum Commands {
         branch: String,
     },
 
-    /// Download objects and refs from a remote repository (LAN only)
+    /// Download objects and refs from a remote repository
     Fetch {
         /// Remote name
         remote: String,
@@ -184,9 +193,9 @@ enum Commands {
         branch: Option<String>,
     },
 
-    /// Clone a repository into a new directory (LAN only)
+    /// Clone a repository into a new directory
     Clone {
-        /// Repository URL (must be LAN)
+        /// Repository URL
         url: String,
 
         /// Directory name
@@ -632,6 +641,9 @@ enum SandboxCommands {
     Run {
         /// Sandbox name
         name: String,
+        /// Require OS-enforced filesystem confinement and deny network access
+        #[arg(long)]
+        strict: bool,
         /// Command and arguments to run (after --)
         #[arg(last = true)]
         cmd: Vec<String>,
@@ -731,8 +743,11 @@ fn run() {
     // Structured error output uses LitError for machine-readable codes and suggestions
     macro_rules! run {
         ($expr:expr) => {
+            run!($expr, true)
+        };
+        ($expr:expr, $print_response:expr) => {
             match $expr {
-                Ok(resp) => {
+                Ok(resp) if $print_response => {
                     let output = formatter::format_response(&resp, format);
                     use std::io::Write;
                     if std::io::stdout().write_all(&output).is_err() {
@@ -740,6 +755,7 @@ fn run() {
                     }
                     println!();
                 }
+                Ok(_) => {}
                 Err(e) => {
                     let output = formatter::format_error(&e, e.error_code(), format);
                     use std::io::Write;
@@ -761,15 +777,20 @@ fn run() {
             run!(commands::branch::execute(name, delete, all))
         }
         Commands::Checkout { target, b } => run!(commands::checkout::execute(target, b)),
-        Commands::Merge { branch, strategy } => {
-            run!(commands::merge::execute(branch, strategy))
+        Commands::Merge { branch, strategy, abort } => {
+            if abort {
+                run!(commands::merge::abort())
+            } else {
+                run!(commands::merge::execute(branch.expect("branch required for merge"), strategy))
+            }
         }
-        Commands::Resolve {
-            file,
-            strategy,
-            all,
-            finish,
-        } => run!(commands::resolve::execute(file, strategy, all, finish)),
+        Commands::Resolve { file, strategy, all, finish, abort } => {
+            if abort {
+                run!(commands::resolve::abort())
+            } else {
+                run!(commands::resolve::execute(file, strategy, all, finish))
+            }
+        }
         Commands::Show { object } => run!(commands::show::execute(object)),
         Commands::Remote { command } => run!(commands::remote::execute(command)),
         Commands::Push {
@@ -893,7 +914,7 @@ fn run() {
                 run!(commands::mcp_serve::execute_http(p))
             } else {
                 let _ = stdio;
-                run!(commands::mcp_serve::execute_stdio())
+                run!(commands::mcp_serve::execute_stdio(), false)
             }
         }
         Commands::Swarm { command } => match command {
@@ -967,7 +988,9 @@ fn run() {
         // Sandbox
         Commands::Sandbox { command } => match command {
             SandboxCommands::Init { name } => run!(commands::sandbox::execute_init(name)),
-            SandboxCommands::Run { name, cmd } => run!(commands::sandbox::execute_run(name, cmd)),
+            SandboxCommands::Run { name, strict, cmd } => {
+                run!(commands::sandbox::execute_run_with_options(name, cmd, strict))
+            }
             SandboxCommands::List => run!(commands::sandbox::execute_list()),
             SandboxCommands::Destroy { name } => run!(commands::sandbox::execute_destroy(name)),
         },

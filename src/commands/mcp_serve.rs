@@ -21,7 +21,6 @@ struct JsonRpcRequest {
 #[derive(Debug, Serialize)]
 struct JsonRpcResponse {
     jsonrpc: &'static str,
-    #[serde(skip_serializing_if = "Option::is_none")]
     id: Option<serde_json::Value>,
     #[serde(skip_serializing_if = "Option::is_none")]
     result: Option<serde_json::Value>,
@@ -49,53 +48,19 @@ struct McpTool {
 /// Run MCP server over stdio (JSON-RPC 2.0)
 pub fn execute_stdio() -> Result<McpServeResponse, crate::errors::LitError> {
     let stdin = io::stdin();
-    let stdout = io::stdout();
+    let mut stdout = io::stdout().lock();
 
     for line in stdin.lock().lines() {
-        let line = match line {
-            Ok(l) => l,
-            Err(_) => break,
-        };
-        let trimmed = line.trim();
-        if trimmed.is_empty() {
+        let line = line.map_err(|e| crate::errors::LitError::io(format!("Read MCP request: {e}")))?;
+        if line.trim().is_empty() {
             continue;
         }
-
-        let request: JsonRpcRequest = match serde_json::from_str(trimmed) {
-            Ok(r) => r,
-            Err(e) => {
-                let resp = JsonRpcResponse {
-                    jsonrpc: "2.0",
-                    id: None,
-                    result: None,
-                    error: Some(JsonRpcError {
-                        code: -32700,
-                        message: format!("Parse error: {}", e),
-                        data: None,
-                    }),
-                };
-                write_response(&stdout, &resp);
-                continue;
-            }
-        };
-
-        if request.jsonrpc != "2.0" {
-            let resp = JsonRpcResponse {
-                jsonrpc: "2.0",
-                id: request.id,
-                result: None,
-                error: Some(JsonRpcError {
-                    code: -32600,
-                    message: "Invalid Request: jsonrpc must be '2.0'".to_string(),
-                    data: None,
-                }),
-            };
-            write_response(&stdout, &resp);
-            continue;
+        if let Some(response) = process_message(&line) {
+            let json = serde_json::to_string(&response).map_err(|e| e.to_string())?;
+            writeln!(stdout, "{json}")
+                .and_then(|_| stdout.flush())
+                .map_err(|e| crate::errors::LitError::io(format!("Write MCP response: {e}")))?;
         }
-
-        let response = handle_mcp_method(&request);
-        write_response(&stdout, &response);
     }
 
     Ok(McpServeResponse {
@@ -147,30 +112,11 @@ pub fn execute_http(port: u16) -> Result<McpServeResponse, crate::errors::LitErr
             continue;
         }
 
-        let rpc_req: JsonRpcRequest = match serde_json::from_str(&body) {
-            Ok(r) => r,
-            Err(e) => {
-                let resp = JsonRpcResponse {
-                    jsonrpc: "2.0",
-                    id: None,
-                    result: None,
-                    error: Some(JsonRpcError {
-                        code: -32700,
-                        message: format!("Parse error: {}", e),
-                        data: None,
-                    }),
-                };
-                let json = serde_json::to_string(&resp).unwrap_or_default();
-                let http_resp = tiny_http::Response::from_string(json).with_header(
-                    tiny_http::Header::from_bytes("Content-Type", "application/json").unwrap(),
-                );
-                let _ = request.respond(http_resp);
-                continue;
-            }
+        let Some(response) = process_message(&body) else {
+            let _ = request.respond(tiny_http::Response::empty(204));
+            continue;
         };
-
-        let rpc_resp = handle_mcp_method(&rpc_req);
-        let json = serde_json::to_string(&rpc_resp).unwrap_or_default();
+        let json = serde_json::to_string(&response).map_err(|e| e.to_string())?;
         let http_resp = tiny_http::Response::from_string(json).with_header(
             tiny_http::Header::from_bytes("Content-Type", "application/json").unwrap(),
         );
@@ -183,11 +129,36 @@ pub fn execute_http(port: u16) -> Result<McpServeResponse, crate::errors::LitErr
     })
 }
 
-fn write_response(stdout: &io::Stdout, resp: &JsonRpcResponse) {
-    let json = serde_json::to_string(resp).unwrap_or_default();
-    let mut out = stdout.lock();
-    let _ = writeln!(out, "{}", json);
-    let _ = out.flush();
+fn process_message(input: &str) -> Option<JsonRpcResponse> {
+    let value = match serde_json::from_str::<serde_json::Value>(input) {
+        Ok(value) => value,
+        Err(_) => return Some(rpc_error(-32700, "Parse error")),
+    };
+    let valid_id = value
+        .get("id")
+        .is_none_or(|id| id.is_string() || id.is_i64() || id.is_u64());
+    let request = match serde_json::from_value::<JsonRpcRequest>(value) {
+        Ok(request) if valid_id && request.jsonrpc == "2.0" => request,
+        _ => return Some(rpc_error(-32600, "Invalid Request")),
+    };
+
+    // MCP notifications have no ID and do not receive a response. None of
+    // the server's notifications currently requires a side effect.
+    request.id.as_ref()?;
+    Some(handle_mcp_method(&request))
+}
+
+fn rpc_error(code: i64, message: &str) -> JsonRpcResponse {
+    JsonRpcResponse {
+        jsonrpc: "2.0",
+        id: None,
+        result: None,
+        error: Some(JsonRpcError {
+            code,
+            message: message.into(),
+            data: None,
+        }),
+    }
 }
 
 fn handle_mcp_method(req: &JsonRpcRequest) -> JsonRpcResponse {
@@ -210,7 +181,7 @@ fn handle_mcp_method(req: &JsonRpcRequest) -> JsonRpcResponse {
             error: None,
         },
 
-        "notifications/initialized" => JsonRpcResponse {
+        "ping" => JsonRpcResponse {
             jsonrpc: "2.0",
             id: req.id.clone(),
             result: Some(serde_json::json!({})),
@@ -894,7 +865,15 @@ fn call_tool(
                 .get("finish")
                 .and_then(|v| v.as_bool())
                 .unwrap_or(false);
-            let resp = commands::resolve::execute(file, strategy, all, finish)?;
+            let abort = args.get("abort").and_then(|v| v.as_bool()).unwrap_or(false);
+            let resp = if abort {
+                if file.is_some() || strategy.is_some() || all || finish {
+                    return Err("Merge abort cannot be combined with resolution arguments".into());
+                }
+                commands::resolve::abort()?
+            } else {
+                commands::resolve::execute(file, strategy, all, finish)?
+            };
             serde_json::to_value(&resp).map_err(|e| e.to_string().into())
         }
         "lit_gc" => {

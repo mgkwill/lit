@@ -7,6 +7,7 @@ use walkdir::WalkDir;
 
 pub fn execute(files: Vec<String>) -> Result<AddResponse, crate::errors::LitError> {
     let repo_root = find_repo_root()?;
+    let _guard = super::transaction::lock_writes(&repo_root)?;
     let store = ObjectStore::new(&repo_root);
     let mut index = Index::load(&repo_root)?;
 
@@ -75,7 +76,9 @@ fn add_file(
         .replace('\\', "/");
 
     // Add to index
-    index.add(rel_path, hash.to_string(), "100644".to_string());
+    let metadata = fs::metadata(file_path).map_err(|e| e.to_string())?;
+    let mode = crate::commands::status::regular_file_mode(&metadata);
+    index.add(rel_path, hash.to_string(), mode.to_string());
 
     Ok(())
 }

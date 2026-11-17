@@ -1,4 +1,5 @@
-use crate::core::ObjectHash;
+use crate::core::{set_head_detached, update_head};
+use crate::errors::LitError;
 use crate::network::transport::{self, RemoteRepo};
 use crate::network::AirgapValidator;
 use crate::response::CloneResponse;
@@ -6,170 +7,96 @@ use crate::storage::ObjectStore;
 use std::fs;
 use std::path::Path;
 
-pub fn execute(url: String, directory: Option<String>) -> Result<CloneResponse, crate::errors::LitError> {
-    let validator = AirgapValidator::new()?;
-    validator.validate_transport(&url)?;
-
-    let remote_repo = RemoteRepo::open(&url)?;
-
-    // Determine target directory
-    let dir_name = if let Some(d) = directory {
-        d
-    } else {
-        // Extract a sensible name from the URL
-        let name = url
-            .trim_end_matches('/')
-            .rsplit('/')
-            .next()
-            .unwrap_or("repo")
-            .trim_end_matches(".git")
-            .trim_end_matches(".lit");
+pub fn execute(url: String, directory: Option<String>) -> Result<CloneResponse, LitError> {
+    AirgapValidator::new()?.validate_transport(&url)?;
+    let dir_name = directory.unwrap_or_else(|| {
+        let name = url.trim_end_matches('/').rsplit('/').next().unwrap_or("");
+        let name = name
+            .strip_suffix(".git")
+            .or_else(|| name.strip_suffix(".lit"))
+            .unwrap_or(name);
         if name.is_empty() {
-            "repo".to_string()
+            "repo".into()
         } else {
-            name.to_string()
-        }
-    };
-
-    let target = std::env::current_dir()
-        .map_err(|e| format!("Failed to get current directory: {}", e))?
-        .join(&dir_name);
-
-    if target.exists() {
-        return Err(format!("Directory '{}' already exists", dir_name).into());
-    }
-
-    // Initialize the new repo
-    fs::create_dir_all(&target).map_err(|e| format!("Failed to create directory: {}", e))?;
-
-    let original_dir =
-        std::env::current_dir().map_err(|e| format!("Failed to get current directory: {}", e))?;
-    std::env::set_current_dir(&target).map_err(|e| format!("Failed to change directory: {}", e))?;
-
-    let init_result = crate::commands::init::execute(false, None);
-    std::env::set_current_dir(&original_dir)
-        .map_err(|e| format!("Failed to restore directory: {}", e))?;
-    init_result?;
-
-    // Set up remote
-    let remotes_config = serde_json::json!({
-        "remotes": {
-            "origin": {
-                "url": url
-            }
+            name.into()
         }
     });
-    fs::write(
-        target.join(".lit").join("remotes"),
-        serde_json::to_string_pretty(&remotes_config)
-            .map_err(|e| format!("Failed to serialize remotes: {}", e))?,
-    )
-    .map_err(|e| format!("Failed to write remotes config: {}", e))?;
-
-    // Get remote branches and download objects
-    let local_store = ObjectStore::new(&target);
-    let remote_branches = remote_repo.list_branches()?;
-
-    let wants: Vec<String> = remote_branches.iter().map(|(_, h)| h.clone()).collect();
-    let needed = remote_repo.negotiate_download(&local_store, &wants)?;
-    let total_transferred = remote_repo.download_objects(&local_store, &needed)?;
-
-    // Create remote-tracking refs
-    for (branch_name, hash) in &remote_branches {
-        transport::update_remote_tracking_ref(&target, "origin", branch_name, hash)?;
+    let target = std::env::current_dir()
+        .map_err(|e| e.to_string())?
+        .join(&dir_name);
+    if target.symlink_metadata().is_ok() {
+        return Err(format!("Directory '{dir_name}' already exists").into());
     }
+    let parent = target.parent().ok_or("Clone target has no parent")?;
+    fs::create_dir_all(parent).map_err(|e| e.to_string())?;
+    let staging = tempfile::tempdir_in(parent).map_err(|e| e.to_string())?;
+    let root = staging.path();
+    super::init::execute(false, Some(root.to_string_lossy().into_owned()))?;
+    super::remote::set_origin(root, &url)?;
 
-    // Determine default branch from remote HEAD
-    let remote_head = remote_repo.read_head()?;
-    let default_branch = if remote_head.starts_with("ref: refs/heads/") {
-        remote_head
-            .strip_prefix("ref: refs/heads/")
-            .unwrap()
-            .to_string()
+    let (branches, transferred) = if super::git_remote::is_git(&url) {
+        super::git_remote::clone_into(root, &url)?
     } else {
-        "main".to_string()
+        clone_native(root, &url)?
     };
-
-    // Set up local branch matching default
-    if let Some((_, hash)) = remote_branches
-        .iter()
-        .find(|(name, _)| name == &default_branch)
-    {
-        crate::core::refs::write_ref(&target, &format!("heads/{}", default_branch), hash)?;
-        fs::write(
-            target.join(".lit").join("HEAD"),
-            format!("ref: refs/heads/{}\n", default_branch),
-        )
-        .map_err(|e| format!("Failed to write HEAD: {}", e))?;
-
-        checkout_tree(&target, &ObjectHash::from_hex(hash.clone()), &local_store)?;
+    if target.symlink_metadata().is_ok() {
+        return Err(format!("Directory '{dir_name}' already exists").into());
     }
+    fs::rename(root, &target).map_err(|e| format!("Publish clone: {e}"))?;
 
     Ok(CloneResponse {
-        url: url.clone(),
+        url,
         directory: dir_name.clone(),
-        branches_cloned: remote_branches.iter().map(|(n, _)| n.clone()).collect(),
-        objects_transferred: total_transferred,
+        branches_cloned: branches.clone(),
+        objects_transferred: transferred,
         message: format!(
-            "Cloned into '{}'\n  {} objects, {} branches",
-            dir_name,
-            total_transferred,
-            remote_branches.len()
+            "Cloned into '{dir_name}'\n  {transferred} objects, {} branches",
+            branches.len()
         ),
     })
 }
 
-/// Checkout working tree from a commit
-fn checkout_tree(
-    repo_path: &Path,
-    commit_hash: &ObjectHash,
-    store: &ObjectStore,
-) -> Result<(), crate::errors::LitError> {
-    use crate::core::Object;
-
-    let commit_obj = store.read(commit_hash)?;
-    let commit = match commit_obj {
-        Object::Commit(c) => c,
-        _ => return Err("Expected commit object".into()),
-    };
-
-    let tree_obj = store.read(&commit.tree)?;
-    let tree = match tree_obj {
-        Object::Tree(t) => t,
-        _ => return Err("Expected tree object".into()),
-    };
-
-    checkout_tree_recursive(repo_path, &tree, store, repo_path)
-}
-
-fn checkout_tree_recursive(
-    base_path: &Path,
-    tree: &crate::core::Tree,
-    store: &ObjectStore,
-    _repo_path: &Path,
-) -> Result<(), crate::errors::LitError> {
-    use crate::core::Object;
-
-    for entry in &tree.entries {
-        let entry_path = base_path.join(&entry.name);
-
-        let obj = store.read(&entry.hash)?;
-        match obj {
-            Object::Blob(blob) => {
-                if let Some(parent) = entry_path.parent() {
-                    fs::create_dir_all(parent)
-                        .map_err(|e| format!("Failed to create directory: {}", e))?;
-                }
-                fs::write(&entry_path, &blob.content)
-                    .map_err(|e| format!("Failed to write file '{}': {}", entry.name, e))?;
-            }
-            Object::Tree(subtree) => {
-                fs::create_dir_all(&entry_path)
-                    .map_err(|e| format!("Failed to create directory: {}", e))?;
-                checkout_tree_recursive(&entry_path, &subtree, store, _repo_path)?;
-            }
-            _ => {}
-        }
+fn clone_native(root: &Path, url: &str) -> Result<(Vec<String>, usize), LitError> {
+    let remote = RemoteRepo::open(url)?;
+    let branches = remote.list_branches()?;
+    let tags = remote.list_refs("tags")?;
+    let head = remote.read_head()?;
+    let detached = crate::commands::serve::is_valid_hex_hash(&head);
+    let mut wants: Vec<_> = branches
+        .iter()
+        .map(|(_, hash)| hash.clone())
+        .chain(tags.iter().map(|tag| tag.hash.clone()))
+        .collect();
+    if detached {
+        wants.push(head.clone());
     }
-    Ok(())
+    let store = ObjectStore::new(root);
+    let needed = remote.negotiate_download(&store, &wants)?;
+    let transferred = remote.download_objects(&store, &needed)?;
+
+    for (branch, hash) in &branches {
+        super::remote::validate_ref(branch)?;
+        transport::update_remote_tracking_ref(root, "origin", branch, hash)?;
+    }
+    for tag in tags {
+        super::remote::validate_ref(&tag.name)?;
+        crate::core::write_ref(root, &format!("tags/{}", tag.name), &tag.hash)?;
+    }
+    if detached {
+        super::worktree::install(root, None, &head, None)?;
+        set_head_detached(root, &head)?;
+    } else {
+        let branch = head
+            .strip_prefix("ref: refs/heads/")
+            .ok_or("Invalid remote HEAD")?;
+        super::remote::validate_ref(branch)?;
+        if let Some((_, tip)) = branches.iter().find(|(name, _)| name == branch) {
+            super::worktree::install(root, None, tip, Some(branch))?;
+        }
+        update_head(root, branch)?;
+    }
+    Ok((
+        branches.into_iter().map(|(name, _)| name).collect(),
+        transferred,
+    ))
 }

@@ -6,7 +6,7 @@ use std::fmt;
 
 /// Object hash type (SHA3-512 + BLAKE3 composite)
 /// Uses NIST-approved SHA-3 as primary hash with BLAKE3 for quantum resistance
-/// Format: sha3_512(data) || blake3(data) = 128 hex chars (64 + 64)
+/// Format: sha3_512(data) || blake3(data) = 192 hex chars (128 + 64)
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct ObjectHash(pub String);
 
@@ -34,6 +34,11 @@ impl ObjectHash {
     /// Get the hash as a string
     pub fn as_str(&self) -> &str {
         &self.0
+    }
+
+    /// Check whether a string can name a full object ID.
+    pub(crate) fn is_full_hex(value: &str) -> bool {
+        value.len() == 192 && value.bytes().all(|byte| byte.is_ascii_hexdigit())
     }
 
     /// Create from a hex string
@@ -168,6 +173,9 @@ pub struct Commit {
     /// Optional metadata (agent annotations, tool context, etc.)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub metadata: Option<serde_json::Value>,
+    /// Original Git commit or tag payload, retained for lossless export.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub git_source: Option<Vec<u8>>,
 }
 
 impl Commit {
@@ -187,6 +195,7 @@ impl Commit {
             message,
             pq_signature: None, // Can be added after creation
             metadata: None,
+            git_source: None,
         }
     }
 
@@ -239,6 +248,9 @@ pub struct Tag {
     /// Optional metadata (agent annotations, tool context, etc.)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub metadata: Option<serde_json::Value>,
+    /// Original Git commit or tag payload, retained for lossless export.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub git_source: Option<Vec<u8>>,
 }
 
 impl Tag {
@@ -258,6 +270,7 @@ impl Tag {
             message,
             pq_signature: None,
             metadata: None,
+            git_source: None,
         }
     }
 

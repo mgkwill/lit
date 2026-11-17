@@ -157,6 +157,12 @@ pub struct StatusResponse {
     pub modified: Vec<String>,
     pub untracked: Vec<String>,
     pub clean: bool,
+    #[serde(default = "default_true")]
+    pub scan_complete: bool,
+}
+
+fn default_true() -> bool {
+    true
 }
 
 impl CommandResponse for StatusResponse {
@@ -186,7 +192,7 @@ impl CommandResponse for StatusResponse {
         if !self.staged.is_empty() {
             out.push_str(&format!("\n{BOLD}Changes to be committed:{RESET}\n"));
             for f in &self.staged {
-                out.push_str(&format!("{GREEN}  new file:   {f}{RESET}\n"));
+                out.push_str(&format!("{GREEN}  staged:     {f}{RESET}\n"));
             }
         }
         if !self.modified.is_empty() {
@@ -200,6 +206,9 @@ impl CommandResponse for StatusResponse {
             for f in &self.untracked {
                 out.push_str(&format!("{RED}  {f}{RESET}\n"));
             }
+        }
+        if !self.scan_complete {
+            out.push_str("\nUntracked scan incomplete. Some paths may be missing.\n");
         }
         out
     }
@@ -1063,10 +1072,14 @@ impl CommandResponse for ReflogResponse {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct BatchOperationResult {
     pub index: usize,
+    #[serde(default)]
+    pub line: usize,
     pub command: String,
     pub status: String,
     pub result: Option<serde_json::Value>,
     pub error: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub error_code: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -1459,6 +1472,10 @@ pub struct SandboxResponse {
     pub message: String,
     pub output: Option<String>,
     pub exit_code: Option<i32>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub controls_enforced: Vec<String>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub controls_unenforced: Vec<String>,
 }
 
 impl CommandResponse for SandboxResponse {
@@ -1467,6 +1484,9 @@ impl CommandResponse for SandboxResponse {
     }
     fn human_readable(&self) -> String {
         let mut out = format!("{}\n", self.message);
+        if !self.controls_unenforced.is_empty() {
+            out.push_str(&format!("Unenforced controls: {}\n", self.controls_unenforced.join(", ")));
+        }
         if let Some(ref text) = self.output {
             if !text.is_empty() {
                 out.push_str(text);

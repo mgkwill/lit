@@ -23,6 +23,8 @@ pub fn execute(
     cont: bool,
 ) -> Result<RebaseResponse, crate::errors::LitError> {
     let repo_root = find_repo_root()?;
+    let _guard = super::transaction::lock_writes(&repo_root)?;
+    super::merge::require_inactive(&repo_root)?;
 
     if abort {
         return rebase_abort(&repo_root);

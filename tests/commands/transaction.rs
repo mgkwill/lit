@@ -30,9 +30,7 @@ fn create_commit(repo_path: &std::path::Path, filename: &str, content: &str, mes
 
 // Helper to clean up any stale transaction state
 fn cleanup_transaction(repo_path: &std::path::Path) {
-    let lock = repo_path.join(".lit/transaction.lock");
     let state = repo_path.join(".lit/transaction.json");
-    let _ = fs::remove_file(&lock);
     let _ = fs::remove_file(&state);
 }
 
@@ -51,10 +49,10 @@ fn test_transaction_begin() {
     assert_eq!(response.action, "begin");
     assert!(response.tx_id.is_some(), "Should have a transaction ID");
 
-    // Lock file should exist
+    // Journal should exist
     assert!(
-        temp.path().join(".lit/transaction.lock").exists(),
-        "Transaction lock should exist"
+        temp.path().join(".lit/transaction.json").exists(),
+        "Transaction journal should exist"
     );
 
     cleanup_transaction(temp.path());
@@ -79,10 +77,10 @@ fn test_transaction_begin_commit_lifecycle() {
     let response = commit_result.unwrap();
     assert_eq!(response.action, "commit");
 
-    // Lock file should be gone
+    // Journal should be gone
     assert!(
-        !temp.path().join(".lit/transaction.lock").exists(),
-        "Transaction lock should be removed after commit"
+        !temp.path().join(".lit/transaction.json").exists(),
+        "Transaction journal should be removed after commit"
     );
 }
 
@@ -108,10 +106,10 @@ fn test_transaction_begin_rollback_lifecycle() {
     let response = rollback_result.unwrap();
     assert_eq!(response.action, "rollback");
 
-    // Lock file should be gone
+    // Journal should be gone
     assert!(
-        !temp.path().join(".lit/transaction.lock").exists(),
-        "Transaction lock should be removed after rollback"
+        !temp.path().join(".lit/transaction.json").exists(),
+        "Transaction journal should be removed after rollback"
     );
 }
 

@@ -47,6 +47,11 @@ impl StashList {
 
 pub fn execute(command: Option<crate::StashCommands>) -> Result<StashResponse, crate::errors::LitError> {
     let repo_root = find_repo_root()?;
+    let _guard = if matches!(command, Some(crate::StashCommands::List)) {
+        None
+    } else {
+        Some(super::transaction::lock_writes(&repo_root)?)
+    };
 
     match command {
         None | Some(crate::StashCommands::Push { message: None }) => stash_push(&repo_root, None),

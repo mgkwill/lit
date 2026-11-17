@@ -7,6 +7,8 @@ use crate::storage::ObjectStore;
 
 pub fn execute(target: String) -> Result<RevertResponse, crate::errors::LitError> {
     let repo_root = find_repo_root()?;
+    let _guard = super::transaction::lock_writes(&repo_root)?;
+    super::merge::require_inactive(&repo_root)?;
     let store = ObjectStore::new(&repo_root);
 
     // Resolve target to commit

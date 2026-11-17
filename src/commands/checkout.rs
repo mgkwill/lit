@@ -1,4 +1,4 @@
-use crate::core::{find_repo_root, read_ref, update_head, write_ref, Object, ObjectHash, Tree};
+use crate::core::{find_repo_root, read_ref, update_head, write_ref, Object, ObjectHash};
 use crate::response::CheckoutResponse;
 use crate::storage::{Index, ObjectStore};
 use std::fs;
@@ -6,21 +6,25 @@ use std::path::Path;
 
 pub fn execute(target: String, create_new: bool) -> Result<CheckoutResponse, crate::errors::LitError> {
     let repo_root = find_repo_root()?;
+    let _guard = super::transaction::lock_writes(&repo_root)?;
+    super::merge::require_inactive(&repo_root)?;
+    super::transaction::require_inactive(&repo_root, "checking out another revision")?;
 
     if create_new {
         use crate::core::read_head;
+        super::remote::validate_ref(&target)?;
         let head_hash = read_head(&repo_root)?;
+        checkout_commit(&repo_root, &ObjectHash::from_hex(head_hash.clone()))?;
         write_ref(&repo_root, &format!("heads/{}", target), &head_hash)?;
         update_head(&repo_root, &target)?;
-        checkout_commit(&repo_root, &ObjectHash::from_hex(head_hash))?;
         Ok(CheckoutResponse {
             target,
             is_new_branch: true,
             is_detached: false,
         })
     } else if let Ok(commit_hash) = read_ref(&repo_root, &format!("heads/{}", target)) {
-        update_head(&repo_root, &target)?;
         checkout_commit(&repo_root, &ObjectHash::from_hex(commit_hash))?;
+        update_head(&repo_root, &target)?;
         Ok(CheckoutResponse {
             target,
             is_new_branch: false,
@@ -54,68 +58,30 @@ fn checkout_commit(repo_root: &Path, commit_hash: &ObjectHash) -> Result<(), cra
         _ => return Err("Not a tree".into()),
     };
 
-    // Update working directory
-    checkout_tree(repo_root, &tree, &store, "")?;
-
-    // Update index
     let mut index = Index::new();
-    for entry in &tree.entries {
-        let path = if entry.name.is_empty() {
-            continue;
-        } else {
-            entry.name.clone()
+    let staging = tempfile::tempdir_in(repo_root.join(".lit")).map_err(|e| e.to_string())?;
+    let entries = crate::core::diff::collect_tree_entries(&tree, &store, "")?;
+    let mut files = Vec::with_capacity(entries.len());
+    for (number, (path, entry)) in entries.into_iter().enumerate() {
+        let target = super::worktree::safe_path(repo_root, &path)?;
+        if target.symlink_metadata().is_ok_and(|meta| meta.is_dir()) {
+            return Err(format!("Cannot replace checkout directory {path}").into());
+        }
+        let Object::Blob(blob) = store.read(&entry.hash)? else {
+            return Err(format!("Expected a blob for {path}").into());
         };
-
-        index.add(path, entry.hash.to_string(), entry.mode.clone());
+        let prepared = staging.path().join(number.to_string());
+        super::worktree::materialize(&prepared, &entry.mode, &blob.content)?;
+        files.push((path.clone(), prepared));
+        index.add(path, entry.hash.to_string(), entry.mode);
+    }
+    for (path, prepared) in files {
+        let target = super::worktree::safe_path(repo_root, &path)?;
+        fs::create_dir_all(target.parent().ok_or("Checkout path has no parent")?)
+            .map_err(|e| e.to_string())?;
+        // Renaming replaces the directory entry without following its old symlink.
+        fs::rename(prepared, target).map_err(|e| e.to_string())?;
     }
     index.save(repo_root)?;
-
-    Ok(())
-}
-
-fn checkout_tree(
-    repo_root: &Path,
-    tree: &Tree,
-    store: &ObjectStore,
-    prefix: &str,
-) -> Result<(), crate::errors::LitError> {
-    for entry in &tree.entries {
-        let path = if prefix.is_empty() {
-            entry.name.clone()
-        } else {
-            format!("{}/{}", prefix, entry.name)
-        };
-
-        let full_path = repo_root.join(&path);
-
-        match entry.object_type.as_str() {
-            "blob" => {
-                // Write file
-                let blob = match store.read(&entry.hash)? {
-                    Object::Blob(b) => b,
-                    _ => return Err("Expected blob".into()),
-                };
-
-                if let Some(parent) = full_path.parent() {
-                    fs::create_dir_all(parent)
-                        .map_err(|e| format!("Failed to create directory: {}", e))?;
-                }
-
-                fs::write(&full_path, &blob.content)
-                    .map_err(|e| format!("Failed to write file: {}", e))?;
-            }
-            "tree" => {
-                // Recursively checkout subtree
-                let subtree = match store.read(&entry.hash)? {
-                    Object::Tree(t) => t,
-                    _ => return Err("Expected tree".into()),
-                };
-
-                checkout_tree(repo_root, &subtree, store, &path)?;
-            }
-            _ => {}
-        }
-    }
-
     Ok(())
 }

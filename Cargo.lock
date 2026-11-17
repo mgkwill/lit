@@ -838,6 +838,7 @@ dependencies = [
  "hex",
  "hmac",
  "lazy_static",
+ "libc",
  "memmap2",
  "pbkdf2",
  "pqcrypto-mldsa",

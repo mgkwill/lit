@@ -77,6 +77,27 @@ fn stage_file(repo: &std::path::Path, name: &str, content: &str) {
 // ---------------------------------------------------------------------------
 
 #[test]
+fn remote_branch_tip_must_name_an_existing_commit() {
+    let remote = TempDir::new().unwrap();
+    init_repo(remote.path());
+    fs::remove_file(remote.path().join(".lit/HEAD")).unwrap();
+    let store = lit::storage::ObjectStore::new(remote.path());
+    let blob = lit::core::Object::Blob(lit::core::Blob::new(b"not a commit".to_vec()));
+    let blob_id = store.write(&blob).unwrap();
+
+    for hash in ["invalid", &"a".repeat(192), blob_id.as_str()] {
+        for force in [false, true] {
+            let result = lit::network::transport::update_remote_branch_ref(
+                remote.path(), "main", hash, force,
+            );
+            assert!(result.unwrap_err().contains("existing commit"));
+            assert!(!remote.path().join(".lit/refs/heads/main").exists());
+            assert!(!remote.path().join(".lit/HEAD").exists());
+        }
+    }
+}
+
+#[test]
 fn test_push_requires_remote_configured() {
     let tmp = TempDir::new().unwrap();
     init_repo(tmp.path());
@@ -190,50 +211,32 @@ fn test_push_with_network_share_remote() {
     let tmp = TempDir::new().unwrap();
     init_repo(tmp.path());
 
-    let _cwd = cwd_guard::CwdGuard::new(tmp.path());
-
-    // Ensure airgap global flag is off (after CwdGuard to avoid racing other airgap tests)
-    lit::network::AirgapConfig::disable_airgap_mode();
-
-    // Save current airgap config and write a clean one
-    let home = dirs::home_dir().unwrap();
-    let airgap_path = home.join(".lit").join("airgap.toml");
-    let backup = if airgap_path.exists() {
-        Some(fs::read_to_string(&airgap_path).unwrap())
-    } else {
-        None
+    let home = TempDir::new().unwrap();
+    let run = |arguments: &[&str]| {
+        std::process::Command::new(env!("CARGO_BIN_EXE_lit"))
+            .args(arguments)
+            .current_dir(tmp.path())
+            .env("HOME", home.path())
+            .env("USERPROFILE", home.path())
+            .env("LIT_OUTPUT", "json")
+            .output()
+            .unwrap()
     };
-    fs::create_dir_all(airgap_path.parent().unwrap()).unwrap();
-    fs::write(&airgap_path, "enabled = false\nstrict_mode = false\n").unwrap();
+    let remote = run(&["remote", "add", "share", "//server/share/repo.lit"]);
+    assert!(remote.status.success(), "{:?}", remote.stderr);
 
-    // Add a UNC path remote
-    lit::commands::remote::execute(Some(lit::RemoteCommands::Add {
-        name: "share".to_string(),
-        url: "//server/share/repo.lit".to_string(),
-    }))
-    .unwrap();
-
-    let result = lit::commands::push::execute("share".to_string(), "main".to_string(), false);
-    assert!(result.is_err());
-    let err = result.unwrap_err();
-    let err = err.internal_message();
-    // Should either be "not implemented" or a transport validation issue, not a panic
+    let push = run(&["push", "share", "main"]);
+    assert!(!push.status.success());
+    let response: serde_json::Value = serde_json::from_slice(&push.stderr).unwrap();
+    let message = response["error"]["message"].as_str().unwrap();
     assert!(
-        err.contains("not yet fully implemented")
-            || err.contains("Push")
-            || err.contains("transport")
-            || err.contains("network"),
-        "Should produce a sensible error, got: {}",
-        err
+        message.contains("Cannot resolve remote path")
+            || message.contains("transport")
+            || message.contains("network")
+            || message.contains("not yet fully implemented")
+            || message.contains("Branch"),
+        "Expected a path, transport or missing branch error, got: {message}",
     );
-
-    // Restore original airgap config
-    match backup {
-        Some(content) => fs::write(&airgap_path, content).unwrap(),
-        None => {
-            let _ = fs::remove_file(&airgap_path);
-        }
-    }
 }
 
 // ---------------------------------------------------------------------------

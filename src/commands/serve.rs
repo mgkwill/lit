@@ -590,8 +590,7 @@ fn route_request(
 
         // Read HEAD
         (Method::Get, "/api/v1/transport/head") => {
-            let head = std::fs::read_to_string(repo_root.join(".lit").join("HEAD"))
-                .map_err(|e| format!("Failed to read HEAD: {}", e))?;
+            let head = crate::network::transport::read_remote_head(repo_root)?;
             Ok((200, serde_json::json!({"head": head.trim()}).to_string()))
         }
 
@@ -675,23 +674,15 @@ fn route_request(
                 .and_then(|v| v.as_bool())
                 .unwrap_or(false);
 
-            // Fast-forward check unless force
-            if !force {
-                if let Ok(current) = crate::core::refs::read_ref(repo_root, &format!("heads/{}", branch)) {
-                    let store = ObjectStore::new(repo_root);
-                    let old_hash = ObjectHash::from_hex(current);
-                    let new_hash = ObjectHash::from_hex(hash.to_string());
-                    let is_ff = crate::core::merge::is_ancestor(&store, &old_hash, &new_hash)?;
-                    if !is_ff {
-                        return Ok((409, serde_json::json!({
-                            "status": "error",
-                            "error": {"message": "Non-fast-forward update rejected. Use force=true."}
-                        }).to_string()));
-                    }
+            if let Err(error) = crate::network::transport::update_remote_branch_ref(repo_root, branch, hash, force) {
+                if error.contains("non-fast-forward") {
+                    return Ok((409, serde_json::json!({
+                        "status": "error",
+                        "error": {"message": error}
+                    }).to_string()));
                 }
+                return Err(error.into());
             }
-
-            crate::core::refs::write_ref(repo_root, &format!("heads/{}", branch), hash)?;
             Ok((200, serde_json::json!({"branch": branch, "hash": hash, "updated": true}).to_string()))
         }
 
@@ -780,7 +771,7 @@ fn is_valid_ref(name: &str) -> bool {
 }
 
 /// Validate a hex-encoded object hash (up to 192 hex characters for SHA3-512+BLAKE3 composite).
-fn is_valid_hex_hash(s: &str) -> bool {
+pub(super) fn is_valid_hex_hash(s: &str) -> bool {
     !s.is_empty() && s.len() <= 192 && s.chars().all(|c| c.is_ascii_hexdigit())
 }
 

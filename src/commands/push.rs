@@ -6,13 +6,21 @@ use crate::response::PushResponse;
 use crate::storage::ObjectStore;
 use std::collections::HashSet;
 
-pub fn execute(remote: String, branch: String, force: bool) -> Result<PushResponse, crate::errors::LitError> {
+pub fn execute(
+    remote: String,
+    branch: String,
+    force: bool,
+) -> Result<PushResponse, crate::errors::LitError> {
     let repo_root = find_repo_root()?;
-    let remote_url = get_remote_url(&repo_root, &remote)?;
+    let remote_url = super::remote::url(&repo_root, &remote)?;
+    super::remote::validate_ref(&branch)?;
 
     let validator = AirgapValidator::new()?;
     validator.validate_transport(&remote_url)?;
 
+    if super::git_remote::is_git(&remote_url) {
+        return super::git_remote::push(&repo_root, remote, &remote_url, branch, force);
+    }
     let remote_repo = RemoteRepo::open(&remote_url)?;
 
     // Get local branch tip
@@ -97,41 +105,4 @@ pub fn execute(remote: String, branch: String, force: bool) -> Result<PushRespon
             remote_url, range, transferred
         ),
     })
-}
-
-fn get_remote_url(repo_root: &std::path::Path, remote_name: &str) -> Result<String, crate::errors::LitError> {
-    use serde::{Deserialize, Serialize};
-    use std::collections::HashMap;
-    use std::fs;
-
-    #[derive(Debug, Deserialize, Serialize)]
-    struct Remote {
-        url: String,
-    }
-
-    #[derive(Debug, Deserialize, Serialize)]
-    struct RemoteConfig {
-        remotes: HashMap<String, Remote>,
-    }
-
-    let config_path = repo_root.join(".lit").join("remotes");
-
-    if !config_path.exists() {
-        return Err(format!(
-            "No remotes configured. Use 'lit remote add {} <url>'",
-            remote_name
-        ).into());
-    }
-
-    let content = fs::read_to_string(&config_path)
-        .map_err(|e| format!("Failed to read remotes config: {}", e))?;
-
-    let config: RemoteConfig = serde_json::from_str(&content)
-        .map_err(|e| format!("Failed to parse remotes config: {}", e))?;
-
-    config
-        .remotes
-        .get(remote_name)
-        .map(|r| r.url.clone())
-        .ok_or_else(|| format!("Remote '{}' not found", remote_name).into())
 }

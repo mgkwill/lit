@@ -22,12 +22,12 @@ pub fn execute(
 
     let tag_name = name.ok_or("Tag name is required")?;
 
+    if verify && !delete {
+        return verify_tag(&repo_root, &tag_name);
+    }
+    let _guard = super::transaction::lock_writes(&repo_root)?;
     if delete {
         return delete_tag(&repo_root, &tag_name);
-    }
-
-    if verify {
-        return verify_tag(&repo_root, &tag_name);
     }
 
     // Create tag

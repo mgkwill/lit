@@ -1,4 +1,5 @@
 #![allow(unused_assignments)]
+use super::key_state::{sync_directory, KeyState};
 /// Encryption Module - FIPS 140-3 Compliant AES-256-GCM
 /// Provides secure at-rest encryption for repository data
 ///
@@ -15,11 +16,11 @@ use aes_gcm::{
 use lazy_static::lazy_static;
 use pbkdf2::pbkdf2_hmac;
 use serde::{Deserialize, Serialize};
-use sha2::Sha512;
+use sha2::{Digest, Sha256, Sha512};
 use std::collections::HashMap;
 use std::fs;
+use std::io::{ErrorKind, Write};
 use std::path::Path;
-use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Mutex;
 use std::time::{Duration, SystemTime};
 use zeroize::{ZeroizeOnDrop, Zeroizing};
@@ -41,15 +42,6 @@ lazy_static! {
     /// Global passphrase cache with thread-safe access
     static ref PASSPHRASE_CACHE: Mutex<HashMap<String, CachedPassphrase>> = Mutex::new(HashMap::new());
 
-    /// Global failed attempt tracker for rate limiting
-    static ref FAILED_ATTEMPTS: Mutex<HashMap<String, FailedAttemptTracker>> = Mutex::new(HashMap::new());
-}
-
-/// Tracks failed passphrase attempts for rate limiting
-struct FailedAttemptTracker {
-    count: u32,
-    last_attempt: SystemTime,
-    lockout_until: Option<SystemTime>,
 }
 
 /// AES-GCM nonce size in bytes (96 bits recommended)
@@ -67,7 +59,9 @@ const PBKDF2_ITERATIONS: u32 = 600_000;
 const SALT_SIZE: usize = 16;
 
 /// Encrypted data header version
-const ENCRYPTION_VERSION: u8 = 1;
+pub(crate) const ENCRYPTION_VERSION: u8 = 1;
+const MANAGED_KEY_VERSION: u8 = 2;
+const VERIFIER_SIZE: usize = 32;
 
 /// Encryption configuration
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -110,7 +104,17 @@ impl EncryptionConfig {
         let content = fs::read_to_string(&config_path)
             .map_err(|e| format!("Failed to read encryption config: {}", e))?;
 
-        toml::from_str(&content).map_err(|e| format!("Failed to parse encryption config: {}", e))
+        let mut config: Self = toml::from_str(&content)
+            .map_err(|e| format!("Failed to parse encryption config: {e}"))?;
+        let key = Path::new(&config.key_file);
+        if !key.is_absolute() && !config.key_file.starts_with('~') {
+            config.key_file = repo_path
+                .join(key)
+                .to_str()
+                .ok_or("Repository key path is not UTF-8")?
+                .to_owned();
+        }
+        Ok(config)
     }
 
     /// Save configuration to repository
@@ -125,81 +129,10 @@ impl EncryptionConfig {
     }
 }
 
-/// Check rate limit for passphrase attempts
-/// Returns Ok(()) if attempt is allowed, Err with message if rate limited
-fn check_rate_limit(repo_path: &str) -> Result<(), String> {
-    let mut attempts = FAILED_ATTEMPTS
-        .lock()
-        .map_err(|_| "Internal error: rate-limit lock poisoned".to_string())?;
-    let tracker = attempts
-        .entry(repo_path.to_string())
-        .or_insert_with(|| FailedAttemptTracker {
-            count: 0,
-            last_attempt: SystemTime::now(),
-            lockout_until: None,
-        });
-
-    // Check if currently locked out
-    if let Some(lockout) = tracker.lockout_until {
-        if SystemTime::now() < lockout {
-            let remaining = lockout
-                .duration_since(SystemTime::now())
-                .unwrap_or(Duration::from_secs(0));
-            return Err(format!(
-                "Too many failed attempts. Please wait {} seconds before trying again.",
-                remaining.as_secs()
-            ));
-        }
-        // Lockout expired, reset counter
-        tracker.lockout_until = None;
-        tracker.count = 0;
-    }
-
-    // Apply exponential backoff: 2^n seconds (max 32 seconds for n=5)
-    if tracker.count > 0 {
-        let delay = Duration::from_secs(2u64.pow(tracker.count.min(5)));
-        if let Ok(elapsed) = tracker.last_attempt.elapsed() {
-            if elapsed < delay {
-                let remaining = delay.as_secs().saturating_sub(elapsed.as_secs());
-                return Err(format!(
-                    "Please wait {} seconds between passphrase attempts.",
-                    remaining
-                ));
-            }
-        }
-    }
-
-    Ok(())
-}
-
-/// Record a failed passphrase attempt
-fn record_failed_attempt(repo_path: &str) {
-    let Ok(mut attempts) = FAILED_ATTEMPTS.lock() else {
-        return;
-    };
-    let tracker = attempts
-        .entry(repo_path.to_string())
-        .or_insert_with(|| FailedAttemptTracker {
-            count: 0,
-            last_attempt: SystemTime::now(),
-            lockout_until: None,
-        });
-
-    tracker.count += 1;
-    tracker.last_attempt = SystemTime::now();
-
-    // Lock out for 5 minutes after 5 failed attempts
-    if tracker.count >= 5 {
-        tracker.lockout_until = Some(SystemTime::now() + Duration::from_secs(300));
-        eprintln!("Warning: Account locked due to multiple failed attempts. Locked for 5 minutes.");
-    }
-}
-
-/// Clear failed attempt counter (called on successful authentication)
-fn clear_failed_attempts(repo_path: &str) {
-    if let Ok(mut attempts) = FAILED_ATTEMPTS.lock() {
-        attempts.remove(repo_path);
-    }
+enum KeyOrigin {
+    Fresh,
+    Managed,
+    Legacy(Option<KeyState>),
 }
 
 /// Secure encryption key with automatic zeroization
@@ -210,16 +143,18 @@ pub struct EncryptionKey {
     /// Salt used to derive this key (needed for saving)
     #[zeroize(skip)]
     salt: [u8; SALT_SIZE],
+    #[zeroize(skip)]
+    origin: KeyOrigin,
 }
 
 impl EncryptionKey {
     /// Derive key from passphrase using PBKDF2-HMAC-SHA512
     pub fn from_passphrase(passphrase: &str, salt: &[u8]) -> Result<Self, String> {
-        // Validate passphrase strength (unless test passphrase)
-        if !passphrase.starts_with("test-") {
-            validate_passphrase_strength(passphrase)?;
-        }
+        validate_passphrase_strength(passphrase)?;
+        Self::derive(passphrase, salt)
+    }
 
+    fn derive(passphrase: &str, salt: &[u8]) -> Result<Self, String> {
         if salt.len() != SALT_SIZE {
             return Err(format!(
                 "Invalid salt size: expected {}, got {}",
@@ -242,6 +177,7 @@ impl EncryptionKey {
         Ok(EncryptionKey {
             key_bytes,
             salt: salt_array,
+            origin: KeyOrigin::Fresh,
         })
     }
 
@@ -253,114 +189,102 @@ impl EncryptionKey {
         salt
     }
 
-    /// Load key from encrypted key file
-    /// SECURITY: Verifies passphrase using stored hash (constant-time comparison)
-    /// SECURITY: Rate limiting prevents brute force attacks
+    /// Authenticate a passphrase against the stored key verifier.
     pub fn load(key_file: &Path, passphrase: &str) -> Result<Self, String> {
-        // Check rate limit before attempting to load (skip for test passphrases)
-        let key_file_str = key_file.to_string_lossy().to_string();
-        if !passphrase.starts_with("test-") {
-            check_rate_limit(&key_file_str)?;
-        }
-
-        if !key_file.exists() {
-            return Err(
-                "Encryption key file not found. Initialize repository with encryption first."
-                    .to_string(),
-            );
-        }
-
-        let encrypted_data =
-            fs::read(key_file).map_err(|e| format!("Failed to read key file: {}", e))?;
-
-        if encrypted_data.len() < SALT_SIZE + 1 {
-            return Err("Invalid key file format (too short)".to_string());
-        }
-
-        // Extract components
-        let salt = &encrypted_data[0..SALT_SIZE];
-        let version = encrypted_data[SALT_SIZE];
-
-        if version != ENCRYPTION_VERSION {
-            return Err(format!("Unsupported key file version: {}", version));
-        }
-
-        // Check if old format (no verification hash) or new format
-        if encrypted_data.len() == SALT_SIZE + 1 {
-            // Old format - just derive key (backward compatibility)
-            let key = Self::from_passphrase(passphrase, salt)?;
-            // Clear failed attempts on successful load
-            clear_failed_attempts(&key_file_str);
-            return Ok(key);
-        }
-
-        if encrypted_data.len() < SALT_SIZE + 1 + 32 {
-            return Err("Invalid key file format (unexpected size)".to_string());
-        }
-
-        let stored_verification = &encrypted_data[SALT_SIZE + 1..SALT_SIZE + 1 + 32];
-
-        // Derive key from passphrase
-        let key = Self::from_passphrase(passphrase, salt)?;
-
-        // Verify passphrase using constant-time comparison
-        use sha2::{Digest, Sha256};
-        let mut hasher = Sha256::new();
-        hasher.update(b"lit-passphrase-verification-v1");
-        hasher.update(&key.key_bytes);
-        let verification_hash = hasher.finalize();
-
-        // Constant-time comparison to prevent timing attacks
-        use subtle::ConstantTimeEq;
-        if verification_hash.ct_eq(stored_verification).unwrap_u8() != 1 {
-            // Record failed attempt for rate limiting (skip for test passphrases)
-            if !passphrase.starts_with("test-") {
-                record_failed_attempt(&key_file_str);
+        let data =
+            fs::read(key_file).map_err(|e| format!("Failed to read encryption key file: {e}"))?;
+        let version = *data.get(SALT_SIZE).ok_or("Invalid key file format")?;
+        let salt = &data[..SALT_SIZE];
+        let verifier: Option<[u8; VERIFIER_SIZE]> = match (version, data.len()) {
+            (ENCRYPTION_VERSION, size) if size == SALT_SIZE + 1 => None,
+            (ENCRYPTION_VERSION | MANAGED_KEY_VERSION, size)
+                if size == SALT_SIZE + 1 + VERIFIER_SIZE =>
+            {
+                Some(
+                    data[SALT_SIZE + 1..]
+                        .try_into()
+                        .map_err(|_| "Invalid key verifier")?,
+                )
             }
-            // Add delay to prevent timing-based passphrase enumeration
-            std::thread::sleep(std::time::Duration::from_millis(100));
-            return Err("Invalid passphrase".to_string());
+            _ => return Err("Unsupported encryption key file format".into()),
+        };
+        let identity = verifier.unwrap_or_else(|| {
+            let mut hash = Sha256::new();
+            hash.update(b"lit-legacy-salt-only-v1");
+            hash.update(salt);
+            hash.finalize().into()
+        });
+        let state = KeyState::new(&identity)?;
+        let attempt = state.authenticate()?;
+        // Strength rules apply when choosing a new passphrase. Every guess,
+        // including a weak one, goes through the same verifier and backoff.
+        let mut key = Self::derive(passphrase, salt)?;
+        if let Some(verifier) = verifier {
+            use subtle::ConstantTimeEq;
+            let authenticated = bool::from(key.verifier().ct_eq(&verifier));
+            attempt.finish(authenticated)?;
+            if !authenticated {
+                return Err("Invalid passphrase".into());
+            }
+            key.origin = if version == MANAGED_KEY_VERSION {
+                KeyOrigin::Managed
+            } else {
+                KeyOrigin::Legacy(None)
+            };
+        } else {
+            // Salt-only keys can only prove authentication by decrypting
+            // ciphertext. Consume the attempt until AEAD verifies it.
+            attempt.finish(false)?;
+            key.origin = KeyOrigin::Legacy(Some(state));
         }
-
-        // Clear failed attempts on successful authentication
-        clear_failed_attempts(&key_file_str);
         Ok(key)
     }
 
-    /// Save key to encrypted key file
-    /// SECURITY: Uses atomic write (temp file + rename) to prevent corruption
-    /// on crash or power loss. Includes verification hash for passphrase validation.
+    fn verifier(&self) -> [u8; VERIFIER_SIZE] {
+        let mut hash = Sha256::new();
+        hash.update(b"lit-passphrase-verification-v1");
+        hash.update(self.key_bytes);
+        hash.finalize().into()
+    }
+
+    /// Publish a verifier for a freshly issued key.
     pub fn save(&self, key_file_str: &str, _passphrase: &str) -> Result<(), String> {
         let expanded = shellexpand::tilde(key_file_str);
-        let key_file = Path::new(expanded.as_ref());
+        self.write_verifier(Path::new(expanded.as_ref()), true)
+            .map(|_| ())
+    }
 
-        // Generate verification hash using current key
-        use sha2::{Digest, Sha256};
-        let mut hasher = Sha256::new();
-        hasher.update(b"lit-passphrase-verification-v1");
-        hasher.update(self.key_bytes);
-        let verification_hash = hasher.finalize();
-
-        // Create key file directory if needed
-        if let Some(parent) = key_file.parent() {
-            fs::create_dir_all(parent)
-                .map_err(|e| format!("Failed to create key directory: {}", e))?;
+    fn write_verifier(&self, key_file: &Path, replace: bool) -> Result<bool, String> {
+        // An old key has unknown lifetime usage. Rewriting the verifier
+        // would falsely certify that the old key has a fresh budget.
+        if !matches!(self.origin, KeyOrigin::Fresh) {
+            return Err("Issue a fresh key with a new salt before saving a verifier.".into());
         }
+        let verifier = self.verifier();
+        KeyState::new(&verifier)?.issue()?;
 
-        // Store: salt + version + verification_hash
-        let mut data = Vec::new();
-        data.extend_from_slice(&self.salt);
-        data.push(ENCRYPTION_VERSION);
-        data.extend_from_slice(&verification_hash);
-
-        // Atomic write: write to temp file then rename to prevent corruption
-        let temp_file = key_file.with_extension("tmp");
-        fs::write(&temp_file, &data)
-            .map_err(|e| format!("Failed to write temp key file: {}", e))?;
-        fs::rename(&temp_file, key_file)
-            .map_err(|e| format!("Failed to rename key file: {}", e))?;
-
-        Ok(())
+        let parent = key_file
+            .parent()
+            .filter(|path| !path.as_os_str().is_empty())
+            .unwrap_or_else(|| Path::new("."));
+        fs::create_dir_all(parent).map_err(|e| format!("Create key directory: {e}"))?;
+        let mut temp = tempfile::NamedTempFile::new_in(parent).map_err(|e| e.to_string())?;
+        temp.write_all(&self.salt)
+            .and_then(|_| temp.write_all(&[MANAGED_KEY_VERSION]))
+            .and_then(|_| temp.write_all(&verifier))
+            .map_err(|e| e.to_string())?;
+        temp.as_file().sync_all().map_err(|e| e.to_string())?;
+        if replace {
+            temp.persist(key_file)
+                .map_err(|e| format!("Publish key verifier: {}", e.error))?;
+        } else if let Err(error) = temp.persist_noclobber(key_file) {
+            if error.error.kind() == ErrorKind::AlreadyExists {
+                return Ok(false);
+            }
+            return Err(format!("Publish key verifier: {}", error.error));
+        }
+        sync_directory(parent).map_err(|e| format!("Sync encryption key directory: {e}"))?;
+        Ok(true)
     }
 
     /// Get raw key bytes (used internally)
@@ -369,51 +293,76 @@ impl EncryptionKey {
     }
 }
 
-/// Maximum encryptions per key (NIST SP 800-38D recommendation)
-/// Never exceed 2^32 encryptions with same key to prevent nonce reuse
-const MAX_ENCRYPTIONS_PER_KEY: u64 = 1u64 << 32;
+struct Budget {
+    state: KeyState,
+    remaining: Mutex<u64>,
+}
 
-/// Encryption engine using AES-256-GCM
-/// SECURITY: Uses atomic counter to guarantee nonce uniqueness
+impl Budget {
+    fn consume(&self) -> Result<(), String> {
+        let mut remaining = self
+            .remaining
+            .lock()
+            .map_err(|_| "Encryption usage reservation lock poisoned")?;
+        if *remaining == 0 {
+            *remaining = self.state.reserve()?;
+        }
+        *remaining -= 1;
+        Ok(())
+    }
+}
+
+/// Encryption engine using AES-256-GCM.
 pub struct EncryptionEngine {
     cipher: Aes256Gcm,
-    /// Atomic counter for nonce generation (ensures uniqueness)
-    nonce_counter: AtomicU64,
+    budget: Option<Budget>,
+    legacy_attempt: Mutex<Option<KeyState>>,
 }
 
 impl EncryptionEngine {
-    /// Create new encryption engine with key
+    /// Create a new encryption engine with the supplied key.
     pub fn new(key: &EncryptionKey) -> Result<Self, String> {
         let cipher = Aes256Gcm::new_from_slice(key.as_bytes())
-            .map_err(|e| format!("Failed to create cipher: {}", e))?;
-
-        Ok(EncryptionEngine {
+            .map_err(|e| format!("Failed to create cipher: {e}"))?;
+        let (budget, legacy_attempt) = match &key.origin {
+            KeyOrigin::Fresh | KeyOrigin::Managed => {
+                let state = KeyState::new(&key.verifier())?;
+                if matches!(key.origin, KeyOrigin::Fresh) {
+                    state.issue()?;
+                }
+                (
+                    Some(Budget {
+                        state,
+                        remaining: Mutex::new(0),
+                    }),
+                    None,
+                )
+            }
+            KeyOrigin::Legacy(attempt) => (None, attempt.clone()),
+        };
+        Ok(Self {
             cipher,
-            nonce_counter: AtomicU64::new(0),
+            budget,
+            legacy_attempt: Mutex::new(legacy_attempt),
         })
     }
 
     /// Encrypt data with authenticated encryption (AES-256-GCM)
     ///
     /// Format: [version: 1 byte][nonce: 12 bytes][ciphertext + auth tag]
-    /// SECURITY: Uses counter-based nonce to guarantee uniqueness
+    /// Uses a fresh 96-bit OS-random nonce for each invocation.
     #[allow(deprecated)]
     pub fn encrypt(&self, plaintext: &[u8]) -> Result<Vec<u8>, String> {
-        // Check encryption limit (NIST SP 800-38D)
-        let count = self.nonce_counter.fetch_add(1, Ordering::SeqCst);
-        if count >= MAX_ENCRYPTIONS_PER_KEY {
-            return Err(format!(
-                "Encryption limit exceeded ({} operations). Key rotation required for security.",
-                MAX_ENCRYPTIONS_PER_KEY
-            ));
-        }
+        self.budget
+            .as_ref()
+            .ok_or("Legacy key has no lifetime usage ledger. Run 'lit rotate-key' before writing.")?
+            .consume()?;
 
-        // Generate nonce: counter (8 bytes) + random (4 bytes)
-        // This guarantees uniqueness while maintaining randomness
         use aes_gcm::aead::rand_core::RngCore;
         let mut nonce_bytes = [0u8; NONCE_SIZE];
-        nonce_bytes[..8].copy_from_slice(&count.to_be_bytes());
-        OsRng.fill_bytes(&mut nonce_bytes[8..]);
+        OsRng
+            .try_fill_bytes(&mut nonce_bytes)
+            .map_err(|e| format!("Could not generate encryption nonce: {e}"))?;
         let nonce = Nonce::from_slice(&nonce_bytes);
 
         // Encrypt with authenticated encryption
@@ -457,6 +406,14 @@ impl EncryptionEngine {
             .decrypt(nonce, ciphertext)
             .map_err(|e| format!("Decryption failed (possible tampering): {}", e))?;
 
+        let mut legacy = self
+            .legacy_attempt
+            .lock()
+            .map_err(|_| "Legacy authentication lock poisoned")?;
+        if let Some(attempt) = legacy.as_ref() {
+            attempt.clear_attempts()?;
+            *legacy = None;
+        }
         Ok(plaintext)
     }
 }
@@ -585,11 +542,6 @@ const MIN_PASSPHRASE_LENGTH: usize = 16;
 /// - Minimum 16 characters (NIST SP 800-63B)
 /// - At least 3 of: uppercase, lowercase, digits, special characters
 fn validate_passphrase_strength(passphrase: &str) -> Result<(), String> {
-    // Skip validation for test passphrases (starting with "test-")
-    if passphrase.starts_with("test-") {
-        return Ok(());
-    }
-
     if passphrase.len() < MIN_PASSPHRASE_LENGTH {
         return Err(format!(
             "Passphrase must be at least {} characters (recommended: 20+)",
@@ -660,6 +612,82 @@ pub fn prompt_for_passphrase_confirmation(prompt_text: &str) -> Result<Zeroizing
     Ok(Zeroizing::new(pass1))
 }
 
+pub(crate) fn prompt_for_new_passphrase() -> Result<Zeroizing<String>, String> {
+    if let Some(path) = std::env::var_os("LIT_NEW_PASSPHRASE_FILE") {
+        let mut passphrase = Zeroizing::new(
+            fs::read_to_string(path)
+                .map_err(|e| format!("Failed to read new passphrase file: {e}"))?,
+        );
+        let length = passphrase.trim_end_matches(['\r', '\n']).len();
+        passphrase.truncate(length);
+        validate_passphrase_strength(&passphrase)?;
+        return Ok(passphrase);
+    }
+    let first = Zeroizing::new(
+        rpassword::prompt_password("Enter new passphrase: ")
+            .map_err(|e| format!("Failed to read new passphrase: {e}"))?,
+    );
+    let confirmation = Zeroizing::new(
+        rpassword::prompt_password("Confirm new passphrase: ")
+            .map_err(|e| format!("Failed to read passphrase confirmation: {e}"))?,
+    );
+    if *first != *confirmation {
+        return Err("Passphrases do not match".into());
+    }
+    validate_passphrase_strength(&first)?;
+    Ok(first)
+}
+
+pub(crate) const ROTATION_DIR: &str = ".lit/key-rotation";
+
+pub(crate) fn require_rotation_complete(repo: &Path) -> Result<(), String> {
+    match repo.join(ROTATION_DIR).symlink_metadata() {
+        Ok(_) => Err(
+            "Key rotation is in progress. Run 'lit rotate-key' with the new passphrase to resume."
+                .into(),
+        ),
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(()),
+        Err(e) => Err(format!("Cannot inspect key rotation state: {e}")),
+    }
+}
+
+/// Serialize rotation against object writes that originate outside the CLI
+/// write guard, such as objects arriving through a transport.
+pub(crate) fn lock_key_writes(repo: &Path, exclusive: bool) -> std::io::Result<fs::File> {
+    let file = fs::OpenOptions::new()
+        .read(true)
+        .write(true)
+        .create(true)
+        .truncate(false)
+        .open(repo.join(".lit/encryption.guard"))?;
+    if exclusive {
+        file.lock()?;
+    } else {
+        file.lock_shared()?;
+    }
+    Ok(file)
+}
+
+pub(crate) fn repository_is_pristine(repo: &Path) -> Result<bool, String> {
+    let metadata = repo.join(".lit");
+    for directory in ["objects", "refs", "packs"] {
+        let directory = metadata.join(directory);
+        if !directory.try_exists().map_err(|e| e.to_string())? {
+            continue;
+        }
+        for entry in walkdir::WalkDir::new(directory) {
+            if entry.map_err(|e| e.to_string())?.file_type().is_file() {
+                return Ok(false);
+            }
+        }
+    }
+    match fs::read(metadata.join("index")) {
+        Ok(index) => Ok(index == b"{\n  \"entries\": {}\n}"),
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(true),
+        Err(e) => Err(format!("Cannot inspect initial index: {e}")),
+    }
+}
+
 /// Encryption manager for repository
 pub struct EncryptionManager {
     config: EncryptionConfig,
@@ -677,6 +705,56 @@ impl EncryptionManager {
         }
     }
 
+    pub(crate) fn for_repository(
+        repo: &Path,
+        passphrase: Option<&str>,
+        create_key: bool,
+    ) -> Result<Self, String> {
+        require_rotation_complete(repo)?;
+        let config = EncryptionConfig::load(repo)?;
+        if !config.enabled {
+            return Ok(Self::new(config));
+        }
+        let passphrase = passphrase
+            .map(|pass| Zeroizing::new(pass.to_owned()))
+            .or_else(|| get_passphrase_non_interactive(repo.to_str()?, &config))
+            .ok_or("Passphrase required for this repository (use --passphrase-file)")?;
+        let expanded = shellexpand::tilde(&config.key_file);
+        let key_exists = Path::new(expanded.as_ref())
+            .try_exists()
+            .map_err(|e| e.to_string())?;
+        if create_key && !key_exists {
+            if !repository_is_pristine(repo)? {
+                return Err("Encryption key file is missing for an existing repository. Restore it from backup.".into());
+            }
+            let mut manager = Self::new(config);
+            manager.initialize(&passphrase)?;
+            Ok(manager)
+        } else {
+            Self::open_existing(config, &passphrase)
+        }
+    }
+
+    pub(crate) fn open_existing(
+        config: EncryptionConfig,
+        passphrase: &str,
+    ) -> Result<Self, String> {
+        let path = shellexpand::tilde(&config.key_file);
+        let key = EncryptionKey::load(Path::new(path.as_ref()), passphrase)?;
+        Self::from_key(config, &key)
+    }
+
+    pub(crate) fn from_key(config: EncryptionConfig, key: &EncryptionKey) -> Result<Self, String> {
+        let mut manager = Self::new(config);
+        manager.engine = Some(EncryptionEngine::new(key)?);
+        Ok(manager)
+    }
+
+    pub(crate) fn matches_config(&self, config: &EncryptionConfig) -> bool {
+        self.config.enabled == config.enabled
+            && (!config.enabled || self.config.key_file == config.key_file)
+    }
+
     /// Initialize encryption with passphrase
     pub fn initialize(&mut self, passphrase: &str) -> Result<(), String> {
         if !self.config.enabled {
@@ -691,8 +769,12 @@ impl EncryptionManager {
             EncryptionKey::load(key_file, passphrase)?
         } else {
             let key = EncryptionKey::from_passphrase(passphrase, &EncryptionKey::generate_salt())?;
-            key.save(&self.config.key_file, passphrase)?;
-            key
+            if key.write_verifier(key_file, false)? {
+                key
+            } else {
+                // Another repository sharing this key path initialized it first.
+                EncryptionKey::load(key_file, passphrase)?
+            }
         };
 
         // Create encryption engine
@@ -774,7 +856,7 @@ mod tests {
 
     #[test]
     fn test_key_derivation() {
-        let passphrase = "test-passphrase-12345";
+        let passphrase = "test-passphrase-12345-A1!";
         let salt = EncryptionKey::generate_salt();
 
         let key1 = EncryptionKey::from_passphrase(passphrase, &salt).unwrap();
@@ -786,7 +868,7 @@ mod tests {
 
     #[test]
     fn test_encryption_decryption() {
-        let passphrase = "test-secure-passphrase";
+        let passphrase = "test-secure-passphrase-A1!";
         let salt = EncryptionKey::generate_salt();
         let key = EncryptionKey::from_passphrase(passphrase, &salt).unwrap();
 
@@ -809,7 +891,7 @@ mod tests {
 
     #[test]
     fn test_encryption_nonce_randomness() {
-        let passphrase = "test-passphrase";
+        let passphrase = "test-passphrase-A1!";
         let salt = EncryptionKey::generate_salt();
         let key = EncryptionKey::from_passphrase(passphrase, &salt).unwrap();
 
@@ -831,7 +913,7 @@ mod tests {
 
     #[test]
     fn test_tampering_detection() {
-        let passphrase = "test-passphrase";
+        let passphrase = "test-passphrase-A1!";
         let salt = EncryptionKey::generate_salt();
         let key = EncryptionKey::from_passphrase(passphrase, &salt).unwrap();
 
@@ -929,28 +1011,18 @@ mod tests {
     }
 
     #[test]
-    #[ignore] // Test is flaky due to shared key file state between tests
     fn test_encryption_manager_with_cache() {
-        use std::env;
-
-        // Clean up any existing key file from previous tests
-        let key_path = shellexpand::tilde("~/.lit/encryption.key");
-        fs::remove_file(key_path.as_ref()).ok();
-
-        let temp_dir = env::temp_dir();
-        let repo_path = temp_dir.join("test-cache-manager");
-        let repo_str = repo_path.to_str().unwrap();
-
-        clear_passphrase_cache();
-
+        let repo = tempfile::tempdir().unwrap();
+        let repo_str = repo.path().to_str().unwrap();
         let config = EncryptionConfig {
             enabled: true,
-            cache_timeout_secs: 300, // 5 minutes
+            key_file: repo.path().join("key").to_str().unwrap().to_owned(),
+            cache_timeout_secs: 300,
             ..Default::default()
         };
 
         let mut manager = EncryptionManager::new(config);
-        let passphrase = "test-cache-manager-pass";
+        let passphrase = "test-cache-manager-pass-A1!";
 
         // Initialize with cache
         manager
@@ -965,83 +1037,202 @@ mod tests {
         manager2.initialize_with_cache(repo_str, None).unwrap();
 
         // Clear cache for cleanup
-        clear_passphrase_cache();
+        PASSPHRASE_CACHE.lock().unwrap().remove(repo_str);
     }
 
+    #[cfg(unix)]
+    fn worker(home: &Path, action: &str, test: &str) -> std::process::Command {
+        let mut command = std::process::Command::new(std::env::current_exe().unwrap());
+        command
+            .args(["--exact", test, "--nocapture"])
+            .current_dir(home)
+            .env("HOME", home)
+            .env("LIT_CRYPTO_TEST_ACTION", action);
+        command
+    }
+
+    #[cfg(unix)]
     #[test]
-    #[ignore] // This test takes ~10 seconds due to rate limiting delays
     fn test_rate_limiting() {
-        // Clean up any existing key file and failed attempts
-        let key_path = shellexpand::tilde("~/.lit/encryption.key");
-        fs::remove_file(key_path.as_ref()).ok();
+        use serde_json::json;
+        const TEST: &str = "crypto::encryption::tests::test_rate_limiting";
+        const PASS: &str = "Fixture-password-A1!";
 
-        // Create a key with a known passphrase (NOT starting with "test-" so rate limiting applies)
-        let passphrase = "correct-passphrase-1234567890";
-        let salt = EncryptionKey::generate_salt();
-        let key = EncryptionKey::from_passphrase(passphrase, &salt).unwrap();
-        key.save("~/.lit/encryption.key", passphrase).unwrap();
+        if let Ok(action) = std::env::var("LIT_CRYPTO_TEST_ACTION") {
+            let key = Path::new("key");
+            match action.as_str() {
+                "prepare" => {
+                    EncryptionKey::from_passphrase(PASS, &EncryptionKey::generate_salt())
+                        .unwrap()
+                        .save("key", PASS)
+                        .unwrap();
+                    fs::copy(key, "alias").unwrap();
+                }
+                "fail" => {
+                    assert_eq!(
+                        EncryptionKey::load(key, "short").err().unwrap(),
+                        "Invalid passphrase"
+                    );
+                }
+                "blocked" => {
+                    let error = EncryptionKey::load(Path::new("alias"), "test-bypass")
+                        .err()
+                        .unwrap();
+                    assert!(error.contains("Passphrase rate limit:"), "{error}");
+                }
+                "recover" => {
+                    EncryptionKey::load(Path::new("alias"), PASS).unwrap();
+                }
+                _ => panic!("unexpected passphrase test worker"),
+            }
+            return;
+        }
 
-        // First failed attempt
-        let result1 = EncryptionKey::load(
-            Path::new(shellexpand::tilde("~/.lit/encryption.key").as_ref()),
-            "wrong-password-111111111111",
-        );
-        assert!(result1.is_err());
+        let home = tempfile::tempdir().unwrap();
+        let run = |action| {
+            assert!(worker(home.path(), action, TEST)
+                .status()
+                .unwrap()
+                .success())
+        };
+        run("prepare");
+        run("fail");
+        let key = fs::read(home.path().join("key")).unwrap();
+        let identity = hex::encode(&key[SALT_SIZE + 1..]);
+        let attempts = home
+            .path()
+            .join(".lit/key-state")
+            .join(format!("{identity}.attempts"));
+        let snapshot =
+            || serde_json::from_slice::<serde_json::Value>(&fs::read(&attempts).unwrap()).unwrap();
+        let initial = snapshot();
+        assert_eq!(initial["pending"], false);
+        assert_eq!(initial["failures"], 1);
+        assert!(initial["retry_at"].as_u64().unwrap() > 0);
+        // Widen the deadline in this disposable fixture to avoid depending on
+        // process scheduling. The policy unit test checks the exact durations.
+        let mut extended = initial;
+        extended["retry_at"] = json!(u64::MAX - 1);
+        fs::write(&attempts, serde_json::to_vec(&extended).unwrap()).unwrap();
+        run("blocked");
+        assert_eq!(snapshot(), extended);
 
-        // Second failed attempt immediately after should trigger rate limit (2 seconds delay)
-        let start = std::time::Instant::now();
-        let result2 = EncryptionKey::load(
-            Path::new(shellexpand::tilde("~/.lit/encryption.key").as_ref()),
-            "wrong-password-222222222222",
-        );
-        assert!(result2.is_err());
-        let elapsed2 = start.elapsed().as_secs();
-        assert!(
-            elapsed2 >= 2,
-            "Expected at least 2 second rate limit delay, got {} seconds",
-            elapsed2
-        );
+        // A killed verifier left its reserved attempt pending.
+        fs::write(&attempts, br#"{"failures":1,"retry_at":0,"pending":true}"#).unwrap();
+        run("blocked");
+        assert_eq!(snapshot()["pending"], false);
+        assert!(snapshot()["retry_at"].as_u64().unwrap() > 0);
 
-        // Wait for backoff period to expire
-        std::thread::sleep(std::time::Duration::from_secs(3));
+        fs::write(&attempts, br#"{"failures":1,"retry_at":0,"pending":false}"#).unwrap();
+        run("recover");
+        assert_eq!(
+            snapshot(),
+            json!({"failures":0,"retry_at":0,"pending":false})
+        );
+    }
 
-        // Third failed attempt should trigger 4 second delay (2^2 = 4)
-        let start = std::time::Instant::now();
-        let result3 = EncryptionKey::load(
-            Path::new(shellexpand::tilde("~/.lit/encryption.key").as_ref()),
-            "wrong-password-333333333333",
-        );
-        assert!(result3.is_err());
-        let elapsed3 = start.elapsed().as_secs();
-        assert!(
-            elapsed3 >= 4,
-            "Expected at least 4 second rate limit delay, got {} seconds",
-            elapsed3
-        );
+    #[cfg(unix)]
+    #[test]
+    fn test_encryption_budget_across_processes() {
+        use super::super::key_state::MAX_ENCRYPTIONS_PER_KEY;
+        use serde_json::json;
+        const TEST: &str = "crypto::encryption::tests::test_encryption_budget_across_processes";
+        // A fixed test-only AES key avoids repeatedly deriving the same key in
+        // children. Each worker still goes through the actual encrypt method.
+        let mut key = EncryptionKey {
+            key_bytes: [0x5a; KEY_SIZE],
+            salt: [0x7b; SALT_SIZE],
+            origin: KeyOrigin::Managed,
+        };
+        if let Ok(action) = std::env::var("LIT_CRYPTO_TEST_ACTION") {
+            if action == "legacy" {
+                key.origin = KeyOrigin::Legacy(None);
+            }
+            let engine = EncryptionEngine::new(&key).unwrap();
+            match action.as_str() {
+                "compete" => match engine.encrypt(b"reserved encryption") {
+                    Ok(content) => fs::write("ciphertext", content).unwrap(),
+                    Err(error) => {
+                        assert!(error.contains("Encryption limit reached"), "{error}");
+                        std::process::exit(2);
+                    }
+                },
+                "crash" => {
+                    fs::write(
+                        "ciphertext",
+                        engine.encrypt(b"reserved encryption").unwrap(),
+                    )
+                    .unwrap();
+                    fs::write("ready", "").unwrap();
+                    loop {
+                        std::thread::park();
+                    }
+                }
+                "missing" | "legacy" => {
+                    let previous = fs::read("ciphertext").unwrap();
+                    assert_eq!(engine.decrypt(&previous).unwrap(), b"reserved encryption");
+                    let error = engine.encrypt(b"must not write").unwrap_err();
+                    assert!(error.contains("ledger"), "{error}");
+                }
+                _ => panic!("unexpected budget test worker"),
+            }
+            return;
+        }
 
-        // Correct passphrase should work and reset counter
-        let result_correct = EncryptionKey::load(
-            Path::new(shellexpand::tilde("~/.lit/encryption.key").as_ref()),
-            passphrase,
+        let home = tempfile::tempdir().unwrap();
+        let state = home.path().join(".lit/key-state");
+        fs::create_dir_all(&state).unwrap();
+        let usage = state.join(format!("{}.usage", hex::encode(key.verifier())));
+        let seed = |reserved| {
+            fs::write(
+                &usage,
+                serde_json::to_vec(&json!({
+                    "version": 1, "reserved": reserved
+                }))
+                .unwrap(),
+            )
+            .unwrap()
+        };
+        seed(MAX_ENCRYPTIONS_PER_KEY - 1);
+        let mut first = worker(home.path(), "compete", TEST).spawn().unwrap();
+        let mut second = worker(home.path(), "compete", TEST).spawn().unwrap();
+        let (first, second) = (first.wait().unwrap(), second.wait().unwrap());
+        assert_ne!(
+            first.success(),
+            second.success(),
+            "only one process may use the last encryption"
         );
-        assert!(result_correct.is_ok());
+        assert_eq!(first.code().unwrap() + second.code().unwrap(), 2);
+        assert!(worker(home.path(), "legacy", TEST)
+            .status()
+            .unwrap()
+            .success());
 
-        // After successful login, next failed attempt should only have minimal delay (counter reset)
-        let start = std::time::Instant::now();
-        let result_after_reset = EncryptionKey::load(
-            Path::new(shellexpand::tilde("~/.lit/encryption.key").as_ref()),
-            "wrong-again-444444444444",
+        // An interrupted process must not refund its unused reservation.
+        seed(MAX_ENCRYPTIONS_PER_KEY - 2);
+        let mut crash = worker(home.path(), "crash", TEST).spawn().unwrap();
+        let deadline = std::time::Instant::now() + Duration::from_secs(10);
+        while !home.path().join("ready").is_file() && std::time::Instant::now() < deadline {
+            if crash.try_wait().unwrap().is_some() {
+                break;
+            }
+            std::thread::sleep(Duration::from_millis(10));
+        }
+        let reached = home.path().join("ready").is_file();
+        let _ = crash.kill();
+        assert!(!crash.wait().unwrap().success());
+        assert!(reached, "process never reserved budget");
+        assert_eq!(
+            worker(home.path(), "compete", TEST)
+                .status()
+                .unwrap()
+                .code(),
+            Some(2)
         );
-        assert!(result_after_reset.is_err());
-        let elapsed_after_reset = start.elapsed().as_secs();
-        // Should not have the 2 second rate limit anymore (counter was reset)
-        assert!(
-            elapsed_after_reset < 2,
-            "Expected <2 seconds after reset, got {} seconds",
-            elapsed_after_reset
-        );
-
-        // Cleanup
-        fs::remove_file(shellexpand::tilde("~/.lit/encryption.key").as_ref()).ok();
+        fs::remove_file(&usage).unwrap();
+        assert!(worker(home.path(), "missing", TEST)
+            .status()
+            .unwrap()
+            .success());
     }
 }

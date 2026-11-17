@@ -42,6 +42,33 @@ impl RemoteConfig {
     }
 }
 
+pub(super) fn url(repo_root: &std::path::Path, name: &str) -> Result<String, crate::errors::LitError> {
+    validate_ref(name)?;
+    let config = RemoteConfig::load(repo_root)?;
+    if config.remotes.is_empty() {
+        return Err(format!("No remotes configured. Use 'lit remote add {name} <url>'").into());
+    }
+    config.remotes.get(name).map(|remote| remote.url.clone())
+        .ok_or_else(|| format!("Remote '{name}' not found").into())
+}
+
+pub(super) fn set_origin(repo_root: &std::path::Path, url: &str) -> Result<(), crate::errors::LitError> {
+    RemoteConfig { remotes: HashMap::from([("origin".into(), Remote { url: url.into() })]) }.save(repo_root)
+}
+
+pub(super) fn validate_ref(name: &str) -> Result<(), crate::errors::LitError> {
+    if name.is_empty()
+        || name.contains("..")
+        || name.contains("@{")
+        || name.ends_with('.')
+        || name.chars().any(|ch| ch.is_control() || ch.is_whitespace() || "~^:?*[\\".contains(ch))
+        || name.split('/').any(|part| part.is_empty() || part.starts_with('.') || part.ends_with(".lock"))
+    {
+        return Err(format!("Invalid ref name: {name}").into());
+    }
+    Ok(())
+}
+
 pub fn execute(command: Option<crate::RemoteCommands>) -> Result<RemoteResponse, crate::errors::LitError> {
     let repo_root = find_repo_root()?;
 

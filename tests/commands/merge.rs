@@ -40,6 +40,7 @@ fn test_merge_fast_forward() {
     lit::commands::branch::execute(Some("feature".to_string()), false, false).unwrap();
     lit::commands::checkout::execute("feature".to_string(), false).unwrap();
     create_commit(temp.path(), "feature.txt", "feature content", "Feature commit");
+    create_commit(temp.path(), "test.txt", "updated on feature", "Update existing file");
 
     // Switch back to main and merge feature (should fast-forward)
     lit::commands::checkout::execute("main".to_string(), false).unwrap();
@@ -49,6 +50,8 @@ fn test_merge_fast_forward() {
     assert!(resp.merged, "Merge should be marked as merged");
     assert!(resp.fast_forward, "Should be a fast-forward merge");
     assert!(!resp.has_conflicts, "Should have no conflicts");
+    assert_eq!(fs::read_to_string(temp.path().join("test.txt")).unwrap(), "updated on feature");
+    assert!(lit::commands::status::execute().unwrap().clean);
 }
 
 #[test]

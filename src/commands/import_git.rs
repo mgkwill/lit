@@ -1,518 +1,300 @@
-use crate::core::{find_repo_root, Blob, Commit, Object, ObjectHash, Tree};
+use super::git_interop::{checked_output, git, git_oid, text, translate, valid_oid, GitObject};
+use crate::core::{find_repo_root, ObjectHash};
+use crate::errors::LitError;
 use crate::response::ImportGitResponse;
 use crate::storage::ObjectStore;
-use sha1::Digest as Sha1Digest;
 use std::collections::HashMap;
 use std::fs;
-use std::io::Read;
+use std::io::{BufRead, BufReader, Read, Write};
 use std::path::{Path, PathBuf};
+use std::process::{Child, ChildStdin, ChildStdout, Stdio};
 
-/// Import a Git repository into Lit format.
-/// Reads Git objects (SHA-1), converts them to Lit objects (SHA3-512 + BLAKE3),
-/// and imports all refs.
-pub fn execute(source: String) -> Result<ImportGitResponse, crate::errors::LitError> {
-    let source_path = PathBuf::from(&source);
-    let git_dir = find_git_dir(&source_path)?;
+pub fn execute(source: String) -> Result<ImportGitResponse, LitError> {
+    execute_at(source, None)
+}
 
-    // Initialize lit repo in current directory if not already
-    let repo_root = match find_repo_root() {
-        Ok(r) => r,
-        Err(_) => {
-            crate::commands::init::execute(false, None)?;
-            find_repo_root()?
+pub(super) fn execute_at(
+    source: String,
+    destination_root: Option<&Path>,
+) -> Result<ImportGitResponse, LitError> {
+    let source_path =
+        fs::canonicalize(&source).map_err(|e| format!("Open Git source {source}: {e}"))?;
+    if !source_path.join(".git").exists() && !source_path.join("HEAD").is_file() {
+        return Err(format!("Not a Git repository: {source}").into());
+    }
+    let format = checked_output(git(&source_path).args(["rev-parse", "--show-object-format"]))?;
+    if text(&format.stdout)?.trim() != "sha1" {
+        return Err("Only SHA-1 Git repositories are supported".into());
+    }
+
+    let refs_output = checked_output(git(&source_path).args([
+        "for-each-ref",
+        "--format=%(objectname)%09%(refname)%09%(symref)",
+        "refs/heads",
+        "refs/tags",
+    ]))?;
+    if !refs_output.stderr.is_empty() {
+        return Err(format!(
+            "Git could not enumerate every branch and tag: {}",
+            String::from_utf8_lossy(&refs_output.stderr).trim()
+        )
+        .into());
+    }
+    let mut refs = Vec::new();
+    for line in text(&refs_output.stdout)?.lines() {
+        let mut fields = line.split('\t');
+        let oid = fields.next().ok_or("Missing Git ref object ID")?;
+        let name = fields.next().ok_or("Missing Git ref name")?;
+        let symref = fields.next().ok_or("Missing Git ref type")?;
+        if !symref.is_empty() {
+            return Err(format!("Symbolic Git ref {name} is unsupported outside HEAD").into());
+        }
+        if !valid_oid(oid) {
+            return Err(format!("Invalid object ID for Git ref {name}").into());
+        }
+        refs.push((name, oid));
+    }
+
+    let head_path = checked_output(git(&source_path).args([
+        "rev-parse",
+        "--path-format=absolute",
+        "--git-path",
+        "HEAD",
+    ]))?;
+    let head_file = fs::read_to_string(text(&head_path.stdout)?.trim_end_matches(['\r', '\n']))
+        .map_err(|e| format!("Read Git HEAD: {e}"))?;
+    let head = head_file.trim_end_matches(['\r', '\n']);
+    let symbolic_head = head.strip_prefix("ref: ");
+    match symbolic_head {
+        Some(reference) if reference.starts_with("refs/heads/") => {
+            checked_output(git(&source_path).args(["check-ref-format", reference]))?;
+        }
+        None if valid_oid(head) => {}
+        _ => return Err("Unsupported Git HEAD format".into()),
+    }
+
+    let mut roots: Vec<_> = refs.iter().map(|(_, oid)| (*oid).to_owned()).collect();
+    if symbolic_head.is_none() {
+        roots.push(head.into());
+    }
+
+    let repo_root = if let Some(root) = destination_root {
+        root.to_owned()
+    } else {
+        match find_repo_root() {
+            Ok(root) => root,
+            Err(_) => {
+                super::init::execute(false, None)?;
+                find_repo_root()?
+            }
         }
     };
+    let _guard = super::transaction::lock_writes(&repo_root)?;
+    super::merge::require_inactive(&repo_root)?;
+    if repo_root.join(".lit/transaction.json").exists() {
+        return Err("Finish the active Lit transaction before importing Git history".into());
+    }
+    let (objects, _) = read_objects(&source_path, &repo_root, roots, true)?;
 
-    let store = ObjectStore::new(&repo_root);
-    let mut hash_map: HashMap<String, ObjectHash> = HashMap::new();
-    let mut objects_imported = 0u64;
-    let mut refs_imported = 0u64;
-
-    // Phase 1: Import all loose objects
-    let objects_dir = git_dir.join("objects");
-    if objects_dir.exists() {
-        for entry in walkdir::WalkDir::new(&objects_dir)
-            .min_depth(2)
-            .max_depth(2)
-        {
-            let entry = entry.map_err(|e| format!("Failed to walk objects: {}", e))?;
-            if !entry.file_type().is_file() {
-                continue;
-            }
-            let path = entry.path();
-            // Reconstruct the SHA-1 hex from dir/file
-            if let (Some(dir_name), Some(file_name)) =
-                (path.parent().and_then(|p| p.file_name()), path.file_name())
-            {
-                let dir_str = dir_name.to_string_lossy();
-                let file_str = file_name.to_string_lossy();
-                // Skip pack/info directories
-                if dir_str == "pack" || dir_str == "info" {
-                    continue;
-                }
-                let git_hash = format!("{}{}", dir_str, file_str);
-
-                match import_loose_object(path, &git_hash, &store, &mut hash_map) {
-                    Ok(_) => objects_imported += 1,
-                    Err(e) => {
-                        eprintln!("Warning: skipping object {}: {}", &git_hash[..8], e);
-                    }
-                }
-            }
-        }
+    let destination = repo_root.join(".lit");
+    // Prepare every update before publishing any ref. Each replacement is atomic
+    // and references objects already in the store, so a failed publish can be retried.
+    let staging = tempfile::tempdir_in(&destination)
+        .map_err(|e| format!("Create Git import staging directory: {e}"))?;
+    let mut updates = Vec::new();
+    for (name, oid) in &refs {
+        let target = objects.get(*oid).ok_or("Missing imported ref target")?;
+        updates.push(stage(&destination, staging.path(), name, target.as_str())?);
+    }
+    let head = match symbolic_head {
+        Some(_) => head.to_owned(),
+        None => objects
+            .get(head)
+            .ok_or("Missing imported HEAD target")?
+            .to_string(),
+    };
+    updates.push(stage(&destination, staging.path(), "HEAD", &head)?);
+    for (temporary, path) in updates {
+        fs::rename(temporary, &path).map_err(|e| format!("Update {}: {e}", path.display()))?;
     }
 
-    // Phase 2: Import pack files
-    let pack_dir = objects_dir.join("pack");
-    if pack_dir.exists() {
-        for entry in
-            fs::read_dir(&pack_dir).map_err(|e| format!("Failed to read pack dir: {}", e))?
-        {
-            let entry = entry.map_err(|e| format!("Pack dir entry error: {}", e))?;
-            let path = entry.path();
-            if path.extension().and_then(|e| e.to_str()) == Some("pack") {
-                match import_pack_file(&path, &store, &mut hash_map) {
-                    Ok(count) => objects_imported += count,
-                    Err(e) => {
-                        eprintln!("Warning: skipping pack {}: {}", path.display(), e);
-                    }
-                }
-            }
-        }
-    }
-
-    // Phase 3: Import refs
-    // branches
-    let refs_heads = git_dir.join("refs").join("heads");
-    if refs_heads.exists() {
-        for entry in walkdir::WalkDir::new(&refs_heads).min_depth(1) {
-            let entry = entry.map_err(|e| format!("Failed to walk refs: {}", e))?;
-            if !entry.file_type().is_file() {
-                continue;
-            }
-            let branch_name = entry
-                .path()
-                .strip_prefix(&refs_heads)
-                .map_err(|e| format!("Path error: {}", e))?
-                .to_string_lossy()
-                .replace('\\', "/");
-            let git_hash = fs::read_to_string(entry.path())
-                .map_err(|e| format!("Failed to read ref: {}", e))?
-                .trim()
-                .to_string();
-            if let Some(lit_hash) = hash_map.get(&git_hash) {
-                crate::core::write_ref(
-                    &repo_root,
-                    &format!("heads/{}", branch_name),
-                    lit_hash.as_str(),
-                )?;
-                refs_imported += 1;
-            }
-        }
-    }
-
-    // tags
-    let refs_tags = git_dir.join("refs").join("tags");
-    if refs_tags.exists() {
-        for entry in walkdir::WalkDir::new(&refs_tags).min_depth(1) {
-            let entry = entry.map_err(|e| format!("Failed to walk tags: {}", e))?;
-            if !entry.file_type().is_file() {
-                continue;
-            }
-            let tag_name = entry
-                .path()
-                .strip_prefix(&refs_tags)
-                .map_err(|e| format!("Path error: {}", e))?
-                .to_string_lossy()
-                .replace('\\', "/");
-            let git_hash = fs::read_to_string(entry.path())
-                .map_err(|e| format!("Failed to read ref: {}", e))?
-                .trim()
-                .to_string();
-            if let Some(lit_hash) = hash_map.get(&git_hash) {
-                crate::core::write_ref(
-                    &repo_root,
-                    &format!("tags/{}", tag_name),
-                    lit_hash.as_str(),
-                )?;
-                refs_imported += 1;
-            }
-        }
-    }
-
-    // HEAD
-    let head_path = git_dir.join("HEAD");
-    if head_path.exists() {
-        let head_content =
-            fs::read_to_string(&head_path).map_err(|e| format!("Failed to read HEAD: {}", e))?;
-        let head_content = head_content.trim();
-        if let Some(ref_target) = head_content.strip_prefix("ref: refs/heads/") {
-            crate::core::update_head(&repo_root, ref_target)?;
-        }
-    }
-
-    // Copy .gitignore as .litignore if present
     let gitignore = source_path.join(".gitignore");
     let litignore = repo_root.join(".litignore");
-    if gitignore.exists() && !litignore.exists() {
-        let _ = fs::copy(&gitignore, &litignore);
+    if gitignore.is_file() && !litignore.exists() {
+        let _ = fs::copy(gitignore, litignore);
     }
 
+    let objects_imported = objects.len() as u64;
+    let refs_imported = refs.len() as u64;
     Ok(ImportGitResponse {
-        source: source.clone(),
+        source,
         objects_imported,
         refs_imported,
-        hash_mapping_count: hash_map.len(),
+        hash_mapping_count: objects.len(),
         message: format!(
-            "Imported {} objects and {} refs from Git repository",
-            objects_imported, refs_imported
+            "Imported {objects_imported} objects and {refs_imported} refs from Git repository"
         ),
     })
 }
 
-/// Find the .git directory for a given path
-fn find_git_dir(path: &Path) -> Result<PathBuf, crate::errors::LitError> {
-    // Could be a bare repo or have .git directory
-    let dot_git = path.join(".git");
-    if dot_git.is_dir() {
-        return Ok(dot_git);
+/// Import immutable object data without publishing refs.
+pub(super) fn read_objects(
+    source: &Path,
+    root: &Path,
+    mut roots: Vec<String>,
+    include_unreachable: bool,
+) -> Result<(HashMap<String, ObjectHash>, usize), LitError> {
+    if include_unreachable {
+        let all = checked_output(git(source).args([
+            "cat-file",
+            "--batch-all-objects",
+            "--batch-check=%(objectname)",
+        ]))?;
+        roots.extend(text(&all.stdout)?.lines().map(str::to_owned));
     }
-    // Bare repository — objects dir directly present
-    if path.join("objects").is_dir() && path.join("refs").is_dir() {
-        return Ok(path.to_path_buf());
-    }
-    Err(format!("Not a Git repository: {}", path.display()).into())
+    let store = ObjectStore::new(root);
+    let git_map = root.join(".lit/git-export-map");
+    let mut reader = ObjectReader::new(source)?;
+    let mut written = 0;
+    let objects = translate(
+        roots,
+        |oid| {
+            let object = reader.read(oid)?;
+            let dependencies = object.dependencies()?;
+            Ok(((oid.to_owned(), object), dependencies))
+        },
+        |(oid, object), objects| {
+            match fs::read_to_string(git_map.join(&oid)) {
+                Ok(hash) => {
+                    let hash = hash.trim();
+                    if hash.len() == 192 && hash.bytes().all(|byte| byte.is_ascii_hexdigit()) {
+                        let hash = ObjectHash::from_hex(hash.to_owned());
+                        if store.exists(&hash) {
+                            return Ok(hash);
+                        }
+                    }
+                }
+                Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+                Err(error) => return Err(format!("Read Git identity mapping: {error}").into()),
+            }
+            let lit = object.to_lit(objects)?;
+            let hash = lit.hash();
+            if !store.exists(&hash) {
+                store.write(&lit)?;
+                written += 1;
+            }
+            Ok(hash)
+        },
+    )?;
+    Ok((objects, written))
 }
 
-/// Import a single loose Git object
-fn import_loose_object(
-    path: &Path,
-    _git_hash: &str,
-    store: &ObjectStore,
-    hash_map: &mut HashMap<String, ObjectHash>,
-) -> Result<(), crate::errors::LitError> {
-    let compressed = fs::read(path).map_err(|e| format!("Read error: {}", e))?;
-
-    // Decompress zlib
-    let mut decoder = flate2::read::ZlibDecoder::new(&compressed[..]);
-    let mut raw = Vec::new();
-    decoder
-        .read_to_end(&mut raw)
-        .map_err(|e| format!("Decompress error: {}", e))?;
-
-    // Parse Git object format: "<type> <size>\0<content>"
-    let null_pos = raw
-        .iter()
-        .position(|&b| b == 0)
-        .ok_or("Invalid Git object: no null byte")?;
-    let header = std::str::from_utf8(&raw[..null_pos]).map_err(|_| "Invalid Git object header")?;
-    let content = &raw[null_pos + 1..];
-
-    let (obj_type, _size_str) = header
-        .split_once(' ')
-        .ok_or("Invalid Git object header format")?;
-
-    // Compute the original git hash for mapping
-    let mut sha1 = sha1::Sha1::new();
-    sha1.update(&raw);
-    let git_hash_computed = hex::encode(sha1.finalize());
-
-    let lit_obj = match obj_type {
-        "blob" => Object::Blob(Blob::new(content.to_vec())),
-        "tree" => {
-            let tree = parse_git_tree(content, hash_map)?;
-            Object::Tree(tree)
-        }
-        "commit" => {
-            let commit = parse_git_commit(content, hash_map)?;
-            Object::Commit(commit)
-        }
-        "tag" => {
-            // Treat as blob for now — full tag object parsing is complex
-            Object::Blob(Blob::new(content.to_vec()))
-        }
-        other => return Err(format!("Unknown object type: {}", other).into()),
-    };
-
-    let lit_hash = store.write(&lit_obj)?;
-    hash_map.insert(git_hash_computed, lit_hash);
-    Ok(())
-}
-
-/// Parse a Git tree object's binary content
-fn parse_git_tree(content: &[u8], hash_map: &HashMap<String, ObjectHash>) -> Result<Tree, crate::errors::LitError> {
-    let mut tree = Tree::new();
-    let mut pos = 0;
-
-    while pos < content.len() {
-        // Format: "<mode> <name>\0<20-byte-sha1>"
-        let space_pos = content[pos..]
-            .iter()
-            .position(|&b| b == b' ')
-            .ok_or("Invalid tree entry: no space")?
-            + pos;
-        let null_pos = content[space_pos..]
-            .iter()
-            .position(|&b| b == 0)
-            .ok_or("Invalid tree entry: no null")?
-            + space_pos;
-
-        let mode = std::str::from_utf8(&content[pos..space_pos])
-            .map_err(|_| "Invalid mode in tree")?
-            .to_string();
-        let name = std::str::from_utf8(&content[space_pos + 1..null_pos])
-            .map_err(|_| "Invalid name in tree")?
-            .to_string();
-
-        if null_pos + 21 > content.len() {
-            break;
-        }
-        let sha1_bytes = &content[null_pos + 1..null_pos + 21];
-        let git_hash = hex::encode(sha1_bytes);
-
-        // Map to lit hash or use placeholder
-        let lit_hash = hash_map
-            .get(&git_hash)
-            .cloned()
-            .unwrap_or_else(|| ObjectHash::from_hex(format!("{:0>192}", git_hash)));
-
-        let obj_type = if mode.starts_with("40") {
-            "tree"
-        } else {
-            "blob"
-        }
-        .to_string();
-
-        tree.add_entry(mode, name, lit_hash, obj_type);
-        pos = null_pos + 21;
-    }
-
-    Ok(tree)
-}
-
-/// Parse a Git commit object's text content
-fn parse_git_commit(
-    content: &[u8],
-    hash_map: &HashMap<String, ObjectHash>,
-) -> Result<Commit, crate::errors::LitError> {
-    let text = std::str::from_utf8(content).map_err(|_| "Invalid commit: not UTF-8")?;
-
-    let mut tree_hash = String::new();
-    let mut parents = Vec::new();
-    let mut author = String::new();
-    let mut committer = String::new();
-    let mut timestamp: i64 = 0;
-    let mut in_body = false;
-    let mut message_lines = Vec::new();
-
-    for line in text.lines() {
-        if in_body {
-            message_lines.push(line);
-            continue;
-        }
-        if line.is_empty() {
-            in_body = true;
-            continue;
-        }
-        if let Some(rest) = line.strip_prefix("tree ") {
-            tree_hash = rest.trim().to_string();
-        } else if let Some(rest) = line.strip_prefix("parent ") {
-            parents.push(rest.trim().to_string());
-        } else if let Some(rest) = line.strip_prefix("author ") {
-            let (name, ts) = parse_git_ident(rest);
-            author = name;
-            timestamp = ts;
-        } else if let Some(rest) = line.strip_prefix("committer ") {
-            let (name, _) = parse_git_ident(rest);
-            committer = name;
+fn stage(
+    root: &Path,
+    staging: &Path,
+    name: &str,
+    value: &str,
+) -> Result<(PathBuf, PathBuf), LitError> {
+    let mut path = root.to_path_buf();
+    for part in Path::new(name).components() {
+        let std::path::Component::Normal(part) = part else {
+            return Err(format!("Invalid Lit ref path: {name}").into());
+        };
+        path.push(part);
+        match fs::symlink_metadata(&path) {
+            Ok(metadata) if metadata.is_symlink() => {
+                return Err(format!("Ref path traverses a symlink: {name}").into());
+            }
+            Ok(_) => {}
+            Err(e) if e.kind() == std::io::ErrorKind::NotFound => {}
+            Err(e) => return Err(format!("Read ref path {name}: {e}").into()),
         }
     }
+    if path.is_dir() {
+        return Err(format!("Cannot replace existing ref directory: {name}").into());
+    }
+    let parent = path.parent().ok_or("Ref path has no parent")?;
+    fs::create_dir_all(parent).map_err(|e| format!("Create ref directory for {name}: {e}"))?;
+    // Mirror the ref names on the same filesystem to catch pathname aliases
+    // (for example case-only differences) before updating the actual refs.
+    let temporary = staging.join(name);
+    let temporary_parent = temporary.parent().ok_or("Ref staging path has no parent")?;
+    fs::create_dir_all(temporary_parent)
+        .map_err(|e| format!("Stage ref directory for {name}: {e}"))?;
+    let mut file =
+        fs::File::create_new(&temporary).map_err(|e| format!("Stage ref {name}: {e}"))?;
+    writeln!(file, "{value}").map_err(|e| format!("Stage ref {name}: {e}"))?;
+    Ok((temporary, path))
+}
 
-    // Map git hashes to lit hashes
-    let lit_tree = hash_map
-        .get(&tree_hash)
-        .cloned()
-        .unwrap_or_else(|| ObjectHash::from_hex(format!("{:0>192}", tree_hash)));
+struct ObjectReader {
+    child: Child,
+    input: ChildStdin,
+    output: BufReader<ChildStdout>,
+}
 
-    let lit_parents: Vec<ObjectHash> = parents
-        .iter()
-        .map(|p| {
-            hash_map
-                .get(p)
-                .cloned()
-                .unwrap_or_else(|| ObjectHash::from_hex(format!("{:0>192}", p)))
+impl ObjectReader {
+    fn new(source: &Path) -> Result<Self, LitError> {
+        let mut child = git(source)
+            .args(["cat-file", "--batch"])
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::null())
+            .spawn()
+            .map_err(|e| format!("Start Git object reader: {e}"))?;
+        let input = child.stdin.take().expect("Git has piped stdin");
+        let output = BufReader::new(child.stdout.take().expect("Git has piped stdout"));
+        Ok(Self {
+            child,
+            input,
+            output,
         })
-        .collect();
+    }
 
-    Ok(Commit {
-        tree: lit_tree,
-        parents: lit_parents,
-        author,
-        committer,
-        timestamp,
-        message: message_lines.join("\n"),
-        pq_signature: None,
-        metadata: None,
-    })
+    fn read(&mut self, oid: &str) -> Result<GitObject, LitError> {
+        if !valid_oid(oid) {
+            return Err("Invalid Git object ID".into());
+        }
+        writeln!(self.input, "{oid}").map_err(|e| format!("Request Git object {oid}: {e}"))?;
+        let mut header = String::new();
+        self.output
+            .read_line(&mut header)
+            .map_err(|e| format!("Read Git object header: {e}"))?;
+        let fields: Vec<_> = header.split_ascii_whitespace().collect();
+        let [reported_oid, kind, len] = fields.as_slice() else {
+            return Err(format!("Git object {oid} is missing or unreadable").into());
+        };
+        if *reported_oid != oid {
+            return Err(format!("Git returned an unexpected object for {oid}").into());
+        }
+        let length = len
+            .parse::<usize>()
+            .map_err(|_| "Invalid size in Git object header")?;
+        let mut body = Vec::new();
+        (&mut self.output)
+            .take(length as u64)
+            .read_to_end(&mut body)
+            .map_err(|e| format!("Read Git object {oid}: {e}"))?;
+        let mut newline = [0];
+        if body.len() != length
+            || self.output.read_exact(&mut newline).is_err()
+            || newline[0] != b'\n'
+        {
+            return Err(format!("Truncated Git object {oid}").into());
+        }
+        if git_oid(kind, &body) != oid {
+            return Err(format!("Git object {oid} failed its content hash check").into());
+        }
+        Ok(GitObject {
+            kind: (*kind).to_owned(),
+            body,
+        })
+    }
 }
 
-/// Parse a Git identity line: "Name <email> timestamp timezone"
-fn parse_git_ident(ident: &str) -> (String, i64) {
-    // "John Doe <john@example.com> 1234567890 +0000"
-    if let Some(bracket_pos) = ident.rfind('>') {
-        let name_email = &ident[..=bracket_pos];
-        let rest = ident[bracket_pos + 1..].trim();
-        let timestamp = rest
-            .split_whitespace()
-            .next()
-            .and_then(|s| s.parse::<i64>().ok())
-            .unwrap_or(0);
-        (name_email.trim().to_string(), timestamp)
-    } else {
-        (ident.to_string(), 0)
+impl Drop for ObjectReader {
+    fn drop(&mut self) {
+        let _ = self.child.kill();
+        let _ = self.child.wait();
     }
-}
-
-/// Import objects from a Git pack file
-fn import_pack_file(
-    pack_path: &Path,
-    store: &ObjectStore,
-    hash_map: &mut HashMap<String, ObjectHash>,
-) -> Result<u64, crate::errors::LitError> {
-    let data = fs::read(pack_path).map_err(|e| format!("Failed to read pack: {}", e))?;
-
-    // Validate pack header: "PACK" magic, version 2/3, object count
-    if data.len() < 12 {
-        return Err("Pack file too small".into());
-    }
-    if &data[0..4] != b"PACK" {
-        return Err("Invalid pack file magic".into());
-    }
-    let version = u32::from_be_bytes([data[4], data[5], data[6], data[7]]);
-    if version != 2 && version != 3 {
-        return Err(format!("Unsupported pack version: {}", version).into());
-    }
-    let num_objects = u32::from_be_bytes([data[8], data[9], data[10], data[11]]);
-    let mut imported = 0u64;
-
-    // Parse pack entries
-    let mut pos = 12;
-    for _ in 0..num_objects {
-        if pos >= data.len() - 20 {
-            break;
-        }
-        match parse_pack_entry(&data, &mut pos, store, hash_map) {
-            Ok(_) => imported += 1,
-            Err(e) => {
-                eprintln!("Warning: skipping pack entry: {}", e);
-                break;
-            }
-        }
-    }
-
-    Ok(imported)
-}
-
-/// Parse a single pack entry
-fn parse_pack_entry(
-    data: &[u8],
-    pos: &mut usize,
-    store: &ObjectStore,
-    hash_map: &mut HashMap<String, ObjectHash>,
-) -> Result<(), crate::errors::LitError> {
-    if *pos >= data.len() {
-        return Err("Unexpected end of pack".into());
-    }
-
-    // Read type and size from variable-length header
-    let mut byte = data[*pos];
-    let obj_type = (byte >> 4) & 0x07;
-    let mut _size: u64 = (byte & 0x0f) as u64;
-    let mut shift = 4;
-    *pos += 1;
-
-    while byte & 0x80 != 0 {
-        if *pos >= data.len() {
-            return Err("Truncated pack header".into());
-        }
-        byte = data[*pos];
-        _size |= ((byte & 0x7f) as u64) << shift;
-        shift += 7;
-        *pos += 1;
-    }
-
-    match obj_type {
-        1..=4 => {
-            // Regular object types: commit, tree, blob, tag
-            let mut decoder = flate2::read::ZlibDecoder::new(&data[*pos..]);
-            let mut content = Vec::new();
-            decoder
-                .read_to_end(&mut content)
-                .map_err(|e| format!("Decompress error: {}", e))?;
-            *pos += decoder.total_in() as usize;
-
-            // Compute git hash
-            let type_name = match obj_type {
-                1 => "commit",
-                2 => "tree",
-                3 => "blob",
-                4 => "tag",
-                _ => unreachable!(),
-            };
-            let header = format!("{} {}\0", type_name, content.len());
-            let mut sha1 = sha1::Sha1::new();
-            sha1.update(header.as_bytes());
-            sha1.update(&content);
-            let git_hash = hex::encode(sha1.finalize());
-
-            let lit_obj = match obj_type {
-                3 => Object::Blob(Blob::new(content)),
-                2 => {
-                    let tree = parse_git_tree(&content, hash_map)?;
-                    Object::Tree(tree)
-                }
-                1 => {
-                    let commit = parse_git_commit(&content, hash_map)?;
-                    Object::Commit(commit)
-                }
-                _ => Object::Blob(Blob::new(content)),
-            };
-
-            let lit_hash = store.write(&lit_obj)?;
-            hash_map.insert(git_hash, lit_hash);
-        }
-        6 => {
-            // OFS_DELTA — skip for now
-            // Read negative offset
-            let mut byte = data[*pos];
-            let mut _offset: u64 = (byte & 0x7f) as u64;
-            *pos += 1;
-            while byte & 0x80 != 0 {
-                byte = data[*pos];
-                _offset = ((_offset + 1) << 7) | (byte & 0x7f) as u64;
-                *pos += 1;
-            }
-            // Skip compressed delta data
-            let mut decoder = flate2::read::ZlibDecoder::new(&data[*pos..]);
-            let mut delta = Vec::new();
-            let _ = decoder.read_to_end(&mut delta);
-            *pos += decoder.total_in() as usize;
-        }
-        7 => {
-            // REF_DELTA
-            if *pos + 20 > data.len() {
-                return Err("Truncated ref delta".into());
-            }
-            *pos += 20; // Skip base hash
-            let mut decoder = flate2::read::ZlibDecoder::new(&data[*pos..]);
-            let mut delta = Vec::new();
-            let _ = decoder.read_to_end(&mut delta);
-            *pos += decoder.total_in() as usize;
-        }
-        _ => {
-            return Err(format!("Unknown pack object type: {}", obj_type).into());
-        }
-    }
-
-    Ok(())
 }

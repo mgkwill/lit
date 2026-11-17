@@ -1,11 +1,13 @@
-use crate::crypto::encryption::{EncryptionConfig, EncryptionManager};
+use crate::crypto::encryption::{
+    repository_is_pristine, require_rotation_complete, EncryptionConfig, EncryptionManager,
+};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
 
 /// Index entry - represents a staged file
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct IndexEntry {
     pub path: String,
     pub hash: String,
@@ -42,6 +44,7 @@ impl Index {
         repo_path: &Path,
         passphrase: Option<&str>,
     ) -> Result<Self, String> {
+        require_rotation_complete(repo_path)?;
         let index_path = repo_path.join(".lit").join("index");
 
         if !index_path.exists() {
@@ -51,19 +54,25 @@ impl Index {
         let encrypted_data =
             fs::read(&index_path).map_err(|e| format!("Failed to read index: {}", e))?;
 
-        // Decrypt if encryption is enabled
-        let data = {
-            let encryption_config = EncryptionConfig::load(repo_path)?;
-            let mut encryption_manager = EncryptionManager::new(encryption_config);
+        Self::decode(repo_path, &encrypted_data, passphrase)
+    }
 
-            if let Some(pass) = passphrase {
-                encryption_manager.initialize(pass)?;
-            }
-
-            encryption_manager.decrypt(&encrypted_data)?
-        };
-
-        serde_json::from_slice(&data).map_err(|e| format!("Failed to parse index: {}", e))
+    pub(crate) fn decode(
+        repo_path: &Path,
+        bytes: &[u8],
+        passphrase: Option<&str>,
+    ) -> Result<Self, String> {
+        require_rotation_complete(repo_path)?;
+        if bytes == b"{\n  \"entries\": {}\n}"
+            && EncryptionConfig::load(repo_path)?.enabled
+            && repository_is_pristine(repo_path)?
+        {
+            // lit init writes a plain empty index before encryption is configured.
+            return Ok(Self::new());
+        }
+        let manager = EncryptionManager::for_repository(repo_path, passphrase, false)?;
+        let data = manager.decrypt(bytes)?;
+        serde_json::from_slice(&data).map_err(|e| format!("Failed to parse index: {e}"))
     }
 
     /// Save index to disk
@@ -79,22 +88,18 @@ impl Index {
     ) -> Result<(), String> {
         let index_path = repo_path.join(".lit").join("index");
 
+        let data = self.encode(repo_path, passphrase)?;
+        fs::write(&index_path, data).map_err(|e| format!("Failed to write index: {e}"))
+    }
+
+    pub(crate) fn encode(
+        &self,
+        repo_path: &Path,
+        passphrase: Option<&str>,
+    ) -> Result<Vec<u8>, String> {
         let data = serde_json::to_vec_pretty(self)
-            .map_err(|e| format!("Failed to serialize index: {}", e))?;
-
-        // Encrypt if encryption is enabled
-        let final_data = {
-            let encryption_config = EncryptionConfig::load(repo_path)?;
-            let mut encryption_manager = EncryptionManager::new(encryption_config);
-
-            if let Some(pass) = passphrase {
-                encryption_manager.initialize(pass)?;
-            }
-
-            encryption_manager.encrypt(&data)?
-        };
-
-        fs::write(&index_path, final_data).map_err(|e| format!("Failed to write index: {}", e))
+            .map_err(|e| format!("Failed to serialize index: {e}"))?;
+        EncryptionManager::for_repository(repo_path, passphrase, true)?.encrypt(&data)
     }
 
     /// Add or update an entry in the index

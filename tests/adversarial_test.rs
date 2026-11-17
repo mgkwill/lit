@@ -1,63 +1,21 @@
 /// Adversarial Testing - Red Team Security Assessment
 /// Simulates real-world attacks against the Lit cryptographic system
-use std::fs;
-use std::path::Path;
-use std::time::Instant;
-
 #[cfg(test)]
 mod adversarial_tests {
-    use super::*;
     use lit::crypto::encryption::{EncryptionEngine, EncryptionKey};
     use lit::errors::LitError;
 
-    /// ATTACK 1: Brute-force with rate limiting
+    /// Weak and test-prefixed guesses both go through the same verifier.
     #[test]
-    #[ignore] // Takes ~30 seconds due to rate limiting delays
     fn attack_brute_force_passphrase() {
-        println!("\n╔═══════════════════════════════════════════════════════════╗");
-        println!("║  ATTACK SIMULATION 1: Brute-Force with Rate Limiting    ║");
-        println!("╚═══════════════════════════════════════════════════════════╝\n");
-
-        let key_path = shellexpand::tilde("~/.lit/adversarial_brute.key");
-        fs::remove_file(key_path.as_ref()).ok();
-
+        let directory = tempfile::tempdir().unwrap();
+        let key_path = directory.path().join("verifier");
         let correct = "SecureP@ssw0rd123456";
-        let salt = EncryptionKey::generate_salt();
-        let key = EncryptionKey::from_passphrase(correct, &salt).unwrap();
-        key.save(key_path.as_ref(), correct).unwrap();
-
-        println!("[+] Target: Key file created with strong passphrase");
-
-        // Attacker tries common passwords
-        let attacks = [
-            "passwordpassword", // Common
-            "admin12345678901", // Admin
-            "qwerty1234567890", // Keyboard
-        ];
-
-        println!("\n[!] ATTACKER: Launching brute-force attack...\n");
-        let start = Instant::now();
-
-        for (i, pwd) in attacks.iter().enumerate() {
-            let t = Instant::now();
-            match EncryptionKey::load(Path::new(key_path.as_ref()), pwd) {
-                Ok(_) => panic!("⚠️  BREACH: Weak password accepted!"),
-                Err(_) => {
-                    let delay = t.elapsed();
-                    println!("    Attempt {}: '{}' → BLOCKED ({:?})", i + 1, pwd, delay);
-                    if delay.as_secs() >= 2 {
-                        println!("                     ↳ Rate limiting active!");
-                    }
-                }
-            }
-        }
-
-        let total = start.elapsed();
-        println!("\n[✓] DEFENSE: Brute-force mitigated in {:?}", total);
-        println!("    Expected delay: ~30s (exponential backoff working)");
-
-        assert!(total.as_secs() >= 10, "Rate limiting should delay attacks");
-        fs::remove_file(key_path.as_ref()).ok();
+        let key = EncryptionKey::from_passphrase(correct, &EncryptionKey::generate_salt()).unwrap();
+        key.save(key_path.to_str().unwrap(), correct).unwrap();
+        assert_eq!(EncryptionKey::load(&key_path, "test-guess").err().unwrap(), "Invalid passphrase");
+        let error = EncryptionKey::load(&key_path, "password").err().unwrap();
+        assert!(error.contains("Passphrase rate limit:"), "{error}");
     }
 
     /// ATTACK 2: Nonce reuse detection
@@ -69,7 +27,7 @@ mod adversarial_tests {
 
         use std::collections::HashSet;
 
-        let passphrase = "test-nonce-attack-secure";
+        let passphrase = "test-nonce-attack-secure-A1!";
         let salt = EncryptionKey::generate_salt();
         let key = EncryptionKey::from_passphrase(passphrase, &salt).unwrap();
         let engine = EncryptionEngine::new(&key).unwrap();
@@ -83,7 +41,7 @@ mod adversarial_tests {
         for i in 0..count {
             let msg = format!("Message {}", i);
             let ciphertext = engine.encrypt(msg.as_bytes()).unwrap();
-            let nonce = &ciphertext[0..12];
+            let nonce = &ciphertext[1..13];
 
             if nonces.contains(nonce) {
                 panic!("⚠️  BREACH: Nonce reused at message {}!", i);
@@ -106,7 +64,7 @@ mod adversarial_tests {
         println!("║  ATTACK SIMULATION 3: Ciphertext Tampering              ║");
         println!("╚═══════════════════════════════════════════════════════════╝\n");
 
-        let passphrase = "test-tampering-secure-16";
+        let passphrase = "test-tampering-secure-16-A1!";
         let salt = EncryptionKey::generate_salt();
         let key = EncryptionKey::from_passphrase(passphrase, &salt).unwrap();
         let engine = EncryptionEngine::new(&key).unwrap();

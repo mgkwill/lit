@@ -5,6 +5,11 @@ use crate::response::{BranchEntry, BranchResponse};
 
 pub fn execute(name: Option<String>, delete: bool, _all: bool) -> Result<BranchResponse, crate::errors::LitError> {
     let repo_root = find_repo_root()?;
+    let _guard = if delete || name.is_some() {
+        Some(super::transaction::lock_writes(&repo_root)?)
+    } else {
+        None
+    };
 
     if delete {
         if let Some(branch_name) = name {

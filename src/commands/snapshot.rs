@@ -15,6 +15,8 @@ pub fn execute(
     metadata: Option<serde_json::Value>,
 ) -> Result<SnapshotResponse, crate::errors::LitError> {
     let repo_root = find_repo_root()?;
+    let _guard = super::transaction::lock_writes(&repo_root)?;
+    super::merge::require_inactive(&repo_root)?;
     let store = ObjectStore::new(&repo_root);
     let mut index = Index::load(&repo_root)?;
 
@@ -103,7 +105,9 @@ fn add_all_files(
                 .map_err(|e| format!("Path error: {}", e))?
                 .to_string_lossy()
                 .replace('\\', "/");
-            index.add(rel_path, hash.to_string(), "100644".to_string());
+            let metadata = fs::metadata(path).map_err(|e| e.to_string())?;
+            let mode = crate::commands::status::regular_file_mode(&metadata);
+            index.add(rel_path, hash.to_string(), mode.to_string());
             count += 1;
         }
     }

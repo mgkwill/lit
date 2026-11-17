@@ -54,6 +54,20 @@ echo '{"op":"add","files":["src/a.rs"]}
 {"op":"commit","message":"fix bug"}' | lit batch
 ```
 
+Batch reads one operation per nonblank line. The canonical form is
+`{"command":"status","args":{}}`. The flat `op` form above remains supported.
+`--dry-run` checks command names and argument types without running repository
+operations. Check each result and the top-level `failed` count even if the
+process exits zero. `--atomic` stops at the first error. For rollback of
+supported writes, use an explicit `lit tx` transaction.
+
+A transaction checkpoints the current branch, index, and files already tracked
+when it starts. Supported writes are serialized across Lit processes. If
+`lit tx rollback` is interrupted, run it again to resume before making further
+Lit writes. Rollback leaves files that were untracked at the start alone.
+Edits made directly to tracked files
+during the transaction can be replaced by the checkpoint on rollback.
+
 ### For Humans
 
 ```bash
@@ -81,6 +95,7 @@ lit show <object>                  # Inspect any object
 lit branch [name] [--delete]       # Manage branches
 lit checkout <target> [-b]         # Switch branches
 lit merge <branch>                 # Merge branches (3-way)
+lit merge --abort                  # Restore files and index entries changed by an active merge
 lit resolve <file> --strategy=X    # Programmatic conflict resolution
 lit tag <name> [--sign]            # Create tags
 lit stash [push|pop|list]          # Stash work-in-progress
@@ -92,6 +107,15 @@ lit blame <file>                   # Line-by-line authorship
 lit bisect <start|good|bad|reset>  # Binary search for bug-introducing commit
 lit reflog                         # Reference update history
 ```
+
+During a conflicted merge, Lit applies non-conflicting changes to the worktree
+and index while leaving HEAD at the original commit. Choose a side with
+`lit resolve <file> --strategy ours|theirs`, then run `lit resolve --continue`.
+Use `lit merge --abort` (or `lit resolve --abort`) to restore merge-owned paths
+and keep unrelated work. If you edited a merge-owned path, save that edit
+elsewhere and restore the merge version before retrying abort. A merge started
+by a version without an abort checkpoint can still be resolved and continued.
+
 
 ### Remote Operations
 
@@ -132,6 +156,59 @@ lit export-git <destination>       # Export to Git format
 lit rotate-key                     # Rotate encryption passphrase
 lit config [get|set|list]          # Manage configuration settings
 ```
+
+`lit gc` packs loose objects into a verified native pack before removing the
+loose copies. Reads and `lit verify` include older plaintext v1 packs in
+unencrypted repositories. In an encrypted repository, `lit gc` writes v2
+packs with authenticated encryption for each compressed object payload.
+Pack indexes expose object IDs and sizes. Supply the repository passphrase
+with `--passphrase-file` for noninteractive reads, writes, and GC.
+
+`lit rotate-key` re-encrypts loose and packed objects, the index, and any
+already-encrypted refs. It keeps native text refs in their existing form.
+For automation, pass the current credential with `--passphrase-file` and
+set `LIT_NEW_PASSPHRASE_FILE` to a separate file. Interrupted publication
+resumes with `lit rotate-key` using the new credential. Rotation installs
+a repository-local key and preserves the old key file for other repositories
+or backups that may still use it.
+
+Lit records passphrase backoff and AES-GCM usage by key identity under
+`~/.lit/key-state`. Processes and repository aliases that share that
+directory share the counters. Failed guesses trigger backoff before Lit
+runs the password derivation again. Lit reserves encryption slots before
+use and discards unused reservations when a process exits. Keep this state
+with the installation and rotate before writing with a legacy key or one
+whose usage ledger is unavailable. A new key gets a new budget. Use separate
+keys across hosts that cannot share one accounting authority.
+
+Local Git import and export require `git` on PATH and use SHA-1 repositories.
+Import reads loose and packed objects and refs, preserving branches, tags and
+symbolic or detached HEAD. It updates Lit history and refs. Checkout is a
+separate operation. Export writes reachable history to a new or empty
+directory as a bare Git repository and runs `git fsck --full --strict` before
+publishing it. Git commits and annotated tags imported by this converter retain
+their original object IDs on re-export.
+
+Git remotes support local `file://` URLs and smart HTTP. Git clone imports
+branches and tags, fetch updates branch tracking refs, and Git pull advances
+the current branch only when it can fast-forward and refuses worktree
+collisions, including file-to-directory replacements. Git push sends the selected
+branch and delegates the fast-forward check to Git. The Git push result uses
+zero for the object count because Git's porcelain output does not report it.
+
+### Sandboxed execution
+
+`lit sandbox run <name> --strict -- <command>` confines filesystem access
+to the copied workspace and a read-only system runtime allowlist and denies
+network access. On macOS it uses Seatbelt through the deprecated system
+`sandbox-exec` launcher. On Linux x86-64 and arm64 it requires a trusted
+non-setuid Bubblewrap in `/usr/bin` or `/bin`, working namespaces and
+seccomp, and kernel support for `close_range` with `CLOSE_RANGE_CLOEXEC`.
+The Linux workspace is mounted at `/workspace` inside strict runs.
+
+Lit returns `SANDBOX_UNAVAILABLE` before the requested command starts if
+strict isolation cannot be prepared. Default runs scrub the environment
+and report filesystem and network isolation as unenforced.
 
 ## Structured Errors
 

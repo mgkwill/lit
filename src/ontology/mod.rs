@@ -640,7 +640,7 @@ fn build_commands() -> Vec<CommandDef> {
         cmd("batch", "Batch Operations", "agent", "Execute multiple operations from JSONL on stdin",
             vec![
                 param("atomic", "boolean", "Stop on first failure, skip remaining", false, Some("false")),
-                param("dry_run", "boolean", "Validate without executing", false, Some("false")),
+                param("dry_run", "boolean", "Validate command names and argument shapes without executing", false, Some("false")),
             ],
             "BatchResponse", vec!["Depends on operations"], vec![],
             vec![ex("Batch", "echo '{\"command\":\"status\"}' | lit batch", serde_json::json!({"atomic": false}))],
@@ -831,17 +831,19 @@ fn build_commands() -> Vec<CommandDef> {
             "ReflogResponse", vec![], vec![],
             vec![ex("Show reflog", "lit reflog", serde_json::json!({}))],
             vec!["reset", "checkout"], vec![], true, true),
-        cmd("resolve", "Resolve Conflicts", "branching", "Resolve merge conflicts using a specified strategy or finalize a merge after manual resolution",
+        cmd("resolve", "Resolve Conflicts", "branching", "Resolve, continue, or abort a merge",
             vec![
                 param("file", "string", "Specific file to resolve", false, None),
                 param("strategy", "string", "Resolution strategy: ours or theirs", false, None),
                 param("all", "boolean", "Resolve all conflicting files", false, Some("false")),
                 param("finish", "boolean", "Finalize merge after resolving all conflicts", false, Some("false")),
+                param("abort", "boolean", "Restore merge-owned worktree and index changes", false, Some("false")),
             ],
             "ResolveResponse", vec!["Modifies conflicting files", "May create merge commit"], vec!["Merge conflicts must exist"],
             vec![
                 ex("Resolve all with ours", "lit resolve --all --strategy ours", serde_json::json!({"all": true, "strategy": "ours"})),
                 ex("Finish merge", "lit resolve --continue", serde_json::json!({"finish": true})),
+                ex("Abort merge", "lit resolve --abort", serde_json::json!({"abort": true})),
             ],
             vec!["commit", "push"], vec!["merge", "pull"], false, false),
         // Monitoring
@@ -981,7 +983,7 @@ fn build_workflows() -> Vec<Workflow> {
                     "Validate operations without executing",
                     true,
                 ),
-                wstep(2, "batch --atomic", "Execute operations atomically", false),
+                wstep(2, "batch --atomic", "Execute operations and stop on first failure", false),
             ],
         },
         Workflow {
@@ -1149,7 +1151,7 @@ fn build_protocols() -> Protocols {
             input: "stdin",
             flags: vec![
                 flag("--atomic", "Stop on first failure"),
-                flag("--dry-run", "Validate without executing"),
+                flag("--dry-run", "Validate command names and argument shapes without executing"),
             ],
         },
     }

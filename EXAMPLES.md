@@ -571,8 +571,15 @@ diff --lit a/README.md b/README.md
 
 ## Example 17: Transactions
 
+A transaction checkpoints the current branch, HEAD, index, and regular
+worktree files tracked at begin. Use it with `lit add`, `lit commit`, and
+`lit snapshot`, including when called from a batch. Rollback restores those
+tracked files to their pre-transaction state. Files that were untracked at
+begin stay on disk and become untracked again. Run other repository mutations
+outside this workflow. Changes are visible between commands.
+
 ```bash
-# Begin an atomic transaction
+# Checkpoint the repository state
 $ lit tx begin
 Transaction begin: Transaction started [a1b2c3d4]
 
@@ -584,7 +591,7 @@ $ echo "update 2" > file2.txt
 $ lit add file2.txt
 $ lit commit -m "Update file 2"
 
-# Commit the transaction (all-or-nothing)
+# Keep the changes and discard the checkpoint
 $ lit tx commit
 Transaction commit: Transaction committed [a1b2c3d4]
 
@@ -610,55 +617,24 @@ $ lit log --output json | jq '.hash'
 
 ## Example 19: Sandboxed Execution
 
+Create a sandbox from the working tree and run a command with OS-enforced
+filesystem and network controls.
+
 ```bash
-# Create a sandbox from the current working tree
-$ lit sandbox init demo
-sandbox 'demo' created
-
-# List sandboxes
-$ lit sandbox list
-demo
-
-# Run a command inside the sandbox (fully isolated environment)
-# HOME, TEMP, PATH are redirected; network is airgapped
-$ lit sandbox run demo -- sh -c "echo HOME=\$HOME; echo PATH=\$PATH; ls"
-command completed successfully
-HOME=/path/to/repo/.lit/sandboxes/demo
-PATH=/usr/bin:/bin
-README.md
-src
-tests
-
-# Verify the sandbox environment is isolated
-$ lit sandbox run demo -- sh -c "env | sort"
-GIT_CONFIG_NOSYSTEM=1
-GIT_TERMINAL_PROMPT=0
-HOME=/path/to/repo/.lit/sandboxes/demo
-LIT_AIRGAPPED=1
-LIT_OUTPUT=json
-PATH=/usr/bin:/bin
-TEMP=/path/to/repo/.lit/sandboxes/demo/tmp
-TMP=/path/to/repo/.lit/sandboxes/demo/tmp
-TMPDIR=/path/to/repo/.lit/sandboxes/demo/tmp
-
-# Run a build or test command safely
-$ lit sandbox run demo -- python3 -m pytest tests/
-command completed successfully
-...test output...
-
-# Destroy the sandbox when done
-$ lit sandbox destroy demo
-sandbox 'demo' destroyed
+lit sandbox init demo
+lit sandbox list
+lit sandbox run demo --strict -- /bin/bash -c 'echo "$HOME"; ls'
+lit sandbox destroy demo
 ```
 
-### Sandbox Isolation Layers
+Strict mode uses macOS Seatbelt via the deprecated system `sandbox-exec`
+launcher. On Linux it uses Bubblewrap and seccomp. The sandbox can read and
+write its copied tree, read the system runtime, and run with network access
+denied. Strict Linux commands see the copied tree at `/workspace`.
+If the platform or launcher cannot apply the profile, Lit refuses to start
+the requested command. Strict mode currently covers filesystem and network
+controls. It does not set CPU, memory, process-count, or time limits.
 
-| Layer       | Protection                                               |
-| ----------- | -------------------------------------------------------- |
-| Filesystem  | Working tree copied into `.lit/sandboxes/<name>/`        |
-| Environment | `env_clear()` — only minimal vars exposed                |
-| Home / Temp | HOME, USERPROFILE, TEMP, TMP redirected to sandbox dir   |
-| PATH        | Restricted to system directories only                    |
-| Network     | `LIT_AIRGAPPED=1` — blocks all network protocols         |
-| Git config  | `GIT_CONFIG_NOSYSTEM=1` — prevents config file leaks     |
-| Credentials | Cleared — no cloud tokens, SSH keys, or API keys present |
+The default `lit sandbox run demo -- <command>` runs a trusted command in the
+copied tree with a scrubbed environment and redirected HOME and temporary
+directory. The response reports filesystem and network isolation as unenforced.

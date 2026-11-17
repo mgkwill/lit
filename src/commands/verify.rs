@@ -1,94 +1,43 @@
-use crate::core::{find_repo_root, list_refs, Object, ObjectHash};
+use crate::core::{find_repo_root, Object, ObjectHash, TreeEntry};
 use crate::response::{VerifyResponse, VerifyResult};
 use crate::storage::ObjectStore;
+
+use std::collections::{HashMap, HashSet};
+use std::path::Path;
+use std::{fs, io};
 
 pub fn execute() -> Result<VerifyResponse, crate::errors::LitError> {
     let repo_root = find_repo_root()?;
     let store = ObjectStore::new(&repo_root);
 
     let mut checks = Vec::new();
-    let mut objects_checked = 0usize;
-    let mut refs_checked = 0usize;
-    let mut all_valid = true;
+    let (objects_checked, graph) = verify_objects(&store, &mut checks);
+    let (refs_checked, roots) = verify_refs(&repo_root, &graph, &mut checks);
+    verify_dag(&graph, &roots, &mut checks);
 
-    // 1. Verify all objects
-    match verify_objects(&repo_root, &store) {
-        Ok((count, results)) => {
-            objects_checked = count;
-            for r in results {
-                if r.status != "ok" {
-                    all_valid = false;
-                }
-                checks.push(r);
-            }
-        }
-        Err(e) => {
-            all_valid = false;
-            checks.push(VerifyResult {
-                check: "object_store".to_string(),
-                status: "error".to_string(),
-                details: Some(e),
-            });
-        }
+    let index =
+        verify_index(&repo_root, &graph).map_err(|error| error.internal_message().to_owned());
+    checks.push(check("index", index));
+
+    for (name, result) in [
+        (
+            "merge_state",
+            super::resolve::verify_state(&repo_root, &store),
+        ),
+        (
+            "transaction_journal",
+            super::transaction::verify_state(&repo_root, &store),
+        ),
+    ] {
+        checks.push(check(
+            name,
+            result
+                .map(|details| details.unwrap_or_else(|| "No active operation".into()))
+                .map_err(|error| error.internal_message().to_owned()),
+        ));
     }
 
-    // 2. Verify refs
-    match verify_refs(&repo_root, &store) {
-        Ok((count, results)) => {
-            refs_checked = count;
-            for r in results {
-                if r.status != "ok" {
-                    all_valid = false;
-                }
-                checks.push(r);
-            }
-        }
-        Err(e) => {
-            all_valid = false;
-            checks.push(VerifyResult {
-                check: "refs".to_string(),
-                status: "error".to_string(),
-                details: Some(e),
-            });
-        }
-    }
-
-    // 3. Verify DAG connectivity
-    match verify_dag(&repo_root, &store) {
-        Ok(result) => {
-            if result.status != "ok" {
-                all_valid = false;
-            }
-            checks.push(result);
-        }
-        Err(e) => {
-            all_valid = false;
-            checks.push(VerifyResult {
-                check: "dag_connectivity".to_string(),
-                status: "error".to_string(),
-                details: Some(e.internal_message().to_string()),
-            });
-        }
-    }
-
-    // 4. Verify index consistency
-    match verify_index(&repo_root, &store) {
-        Ok(result) => {
-            if result.status != "ok" {
-                all_valid = false;
-            }
-            checks.push(result);
-        }
-        Err(e) => {
-            all_valid = false;
-            checks.push(VerifyResult {
-                check: "index".to_string(),
-                status: "error".to_string(),
-                details: Some(e.internal_message().to_string()),
-            });
-        }
-    }
-
+    let all_valid = checks.iter().all(|check| check.status == "ok");
     let message = if all_valid {
         "Repository is valid".to_string()
     } else {
@@ -104,212 +53,326 @@ pub fn execute() -> Result<VerifyResponse, crate::errors::LitError> {
     })
 }
 
-fn verify_objects(
-    repo_root: &std::path::Path,
-    store: &ObjectStore,
-) -> Result<(usize, Vec<VerifyResult>), String> {
-    let objects_dir = repo_root.join(".lit").join("objects");
-    let mut results = Vec::new();
-    let mut count = 0usize;
-    let mut corrupt = 0usize;
+enum ObjectLinks {
+    Blob,
+    Tree(Vec<TreeEntry>),
+    Commit {
+        tree: ObjectHash,
+        parents: Vec<ObjectHash>,
+    },
+    Tag {
+        target: ObjectHash,
+        target_type: String,
+    },
+}
 
-    if !objects_dir.exists() {
-        return Ok((0, vec![VerifyResult {
-            check: "object_store".to_string(),
-            status: "ok".to_string(),
-            details: Some("No objects directory (empty repository)".to_string()),
-        }]));
-    }
-
-    // Walk the objects directory
-    for dir_entry in std::fs::read_dir(&objects_dir)
-        .map_err(|e| format!("Failed to read objects dir: {}", e))?
-    {
-        let dir_entry = dir_entry.map_err(|e| format!("Dir entry error: {}", e))?;
-        if !dir_entry.file_type().map(|t| t.is_dir()).unwrap_or(false) {
-            continue;
+impl ObjectLinks {
+    fn kind(&self) -> &'static str {
+        match self {
+            Self::Blob => "blob",
+            Self::Tree(_) => "tree",
+            Self::Commit { .. } => "commit",
+            Self::Tag { .. } => "tag",
         }
+    }
+}
 
-        let prefix = dir_entry.file_name().to_string_lossy().to_string();
-        let subdir = objects_dir.join(&prefix);
-
-        for file_entry in std::fs::read_dir(&subdir)
-            .map_err(|e| format!("Failed to read subdir {}: {}", prefix, e))?
-        {
-            let file_entry = file_entry.map_err(|e| format!("File entry error: {}", e))?;
-            let filename = file_entry.file_name().to_string_lossy().to_string();
-            let hash_str = format!("{}{}", prefix, filename);
-
-            let hash = ObjectHash::from_hex(hash_str.clone());
-            match store.read(&hash) {
-                Ok(_) => count += 1,
-                Err(e) => {
-                    corrupt += 1;
-                    count += 1;
-                    results.push(VerifyResult {
-                        check: format!("object:{}", &hash_str[..16.min(hash_str.len())]),
-                        status: "error".to_string(),
-                        details: Some(format!("Corrupt object: {}", e)),
-                    });
-                }
+fn verify_objects(
+    store: &ObjectStore,
+    checks: &mut Vec<VerifyResult>,
+) -> (usize, HashMap<ObjectHash, ObjectLinks>) {
+    let mut graph = HashMap::new();
+    let mut seen = HashSet::new();
+    let before = checks.len();
+    let scan = store.visit_verified(|hash, object| {
+        seen.insert(hash.clone());
+        let links = match object {
+            Ok(Object::Blob(_)) => ObjectLinks::Blob,
+            Ok(Object::Tree(tree)) => ObjectLinks::Tree(tree.entries),
+            Ok(Object::Commit(commit)) => ObjectLinks::Commit {
+                tree: commit.tree,
+                parents: commit.parents,
+            },
+            Ok(Object::Tag(tag)) => ObjectLinks::Tag {
+                target: tag.target,
+                target_type: tag.target_type,
+            },
+            Err(error) => {
+                checks.push(check(format!("object:{}", hash.short()), Err(error)));
+                return;
+            }
+        };
+        graph.insert(hash.clone(), links);
+    });
+    match scan {
+        Ok(errors) => {
+            for error in errors {
+                checks.push(check("pack_index", Err(error)));
             }
         }
+        Err(error) => checks.push(check("object_store", Err(error))),
     }
-
-    if corrupt == 0 {
-        results.push(VerifyResult {
-            check: "object_hashes".to_string(),
-            status: "ok".to_string(),
-            details: Some(format!("All {} objects verified", count)),
-        });
+    let count = seen.len();
+    if before == checks.len() {
+        checks.push(check(
+            "object_hashes",
+            Ok(format!("All {count} objects verified")),
+        ));
     }
-
-    Ok((count, results))
+    (count, graph)
 }
 
 fn verify_refs(
-    repo_root: &std::path::Path,
-    store: &ObjectStore,
-) -> Result<(usize, Vec<VerifyResult>), String> {
-    let mut results = Vec::new();
-    let mut count = 0usize;
-    let mut dangling = 0usize;
-
-    // Check heads
-    let heads = list_refs(repo_root, "heads")
-        .unwrap_or_default();
-    for r in &heads { let (name, hash) = (&r.name, &r.hash);
-        count += 1;
-        let hash_obj = ObjectHash::from_hex(hash.clone());
-        match store.read(&hash_obj) {
-            Ok(Object::Commit(_)) => {}
-            Ok(_) => {
-                dangling += 1;
-                results.push(VerifyResult {
-                    check: format!("ref:heads/{}", name),
-                    status: "error".to_string(),
-                    details: Some("Points to non-commit object".to_string()),
-                });
-            }
-            Err(_) => {
-                dangling += 1;
-                results.push(VerifyResult {
-                    check: format!("ref:heads/{}", name),
-                    status: "error".to_string(),
-                    details: Some(format!("Dangling reference: {}", &hash[..16.min(hash.len())])),
-                });
+    repo_root: &Path,
+    graph: &HashMap<ObjectHash, ObjectLinks>,
+    checks: &mut Vec<VerifyResult>,
+) -> (usize, Vec<ObjectHash>) {
+    let before = checks.len();
+    let metadata = repo_root.join(".lit");
+    let refs_dir = metadata.join("refs");
+    let mut roots = Vec::new();
+    let mut count = 0;
+    match refs_dir.symlink_metadata() {
+        Ok(meta) if meta.is_dir() => {
+            for entry in walkdir::WalkDir::new(&refs_dir)
+                .min_depth(1)
+                .sort_by_file_name()
+            {
+                let entry = match entry {
+                    Ok(entry) if !entry.file_type().is_dir() => entry,
+                    Ok(_) => continue,
+                    Err(error) => {
+                        checks.push(check(
+                            "refs",
+                            Err(format!("Cannot enumerate refs: {error}")),
+                        ));
+                        continue;
+                    }
+                };
+                let name = entry
+                    .path()
+                    .strip_prefix(&refs_dir)
+                    .expect("walked below refs directory")
+                    .to_string_lossy();
+                #[cfg(windows)]
+                let name = name.replace('\\', "/");
+                count += 1;
+                let result = read_ref_root(repo_root, entry.path(), &name, graph);
+                match result {
+                    Ok(hash) => roots.push(hash),
+                    Err(error) => checks.push(check(format!("ref:{name}"), Err(error))),
+                }
             }
         }
+        Ok(_) => checks.push(check(
+            "refs",
+            Err("Expected .lit/refs to be a directory".into()),
+        )),
+        Err(error) if error.kind() == io::ErrorKind::NotFound => {}
+        Err(error) => checks.push(check("refs", Err(format!("Cannot inspect refs: {error}")))),
     }
 
-    // Check tags
-    let tags = list_refs(repo_root, "tags")
-        .unwrap_or_default();
-    for r in &tags { let (name, hash) = (&r.name, &r.hash);
-        count += 1;
-        let hash_obj = ObjectHash::from_hex(hash.clone());
-        if store.read(&hash_obj).is_err() {
-            dangling += 1;
-            results.push(VerifyResult {
-                check: format!("ref:tags/{}", name),
-                status: "error".to_string(),
-                details: Some(format!("Dangling reference: {}", &hash[..16.min(hash.len())])),
-            });
+    match read_regular_ref(repo_root, &metadata.join("HEAD")) {
+        Ok(contents) => {
+            let head = contents.trim();
+            if let Some(branch) = head.strip_prefix("ref: refs/heads/") {
+                // A symbolic HEAD can name an unborn branch, including in a repo with other refs.
+                if let Err(error) = super::remote::validate_ref(branch) {
+                    checks.push(check("ref:HEAD", Err(error.to_string())));
+                }
+            } else {
+                count += 1;
+                let hash = ObjectHash::from_hex(head.to_owned());
+                match check_target(graph, &hash, Some("commit")) {
+                    Ok(()) => roots.push(hash),
+                    Err(error) => checks.push(check("ref:HEAD", Err(error))),
+                }
+            }
         }
+        Err(error)
+            if error.kind() == io::ErrorKind::NotFound
+                && fs::read_to_string(metadata.join("config")).is_ok_and(|config| {
+                    config.lines().any(|line| line.trim() == "bare = true")
+                }) => {}
+        Err(error) => checks.push(check("ref:HEAD", Err(format!("Cannot read HEAD: {error}")))),
     }
-
-    if dangling == 0 {
-        results.push(VerifyResult {
-            check: "refs".to_string(),
-            status: "ok".to_string(),
-            details: Some(format!("All {} refs valid", count)),
-        });
+    if before == checks.len() {
+        checks.push(check("refs", Ok(format!("All {count} refs valid"))));
     }
+    (count, roots)
+}
 
-    Ok((count, results))
+fn read_ref_root(
+    repo: &Path,
+    path: &Path,
+    name: &str,
+    graph: &HashMap<ObjectHash, ObjectLinks>,
+) -> Result<ObjectHash, String> {
+    let value = read_regular_ref(repo, path).map_err(|error| format!("Cannot read ref: {error}"))?;
+    let hash = ObjectHash::from_hex(value.trim().to_owned());
+    let expected = (name.starts_with("heads/") || name.starts_with("remotes/")).then_some("commit");
+    check_target(graph, &hash, expected)
+        .map_err(|error| format!("Dangling or invalid reference: {error}"))?;
+    Ok(hash)
+}
+
+fn read_regular_ref(repo: &Path, path: &Path) -> io::Result<String> {
+    if !path.symlink_metadata()?.is_file() {
+        return Err(io::Error::new(
+            io::ErrorKind::InvalidData,
+            "expected a regular file",
+        ));
+    }
+    crate::core::refs::read_ref_file(repo, path)
 }
 
 fn verify_dag(
-    repo_root: &std::path::Path,
-    store: &ObjectStore,
-) -> Result<VerifyResult, crate::errors::LitError> {
-    let heads = list_refs(repo_root, "heads")
-        .unwrap_or_default();
-
-    let mut visited = std::collections::HashSet::new();
-    let mut missing_parents = Vec::new();
-
-    for r in &heads { let hash = &r.hash;
-        walk_commit_dag(store, hash, &mut visited, &mut missing_parents);
-    }
-
-    if missing_parents.is_empty() {
-        Ok(VerifyResult {
-            check: "dag_connectivity".to_string(),
-            status: "ok".to_string(),
-            details: Some(format!("DAG is connected ({} commits reachable)", visited.len())),
-        })
-    } else {
-        Ok(VerifyResult {
-            check: "dag_connectivity".to_string(),
-            status: "error".to_string(),
-            details: Some(format!("{} missing parent commit(s)", missing_parents.len())),
-        })
-    }
-}
-
-fn walk_commit_dag(
-    store: &ObjectStore,
-    hash: &str,
-    visited: &mut std::collections::HashSet<String>,
-    missing: &mut Vec<String>,
+    graph: &HashMap<ObjectHash, ObjectLinks>,
+    roots: &[ObjectHash],
+    checks: &mut Vec<VerifyResult>,
 ) {
-    if visited.contains(hash) {
-        return;
-    }
-    visited.insert(hash.to_string());
+    let mut queue: Vec<_> = roots.iter().collect();
+    let mut seen = HashSet::new();
+    let before = checks.len();
+    while let Some(hash) = queue.pop() {
+        if !seen.insert(hash) {
+            continue;
+        }
+        let mut follow = |target, expected: Result<&str, &str>, relation: String| {
+            let result = expected
+                .map_err(str::to_owned)
+                .and_then(|kind| check_target(graph, target, Some(kind)));
+            match result {
+                Ok(()) => queue.push(target),
+                Err(error) => checks.push(check(
+                    format!("link:{}", hash.short()),
+                    Err(format!("{relation}: {error}")),
+                )),
+            }
+        };
 
-    let hash_obj = ObjectHash::from_hex(hash.to_string());
-    if let Ok(Object::Commit(commit)) = store.read(&hash_obj) {
-        for parent in &commit.parents {
-            let parent_str = parent.to_string();
-            if store.exists(parent) {
-                walk_commit_dag(store, &parent_str, visited, missing);
-            } else {
-                missing.push(parent_str);
+        match &graph[hash] {
+            ObjectLinks::Blob => {}
+            ObjectLinks::Commit { tree, parents } => {
+                follow(tree, Ok("tree"), "Commit tree".into());
+                for parent in parents {
+                    follow(parent, Ok("commit"), "Commit parent".into());
+                }
+            }
+            ObjectLinks::Tree(entries) => {
+                for entry in entries {
+                    let expected = match (entry.mode.as_str(), entry.object_type.as_str()) {
+                        ("040000", "tree") => Ok("tree"),
+                        ("100644" | "100755" | "120000", "blob") => Ok("blob"),
+                        // Git links name objects in a different repository.
+                        ("160000", "gitlink")
+                            if entry.hash.len() == 40
+                                && entry
+                                    .hash
+                                    .as_str()
+                                    .bytes()
+                                    .all(|byte| byte.is_ascii_hexdigit()) =>
+                        {
+                            continue
+                        }
+                        _ => Err("Invalid mode, kind or Git link ID"),
+                    };
+                    follow(
+                        &entry.hash,
+                        expected,
+                        format!("Tree entry {:?}", entry.name),
+                    );
+                }
+            }
+            ObjectLinks::Tag {
+                target,
+                target_type,
+            } => {
+                follow(target, Ok(target_type), "Annotated tag target".into());
             }
         }
+    }
+
+    let errors = checks.len() - before;
+    let details = if errors == 0 {
+        Ok(format!(
+            "All reachable links verified ({} objects)",
+            seen.len()
+        ))
+    } else {
+        Err(format!("{errors} broken reachable link(s)"))
+    };
+    checks.push(check("dag_connectivity", details));
+}
+
+fn check_target(
+    graph: &HashMap<ObjectHash, ObjectLinks>,
+    hash: &ObjectHash,
+    expected: Option<&str>,
+) -> Result<(), String> {
+    if !ObjectHash::is_full_hex(hash.as_str()) {
+        return Err(format!("Invalid object ID {:?}", hash.short()));
+    }
+    let kind = graph
+        .get(hash)
+        .ok_or_else(|| format!("Object {hash} is missing or corrupt"))?
+        .kind();
+    if let Some(expected) = expected.filter(|expected| *expected != kind) {
+        return Err(format!("Object {hash} is a {kind}, expected {expected}"));
+    }
+    Ok(())
+}
+
+fn check(name: impl Into<String>, result: Result<String, String>) -> VerifyResult {
+    let (status, details) = match result {
+        Ok(details) => ("ok", details),
+        Err(details) => ("error", details),
+    };
+    VerifyResult {
+        check: name.into(),
+        status: status.into(),
+        details: Some(details),
     }
 }
 
 fn verify_index(
-    repo_root: &std::path::Path,
-    store: &ObjectStore,
-) -> Result<VerifyResult, crate::errors::LitError> {
+    repo_root: &Path,
+    graph: &HashMap<ObjectHash, ObjectLinks>,
+) -> Result<String, crate::errors::LitError> {
     let index = crate::storage::Index::load(repo_root)?;
-    let mut missing = 0usize;
+    check_index_entries(&index, |hash| {
+        matches!(graph.get(hash), Some(ObjectLinks::Blob))
+    })?;
+    Ok(format!(
+        "All {} index entries reference valid blobs",
+        index.entries.len()
+    ))
+}
 
-    for entry in index.sorted_entries() {
+pub(super) fn validate_index_entries(
+    index: &crate::storage::Index,
+    store: &ObjectStore,
+) -> Result<(), String> {
+    check_index_entries(index, |hash| {
+        matches!(store.read_verified(hash), Ok(Object::Blob(_)))
+    })
+}
+
+fn check_index_entries(
+    index: &crate::storage::Index,
+    valid_blob: impl Fn(&ObjectHash) -> bool,
+) -> Result<(), String> {
+    for (path, entry) in &index.entries {
+        if path != &entry.path || !ObjectHash::is_full_hex(&entry.hash) {
+            return Err(format!("Malformed index entry for {}", entry.path));
+        }
         let hash = ObjectHash::from_hex(entry.hash.clone());
-        if !store.exists(&hash) {
-            missing += 1;
+        if !valid_blob(&hash) {
+            return Err(format!(
+                "Index entry for {} does not reference a valid blob {hash}",
+                entry.path
+            ));
         }
     }
-
-    if missing == 0 {
-        Ok(VerifyResult {
-            check: "index".to_string(),
-            status: "ok".to_string(),
-            details: Some(format!(
-                "All {} index entries reference valid objects",
-                index.entries.len()
-            )),
-        })
-    } else {
-        Ok(VerifyResult {
-            check: "index".to_string(),
-            status: "error".to_string(),
-            details: Some(format!("{} index entries reference missing objects", missing)),
-        })
-    }
+    Ok(())
 }

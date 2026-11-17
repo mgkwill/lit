@@ -15,6 +15,7 @@ pub enum ErrorCode {
     IndexLocked,
     AuthFailed,
     TransportDenied,
+    SandboxUnavailable,
     CryptoError,
     ObjectNotFound,
     InvalidInput,
@@ -35,6 +36,7 @@ impl ErrorCode {
             ErrorCode::IndexLocked => "INDEX_LOCKED",
             ErrorCode::AuthFailed => "AUTH_FAILED",
             ErrorCode::TransportDenied => "TRANSPORT_DENIED",
+            ErrorCode::SandboxUnavailable => "SANDBOX_UNAVAILABLE",
             ErrorCode::CryptoError => "CRYPTO_ERROR",
             ErrorCode::ObjectNotFound => "OBJECT_NOT_FOUND",
             ErrorCode::InvalidInput => "INVALID_INPUT",
@@ -57,6 +59,8 @@ pub enum LitError {
     Config(String),
     /// Network-related errors
     Network(String),
+    /// Required sandbox controls could not be initialized
+    SandboxUnavailable(String),
     /// Repository structure errors
     Repository(String),
     /// Git object errors
@@ -115,6 +119,7 @@ impl LitError {
             LitError::IO(msg) => msg,
             LitError::Config(msg) => msg,
             LitError::Network(msg) => msg,
+            LitError::SandboxUnavailable(msg) => msg,
             LitError::Repository(msg) => msg,
             LitError::Object(msg) => msg,
             LitError::Index(msg) => msg,
@@ -129,6 +134,7 @@ impl LitError {
             LitError::IO(_) => ErrorCode::IoError.as_str(),
             LitError::Config(_) => ErrorCode::ConfigError.as_str(),
             LitError::Network(_) => ErrorCode::TransportDenied.as_str(),
+            LitError::SandboxUnavailable(_) => ErrorCode::SandboxUnavailable.as_str(),
             LitError::Repository(msg) => {
                 if msg.contains("not found")
                     || msg.contains("No .lit directory")
@@ -231,6 +237,7 @@ impl fmt::Display for LitError {
             LitError::IO(_) => write!(f, "I/O operation failed"),
             LitError::Config(_) => write!(f, "Configuration error"),
             LitError::Network(_) => write!(f, "Network operation failed"),
+            LitError::SandboxUnavailable(_) => write!(f, "Required sandbox isolation is unavailable"),
             LitError::Repository(_) => write!(f, "Repository operation failed"),
             LitError::Object(_) => write!(f, "Object operation failed"),
             LitError::Index(_) => write!(f, "Index operation failed"),
