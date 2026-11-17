@@ -23,6 +23,26 @@ cargo test --test feature_integration_test
 cargo test --test performance_benchmarks --release -- --nocapture
 ```
 
+### Concurrent agent integration
+
+Run the Git-backed workflow with Python 3 and Git on PATH. Pass the absolute
+path to a recovery build of Lit.
+
+```sh
+python3 tests/agent_workflow_regression.py /absolute/path/to/lit
+```
+
+The default runs launch 10, 50, and 100 workers with separate worktrees at a
+pinned base. The fixture checks both disjoint edits and a shared-file conflict.
+It round-trips the exact integration candidate through Lit, then uses a Git ref
+transaction to verify the verdict, current main, and current task attempts
+before recording publication receipts. It exercises missing verdicts,
+reassigned tasks, stale main, and duplicate publication.
+
+The workflow uses disposable local repositories and trusted fixture processes.
+A hosted deployment needs a forge or service to authenticate writers and
+restrict writes to claims, verdicts, receipts, and the protected main branch.
+
 ### Documentation
 
 - 📋 **[TESTING_QUICK_REFERENCE.md](TESTING_QUICK_REFERENCE.md)** - Command cheat sheet
