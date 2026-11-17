@@ -134,6 +134,26 @@ Per-job tokens exercise separate credentials for a repository's Actions
 identity. Per-agent GitHub identities and ownership enforcement between
 allowed worker branches need their own qualification.
 
+#### GitHub App branch ownership
+
+Install a distinct private GitHub App per worker on the sandbox, with
+Contents and Pull Requests write access. Give each branch its own active
+ruleset for creation, updates, and deletion. Give only the assigned App
+bypass access to that branch's ruleset. Keep those bypasses separate from
+protected `main` and keep every other worker ref covered by the catch-all
+ruleset. Add the per-branch rules before excluding their refs from the
+catch-all.
+
+Run [the ownership worker](tests/fixtures/github-merge-queue/app-ownership-worker.py)
+on each assigned host with a sandbox-scoped installation token on stdin.
+Run `publish HOST APP_SLUG BASE_SHA` for all three workers before running
+`challenge HOST APP_SLUG BASE_SHA` on each. Check that the App created the
+PR and that its head equals the published commit. The challenges construct
+real fast-forward updates and require GitHub to reject them for both peer
+branches and `main`. Compare each ref before and after the attempted update.
+Verify the automatic `pull_request` and `merge_group` checks using the
+Actions-only procedure above.
+
 ### Documentation
 
 - 📋 **[TESTING_QUICK_REFERENCE.md](TESTING_QUICK_REFERENCE.md)** - Command cheat sheet
