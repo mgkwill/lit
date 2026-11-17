@@ -43,6 +43,31 @@ The workflow uses disposable local repositories and trusted fixture processes.
 A hosted deployment needs a forge or service to authenticate writers and
 restrict writes to claims, verdicts, receipts, and the protected main branch.
 
+### GitHub merge queue
+
+The `Agent workflow candidate` check runs a 10-worker preflight for pull
+requests and the 10-, 50-, and 100-worker suites for GitHub's
+`merge_group.checks_requested` event. Both paths verify the checked-out commit
+against the event before building Lit. The Actions summary records the event
+and candidate SHA.
+
+In a disposable queue-enabled organization repository, require a pull request,
+the merge queue, and the `Agent workflow candidate` check from GitHub Actions
+on the target branch. Record the effective branch rules and active queue
+before the test. Use a separate worker credential with access to its assigned
+branch namespace. Exercise these cases with real GitHub writes:
+
+- Push a new commit to the assigned branch and confirm its remote tip.
+- Attempt a new commit on another worker's branch and a direct push to the
+  protected base. Capture both server rejections and confirm both tips.
+- Queue an allowed pull request and capture the merge group and check run
+  SHAs. A passing check on the pull request's earlier SHA must leave the
+  queued group waiting. Exercise a failing merge-group check and confirm
+  the protected base remains at its earlier tip.
+- Queue a passing candidate. Capture its check result, the merge queue result,
+  and the final base tip. Compare the applied changes if the configured merge
+  method changes commit IDs.
+
 ### Documentation
 
 - 📋 **[TESTING_QUICK_REFERENCE.md](TESTING_QUICK_REFERENCE.md)** - Command cheat sheet

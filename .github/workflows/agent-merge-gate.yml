@@ -1,0 +1,46 @@
+name: Agent merge gate
+
+on:
+  pull_request:
+  merge_group:
+    types: [checks_requested]
+
+permissions:
+  contents: read
+
+jobs:
+  candidate:
+    name: Agent workflow candidate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out the integration candidate
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.merge_group.head_sha || github.sha }}
+          persist-credentials: false
+
+      - name: Verify the candidate SHA
+        env:
+          CANDIDATE_SHA: ${{ github.event.merge_group.head_sha || github.sha }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$CANDIDATE_SHA"
+          test "$GITHUB_SHA" = "$CANDIDATE_SHA"
+          printf 'Event %s tested candidate %s\n' \
+            "$GITHUB_EVENT_NAME" "$CANDIDATE_SHA" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Install stable Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build and test batch rollback
+        run: |
+          cargo test --locked --release --test agent_regressions batch_ -- --test-threads=1
+          cargo build --locked --release --bin lit
+
+      - name: Run the agent workflow
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = merge_group ]; then
+            python3 tests/agent_workflow_regression.py "$PWD/target/release/lit"
+          else
+            python3 tests/agent_workflow_regression.py "$PWD/target/release/lit" --workers 10
+          fi
