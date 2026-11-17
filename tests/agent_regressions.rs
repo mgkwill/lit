@@ -165,6 +165,23 @@ fn batch_checks_each_line_and_preserves_both_input_forms() {
 }
 
 #[test]
+fn batch_can_signal_per_operation_failures_in_the_process_status() {
+    let f = Fixture::new();
+    let mixed = "{\"command\":\"status\"}\n{\"command\":\"add\"}\n";
+    let legacy = f.output(&["batch", "--dry-run"], mixed);
+    assert!(legacy.status.success());
+    let strict = f.output(&["batch", "--dry-run", "--fail-on-error"], mixed);
+    assert_eq!(strict.status.code(), Some(1));
+    assert_eq!(strict.stdout, legacy.stdout);
+    assert!(strict.stderr.is_empty());
+    assert!(
+        f.output(&["batch", "--fail-on-error"], "{\"command\":\"status\"}\n")
+            .status
+            .success()
+    );
+}
+
+#[test]
 fn transaction_restores_dirty_worktree_index_and_ref_and_can_retry() {
     let f = Fixture::new();
     let original = f.seed();

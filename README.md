@@ -58,8 +58,10 @@ Batch reads one operation per nonblank line. The canonical form is
 `{"command":"status","args":{}}`. The flat `op` form above remains supported.
 `--dry-run` checks command names and argument types without running repository
 operations. Check each result and the top-level `failed` count even if the
-process exits zero. `--atomic` stops at the first error. For rollback of
-supported writes, use an explicit `lit tx` transaction.
+process exits zero. Use `--fail-on-error` to return exit status 1 after
+reporting any failed operations, including in dry-run. `--atomic` stops at the
+first error. For rollback of supported writes, use an explicit `lit tx`
+transaction.
 
 A transaction checkpoints the current branch, index, and files already tracked
 when it starts. Supported writes are serialized across Lit processes. If

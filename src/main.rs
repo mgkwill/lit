@@ -354,6 +354,10 @@ enum Commands {
         /// Validate without executing
         #[arg(long)]
         dry_run: bool,
+
+        /// Exit with status 1 if any operation fails, after writing the batch result
+        #[arg(long)]
+        fail_on_error: bool,
     },
 
     /// Transaction operations (begin/commit/rollback)
@@ -850,7 +854,16 @@ fn run() {
         Commands::Reflog { ref_name, count } => run!(commands::reflog::execute(ref_name, count)),
 
         // Phase 2
-        Commands::Batch { atomic, dry_run } => run!(commands::batch::execute(atomic, dry_run)),
+        Commands::Batch { atomic, dry_run, fail_on_error } => {
+            let mut failed = false;
+            run!(commands::batch::execute(atomic, dry_run).map(|response| {
+                failed = response.failed != 0;
+                response
+            }));
+            if fail_on_error && failed {
+                process::exit(1);
+            }
+        }
         Commands::Tx { command } => match command {
             TxCommands::Begin => run!(commands::transaction::execute_begin()),
             TxCommands::Commit => run!(commands::transaction::execute_commit_tx()),
