@@ -36,31 +36,56 @@ fn agents_dir(repo_root: &Path) -> PathBuf {
 
 /// Register an agent in the swarm — creates namespaced branch prefix
 pub fn execute_register(agent_id: String) -> Result<SwarmResponse, crate::errors::LitError> {
+    if agent_id.is_empty()
+        || !agent_id
+            .bytes()
+            .all(|c| c.is_ascii_alphanumeric() || c == b'-' || c == b'_')
+    {
+        return Err("Agent IDs must contain only letters, digits, hyphens, and underscores".into());
+    }
     let repo_root = find_repo_root()?;
-    let agents = agents_dir(&repo_root);
-    fs::create_dir_all(&agents).map_err(|e| format!("Failed to create swarm dir: {}", e))?;
-    fs::create_dir_all(leases_dir(&repo_root))
-        .map_err(|e| format!("Failed to create leases dir: {}", e))?;
-
-    // Create agent namespace directory for refs
-    let agent_refs = repo_root
-        .join(".lit")
-        .join("refs")
-        .join("agents")
-        .join(&agent_id);
-    fs::create_dir_all(&agent_refs).map_err(|e| format!("Failed to create agent refs: {}", e))?;
-
-    let record = AgentRecord {
-        agent_id: agent_id.clone(),
-        registered_at: chrono::Utc::now().timestamp(),
-        branches: Vec::new(),
-        leases: Vec::new(),
+    let metadata = repo_root.join(".lit");
+    if !metadata.symlink_metadata().is_ok_and(|entry| entry.is_dir()) {
+        return Err("Expected a local .lit metadata directory".into());
+    }
+    let _guard = super::transaction::lock_writes(&repo_root)?;
+    let agent_refs = super::worktree::safe_path(&metadata, &format!("refs/agents/{agent_id}"))?;
+    let path = super::worktree::safe_path(&metadata, &format!("swarm/agents/{agent_id}.json"))?;
+    let leases = super::worktree::safe_path(&metadata, "swarm/leases")?;
+    if agent_refs.symlink_metadata().is_ok_and(|entry| !entry.is_dir()) {
+        return Err("Agent ref namespace is blocked".into());
+    }
+    if leases.symlink_metadata().is_ok_and(|entry| !entry.is_dir()) {
+        return Err("Swarm lease directory is blocked".into());
+    }
+    let record = match path.symlink_metadata() {
+        Ok(entry) if entry.is_file() => {
+            let record: AgentRecord =
+                serde_json::from_slice(&fs::read(&path).map_err(|e| e.to_string())?)
+                    .map_err(|e| format!("Invalid agent record: {e}"))?;
+            if record.agent_id != agent_id {
+                return Err("Agent ID conflicts with an existing registration".into());
+            }
+            None
+        }
+        Ok(_) => return Err("Agent registration path is blocked".into()),
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Some(AgentRecord {
+            agent_id: agent_id.clone(),
+            registered_at: chrono::Utc::now().timestamp(),
+            branches: Vec::new(),
+            leases: Vec::new(),
+        }),
+        Err(error) => return Err(crate::errors::LitError::io(error.to_string())),
     };
-
-    let path = agents.join(format!("{}.json", sanitize_id(&agent_id)));
-    let data = serde_json::to_string_pretty(&record)
-        .map_err(|e| format!("Failed to serialize agent record: {}", e))?;
-    fs::write(&path, &data).map_err(|e| format!("Failed to write agent record: {}", e))?;
+    fs::create_dir_all(agents_dir(&repo_root))
+        .map_err(|e| format!("Failed to create swarm dir: {e}"))?;
+    fs::create_dir_all(leases)
+        .map_err(|e| format!("Failed to create leases dir: {e}"))?;
+    fs::create_dir_all(agent_refs).map_err(|e| format!("Failed to create agent refs: {e}"))?;
+    if let Some(record) = record {
+        let data = serde_json::to_vec_pretty(&record).map_err(|e| e.to_string())?;
+        super::worktree::replace(&path, &data)?;
+    }
 
     Ok(SwarmResponse {
         action: "register".to_string(),
@@ -245,19 +270,6 @@ pub fn execute_lease_list() -> Result<SwarmResponse, crate::errors::LitError> {
         message: format!("{} lease(s)", active_leases.len()),
         details: Some(serde_json::json!({ "leases": active_leases })),
     })
-}
-
-/// Sanitize an agent ID for use as a filename
-fn sanitize_id(id: &str) -> String {
-    id.chars()
-        .map(|c| {
-            if c.is_alphanumeric() || c == '-' || c == '_' {
-                c
-            } else {
-                '_'
-            }
-        })
-        .collect()
 }
 
 /// Sanitize a file path for use as a lease filename

@@ -198,6 +198,36 @@ fn transaction_restores_dirty_worktree_index_and_ref_and_can_retry() {
 }
 
 #[test]
+fn swarm_registration_stays_inside_the_repository_and_is_idempotent() {
+    let f = Fixture::new();
+    let outside = f._root.path().join("outside");
+    for name in [outside.to_str().unwrap(), "../../../../outside", r"..\outside"] {
+        assert!(!f.output(&["swarm", "register", name], "").status.success());
+        assert!(!outside.exists());
+    }
+
+    f.run(&["swarm", "register", "worker-1"], "");
+    let record = f.repo.join(".lit/swarm/agents/worker-1.json");
+    let mut data: Value = serde_json::from_slice(&fs::read(&record).unwrap()).unwrap();
+    data["branches"] = json!(["existing"]);
+    let saved = serde_json::to_vec(&data).unwrap();
+    fs::write(&record, &saved).unwrap();
+    f.run(&["swarm", "register", "worker-1"], "");
+    assert_eq!(fs::read(record).unwrap(), saved);
+}
+
+#[cfg(unix)]
+#[test]
+fn swarm_registration_rejects_redirected_namespace() {
+    let f = Fixture::new();
+    let outside = f._root.path().join("outside");
+    fs::create_dir(&outside).unwrap();
+    std::os::unix::fs::symlink(&outside, f.repo.join(".lit/refs/agents")).unwrap();
+    assert!(!f.output(&["swarm", "register", "worker-1"], "").status.success());
+    assert!(!outside.join("worker-1").exists());
+}
+
+#[test]
 fn checkout_cannot_invalidate_an_open_transaction() {
     let f = Fixture::new();
     let original = f.seed();
