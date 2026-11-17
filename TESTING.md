@@ -113,6 +113,27 @@ unchanged. For the passing candidate, compare the tested SHA, the PR's merge
 commit, and the protected branch tip. The fixture's merge-commit mode expects
 all three to match.
 
+#### Multi-host queue qualification
+
+Use repository-scoped, one-job runners on the lab hosts. Give each worker a
+unique runner label and a separate workflow job so GitHub issues a distinct
+short-lived token. Pin every proposal to the same base and assign a separate
+branch and file to each worker. Record the runner, host, and pushed SHA.
+Compare the protected and out-of-scope refs before and after denied pushes.
+
+Open one PR per worker push as the operator so the automatic
+`pull_request` checks can run. Enqueue the checked heads together, record
+queue depth and simultaneous builds, and verify the Actions check against
+each PR's merge commit in the protected branch's first-parent history.
+Use the PR timeline's merge event to cross-check Git when the PR summary
+reports a different SHA. Keep the Actions requirement and bypass policy
+active when tuning queue capacity. Restore any sandbox settings
+changed for the trial and remove the temporary runner directories.
+
+Per-job tokens exercise separate credentials for a repository's Actions
+identity. Per-agent GitHub identities and ownership enforcement between
+allowed worker branches need their own qualification.
+
 ### Documentation
 
 - 📋 **[TESTING_QUICK_REFERENCE.md](TESTING_QUICK_REFERENCE.md)** - Command cheat sheet
