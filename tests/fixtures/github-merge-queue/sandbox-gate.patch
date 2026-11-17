@@ -1,0 +1,19 @@
+diff --git a/.github/workflows/agent-merge-gate.yml b/.github/workflows/agent-merge-gate.yml
+index 673a536..0b7ff91 100644
+--- a/.github/workflows/agent-merge-gate.yml
++++ b/.github/workflows/agent-merge-gate.yml
+@@ -4,0 +5,2 @@ on:
++    types: [opened, synchronize, reopened]
++  workflow_dispatch:
+@@ -31,0 +34,8 @@ jobs:
++      - name: Exercise the negative merge-group control
++        if: github.event_name == 'merge_group' || startsWith(github.ref, 'refs/heads/gh-readonly-queue/')
++        run: |
++          if grep -qx fail .queue-qualification 2>/dev/null; then
++            echo "Controlled merge-group failure"
++            exit 1
++          fi
++
+@@ -42 +52 @@ jobs:
+-          if [ "$GITHUB_EVENT_NAME" = merge_group ]; then
++          if [ "$GITHUB_EVENT_NAME" = merge_group ] || [[ "$GITHUB_REF" == refs/heads/gh-readonly-queue/* ]]; then

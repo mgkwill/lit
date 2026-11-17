@@ -32,8 +32,9 @@ path to a recovery build of Lit.
 python3 tests/agent_workflow_regression.py /absolute/path/to/lit
 ```
 
-The default runs launch 10, 50, and 100 workers with separate worktrees at a
-pinned base. The fixture checks both disjoint edits and a shared-file conflict.
+The default runs provision separate worktrees at a pinned base before
+releasing 10, 50, and 100 workers to edit, commit, and submit concurrently.
+The fixture checks both disjoint edits and a shared-file conflict.
 It round-trips the exact integration candidate through Lit, then uses a Git ref
 transaction to verify the verdict, current main, and current task attempts
 before recording publication receipts. It exercises missing verdicts,
@@ -67,6 +68,33 @@ branch namespace. Exercise these cases with real GitHub writes:
 - Queue a passing candidate. Capture its check result, the merge queue result,
   and the final base tip. Compare the applied changes if the configured merge
   method changes commit IDs.
+
+The [GitHub queue fixtures](tests/fixtures/github-merge-queue) define a
+disposable test with `main`, `agents/worker-a`, and `agents/worker-b` seeded
+from the same commit. Install `branch-permissions-probe.yml` under
+`.github/workflows/` in the sandbox only. Apply `worker-scope.json` and
+`protected-main.json` as repository rulesets after seeding those branches.
+The probe uses its job's short-lived Actions token for the three real pushes
+and checks the resulting remote tips.
+
+For the sandbox's controlled failure, apply `sandbox-gate.patch` with
+`git apply --unidiff-zero` before seeding. Dispatch the probe with `fail` to
+create the first candidate and `pass` to replace it after GitHub records
+the failure. An operator opens and enqueues the pull request.
+
+If Actions does not start an automatic run, the patch allows a manual
+dispatch on the exact PR head or GitHub-created `gh-readonly-queue` ref.
+For this sandbox fallback, replace the required Actions check in the main
+ruleset with a separate commit-status context, such as
+`sandbox/agent-workflow-attested`. Leave the queue and other branch rules
+enforced with no bypass actors. Once a hosted run completes, verify its
+SHA and conclusion, then report that result to the commit-status context
+on the exact SHA and link to the run.
+
+Record the event, checked SHA, check conclusion, and protected tip. A check
+on the PR head alone cannot qualify queue enforcement. The manual fallback
+qualifies GitHub's queue with an external status reporter and leaves
+automatic Actions event delivery to its own test.
 
 ### Documentation
 

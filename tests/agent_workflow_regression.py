@@ -93,12 +93,15 @@ class Workflow:
         self.git("worktree", "add", "--quiet", "--detach", str(destination), base)
         return destination
 
-    def propose(self, task, attempt, path, value, barrier=None):
+    def prepare_worker(self, task, attempt):
         workspace = self.worktree(f"work-{task}-{attempt[:12]}", self.base)
         assert self.git("rev-parse", "HEAD", cwd=workspace) == self.base
-        (workspace / path).write_text(value)
+        return workspace
+
+    def propose(self, task, attempt, path, value, workspace, barrier=None):
         if barrier:
             barrier.wait(timeout=120)
+        (workspace / path).write_text(value)
         self.git("add", "--", path, cwd=workspace)
         self.git("commit", "-qm", f"{task} attempt {attempt[:12]}", cwd=workspace)
         proposal = Submission(task, attempt, self.git("rev-parse", "HEAD", cwd=workspace))
@@ -173,11 +176,16 @@ def qualify(workers, lit):
                  for name in tasks[:-2]]
         paths.extend((name, "hotspot", f"{name}\n") for name in tasks[-2:])
         workflow.refs(*(f"create refs/lit/claims/{task} {primary}" for task in tasks))
+        # Prepare shared Git worktree metadata before the concurrent edit and
+        # submit phase. No Git subprocess runs before a worker reaches the barrier.
+        workspaces = [workflow.prepare_worker(task, primary) for task in tasks]
 
         barrier = Barrier(workers)
         with ThreadPoolExecutor(max_workers=workers) as executor:
-            futures = [executor.submit(workflow.propose, task, primary, path, value, barrier)
-                       for task, path, value in paths]
+            futures = [
+                executor.submit(workflow.propose, task, primary, path, value, workspace, barrier)
+                for (task, path, value), workspace in zip(paths, workspaces, strict=True)
+            ]
             proposals = [future.result() for future in futures]
         assert len({proposal.oid for proposal in proposals}) == workers
         print(f"{workers} isolated workers submitted pinned proposals", flush=True)
@@ -207,7 +215,8 @@ def qualify(workers, lit):
         assert workflow.ref(MAIN) == workflow.base
         workflow.assert_receipts(checked, [])
         task, path, text = paths[0]
-        accepted[0] = workflow.propose(task, replacement, path, text)
+        workspace = workflow.prepare_worker(task, replacement)
+        accepted[0] = workflow.propose(task, replacement, path, text, workspace)
 
         # A successful independent publication invalidates the candidate's base.
         upstream = workflow.worktree("independent", workflow.base)

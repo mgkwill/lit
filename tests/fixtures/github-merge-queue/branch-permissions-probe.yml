@@ -1,0 +1,53 @@
+name: Scoped Actions token probe
+
+on:
+  workflow_dispatch:
+    inputs:
+      candidate:
+        description: Queue candidate control
+        type: choice
+        options: [fail, pass]
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  branch-scope:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agents/worker-a
+          fetch-depth: 0
+
+      - name: Push one allowed branch and challenge restricted branches
+        env:
+          CANDIDATE: ${{ inputs.candidate }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY" --jq '{repository: .full_name, visibility}'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          printf '%s\n' "$CANDIDATE" > .queue-qualification
+          git add -- .queue-qualification
+          git commit --allow-empty -m "Qualify merge queue candidate ($CANDIDATE)"
+          candidate_sha="$(git rev-parse HEAD)"
+          git push --porcelain origin HEAD:refs/heads/agents/worker-a
+          test "$(git ls-remote origin refs/heads/agents/worker-a | cut -f1)" = "$candidate_sha"
+          echo "Allowed worker-a push at $candidate_sha"
+          for branch in agents/worker-b main; do
+            before="$(git ls-remote origin "refs/heads/$branch" | cut -f1)"
+            test -n "$before"
+            test "$before" != "$candidate_sha"
+            if git push --porcelain origin "HEAD:refs/heads/$branch" > "$RUNNER_TEMP/push.log" 2>&1; then
+              cat "$RUNNER_TEMP/push.log"
+              echo "Restricted push unexpectedly succeeded: $branch"
+              exit 1
+            fi
+            cat "$RUNNER_TEMP/push.log"
+            grep -Eq 'GH013|GH006' "$RUNNER_TEMP/push.log"
+            test "$(git ls-remote origin "refs/heads/$branch" | cut -f1)" = "$before"
+            echo "Restricted push rejected and ref unchanged: $branch $before"
+          done
