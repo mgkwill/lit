@@ -60,8 +60,20 @@ Batch reads one operation per nonblank line. The canonical form is
 operations. Check each result and the top-level `failed` count even if the
 process exits zero. Use `--fail-on-error` to return exit status 1 after
 reporting any failed operations, including in dry-run. `--atomic` stops at the
-first error. For rollback of supported writes, use an explicit `lit tx`
-transaction.
+first error and retains earlier writes.
+
+Use `lit batch --rollback-on-error` to restore the original index and branch tip
+when a line fails. It supports `add`, `commit`, `snapshot`, `status`, `log`,
+and branch listing on a checked-out branch. The response reports
+`transaction: "committed"` or `transaction: "rolled_back"`. A rolled-back
+batch exits 1 and marks earlier results `rolled_back`. Add `--dry-run` to
+validate every line against this mode without starting a transaction.
+
+The mode holds the repository write lock until completion. Working files
+remain under the caller's control. Readers can see intermediate state, and
+unreferenced objects created by a failed batch can be collected by `lit gc`.
+After a process crash, run `lit tx rollback` to restore the checkpoint before
+starting another write.
 
 A transaction checkpoints the current branch, index, and files already tracked
 when it starts. Supported writes are serialized across Lit processes. If

@@ -351,6 +351,10 @@ enum Commands {
         #[arg(long)]
         atomic: bool,
 
+        /// Roll back staged changes and commits if any operation fails
+        #[arg(long, conflicts_with = "atomic")]
+        rollback_on_error: bool,
+
         /// Validate without executing
         #[arg(long)]
         dry_run: bool,
@@ -854,13 +858,18 @@ fn run() {
         Commands::Reflog { ref_name, count } => run!(commands::reflog::execute(ref_name, count)),
 
         // Phase 2
-        Commands::Batch { atomic, dry_run, fail_on_error } => {
+        Commands::Batch { atomic, dry_run, fail_on_error, rollback_on_error } => {
             let mut failed = false;
-            run!(commands::batch::execute(atomic, dry_run).map(|response| {
+            let result = if rollback_on_error {
+                commands::batch::execute_with_rollback(dry_run)
+            } else {
+                commands::batch::execute(atomic, dry_run)
+            };
+            run!(result.map(|response| {
                 failed = response.failed != 0;
                 response
             }));
-            if fail_on_error && failed {
+            if (fail_on_error || rollback_on_error) && failed {
                 process::exit(1);
             }
         }

@@ -1089,7 +1089,17 @@ pub struct BatchResponse {
     pub failed: usize,
     pub atomic: bool,
     pub dry_run: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub transaction: Option<BatchTransactionOutcome>,
     pub results: Vec<BatchOperationResult>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum BatchTransactionOutcome {
+    Committed,
+    RolledBack,
+    DryRun,
 }
 
 impl CommandResponse for BatchResponse {
@@ -1098,12 +1108,17 @@ impl CommandResponse for BatchResponse {
     }
     fn human_readable(&self) -> String {
         format!(
-            "Batch complete: {}/{} succeeded, {} failed{}{}",
+            "Batch complete: {}/{} succeeded, {} failed{}{}{}",
             self.succeeded,
             self.total,
             self.failed,
             if self.atomic { " (atomic)" } else { "" },
             if self.dry_run { " (dry-run)" } else { "" },
+            match self.transaction {
+                Some(BatchTransactionOutcome::Committed) => " (committed)",
+                Some(BatchTransactionOutcome::RolledBack) => " (rolled back)",
+                _ => "",
+            },
         )
     }
 }

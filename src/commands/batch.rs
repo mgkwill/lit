@@ -1,9 +1,10 @@
 use crate::core::find_repo_root;
 use crate::errors::LitError;
-use crate::response::{BatchOperationResult, BatchResponse};
+use crate::response::{BatchOperationResult, BatchResponse, BatchTransactionOutcome};
 use serde::Deserialize;
 use serde_json::{Map, Value};
 use std::io::{self, BufRead};
+use std::path::Path;
 
 #[derive(Deserialize)]
 #[serde(tag = "command", content = "args", rename_all = "snake_case")]
@@ -41,15 +42,20 @@ enum Operation {
 }
 
 pub fn execute(atomic: bool, dry_run: bool) -> Result<BatchResponse, LitError> {
-    find_repo_root()?;
-    execute_lines(io::stdin().lock(), atomic, dry_run)
+    execute_lines(io::stdin().lock(), atomic, dry_run, false)
+}
+
+pub fn execute_with_rollback(dry_run: bool) -> Result<BatchResponse, LitError> {
+    execute_lines(io::stdin().lock(), false, dry_run, true)
 }
 
 fn execute_lines(
     input: impl BufRead,
     atomic: bool,
     dry_run: bool,
+    rollback: bool,
 ) -> Result<BatchResponse, LitError> {
+    let root = find_repo_root()?;
     // Read the complete request before running its first operation.
     let lines = input
         .lines()
@@ -57,6 +63,13 @@ fn execute_lines(
         .map(|(index, line)| line.map(|line| (index + 1, line)))
         .collect::<Result<Vec<_>, _>>()
         .map_err(|e| LitError::io(format!("Read batch input: {e}")))?;
+    if lines.iter().all(|(_, input)| input.trim().is_empty()) {
+        return Err("Provide at least one JSONL batch operation on stdin".into());
+    }
+    let transaction = (rollback && !dry_run)
+        .then(|| super::transaction::BatchTransaction::begin(&root))
+        .transpose()?;
+    let locked_root = transaction.as_ref().map(|_| root.as_path());
     let mut results = Vec::new();
     let mut succeeded = 0;
     let mut failed = 0;
@@ -76,17 +89,22 @@ fn execute_lines(
             error_code: None,
         };
         let parsed = parse_operation(&input, &mut result.command);
-        if atomic && failed != 0 {
+        if (atomic || (rollback && !dry_run)) && failed != 0 {
             result.status = "skipped".into();
             result.error = Some("Skipped after a prior operation failed".into());
         } else {
             let outcome = parsed
                 .map_err(|message| ("INVALID_BATCH_OPERATION", message))
                 .and_then(|operation| {
-                    if dry_run {
+                    if rollback && !operation.supports_rollback() {
+                        Err((
+                            "BATCH_OPERATION_NOT_ROLLBACK_SAFE",
+                            "Batch rollback supports add, commit, snapshot, status, log, and branch listing".into(),
+                        ))
+                    } else if dry_run {
                         Ok(serde_json::json!({"dry_run": true}))
                     } else {
-                        apply(operation)
+                        apply(operation, locked_root)
                             .map_err(|error| (error.error_code(), error.user_message().to_owned()))
                     }
                 });
@@ -106,9 +124,22 @@ fn execute_lines(
         results.push(result);
     }
 
-    if results.is_empty() {
-        return Err("Provide at least one JSONL batch operation on stdin".into());
-    }
+    let transaction = if let Some(transaction) = transaction {
+        let abort = failed != 0;
+        transaction.finish(abort)?;
+        if abort {
+            for result in results.iter_mut().filter(|result| result.status == "ok") {
+                result.status = "rolled_back".into();
+                result.result = None;
+            }
+            succeeded = 0;
+            Some(BatchTransactionOutcome::RolledBack)
+        } else {
+            Some(BatchTransactionOutcome::Committed)
+        }
+    } else {
+        rollback.then_some(BatchTransactionOutcome::DryRun)
+    };
 
     Ok(BatchResponse {
         total: results.len(),
@@ -116,6 +147,7 @@ fn execute_lines(
         failed,
         atomic,
         dry_run,
+        transaction,
         results,
     })
 }
@@ -157,12 +189,24 @@ fn parse_operation(input: &str, command: &mut String) -> Result<Operation, Strin
     Ok(operation)
 }
 
-fn apply(operation: Operation) -> Result<Value, LitError> {
+impl Operation {
+    fn supports_rollback(&self) -> bool {
+        !matches!(self, Self::Checkout { .. } | Self::Branch { name: Some(_), .. } | Self::Branch { delete: true, .. })
+    }
+}
+
+fn apply(operation: Operation, locked_root: Option<&Path>) -> Result<Value, LitError> {
     use crate::commands;
     let value = match operation {
-        Operation::Add { files } => serde_json::to_value(commands::add::execute(files)?),
+        Operation::Add { files } => serde_json::to_value(match locked_root {
+            Some(root) => commands::add::execute_locked(root, files)?,
+            None => commands::add::execute(files)?,
+        }),
         Operation::Commit { message, author } => {
-            serde_json::to_value(commands::commit::execute(message, author)?)
+            serde_json::to_value(match locked_root {
+                Some(root) => commands::commit::execute_locked(root, message, author)?,
+                None => commands::commit::execute(message, author)?,
+            })
         }
         Operation::Status {} => serde_json::to_value(commands::status::execute()?),
         Operation::Branch { name, delete, all } => {
@@ -178,7 +222,10 @@ fn apply(operation: Operation) -> Result<Value, LitError> {
             message,
             author,
             metadata,
-        } => serde_json::to_value(commands::snapshot::execute(message, author, metadata)?),
+        } => serde_json::to_value(match locked_root {
+            Some(root) => commands::snapshot::execute_locked(root, message, author, metadata)?,
+            None => commands::snapshot::execute(message, author, metadata)?,
+        }),
     };
     value.map_err(|e| e.to_string().into())
 }

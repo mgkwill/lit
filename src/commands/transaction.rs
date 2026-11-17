@@ -121,28 +121,92 @@ pub(super) fn require_inactive(root: &Path, operation: &str) -> Result<(), LitEr
 pub fn execute_begin() -> Result<TransactionResponse, LitError> {
     let repo_root = find_repo_root()?;
     let _guard = lock_repository(&repo_root)?;
-    crate::crypto::encryption::require_rotation_complete(&repo_root)?;
-    super::merge::require_inactive(&repo_root)?;
+    begin_locked(&repo_root, false)
+}
+
+/// Own the repository write lock from checkpoint creation through commit or
+/// rollback. A killed process leaves a rollback-required journal behind.
+pub(super) struct BatchTransaction<'a> {
+    root: &'a Path,
+    _guard: File,
+}
+
+impl<'a> BatchTransaction<'a> {
+    pub(super) fn begin(root: &'a Path) -> Result<Self, LitError> {
+        let guard = lock_repository(root)?;
+        begin_locked(root, true)?;
+        Ok(Self { root, _guard: guard })
+    }
+
+    pub(super) fn finish(self, rollback: bool) -> Result<(), LitError> {
+        if rollback {
+            finish_locked(self.root, true, || {})?;
+        } else {
+            fs::remove_file(self.root.join(".lit/transaction.json")).map_err(io_error)?;
+        }
+        Ok(())
+    }
+}
+
+fn begin_locked(repo_root: &Path, batch: bool) -> Result<TransactionResponse, LitError> {
+    crate::crypto::encryption::require_rotation_complete(repo_root)?;
+    super::merge::require_inactive(repo_root)?;
     let lit = repo_root.join(".lit");
     let journal = lit.join("transaction.json");
     if journal.try_exists().map_err(io_error)? {
         return Err("Another transaction is in progress. Finish it with 'lit tx commit' or 'lit tx rollback'.".into());
     }
-    let branch = crate::core::get_current_branch(&repo_root).unwrap_or_else(|_| "main".to_owned());
+    let branch = if batch {
+        crate::core::get_current_branch(repo_root)
+            .map_err(|_| "Batch rollback requires a checked-out branch")?
+    } else {
+        crate::core::get_current_branch(repo_root).unwrap_or_else(|_| "main".to_owned())
+    };
     let ref_path = checked_path(&lit.join("refs/heads"), &branch)?;
-    let store = ObjectStore::new(&repo_root);
-    let index = Index::load(&repo_root)?;
-    let head = read_head(&repo_root).ok();
+    let store = ObjectStore::new(repo_root);
+    // Batch writes are confined to the index and current branch ref. They
+    // never own working files, including files another process edits directly.
+    let tracked = if batch {
+        BTreeMap::new()
+    } else {
+        snapshot_working_files(repo_root, &store)?
+    };
+    let checkpoint = Checkpoint {
+        head: read_optional(&lit.join("HEAD"))?,
+        index: read_optional(&lit.join("index"))?,
+        branch,
+        branch_ref: read_optional(&ref_path)?,
+        tracked,
+    };
+    if batch {
+        validate_checkpoint(repo_root, &store, &checkpoint)?;
+    }
+    let state = TransactionState {
+        tx_id: uuid::Uuid::new_v4().to_string(),
+        rolling_back: batch,
+        checkpoint: Some(checkpoint),
+    };
+    let bytes = serde_json::to_vec(&state).map_err(|e| e.to_string())?;
+    write_file(&journal, &bytes, None)?;
+    Ok(response(state, "begin", "Transaction started"))
+}
+
+fn snapshot_working_files(
+    repo_root: &Path,
+    store: &ObjectStore,
+) -> Result<BTreeMap<String, Option<WorkingFile>>, LitError> {
+    let index = Index::load(repo_root)?;
+    let head = read_head(repo_root).ok();
     let mut tracked = BTreeMap::new();
     for path in index
         .entries
         .into_keys()
-        .chain(super::status::head_entries(&repo_root, head.as_deref())?.into_keys())
+        .chain(super::status::head_entries(repo_root, head.as_deref())?.into_keys())
     {
         if tracked.contains_key(&path) {
             continue;
         }
-        let target = working_path(&repo_root, &path)?;
+        let target = working_path(repo_root, &path)?;
         let file = match fs::symlink_metadata(&target) {
             Ok(meta) if meta.is_file() => {
                 let bytes = fs::read(&target).map_err(io_error)?;
@@ -169,20 +233,7 @@ pub fn execute_begin() -> Result<TransactionResponse, LitError> {
         };
         tracked.insert(path, file);
     }
-    let state = TransactionState {
-        tx_id: uuid::Uuid::new_v4().to_string(),
-        rolling_back: false,
-        checkpoint: Some(Checkpoint {
-            head: read_optional(&lit.join("HEAD"))?,
-            index: read_optional(&lit.join("index"))?,
-            branch,
-            branch_ref: read_optional(&ref_path)?,
-            tracked,
-        }),
-    };
-    let bytes = serde_json::to_vec(&state).map_err(|e| e.to_string())?;
-    write_file(&journal, &bytes, None)?;
-    Ok(response(state, "begin", "Transaction started"))
+    Ok(tracked)
 }
 
 pub fn execute_commit_tx() -> Result<TransactionResponse, LitError> {
@@ -199,6 +250,14 @@ fn finish(
     after_ref_restore: impl FnOnce(),
 ) -> Result<TransactionResponse, LitError> {
     let _guard = lock_repository(repo_root)?;
+    finish_locked(repo_root, rollback, after_ref_restore)
+}
+
+fn finish_locked(
+    repo_root: &Path,
+    rollback: bool,
+    after_ref_restore: impl FnOnce(),
+) -> Result<TransactionResponse, LitError> {
     crate::crypto::encryption::require_rotation_complete(repo_root)?;
     let lit = repo_root.join(".lit");
     let journal = lit.join("transaction.json");
@@ -335,9 +394,9 @@ fn validate_checkpoint(
     checked_path(&root.join(".lit/refs/heads"), &checkpoint.branch)
         .map_err(|e| invalid_journal(format!("invalid checkpoint branch: {e}")))?;
     if let Some(bytes) = &checkpoint.head {
-        let head = std::str::from_utf8(bytes)
-            .map_err(|_| invalid_journal("checkpoint HEAD is not UTF-8"))?
-            .trim();
+        let head = crate::core::refs::decode_ref_bytes(root, bytes)
+            .map_err(|_| invalid_journal("cannot decode checkpoint HEAD"))?;
+        let head = head.trim();
         if let Some(branch) = head.strip_prefix("ref: refs/heads/") {
             if branch != checkpoint.branch {
                 return Err(invalid_journal("checkpoint HEAD and branch disagree"));
@@ -347,10 +406,9 @@ fn validate_checkpoint(
         }
     }
     if let Some(bytes) = &checkpoint.branch_ref {
-        let hash = std::str::from_utf8(bytes)
-            .map_err(|_| invalid_journal("checkpoint branch ref is not UTF-8"))?
-            .trim();
-        validate_commit(store, hash, "branch ref")?;
+        let hash = crate::core::refs::decode_ref_bytes(root, bytes)
+            .map_err(|_| invalid_journal("cannot decode checkpoint branch ref"))?;
+        validate_commit(store, hash.trim(), "branch ref")?;
     }
     if let Some(bytes) = &checkpoint.index {
         let index = Index::decode(root, bytes, None)

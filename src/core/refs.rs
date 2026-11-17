@@ -38,19 +38,25 @@ pub fn find_repo_root() -> Result<PathBuf, String> {
 }
 
 pub(crate) fn read_ref_file(repo: &Path, path: &Path) -> std::io::Result<String> {
+    let bytes = fs::read(path)?;
+    decode_ref_bytes(repo, &bytes)
+}
+
+pub(crate) fn decode_ref_bytes(repo: &Path, bytes: &[u8]) -> std::io::Result<String> {
     let invalid = |e| std::io::Error::new(std::io::ErrorKind::InvalidData, e);
     require_rotation_complete(repo).map_err(invalid)?;
-    let bytes = fs::read(path)?;
-    let result = if is_encrypted_ref(&bytes) {
+    if is_encrypted_ref(bytes) {
         let manager = EncryptionManager::for_repository(repo, None, false).map_err(invalid)?;
         if !manager.is_enabled() {
             return Err(invalid("Encrypted ref requires repository encryption".into()));
         }
-        manager.decrypt(&bytes).map_err(invalid)?
+        let decoded = manager.decrypt(bytes).map_err(invalid)?;
+        String::from_utf8(decoded).map_err(|e| invalid(e.to_string()))
     } else {
-        bytes
-    };
-    String::from_utf8(result).map_err(|e| invalid(e.to_string()))
+        std::str::from_utf8(bytes)
+            .map(str::to_owned)
+            .map_err(|e| invalid(e.to_string()))
+    }
 }
 
 pub(crate) fn is_encrypted_ref(bytes: &[u8]) -> bool {

@@ -8,14 +8,21 @@ use walkdir::WalkDir;
 pub fn execute(files: Vec<String>) -> Result<AddResponse, crate::errors::LitError> {
     let repo_root = find_repo_root()?;
     let _guard = super::transaction::lock_writes(&repo_root)?;
-    let store = ObjectStore::new(&repo_root);
-    let mut index = Index::load(&repo_root)?;
+    execute_locked(&repo_root, files)
+}
+
+pub(super) fn execute_locked(
+    repo_root: &std::path::Path,
+    files: Vec<String>,
+) -> Result<AddResponse, crate::errors::LitError> {
+    let store = ObjectStore::new(repo_root);
+    let mut index = Index::load(repo_root)?;
 
     let mut total_added = 0usize;
 
     for file_pattern in &files {
         if file_pattern == "." {
-            total_added += add_directory(&repo_root, &repo_root, &store, &mut index)?;
+            total_added += add_directory(repo_root, repo_root, &store, &mut index)?;
         } else {
             let file_path = PathBuf::from(file_pattern);
             let full_path = if file_path.is_absolute() {
@@ -31,15 +38,15 @@ pub fn execute(files: Vec<String>) -> Result<AddResponse, crate::errors::LitErro
             }
 
             if full_path.is_dir() {
-                total_added += add_directory(&repo_root, &full_path, &store, &mut index)?;
+                total_added += add_directory(repo_root, &full_path, &store, &mut index)?;
             } else {
-                add_file(&repo_root, &full_path, &store, &mut index)?;
+                add_file(repo_root, &full_path, &store, &mut index)?;
                 total_added += 1;
             }
         }
     }
 
-    index.save(&repo_root)?;
+    index.save(repo_root)?;
 
     Ok(AddResponse {
         files_added: total_added,

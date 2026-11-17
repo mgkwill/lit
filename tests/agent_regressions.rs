@@ -182,6 +182,167 @@ fn batch_can_signal_per_operation_failures_in_the_process_status() {
 }
 
 #[test]
+fn batch_rollback_restores_index_and_branch_on_failure() {
+    let f = Fixture::new();
+    let base = f.seed();
+    let index_path = f.repo.join(".lit/index");
+    let index = fs::read(&index_path).unwrap();
+    fs::write(f.repo.join("a"), "working edit").unwrap();
+    fs::write(f.repo.join("untracked"), "keep this").unwrap();
+    let request = concat!(
+        "{\"op\":\"add\",\"files\":[\"a\"]}\n",
+        "{\"op\":\"commit\",\"message\":\"provisional\"}\n",
+        "{\"op\":\"add\",\"files\":[\"missing\"]}\n",
+        "{\"op\":\"status\"}\n",
+    );
+    let result = f.output(&["batch", "--rollback-on-error"], request);
+    assert_eq!(result.status.code(), Some(1), "{:?}", result.stderr);
+    let response: Value = serde_json::from_slice(&result.stdout).unwrap();
+    assert_eq!(response["transaction"], "rolled_back");
+    assert_eq!(response["succeeded"], 0);
+    assert_eq!(response["results"][0]["status"], "rolled_back");
+    assert_eq!(response["results"][1]["status"], "rolled_back");
+    assert_eq!(response["results"][1]["result"], Value::Null);
+    assert_eq!(response["results"][2]["status"], "error");
+    assert_eq!(response["results"][3]["status"], "skipped");
+    assert_eq!(f.run(&["status"], "")["head"], base);
+    assert_eq!(fs::read(&index_path).unwrap(), index);
+    assert_eq!(fs::read_to_string(f.repo.join("a")).unwrap(), "working edit");
+    assert_eq!(fs::read_to_string(f.repo.join("untracked")).unwrap(), "keep this");
+    assert!(!f.repo.join(".lit/transaction.json").exists());
+
+    let result = f.run(
+        &["batch", "--rollback-on-error"],
+        "{\"op\":\"snapshot\",\"message\":\"retry\"}\n",
+    );
+    assert_eq!(result["transaction"], "committed");
+    assert_eq!(f.run(&["status"], "")["head"], result["results"][0]["result"]["hash"]);
+    assert!(!f.repo.join(".lit/transaction.json").exists());
+}
+
+#[test]
+fn batch_rollback_removes_the_first_commit_of_an_unborn_branch() {
+    let f = Fixture::new();
+    let ref_path = f.repo.join(".lit/refs/heads/main");
+    fs::write(f.repo.join("a"), "unpublished").unwrap();
+    let result = f.output(
+        &["batch", "--rollback-on-error"],
+        "{\"op\":\"snapshot\",\"message\":\"first commit\"}\n{\"op\":\"unknown\"}\n",
+    );
+    assert_eq!(result.status.code(), Some(1));
+    let response: Value = serde_json::from_slice(&result.stdout).unwrap();
+    assert_eq!(response["transaction"], "rolled_back");
+    assert!(!ref_path.exists());
+    let status = f.run(&["status"], "");
+    assert_eq!(status["head"], Value::Null);
+    assert_eq!(status["untracked"], json!(["a"]));
+}
+
+#[test]
+fn batch_rollback_validates_capabilities_and_rejects_nested_transactions() {
+    let f = Fixture::new();
+    let result = f.output(
+        &["batch", "--rollback-on-error", "--dry-run"],
+        "{\"op\":\"checkout\",\"target\":\"main\"}\n{\"op\":\"status\"}\n",
+    );
+    assert_eq!(result.status.code(), Some(1));
+    let response: Value = serde_json::from_slice(&result.stdout).unwrap();
+    assert_eq!(response["transaction"], "dry_run");
+    assert_eq!(response["results"][0]["error_code"], "BATCH_OPERATION_NOT_ROLLBACK_SAFE");
+    assert_eq!(response["results"][1]["status"], "ok");
+    let journal = f.repo.join(".lit/transaction.json");
+    assert!(!journal.exists());
+
+    f.run(&["tx", "begin"], "");
+    let before = fs::read(&journal).unwrap();
+    let result = f.output(&["batch", "--rollback-on-error"], "{\"op\":\"status\"}\n");
+    assert!(!result.status.success());
+    assert_eq!(fs::read(&journal).unwrap(), before);
+    f.run(&["tx", "rollback"], "");
+}
+
+#[cfg(any(target_os = "macos", target_os = "linux"))]
+#[test]
+fn batch_rollback_recovers_a_killed_process_and_excludes_competing_writers() {
+    use std::fs::OpenOptions;
+    use std::process::Child;
+    use std::thread;
+    use std::time::{Duration, Instant};
+
+    struct Worker(Child);
+    impl Drop for Worker {
+        fn drop(&mut self) {
+            let _ = self.0.kill();
+            let _ = self.0.wait();
+        }
+    }
+
+    let f = Fixture::new();
+    f.seed();
+    let metadata = f.repo.join(".lit");
+    let branch = metadata.join("refs/heads/main");
+    let head = metadata.join("HEAD");
+    let index = metadata.join("index");
+    let journal = metadata.join("transaction.json");
+    let before_ref = fs::read(&branch).unwrap();
+    let before_head = fs::read(&head).unwrap();
+    let before_index = fs::read(&index).unwrap();
+    fs::write(f.repo.join("a"), "first edit").unwrap();
+    fs::write(f.repo.join("contender"), "independent file").unwrap();
+    assert!(Command::new("mkfifo")
+        .arg(f.repo.join("pause"))
+        .status()
+        .unwrap()
+        .success());
+
+    let mut batch = Worker(f.command(&["batch", "--rollback-on-error"])
+        .stdin(Stdio::piped())
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .spawn().unwrap());
+    batch.0.stdin.take().unwrap().write_all(concat!(
+        "{\"op\":\"add\",\"files\":[\"a\"]}\n",
+        "{\"op\":\"commit\",\"message\":\"before crash\"}\n",
+        "{\"op\":\"add\",\"files\":[\"pause\"]}\n",
+    ).as_bytes()).unwrap();
+
+    let deadline = Instant::now() + Duration::from_secs(15);
+    while !fs::read(&branch)
+        .is_ok_and(|value| value.len() == before_ref.len() && value != before_ref)
+    {
+        assert!(batch.0.try_wait().unwrap().is_none(), "batch exited before commit");
+        assert!(Instant::now() < deadline, "batch never reached the provisional commit");
+        thread::sleep(Duration::from_millis(10));
+    }
+    assert!(journal.exists());
+    assert_ne!(fs::read(&index).unwrap(), before_index);
+    let guard = OpenOptions::new().read(true).write(true)
+        .open(metadata.join("transaction.guard")).unwrap();
+    assert!(matches!(guard.try_lock(), Err(std::fs::TryLockError::WouldBlock)));
+    let mut writer = Worker(f.command(&["add", "contender"])
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .spawn().unwrap());
+    thread::sleep(Duration::from_millis(100));
+    assert!(writer.0.try_wait().unwrap().is_none(), "competing writer escaped the lock");
+    fs::write(f.repo.join("a"), "edit made after the provisional commit").unwrap();
+
+    batch.0.kill().unwrap();
+    assert!(!batch.0.wait().unwrap().success());
+    assert_eq!(writer.0.wait().unwrap().code(), Some(1));
+    assert!(!f.output(&["tx", "commit"], "").status.success());
+    fs::remove_file(f.repo.join("pause")).unwrap();
+    f.run(&["tx", "rollback"], "");
+    assert_eq!(fs::read(&head).unwrap(), before_head);
+    assert_eq!(fs::read(&branch).unwrap(), before_ref);
+    assert_eq!(fs::read(&index).unwrap(), before_index);
+    assert_eq!(fs::read_to_string(f.repo.join("a")).unwrap(), "edit made after the provisional commit");
+    assert!(!journal.exists());
+    f.run(&["add", "contender"], "");
+    assert_eq!(f.run(&["status"], "")["staged"], json!(["contender"]));
+}
+
+#[test]
 fn transaction_restores_dirty_worktree_index_and_ref_and_can_retry() {
     let f = Fixture::new();
     let original = f.seed();

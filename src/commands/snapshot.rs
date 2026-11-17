@@ -16,13 +16,20 @@ pub fn execute(
 ) -> Result<SnapshotResponse, crate::errors::LitError> {
     let repo_root = find_repo_root()?;
     let _guard = super::transaction::lock_writes(&repo_root)?;
-    super::merge::require_inactive(&repo_root)?;
-    let store = ObjectStore::new(&repo_root);
-    let mut index = Index::load(&repo_root)?;
+    execute_locked(&repo_root, message, author, metadata)
+}
+
+pub(super) fn execute_locked(
+    repo_root: &std::path::Path,
+    message: String, author: Option<String>, metadata: Option<serde_json::Value>,
+) -> Result<SnapshotResponse, crate::errors::LitError> {
+    super::merge::require_inactive(repo_root)?;
+    let store = ObjectStore::new(repo_root);
+    let mut index = Index::load(repo_root)?;
 
     // Stage all files (like `lit add .`)
-    let files_added = add_all_files(&repo_root, &store, &mut index)?;
-    index.save(&repo_root)?;
+    let files_added = add_all_files(repo_root, &store, &mut index)?;
+    index.save(repo_root)?;
 
     if index.entries.is_empty() {
         return Err("Nothing to snapshot (no files in working directory)".into());
@@ -41,7 +48,7 @@ pub fn execute(
     let tree_hash = build_tree_from_index(&index, &store)?;
 
     // Get parent commit(s)
-    let parents = match read_head(&repo_root) {
+    let parents = match read_head(repo_root) {
         Ok(parent_hash) => vec![ObjectHash::from_hex(parent_hash)],
         Err(_) => vec![],
     };
@@ -61,9 +68,9 @@ pub fn execute(
     let commit_hash = store.write(&commit_object)?;
 
     // Update the current branch reference
-    let branch = get_current_branch(&repo_root).unwrap_or_else(|_| "main".to_string());
+    let branch = get_current_branch(repo_root).unwrap_or_else(|_| "main".to_string());
     write_ref(
-        &repo_root,
+        repo_root,
         &format!("heads/{}", branch),
         commit_hash.as_str(),
     )?;

@@ -641,6 +641,8 @@ fn build_commands() -> Vec<CommandDef> {
             vec![
                 param("atomic", "boolean", "Stop on first failure, skip remaining", false, Some("false")),
                 param("dry_run", "boolean", "Validate command names and argument shapes without executing", false, Some("false")),
+                param("fail_on_error", "boolean", "Return exit status 1 after reporting failed operations", false, Some("false")),
+                param("rollback_on_error", "boolean", "Restore the original branch tip and index on failure, with exit status 1", false, Some("false")),
             ],
             "BatchResponse", vec!["Depends on operations"], vec![],
             vec![ex("Batch", "echo '{\"command\":\"status\"}' | lit batch", serde_json::json!({"atomic": false}))],
