@@ -96,6 +96,23 @@ on the PR head alone cannot qualify queue enforcement. The manual fallback
 qualifies GitHub's queue with an external status reporter and leaves
 automatic Actions event delivery to its own test.
 
+#### Actions-only qualification
+
+Keep `protected-main.json` active with an empty bypass list for both the
+failing and passing trials. Record the ruleset before and after each trial.
+Open a fresh sandbox PR and wait for the automatic `pull_request` run of
+`Agent workflow candidate` to pass before enqueueing. Record both the PR head
+and the checked-out PR test merge SHA. GitHub can attach the check run to the
+PR head even when the job checks out the test merge.
+
+For each queue attempt, capture GitHub's queue entry, its candidate SHA, and
+the automatic `merge_group` run. Check that the required check came from the
+GitHub Actions app and that the PR and queue commits have no manually posted
+commit statuses. The failing candidate should leave the queue with `main`
+unchanged. For the passing candidate, compare the tested SHA, the PR's merge
+commit, and the protected branch tip. The fixture's merge-commit mode expects
+all three to match.
+
 ### Documentation
 
 - 📋 **[TESTING_QUICK_REFERENCE.md](TESTING_QUICK_REFERENCE.md)** - Command cheat sheet
