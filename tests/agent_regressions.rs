@@ -228,6 +228,65 @@ fn swarm_registration_rejects_redirected_namespace() {
 }
 
 #[test]
+fn swarm_leases_preserve_legacy_records_without_path_collisions() {
+    let f = Fixture::new();
+    f.run(&["swarm", "register", "first"], "");
+    let legacy = f.repo.join(".lit/swarm/leases/src_a.rs.json");
+    let now = chrono::Utc::now().timestamp();
+    fs::write(
+        &legacy,
+        json!({
+            "agent_id": "first", "path": "./src/a.rs",
+            "acquired_at": now, "expires_at": now + 300,
+        })
+        .to_string(),
+    )
+    .unwrap();
+
+    let acquire = |agent, path| {
+        f.output(&["swarm", "lease-acquire", "--agent", agent, "--path", path], "")
+    };
+    assert!(!acquire("second", "src//a.rs").status.success());
+    assert!(acquire("second", "src_a.rs").status.success());
+    assert!(!acquire("second", "src/a.rs").status.success());
+    assert!(!acquire("second", "../outside").status.success());
+
+    let list = f.run(&["swarm", "lease-list"], "");
+    assert_eq!(list["details"]["leases"].as_array().unwrap().len(), 2);
+    let release = |agent| {
+        f.output(&["swarm", "lease-release", "--agent", agent, "--path", "./src/a.rs"], "")
+    };
+    assert!(!release("second").status.success());
+    assert!(release("first").status.success());
+    assert!(acquire("second", "src/a.rs").status.success());
+    assert!(legacy.exists());
+}
+
+#[test]
+fn swarm_lease_acquisition_serializes_competing_processes() {
+    let f = Fixture::new();
+    let contenders = (0..24)
+        .map(|i| {
+            f.command(&[
+                "swarm", "lease-acquire", "--agent", &format!("worker-{i}"), "--path", "shared",
+            ])
+            .stdout(Stdio::null())
+            .stderr(Stdio::null())
+            .spawn()
+            .unwrap()
+        })
+        .collect::<Vec<_>>();
+    let winners = contenders
+        .into_iter()
+        .map(|mut child| child.wait().unwrap())
+        .filter(|status| status.success())
+        .count();
+    assert_eq!(winners, 1);
+    let leases = f.run(&["swarm", "lease-list"], "");
+    assert_eq!(leases["details"]["leases"].as_array().unwrap().len(), 1);
+}
+
+#[test]
 fn checkout_cannot_invalidate_an_open_transaction() {
     let f = Fixture::new();
     let original = f.seed();

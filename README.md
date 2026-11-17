@@ -139,10 +139,15 @@ lit tx <operations...>             # Atomic transaction mode
 lit snapshot -m <msg>              # Add-all + commit in one step
 lit search <query>                 # Full-text search across history
 lit watch                          # Emit filesystem change events
-lit swarm <join|status|sync>       # Multi-agent swarm coordination
+lit swarm <register|lease-list>    # Agent registrations and advisory file leases
 lit ontology                       # Output command ontology for agent discovery
 lit schema [--command <id>]        # Generate JSON Schema (draft 2020-12) from ontology
 ```
+
+Swarm leases coordinate Lit processes sharing one repository. Use paths
+relative to its root. The first successful lease write imports legacy lease
+records into the new shared state. Use current clients for subsequent lease
+operations in that repository.
 
 ### Maintenance & Migration
 
