@@ -74,10 +74,10 @@ def test(args, token):
         if args.action == "publish":
             if head("refs/heads/main") != args.base:
                 raise RuntimeError("Main has advanced since pilot setup")
-            git("fetch", "--depth=1", REMOTE, args.base)
+            git("fetch", REMOTE, args.base)
             git("checkout", "-q", "--detach", args.base)
             path = root / "qualification" / "app-pilot" / f"{args.host}.txt"
-            path.parent.mkdir(parents=True)
+            path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(f"host={args.host}\napp={args.app}\nbase={args.base}\n")
             git("add", str(path.relative_to(root)))
             git("commit", "-q", "-m", f"Pilot proposal from {args.host}")

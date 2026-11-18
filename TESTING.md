@@ -215,6 +215,12 @@ after recovery. Queue entry absence alone is not evidence of removal or
 failure; wait for a definitive PR outcome. Do not count fail-closed unknown
 enqueue outcomes as a completed unattended workflow.
 
+The [live withdrawal qualification](tests/fixtures/github-merge-queue/LIVE-WITHDRAWAL-2026-11-17.md)
+records an actual App-authored dequeue, unchanged refs and Actions-only policy,
+and 23 regression tests on local macOS, host-a, host-e and host-f. It also covers
+the queued-conflict case: a PR can remain `QUEUED` without a candidate while
+GitHub reports it `CONFLICTING` and an earlier candidate occupies the build slot.
+
 ### Documentation
 
 - 📋 **[TESTING_QUICK_REFERENCE.md](TESTING_QUICK_REFERENCE.md)** - Command cheat sheet

@@ -1,0 +1,213 @@
+{
+  "date_local": "2026-11-17",
+  "source_baseline": "64d873505241bfee1f473b14138db6aee12b24b3",
+  "source_sha256": {
+    "tools/github_queue_coordinator.py": "807e8e05bc72ee14afc5094ad3378050942ea7b40d4bb311ff38cf2c174b8b8f",
+    "tests/github_queue_coordinator_regression.py": "a4e89b9566c378a94560b1dc22fcdf8eea678938afa8a7f4a4ba34ff0db12260"
+  },
+  "original_live_state": {
+    "data": {
+      "repository": {
+        "ref": {
+          "target": {
+            "oid": "f480055e5cbcaa13070363e02676d52d5f97ade9"
+          }
+        },
+        "pullRequest": {
+          "headRefOid": "454c0f5c12d12052dca53bdfcad5850963e6ccd9",
+          "mergeable": "CONFLICTING",
+          "mergeQueueEntry": {
+            "id": "MQE_lQDOVxXMNs8AAAABQAdoX84ABY2lzgQXo9A",
+            "state": "QUEUED",
+            "headCommit": null
+          }
+        },
+        "mergeQueue": {
+          "entries": {
+            "nodes": [
+              {
+                "state": "AWAITING_CHECKS",
+                "pullRequest": {
+                  "number": 102
+                }
+              },
+              {
+                "state": "QUEUED",
+                "pullRequest": {
+                  "number": 100
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "original_cli_state": {
+    "proposals": [
+      {
+        "author": "100latent-lit-pilot-host-f[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-f/09",
+        "head": "454c0f5c12d12052dca53bdfcad5850963e6ccd9",
+        "number": 100,
+        "phase": "queued"
+      }
+    ],
+    "actions": []
+  },
+  "configured_stale_seconds": 1,
+  "old_watch_seconds": 20,
+  "before": {
+    "ref": {
+      "target": {
+        "oid": "f480055e5cbcaa13070363e02676d52d5f97ade9"
+      }
+    },
+    "pullRequest": {
+      "id": "PR_kwDOVxXMNs8AAAABQAdoXw",
+      "headRefOid": "454c0f5c12d12052dca53bdfcad5850963e6ccd9",
+      "mergeable": "CONFLICTING",
+      "mergeQueueEntry": {
+        "id": "MQE_lQDOVxXMNs8AAAABQAdoX84ABY2lzgQXo9A",
+        "state": "QUEUED",
+        "headCommit": null
+      }
+    }
+  },
+  "after": {
+    "ref": {
+      "target": {
+        "oid": "f480055e5cbcaa13070363e02676d52d5f97ade9"
+      }
+    },
+    "pullRequest": {
+      "id": "PR_kwDOVxXMNs8AAAABQAdoXw",
+      "headRefOid": "454c0f5c12d12052dca53bdfcad5850963e6ccd9",
+      "mergeable": "CONFLICTING",
+      "mergeQueueEntry": null
+    }
+  },
+  "withdrawal_state": {
+    "proposals": [
+      {
+        "author": "100latent-lit-pilot-host-f[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-f/09",
+        "head": "454c0f5c12d12052dca53bdfcad5850963e6ccd9",
+        "number": 100,
+        "phase": "held_conflict"
+      }
+    ],
+    "actions": [
+      {
+        "id": 1,
+        "number": 100,
+        "kind": "dequeue",
+        "status": "observed",
+        "entry_id": "MQE_lQDOVxXMNs8AAAABQAdoX84ABY2lzgQXo9A",
+        "created": 1794979552.900696
+      }
+    ]
+  },
+  "native_git_proof": {
+    "event": "queued",
+    "number": 100,
+    "main": "f480055e5cbcaa13070363e02676d52d5f97ade9",
+    "head": "454c0f5c12d12052dca53bdfcad5850963e6ccd9",
+    "git_conflict_sha256": "2ee47b9252ad55922ad23d1fbf222f558cfcc950609ea31ab3f6672d8251f9d5"
+  },
+  "removal_event": {
+    "id": 36490639331,
+    "event": "removed_from_merge_queue",
+    "created_at": "2026-11-18T05:25:53Z",
+    "actor": {
+      "login": "100latent-lit-pilot-host-a[bot]",
+      "id": 357931539,
+      "node_id": "BOT_kgDOFVWaEw",
+      "avatar_url": "https://avatars.githubusercontent.com/u/212952918?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/100latent-lit-pilot-host-a%5Bbot%5D",
+      "html_url": "https://github.com/apps/100latent-lit-pilot-host-a",
+      "followers_url": "https://api.github.com/users/100latent-lit-pilot-host-a%5Bbot%5D/followers",
+      "following_url": "https://api.github.com/users/100latent-lit-pilot-host-a%5Bbot%5D/following{/other_user}",
+      "gists_url": "https://api.github.com/users/100latent-lit-pilot-host-a%5Bbot%5D/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/100latent-lit-pilot-host-a%5Bbot%5D/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/100latent-lit-pilot-host-a%5Bbot%5D/subscriptions",
+      "organizations_url": "https://api.github.com/users/100latent-lit-pilot-host-a%5Bbot%5D/orgs",
+      "repos_url": "https://api.github.com/users/100latent-lit-pilot-host-a%5Bbot%5D/repos",
+      "events_url": "https://api.github.com/users/100latent-lit-pilot-host-a%5Bbot%5D/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/100latent-lit-pilot-host-a%5Bbot%5D/received_events",
+      "type": "Bot",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "performed_via_github_app": null
+  },
+  "verified_barrier_and_cleanup": {
+    "base": "f480055e5cbcaa13070363e02676d52d5f97ade9",
+    "main": "24c3c504983dd79698adb0e0f7bc6e54bb9bf2a0",
+    "barrier_pr": 102,
+    "barrier_head": "fa08b3de4df3d24f9f6082f527636af81a0e60b1",
+    "run_id": 44243898641,
+    "check_id": 134598066174,
+    "check_app_id": 15368,
+    "candidate_sha": "24c3c504983dd79698adb0e0f7bc6e54bb9bf2a0",
+    "target_pr": 100,
+    "target_head": "454c0f5c12d12052dca53bdfcad5850963e6ccd9",
+    "rules_unchanged": true,
+    "manual_statuses": 0,
+    "freeze_removed": true,
+    "key_file_removed": true
+  },
+  "platforms": {
+    "local": {
+      "tests": 23,
+      "passed": true,
+      "versions": "Darwin arm64\nPython 3.14.3\ngit version 2.56.0\n"
+    },
+    "host-a": {
+      "tests": 23,
+      "passed": true,
+      "versions": "host-a.lab.wsub.net\nx86_64\nPython 3.13.7\ngit version 2.51.0\n"
+    },
+    "host-e": {
+      "tests": 23,
+      "passed": true,
+      "versions": "host-e.lab.wsub.net\naarch64\nPython 3.12.3\ngit version 2.43.0\n"
+    },
+    "host-f": {
+      "tests": 23,
+      "passed": true,
+      "versions": "host-f.lab.wsub.net\naarch64\nPython 3.12.3\ngit version 2.43.0\n"
+    }
+  },
+  "initial_direct_enqueue_rejection": {
+    "data": {
+      "enqueuePullRequest": null
+    },
+    "errors": [
+      {
+        "type": "UNPROCESSABLE",
+        "path": [
+          "enqueuePullRequest"
+        ],
+        "locations": [
+          {
+            "line": 1,
+            "column": 38
+          }
+        ],
+        "message": "Pull request has merge conflicts and Pull request not in mergeable state"
+      }
+    ]
+  },
+  "fixture": {
+    "repo": "100latent/lit-merge-queue-sandbox",
+    "target_pr": 100,
+    "barrier_pr": 102,
+    "method": "Temporarily retarget held PR to an ancestor branch, wait for clean mergeability, restore main, enqueue stale metadata behind a checked valid candidate; real GitHub data and mutations only",
+    "original_pr_base_restored": "main",
+    "manual_statuses": 0,
+    "main_rule_changed": false
+  },
+  "audit_directory": "<private-path>"
+}

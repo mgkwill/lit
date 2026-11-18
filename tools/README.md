@@ -81,12 +81,16 @@ blindly retry. This is a deliberate fail-closed limit, not an exactly-once
 claim. A watch deadline fails with durable state intact. Inspect the journal
 and remote history to resolve genuinely unobservable outcomes.
 
-Stale cleanup defaults to 120 seconds of persisted `UNMERGEABLE` state with
-no candidate commit. It fetches main and the immutable proposal into an
+Stale cleanup defaults to 120 seconds without a candidate commit, with either
+`UNMERGEABLE` state or `QUEUED` state and a PR reported `CONFLICTING`. GitHub can
+leave a conflicting PR queued while earlier candidates occupy build slots.
+The coordinator fetches main and the immutable proposal into an
 isolated bare Git mirror, runs `git merge-tree --write-tree`, then rechecks
 main, proposal identity, queue entry and policy. A changed head becomes
 `superseded`; a transient unmergeable entry without a real conflict stays
 queued. A withdrawn conflict remains held for a new attempt to repair.
+Queued-conflict cleanup evaluates current main; it does not plan dependencies
+or predict whether a preceding proposal might later resolve the conflict.
 
 This is queue coordination for fixed attempts. It does not implement task
 reassignment, scheduler ownership leases, credential issuance or CI policy

@@ -196,6 +196,13 @@ def identity(repo, spec, pr):
             and pr["author"]["login"].removesuffix("[bot]") == spec["author"].removesuffix("[bot]"))
 
 
+def conflict_entry(pr):
+    entry = pr["mergeQueueEntry"]
+    return (entry is not None and entry["headCommit"] is None
+            and (entry["state"] == "UNMERGEABLE"
+                 or (entry["state"] == "QUEUED" and pr["mergeable"] == "CONFLICTING")))
+
+
 def conflict_proof(github, manifest, spec, main, args):
     if args.test_git_remote and not github.local:
         raise ValueError("a test Git remote is allowed only with a loopback API fixture")
@@ -263,7 +270,7 @@ def tick(db, github, manifest, args):
             resolve(db, number)
             record(db, number, "queued")
             since = row["stale_since"] if row["entry_id"] == entry["id"] else None
-            if entry["state"] != "UNMERGEABLE" or entry["headCommit"] is not None:
+            if not conflict_entry(pr):
                 with db:
                     db.execute("UPDATE proposals SET stale_since=NULL,entry_id=? WHERE number=?",
                                (entry["id"], number))
@@ -288,7 +295,7 @@ def tick(db, github, manifest, args):
             if not current:
                 record(db, number, "held_conflict", **proof)
             elif (latest["ref"]["target"]["oid"] == main and current["id"] == entry["id"]
-                  and current["state"] == "UNMERGEABLE" and current["headCommit"] is None):
+                  and conflict_entry(fresh)):
                 record(db, number, "queued", **proof)
                 action(db, github, number, "dequeue", fresh)
             continue

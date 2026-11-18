@@ -19,6 +19,7 @@ class Forge:
         self.proposal = proposal
         self.queued = False
         self.queue_state = "QUEUED"
+        self.candidate = None
         self.mergeable = "MERGEABLE"
         self.merged = False
         self.complete_after_enqueue = False
@@ -128,7 +129,7 @@ class Forge:
                             "headRepository": {"nameWithOwner": "100latent/lit-merge-queue-sandbox"},
                             "author": {"__typename": forge.author_type,
                                        "login": p["author"].removesuffix("[bot]")}, "mergeQueueEntry": {
-                                "id": "MQE_7", "state": forge.queue_state, "headCommit": None
+                                "id": "MQE_7", "state": forge.queue_state, "headCommit": forge.candidate
                             } if forge.queued else None}}}})
                 else:
                     if self.headers.get("Authorization") != "Bearer good":
@@ -419,6 +420,33 @@ class CoordinatorTests(unittest.TestCase):
         result = self.tick(extra=("--watch", "--poll-seconds", "0.1", "--max-seconds", "5"))
         self.assertIn("retrying_observation", result.stdout)
         self.assertEqual(self.remote.mutations, ["EnqueueProposal"])
+
+    def test_queued_conflicting_pr_is_withdrawn_after_native_git_proof(self):
+        self.git_fixture()
+        self.remote.queue_state = "QUEUED"
+        self.remote.mergeable = "CONFLICTING"
+        self.tick()
+        self.tick()
+        self.assertEqual(self.remote.mutations, ["WithdrawProposal"])
+        status, = self.cli("status")
+        self.assertEqual(status["proposals"][0]["phase"], "held_conflict")
+
+    def test_queued_conflict_label_without_git_conflict_is_preserved(self):
+        self.git_fixture(conflict=False)
+        self.remote.queue_state = "QUEUED"
+        self.remote.mergeable = "CONFLICTING"
+        self.tick()
+        self.assertTrue(self.remote.queued)
+        self.assertEqual(self.remote.mutations, [])
+
+    def test_queued_conflict_with_a_candidate_commit_is_preserved(self):
+        self.git_fixture()
+        self.remote.queue_state = "QUEUED"
+        self.remote.mergeable = "CONFLICTING"
+        self.remote.candidate = {"oid": self.remote.main}
+        self.tick()
+        self.assertTrue(self.remote.queued)
+        self.assertEqual(self.remote.mutations, [])
 
 
 if __name__ == "__main__":
