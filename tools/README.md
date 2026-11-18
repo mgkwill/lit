@@ -173,6 +173,12 @@ are repository-read only. Workers publish regular UTF-8 file proposals through
 Admission requires the newest relevant native preflight run to have passed; an
 older success for the same SHA cannot mask a new pending run.
 
+Broker owners are logical identities bound to individual client certificates;
+they do not each need a GitHub App. The broker App authors their PRs, while
+durable publication receipts bind each proposal to its authenticated owner.
+Host OS accounts remain a separate boundary: clients sharing an account can
+access that account's credentials, even when certificates are distinct.
+
 ## Regression tests
 
 ```sh
