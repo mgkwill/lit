@@ -154,6 +154,46 @@ branches and `main`. Compare each ref before and after the attempted update.
 Verify the automatic `pull_request` and `merge_group` checks using the
 Actions-only procedure above.
 
+#### Multi-App PR burst
+
+Run [the burst worker](tests/fixtures/github-merge-queue/app-burst-worker.py)
+on `host-a`, `host-e`, and `host-f`, each with its own App installation token.
+Use `HOST APP_SLUG BASE_SHA RUN_ID`. The worker checks its host and token
+repository scope, then creates ten separate worktrees pinned to the base.
+Nine proposals add unique files. The tenth adds `shared.txt` with different
+content from each host, producing an intentional add/add conflict.
+
+Authorize exactly ten temporary branch refs per App under
+`agents/app-burst/RUN_ID/HOST/00` through `09`. Add those refs to the assigned
+App's ownership rule before excluding them from the catch-all rule. Keep
+the required Actions integration and `main` bypass policy unchanged.
+
+Keep each SSH worker's stdin open. Send its installation token as the first
+line. After all three workers emit `ready`, send the same near-future Unix
+start time to each. Each runs three concurrent publishers. Collect all 30
+`published` receipts, then send `challenge` to all workers after every host
+emits `published_all`. Require all nine prohibited fast-forward pushes to
+fail without changing their target refs. Successful workers revoke their
+installation tokens and remove their temporary worktrees.
+
+Wait for all 30 automatic PR checks before enqueueing their exact heads.
+Enqueue the 27 disjoint proposals before the three shared-file proposals.
+Record any temporary queue capacity change and restore it after the run.
+Expect 28 protected merges and two open conflicting proposals. Verify every
+successful queue candidate's checked-out SHA, Actions check SHA, timeline
+merge event, and Git first-parent commit. Check all final file contents,
+then use `git merge-tree --write-tree` to confirm the two held conflicts.
+Check that their original heads and contents remain intact. Restore the
+catch-all before removing temporary ownership exemptions, remove host
+source directories and local signing files, and preserve adverse receipts.
+
+Check that losing proposals actually leave the queue. Preserve any stale
+`UNMERGEABLE` entry and unknown PR mergeability as an adverse result before
+withdrawing it. Verify the conflicting head with Git and compare proposal
+and main refs around cleanup. Operator withdrawal does not qualify fully
+automatic queue cleanup. See the [2026-11-17 burst results](tests/fixtures/github-merge-queue/BURST-2026-11-17.md)
+for the observed stale-entry case and exact tested commits.
+
 ### Documentation
 
 - 📋 **[TESTING_QUICK_REFERENCE.md](TESTING_QUICK_REFERENCE.md)** - Command cheat sheet
