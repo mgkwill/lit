@@ -11,7 +11,8 @@ import socket
 import ssl
 import sys
 import time
-from urllib.error import HTTPError
+from urllib.error import HTTPError, URLError
+from http.client import HTTPException
 from urllib.request import HTTPSHandler, HTTPRedirectHandler, Request, build_opener
 
 
@@ -27,13 +28,19 @@ def run(operation, root, url, action):
     opener = build_opener(NoRedirect(), HTTPSHandler(context=context))
     attempts = 0
     busy = 0
+    transport_retries = 0
+    publication_posts = 0
+    polls = 0
+    accepted = []
     started = time.time()
 
     def call(route, payload=None, retry=True):
-        nonlocal attempts, busy
+        nonlocal attempts, busy, transport_retries, publication_posts, polls
         deadline = time.monotonic() + 1800
         while True:
             attempts += 1
+            if route == 'propose': publication_posts += 1
+            if route.startswith('publication?claim='): polls += 1
             request = Request(url + '/' + route,
                               None if payload is None else json.dumps(payload).encode(),
                               {'Content-Type': 'application/json'})
@@ -41,12 +48,15 @@ def run(operation, root, url, action):
                 with opener.open(request, timeout=40) as response:
                     code, body = response.status, json.load(response)
                 if code == 202:
+                    if not accepted:
+                        accepted.append({'operation':body['operation'],'state':body['state'],
+                                         'at':time.time(),'status_path':body['status_path']})
                     # Poll an accepted operation; never resubmit a remote write.
                     route = body['status_path'].lstrip('/')
                     assert route.startswith('publication?claim=') and '/' not in route
                     payload = None
                     if time.monotonic() >= deadline: raise TimeoutError('publication pending')
-                    time.sleep(1)
+                    time.sleep(max(.1,min(5,body.get('poll_after_seconds',1))))
                     continue
                 return code, body
             except HTTPError as error:
@@ -57,6 +67,15 @@ def run(operation, root, url, action):
                     time.sleep(min(3, .2 + busy * .08))
                     continue
                 return code, body
+            except (URLError, HTTPException, TimeoutError, ConnectionError) as error:
+                # Admission is idempotent by claim+digest. If its reply was lost,
+                # identical submission joins the job; it never repeats an unknown
+                # provider mutation. Do not suppress identity/certificate errors.
+                reason=getattr(error,'reason',error)
+                if isinstance(reason,ssl.SSLCertVerificationError) or not retry or time.monotonic()>=deadline:
+                    raise
+                transport_retries += 1
+                time.sleep(min(3,.2+transport_retries*.1))
 
     code, claims = call('claims')
     assert code == 200
@@ -91,11 +110,13 @@ def run(operation, root, url, action):
         body = {k: claim[k] for k in ('task', 'generation', 'claim', 'base')}
         body.update(capability=operation['old_capability'], request=operation['request'],
                     files=operation['files'])
-        code, _ = call('propose', body, retry=False)
+        code, denied = call('propose', body)
         assert code == 409, 'revoked attempt could still publish'
-        code, _ = call('register', {'proposal': operation['receipt'],
-                                  'capability': operation['old_capability']}, retry=False)
+        assert denied.get('retryable') is False
+        code, denied = call('register', {'proposal': operation['receipt'],
+                                       'capability': operation['old_capability']})
         assert code == 409, 'revoked attempt could still register'
+        assert denied.get('retryable') is False
         record['stale_publication_and_registration_denied'] = True
     elif action == 'permissions':
         assert call('status', retry=False)[0] == 403
@@ -129,7 +150,9 @@ def run(operation, root, url, action):
         record['read_permissions'] = credential['permissions']
     else:
         raise ValueError('unknown action')
-    record.update(finished=time.time(), requests=attempts, busy_retries=busy)
+    record.update(finished=time.time(), requests=attempts, busy_retries=busy,
+                  transport_retries=transport_retries,publication_posts=publication_posts,
+                  status_polls=polls,admission=accepted[0] if accepted else None)
     return record
 
 
@@ -138,12 +161,14 @@ def main():
     parser.add_argument('--host', required=True, choices=('host-a', 'host-e', 'host-f'))
     parser.add_argument('--profiles', type=Path, required=True)
     parser.add_argument('--url', default='https://192.0.2.10:19443')
+    parser.add_argument('--concurrency',type=int,default=10)
     parser.add_argument('action', choices=('publish', 'register', 'stale', 'permissions'))
     args = parser.parse_args()
     assert socket.gethostname().split('.')[0] == args.host
     operations = json.load(sys.stdin)
     assert 0 < len(operations) <= 30
-    with ThreadPoolExecutor(max_workers=10) as pool:
+    assert 1 <= args.concurrency <= 30
+    with ThreadPoolExecutor(max_workers=args.concurrency) as pool:
         futures = [pool.submit(run, op, args.profiles, args.url, args.action) for op in operations]
         for future in futures:
             # Emit each completed receipt even if a later operation fails.
