@@ -1,0 +1,425 @@
+"""Black-box CLI tests for the durable hosted queue coordinator."""
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
+import threading
+import time
+import unittest
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+CLI = Path(__file__).resolve().parents[1] / "tools/github_queue_coordinator.py"
+
+
+class Forge:
+    """A stateful external GitHub boundary, not a mock of coordinator internals."""
+    def __init__(self, proposal):
+        self.proposal = proposal
+        self.queued = False
+        self.queue_state = "QUEUED"
+        self.mergeable = "MERGEABLE"
+        self.merged = False
+        self.complete_after_enqueue = False
+        self.main = "c" * 40
+        self.mutations = []
+        self.freeze = True
+        self.main_failures = 0
+        self.freeze_reads = 0
+        self.remove_freeze_on_recheck = False
+        self.check_app = 15368
+        self.author_type = "Bot"
+        self.allow_observer = False
+        self.snapshots = 0
+        self.replace_head_on_second_read = False
+        self.drop_reply = False
+        self.drop_without_apply = False
+        self.calls = []
+        self.block_reply = False
+        self.applied = threading.Event()
+        self.release = threading.Event()
+        forge = self
+
+        class Handler(BaseHTTPRequestHandler):
+            def log_message(self, *args):
+                pass
+
+            def respond(self, body, code=200):
+                if (forge.allow_observer and self.headers.get("Authorization") == "Bearer good"
+                        and "bypass_actors" in body):
+                    body = {key: value for key, value in body.items() if key != "bypass_actors"}
+                data = json.dumps(body).encode()
+                self.send_response(code)
+                self.send_header("Content-Length", str(len(data)))
+                self.end_headers()
+                try:
+                    self.wfile.write(data)
+                except BrokenPipeError:
+                    pass
+
+            def authorized(self):
+                allowed = ["Bearer good"] + (["Bearer observer"] if forge.allow_observer else [])
+                if self.headers.get("Authorization") not in allowed:
+                    self.respond({"message": "Bad credentials"}, 401)
+                    return False
+                return True
+
+            def do_GET(self):
+                if not self.authorized():
+                    return
+                if self.path == "/installation/repositories":
+                    if self.headers.get("Authorization") != "Bearer good":
+                        self.respond({"message": "writer token required"}, 401)
+                    else:
+                        self.respond({"total_count": 1, "repositories": [
+                            {"full_name": "100latent/lit-merge-queue-sandbox"}]})
+                elif self.path.endswith("/rulesets/10"):
+                    if forge.main_failures:
+                        forge.main_failures -= 1
+                        self.respond({"message": "temporary gateway error"}, 502)
+                        return
+                    self.respond({"target": "branch", "enforcement": "active", "bypass_actors": [],
+                                  "conditions": {"ref_name": {"include": ["refs/heads/main"], "exclude": []}},
+                                  "rules": [{"type": "pull_request"}, {"type": "deletion"},
+                                            {"type": "non_fast_forward"},
+                                            {"type": "merge_queue", "parameters": {"grouping_strategy": "ALLGREEN",
+                                                "merge_method": "MERGE", "max_entries_to_merge": 1}},
+                                            {"type": "required_status_checks", "parameters": {
+                                                "required_status_checks": [{"context": "Agent workflow candidate", "integration_id": 15368}]}}]})
+                elif self.path.endswith("/rulesets/11"):
+                    forge.freeze_reads += 1
+                    if forge.remove_freeze_on_recheck and forge.freeze_reads == 2:
+                        forge.freeze = False
+                    self.respond({"target": "branch", "enforcement": "active" if forge.freeze else "disabled",
+                                  "bypass_actors": [], "conditions": {"ref_name": {
+                                      "include": ["refs/heads/" + forge.proposal["branch"]], "exclude": []}},
+                                  "rules": [{"type": "update"}, {"type": "deletion"}]})
+                elif "/check-runs?" in self.path:
+                    self.respond({"total_count": 1, "check_runs": [{"name": "Agent workflow candidate",
+                        "head_sha": forge.proposal["head"], "status": "completed", "conclusion": "success",
+                        "app": {"id": forge.check_app}, "check_suite": {"id": 100}}]})
+                elif "/actions/runs?" in self.path:
+                    self.respond({"total_count": 1, "workflow_runs": [{"event": "pull_request",
+                        "head_sha": forge.proposal["head"], "check_suite_id": 100,
+                        "path": ".github/workflows/agent-merge-gate.yml", "conclusion": "success"}]})
+                else:
+                    self.respond({"message": "Unexpected fixture endpoint"}, 404)
+
+            def do_POST(self):
+                if not self.authorized():
+                    return
+                request = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
+                operation = request["operationName"]
+                forge.calls.append(operation)
+                if operation == "QueueSnapshot":
+                    forge.snapshots += 1
+                    if forge.replace_head_on_second_read and forge.snapshots == 2:
+                        forge.proposal["head"] = "b" * 40
+                    p = forge.proposal
+                    if forge.complete_after_enqueue and forge.queued:
+                        forge.merged = True
+                        forge.queued = False
+                    self.respond({"data": {"repository": {
+                        "ref": {"target": {"oid": forge.main}},
+                        "pullRequest": {"id": "PR_7", "headRefOid": p["head"],
+                            "headRefName": p["branch"], "baseRefName": "main", "merged": forge.merged,
+                            "closed": False, "mergeable": forge.mergeable,
+                            "headRepository": {"nameWithOwner": "100latent/lit-merge-queue-sandbox"},
+                            "author": {"__typename": forge.author_type,
+                                       "login": p["author"].removesuffix("[bot]")}, "mergeQueueEntry": {
+                                "id": "MQE_7", "state": forge.queue_state, "headCommit": None
+                            } if forge.queued else None}}}})
+                else:
+                    if self.headers.get("Authorization") != "Bearer good":
+                        self.respond({"message": "writer token required"}, 401)
+                        return
+                    if forge.drop_without_apply:
+                        self.close_connection = True
+                        return
+                    forge.mutations.append(operation)
+                    if operation == "EnqueueProposal":
+                        if request["variables"]["head"] != forge.proposal["head"]:
+                            self.respond({"errors": [{"message": "head differs"}]})
+                            return
+                        forge.queued = True
+                    elif operation == "WithdrawProposal":
+                        forge.queued = False
+                    else:
+                        self.respond({"errors": [{"message": "unexpected mutation"}]})
+                        return
+                    forge.applied.set()
+                    if forge.block_reply:
+                        forge.release.wait(10)
+                    if forge.drop_reply:
+                        self.close_connection = True
+                        return
+                    self.respond({"data": {"result": {"mergeQueueEntry": {"id": "MQE_7"}}}})
+
+        self.server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+        self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
+        self.thread.start()
+        self.url = f"http://127.0.0.1:{self.server.server_port}"
+
+    def close(self):
+        self.release.set()
+        self.server.shutdown()
+        self.server.server_close()
+        self.thread.join()
+
+
+class CoordinatorTests(unittest.TestCase):
+    def setUp(self):
+        self.scratch = tempfile.TemporaryDirectory(prefix="lit-queue-test-")
+        self.addCleanup(self.scratch.cleanup)
+        self.root = Path(self.scratch.name)
+        self.state = self.root / "state"
+        self.manifest = self.root / "manifest.json"
+        self.proposal = {"number": 7, "head": "a" * 40, "branch": "agents/test/7",
+                         "author": "worker[bot]"}
+        self.payload = {"repo": "100latent/lit-merge-queue-sandbox", "main_ruleset": 10,
+                        "freeze_ruleset": 11, "proposals": [self.proposal]}
+        self.manifest.write_text(json.dumps(self.payload))
+
+    def cli(self, *args, expected=0):
+        result = subprocess.run([sys.executable, str(CLI), "--state", str(self.state), *args],
+                                text=True, capture_output=True, timeout=15)
+        self.assertEqual(result.returncode, expected, result.stdout + result.stderr)
+        return [json.loads(line) for line in result.stdout.splitlines()]
+
+    def forge(self):
+        self.remote = Forge(dict(self.proposal))
+        self.addCleanup(self.remote.close)
+        self.cli("register", str(self.manifest))
+
+    def run_args(self):
+        args = [sys.executable, str(CLI), "--state", str(self.state), "run", "--api-url", self.remote.url,
+                "--stale-seconds", "0"]
+        if hasattr(self, "git_remote"):
+            args += ["--test-git-remote", str(self.git_remote)]
+        return args
+
+    def git_fixture(self, conflict=True):
+        self.git_remote = self.root / "git-remote"
+        self.git_remote.mkdir()
+        def git(*args):
+            return subprocess.check_output(["git", "-C", str(self.git_remote), *args], text=True,
+                env={"PATH": os.environ["PATH"], "HOME": str(self.root), "LC_ALL": "C",
+                                  "GIT_CONFIG_GLOBAL": os.devnull, "GIT_CONFIG_NOSYSTEM": "1",
+                                  "GIT_AUTHOR_NAME": "fixture", "GIT_COMMITTER_NAME": "fixture",
+                                  "GIT_AUTHOR_EMAIL": "fixture@example.test",
+                                  "GIT_COMMITTER_EMAIL": "fixture@example.test"}, stderr=subprocess.DEVNULL).strip()
+        git("init", "-q", "-b", "main")
+        (self.git_remote / "shared").write_text("base\n")
+        git("add", ".")
+        git("commit", "-qm", "base")
+        git("checkout", "-qb", self.proposal["branch"])
+        (self.git_remote / ("shared" if conflict else "disjoint")).write_text("proposal\n")
+        git("add", ".")
+        git("commit", "-qm", "proposal")
+        self.proposal["head"] = git("rev-parse", "HEAD")
+        git("checkout", "-q", "main")
+        (self.git_remote / "shared").write_text("landed\n")
+        git("commit", "-qam", "landed")
+        self.manifest.write_text(json.dumps(self.payload))
+        self.forge()
+        self.remote.main = git("rev-parse", "HEAD")
+        self.remote.queued = True
+        self.remote.queue_state = "UNMERGEABLE"
+        self.remote.mergeable = "UNKNOWN"
+
+    def tick(self, expected=0, token="good", extra=(), observer=""):
+        result = subprocess.run(self.run_args() + list(extra), text=True, capture_output=True, timeout=20,
+                                env=os.environ | {"GH_TOKEN": token, "LIT_QUEUE_OBSERVER_TOKEN": observer})
+        self.assertEqual(result.returncode, expected, result.stdout + result.stderr)
+        self.assertNotIn("Bearer good", result.stdout + result.stderr)
+        return result
+
+    def test_registration_is_idempotent_and_rejects_changed_attempt(self):
+        self.cli("register", str(self.manifest))
+        self.cli("register", str(self.manifest))
+        status, = self.cli("status")
+        self.assertEqual(len(status["proposals"]), 1)
+        self.assertEqual(status["proposals"][0]["head"], "a" * 40)
+        self.proposal["head"] = "b" * 40
+        self.manifest.write_text(json.dumps(self.payload))
+        self.cli("register", str(self.manifest), expected=1)
+        status, = self.cli("status")
+        self.assertEqual(status["proposals"][0]["head"], "a" * 40)
+
+    def test_lost_enqueue_reply_is_reconciled_without_duplicate_mutation(self):
+        self.forge()
+        self.remote.drop_reply = True
+        self.tick(expected=1)
+        self.assertTrue(self.remote.queued)
+        self.remote.drop_reply = False
+        self.tick()
+        self.assertEqual(self.remote.mutations, ["EnqueueProposal"])
+        status, = self.cli("status")
+        self.assertEqual(status["proposals"][0]["phase"], "queued")
+
+    def test_unfrozen_branch_refuses_admission(self):
+        self.forge()
+        self.remote.freeze = False
+        self.tick(expected=1)
+        self.assertEqual(self.remote.mutations, [])
+
+    def test_non_actions_check_cannot_admit_proposal(self):
+        self.forge()
+        self.remote.check_app = 999
+        self.tick()
+        self.assertEqual(self.remote.mutations, [])
+
+    def test_stale_unknown_mergeability_is_withdrawn_only_after_real_git_conflict(self):
+        self.git_fixture()
+        self.tick()
+        self.tick()
+        self.assertEqual(self.remote.mutations, ["WithdrawProposal"])
+        status, = self.cli("status")
+        self.assertEqual(status["proposals"][0]["phase"], "held_conflict")
+
+    def test_transient_unmergeable_entry_without_git_conflict_is_preserved(self):
+        self.git_fixture(conflict=False)
+        self.tick()
+        self.assertTrue(self.remote.queued)
+        self.assertEqual(self.remote.mutations, [])
+
+    def test_changed_head_before_withdrawal_is_fenced(self):
+        self.git_fixture()
+        self.remote.replace_head_on_second_read = True
+        self.tick(expected=1)
+        self.assertTrue(self.remote.queued)
+        self.assertEqual(self.remote.mutations, [])
+
+    def test_kill_after_remote_acceptance_recovers_without_duplicate_enqueue(self):
+        self.forge()
+        self.remote.block_reply = True
+        worker = subprocess.Popen(self.run_args(), stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                  text=True, env=os.environ | {"GH_TOKEN": "good", "LIT_QUEUE_OBSERVER_TOKEN": ""})
+        self.addCleanup(lambda: worker.poll() is None and worker.kill())
+        self.assertTrue(self.remote.applied.wait(10))
+        worker.kill()
+        worker.communicate(timeout=5)
+        self.remote.release.set()
+        self.remote.block_reply = False
+        self.tick()
+        self.assertEqual(self.remote.mutations, ["EnqueueProposal"])
+
+    def test_revoked_credentials_stop_then_fresh_credentials_reconcile(self):
+        self.forge()
+        self.tick(token="revoked", expected=1)
+        self.assertEqual(self.remote.mutations, [])
+        self.tick()
+        self.tick()
+        self.assertEqual(self.remote.mutations, ["EnqueueProposal"])
+
+    def test_competing_writer_cannot_mutate_and_killed_owner_releases_lock(self):
+        self.forge()
+        worker = subprocess.Popen(self.run_args() + ["--watch", "--poll-seconds", "0.1"],
+                                  stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                  text=True, env=os.environ | {"GH_TOKEN": "good", "LIT_QUEUE_OBSERVER_TOKEN": ""})
+        self.addCleanup(lambda: worker.poll() is None and worker.kill())
+        self.assertTrue(self.remote.applied.wait(10))
+        result = self.tick(expected=1)
+        self.assertIn("another coordinator", result.stderr)
+        worker.kill()
+        worker.communicate(timeout=5)
+        self.tick()
+        self.assertEqual(self.remote.mutations, ["EnqueueProposal"])
+
+    def test_lost_withdraw_reply_recovers_without_reenqueue(self):
+        self.git_fixture()
+        self.remote.drop_reply = True
+        self.tick(expected=1)
+        self.assertFalse(self.remote.queued)
+        self.remote.drop_reply = False
+        self.tick()
+        self.tick()
+        self.assertEqual(self.remote.mutations, ["WithdrawProposal"])
+        status, = self.cli("status")
+        self.assertEqual(status["proposals"][0]["phase"], "held_conflict")
+
+    def test_ambiguous_non_acceptance_is_not_blindly_resubmitted(self):
+        self.forge()
+        self.remote.drop_without_apply = True
+        self.tick(expected=1)
+        self.remote.drop_without_apply = False
+        self.tick()
+        self.tick()
+        self.assertEqual(self.remote.calls.count("EnqueueProposal"), 1)
+        self.assertEqual(self.remote.mutations, [])
+        status, = self.cli("status")
+        self.assertEqual(status["proposals"][0]["phase"], "unknown_enqueue")
+
+    def test_removed_branch_lock_prevents_withdrawal(self):
+        self.git_fixture()
+        self.remote.remove_freeze_on_recheck = True
+        self.tick(expected=1)
+        self.assertEqual(self.remote.mutations, [])
+
+    def test_changed_head_before_admission_is_fenced(self):
+        self.forge()
+        self.remote.replace_head_on_second_read = True
+        self.tick(expected=1)
+        self.assertEqual(self.remote.mutations, [])
+
+    def test_disappeared_entry_awaits_definitive_outcome_without_reenqueue(self):
+        self.forge()
+        self.tick()
+        self.tick()
+        self.remote.queued = False
+        self.tick()
+        self.tick()
+        self.assertEqual(self.remote.mutations, ["EnqueueProposal"])
+        status, = self.cli("status")
+        self.assertEqual(status["proposals"][0]["phase"], "awaiting_outcome")
+        self.remote.merged = True
+        self.tick()
+        status, = self.cli("status")
+        self.assertEqual(status["proposals"][0]["phase"], "merged")
+
+    def test_stale_age_survives_restart_and_never_cleans_immediately(self):
+        self.git_fixture()
+        self.tick(extra=("--stale-seconds", "2"))
+        self.assertTrue(self.remote.queued)
+        self.assertEqual(self.remote.mutations, [])
+        time.sleep(2.1)
+        self.tick(extra=("--stale-seconds", "2"))
+        self.assertFalse(self.remote.queued)
+        self.assertEqual(self.remote.mutations, ["WithdrawProposal"])
+
+    def test_human_actor_with_matching_app_slug_is_not_the_registered_bot(self):
+        self.forge()
+        self.remote.author_type = "User"
+        self.tick(expected=1)
+        self.assertEqual(self.remote.mutations, [])
+
+    def test_observer_can_see_policy_but_cannot_replace_revoked_writer(self):
+        self.forge()
+        self.remote.allow_observer = True
+        self.tick(observer="observer")
+        self.tick(observer="observer", token="revoked", expected=1)
+        self.assertEqual(self.remote.mutations, ["EnqueueProposal"])
+        self.tick(observer="observer")
+        self.assertEqual(self.remote.mutations, ["EnqueueProposal"])
+
+    def test_watch_reconciles_lost_reply_and_completes_without_a_supervisor_restart(self):
+        self.forge()
+        self.remote.drop_reply = True
+        self.remote.complete_after_enqueue = True
+        self.tick(extra=("--watch", "--poll-seconds", "0.1", "--max-seconds", "5"))
+        self.assertEqual(self.remote.mutations, ["EnqueueProposal"])
+        status, = self.cli("status")
+        self.assertEqual(status["proposals"][0]["phase"], "merged")
+
+    def test_watch_retries_read_only_gateway_failure_before_admission(self):
+        self.forge()
+        self.remote.main_failures = 1
+        self.remote.complete_after_enqueue = True
+        result = self.tick(extra=("--watch", "--poll-seconds", "0.1", "--max-seconds", "5"))
+        self.assertIn("retrying_observation", result.stdout)
+        self.assertEqual(self.remote.mutations, ["EnqueueProposal"])
+
+
+if __name__ == "__main__":
+    unittest.main()

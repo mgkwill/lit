@@ -194,6 +194,27 @@ and main refs around cleanup. Operator withdrawal does not qualify fully
 automatic queue cleanup. See the [2026-11-17 burst results](tests/fixtures/github-merge-queue/BURST-2026-11-17.md)
 for the observed stale-entry case and exact tested commits.
 
+#### Durable queue coordinator
+
+Use [the coordinator guide](tools/README.md) to enroll immutable proposal
+heads, retain a durable journal, and run queue admission and conflict cleanup.
+The integration suite runs through the public CLI against a stateful HTTP
+forge and real Git, including process death, lost replies, competing writers,
+revoked credentials and delayed merge visibility:
+
+```sh
+python3 tests/github_queue_coordinator_regression.py
+```
+
+For hosted qualification, lock proposal updates with a separate exact-ref,
+no-bypass ruleset before admission. Observe policy with an operator credential
+when publisher Apps cannot see bypass metadata. Keep the writer token scoped
+to the sandbox. Test restart and writer revocation against the same state
+directory, and compare the number of durable admission intents before and
+after recovery. Queue entry absence alone is not evidence of removal or
+failure; wait for a definitive PR outcome. Do not count fail-closed unknown
+enqueue outcomes as a completed unattended workflow.
+
 ### Documentation
 
 - 📋 **[TESTING_QUICK_REFERENCE.md](TESTING_QUICK_REFERENCE.md)** - Command cheat sheet

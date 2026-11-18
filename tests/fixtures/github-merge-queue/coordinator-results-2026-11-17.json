@@ -1,0 +1,2479 @@
+{
+  "date_local": "2026-11-17",
+  "run_id": "final-sp9eje54",
+  "source_baseline": "e96e0cb4e1447673da14aabfaac748f39b4ba895",
+  "source_sha256": {
+    "tools/github_queue_coordinator.py": "43328d0b0cfbdd3a1da19d5b4e6d96f6d512ffddc7f92b4c5c8e0e3c61ad3d26",
+    "tests/github_queue_coordinator_regression.py": "236cd4604fe166f5a7970d06ff5fa7618586dfdcb98f7e66d71be419e7e6c0bf"
+  },
+  "summary": {
+    "proposals": 30,
+    "hosts": 3,
+    "app_identities": 3,
+    "disjoint_merged": 27,
+    "shared_merged": 1,
+    "conflicts_held": [
+      101,
+      100
+    ],
+    "denied_updates": 9,
+    "base": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+    "tip": "f480055e5cbcaa13070363e02676d52d5f97ade9",
+    "pr_runs": {
+      "success": 30
+    },
+    "merge_group_runs": {
+      "success": 28
+    },
+    "peak_queue": {
+      "queue_depth": 30,
+      "running_groups": 28
+    },
+    "publication_window_seconds": 16.187471628189087,
+    "automatic_queue_cleanup_passed": true,
+    "operator_dequeued": [],
+    "api_merge_metadata_anomalies": [
+      {
+        "pr": 73,
+        "git_commit": "98d06b0d8220d3c10f7bdb1f4422abfe9a2ea685",
+        "timeline": {
+          "merged": true,
+          "headRefOid": "5e7a794ce78b29cc3bb14936745318fdadff98ac",
+          "timelineItems": {
+            "nodes": []
+          }
+        }
+      }
+    ]
+  },
+  "coordinator_final_state": {
+    "proposals": [
+      {
+        "author": "100latent-lit-pilot-host-a[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-a/01",
+        "head": "9d5a0664cfcad46f61df8b97809637dc6afdc72a",
+        "kind": "disjoint",
+        "number": 72,
+        "phase": "merged"
+      },
+      {
+        "author": "100latent-lit-pilot-host-e[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-e/02",
+        "head": "5e7a794ce78b29cc3bb14936745318fdadff98ac",
+        "kind": "disjoint",
+        "number": 73,
+        "phase": "merged"
+      },
+      {
+        "author": "100latent-lit-pilot-host-a[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-a/00",
+        "head": "d6663b9883ff683fede1a838a1f8ccc04a78f7f4",
+        "kind": "disjoint",
+        "number": 74,
+        "phase": "merged"
+      },
+      {
+        "author": "100latent-lit-pilot-host-e[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-e/00",
+        "head": "2c95ad2cb3122c822a8456e95f59cc5e86245523",
+        "kind": "disjoint",
+        "number": 75,
+        "phase": "merged"
+      },
+      {
+        "author": "100latent-lit-pilot-host-e[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-e/01",
+        "head": "88100599b4490f3bdcb3af71f89f132f7b724473",
+        "kind": "disjoint",
+        "number": 76,
+        "phase": "merged"
+      },
+      {
+        "author": "100latent-lit-pilot-host-f[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-f/00",
+        "head": "cca49580390349e4a9353b83053de1a617e40454",
+        "kind": "disjoint",
+        "number": 77,
+        "phase": "merged"
+      },
+      {
+        "author": "100latent-lit-pilot-host-a[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-a/02",
+        "head": "fd56aa31b3af2907b80d8971687da916e04774dd",
+        "kind": "disjoint",
+        "number": 78,
+        "phase": "merged"
+      },
+      {
+        "author": "100latent-lit-pilot-host-f[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-f/01",
+        "head": "ce3035fd2827d94b815d81fa93fd07d817eb1473",
+        "kind": "disjoint",
+        "number": 79,
+        "phase": "merged"
+      },
+      {
+        "author": "100latent-lit-pilot-host-f[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-f/02",
+        "head": "ec3eb2f262dceed0a2fe16b9d0757122b0b16697",
+        "kind": "disjoint",
+        "number": 80,
+        "phase": "merged"
+      },
+      {
+        "author": "100latent-lit-pilot-host-a[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-a/03",
+        "head": "771a71eca7167cae4ad681ec4f42f5dc04a0e6c3",
+        "kind": "disjoint",
+        "number": 81,
+        "phase": "merged"
+      },
+      {
+        "author": "100latent-lit-pilot-host-e[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-e/03",
+        "head": "41ef55476526a6e41f55d80f025a5503e47b6d9c",
+        "kind": "disjoint",
+        "number": 82,
+        "phase": "merged"
+      },
+      {
+        "author": "100latent-lit-pilot-host-a[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-a/05",
+        "head": "7ab9366b0d7f345d038de87b98a82ababbf34eb3",
+        "kind": "disjoint",
+        "number": 83,
+        "phase": "merged"
+      },
+      {
+        "author": "100latent-lit-pilot-host-e[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-e/04",
+        "head": "17241b15f6b41d661509125c6c3c111ef74f33b0",
+        "kind": "disjoint",
+        "number": 84,
+        "phase": "merged"
+      },
+      {
+        "author": "100latent-lit-pilot-host-a[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-a/04",
+        "head": "0c89778de48ca02ec8babd395fcc154fbae13411",
+        "kind": "disjoint",
+        "number": 85,
+        "phase": "merged"
+      },
+      {
+        "author": "100latent-lit-pilot-host-f[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-f/03",
+        "head": "cc3d6330e68c278a31d366acf73637d2e894179a",
+        "kind": "disjoint",
+        "number": 86,
+        "phase": "merged"
+      },
+      {
+        "author": "100latent-lit-pilot-host-f[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-f/04",
+        "head": "922269727ce13c93a2e8fb66ffa06c32922d7c3e",
+        "kind": "disjoint",
+        "number": 87,
+        "phase": "merged"
+      },
+      {
+        "author": "100latent-lit-pilot-host-e[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-e/05",
+        "head": "4940046defa330ba233770bb9c46e819fb503309",
+        "kind": "disjoint",
+        "number": 88,
+        "phase": "merged"
+      },
+      {
+        "author": "100latent-lit-pilot-host-f[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-f/05",
+        "head": "6904b11dcde89ce101c8329087c625d44cf01cc4",
+        "kind": "disjoint",
+        "number": 89,
+        "phase": "merged"
+      },
+      {
+        "author": "100latent-lit-pilot-host-a[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-a/06",
+        "head": "11bc1f2e74c7fb917c3ab87c08bb030ec91ad3a3",
+        "kind": "disjoint",
+        "number": 90,
+        "phase": "merged"
+      },
+      {
+        "author": "100latent-lit-pilot-host-e[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-e/06",
+        "head": "c91dd35aa3418b6e97ba0cb64a6bdb33e2bcbfdf",
+        "kind": "disjoint",
+        "number": 91,
+        "phase": "merged"
+      },
+      {
+        "author": "100latent-lit-pilot-host-a[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-a/07",
+        "head": "87a52d206c2407470d47c7850de5b9e3c8e5316a",
+        "kind": "disjoint",
+        "number": 92,
+        "phase": "merged"
+      },
+      {
+        "author": "100latent-lit-pilot-host-e[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-e/07",
+        "head": "46e7da5758b6ba8c46a86090b0c62fbaddb95e04",
+        "kind": "disjoint",
+        "number": 93,
+        "phase": "merged"
+      },
+      {
+        "author": "100latent-lit-pilot-host-a[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-a/08",
+        "head": "3d7d1d11f48c829d8ae8e92db3968e887fb16d9d",
+        "kind": "disjoint",
+        "number": 94,
+        "phase": "merged"
+      },
+      {
+        "author": "100latent-lit-pilot-host-f[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-f/07",
+        "head": "eb84bf2f198ff47ebe4c89472635a51dc6ec4703",
+        "kind": "disjoint",
+        "number": 95,
+        "phase": "merged"
+      },
+      {
+        "author": "100latent-lit-pilot-host-f[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-f/06",
+        "head": "d48044b53c3ffce1879aadf1c62083e78d3fc9d3",
+        "kind": "disjoint",
+        "number": 96,
+        "phase": "merged"
+      },
+      {
+        "author": "100latent-lit-pilot-host-f[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-f/08",
+        "head": "023da0012f952e7fa9899e24c27a8cdcca2132a7",
+        "kind": "disjoint",
+        "number": 97,
+        "phase": "merged"
+      },
+      {
+        "author": "100latent-lit-pilot-host-e[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-e/08",
+        "head": "4df529d7bf6a54dd1bc7ecd50d36ea08b484760d",
+        "kind": "disjoint",
+        "number": 98,
+        "phase": "merged"
+      },
+      {
+        "author": "100latent-lit-pilot-host-e[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-e/09",
+        "head": "9640cb77d96002c88f7deb0660af0672489fdaf0",
+        "kind": "shared",
+        "number": 99,
+        "phase": "merged"
+      },
+      {
+        "author": "100latent-lit-pilot-host-f[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-f/09",
+        "head": "454c0f5c12d12052dca53bdfcad5850963e6ccd9",
+        "kind": "shared",
+        "number": 100,
+        "phase": "held_conflict"
+      },
+      {
+        "author": "100latent-lit-pilot-host-a[bot]",
+        "branch": "agents/app-burst/final-sp9eje54/host-a/09",
+        "head": "e3ecf547373ab501425255a238d9522e34d6c1ec",
+        "kind": "shared",
+        "number": 101,
+        "phase": "held_conflict"
+      }
+    ],
+    "actions": [
+      {
+        "id": 1,
+        "number": 72,
+        "kind": "enqueue",
+        "status": "observed",
+        "entry_id": null,
+        "created": 1794972081.721823
+      },
+      {
+        "id": 2,
+        "number": 73,
+        "kind": "enqueue",
+        "status": "observed",
+        "entry_id": null,
+        "created": 1794972085.33108
+      },
+      {
+        "id": 3,
+        "number": 74,
+        "kind": "enqueue",
+        "status": "observed",
+        "entry_id": null,
+        "created": 1794972089.094413
+      },
+      {
+        "id": 4,
+        "number": 75,
+        "kind": "enqueue",
+        "status": "observed",
+        "entry_id": null,
+        "created": 1794972092.425548
+      },
+      {
+        "id": 5,
+        "number": 76,
+        "kind": "enqueue",
+        "status": "observed",
+        "entry_id": null,
+        "created": 1794972095.964736
+      },
+      {
+        "id": 6,
+        "number": 77,
+        "kind": "enqueue",
+        "status": "observed",
+        "entry_id": null,
+        "created": 1794972099.5978172
+      },
+      {
+        "id": 7,
+        "number": 78,
+        "kind": "enqueue",
+        "status": "observed",
+        "entry_id": null,
+        "created": 1794972103.027842
+      },
+      {
+        "id": 8,
+        "number": 79,
+        "kind": "enqueue",
+        "status": "observed",
+        "entry_id": null,
+        "created": 1794972107.200364
+      },
+      {
+        "id": 9,
+        "number": 80,
+        "kind": "enqueue",
+        "status": "observed",
+        "entry_id": null,
+        "created": 1794972110.906574
+      },
+      {
+        "id": 10,
+        "number": 81,
+        "kind": "enqueue",
+        "status": "observed",
+        "entry_id": null,
+        "created": 1794972114.672513
+      },
+      {
+        "id": 11,
+        "number": 82,
+        "kind": "enqueue",
+        "status": "observed",
+        "entry_id": null,
+        "created": 1794972119.164861
+      },
+      {
+        "id": 12,
+        "number": 83,
+        "kind": "enqueue",
+        "status": "observed",
+        "entry_id": null,
+        "created": 1794972122.63303
+      },
+      {
+        "id": 13,
+        "number": 84,
+        "kind": "enqueue",
+        "status": "observed",
+        "entry_id": null,
+        "created": 1794972126.4193752
+      },
+      {
+        "id": 14,
+        "number": 85,
+        "kind": "enqueue",
+        "status": "observed",
+        "entry_id": null,
+        "created": 1794972130.0931048
+      },
+      {
+        "id": 15,
+        "number": 86,
+        "kind": "enqueue",
+        "status": "observed",
+        "entry_id": null,
+        "created": 1794972134.252063
+      },
+      {
+        "id": 16,
+        "number": 87,
+        "kind": "enqueue",
+        "status": "observed",
+        "entry_id": null,
+        "created": 1794972137.737909
+      },
+      {
+        "id": 17,
+        "number": 88,
+        "kind": "enqueue",
+        "status": "observed",
+        "entry_id": null,
+        "created": 1794972141.1296608
+      },
+      {
+        "id": 18,
+        "number": 89,
+        "kind": "enqueue",
+        "status": "observed",
+        "entry_id": null,
+        "created": 1794972144.756014
+      },
+      {
+        "id": 19,
+        "number": 90,
+        "kind": "enqueue",
+        "status": "observed",
+        "entry_id": null,
+        "created": 1794972148.42335
+      },
+      {
+        "id": 20,
+        "number": 91,
+        "kind": "enqueue",
+        "status": "observed",
+        "entry_id": null,
+        "created": 1794972153.212
+      },
+      {
+        "id": 21,
+        "number": 92,
+        "kind": "enqueue",
+        "status": "observed",
+        "entry_id": null,
+        "created": 1794972156.6473868
+      },
+      {
+        "id": 22,
+        "number": 93,
+        "kind": "enqueue",
+        "status": "observed",
+        "entry_id": null,
+        "created": 1794972160.147558
+      },
+      {
+        "id": 23,
+        "number": 94,
+        "kind": "enqueue",
+        "status": "observed",
+        "entry_id": null,
+        "created": 1794972163.7076118
+      },
+      {
+        "id": 24,
+        "number": 95,
+        "kind": "enqueue",
+        "status": "observed",
+        "entry_id": null,
+        "created": 1794972167.167286
+      },
+      {
+        "id": 25,
+        "number": 96,
+        "kind": "enqueue",
+        "status": "observed",
+        "entry_id": null,
+        "created": 1794972170.7380831
+      },
+      {
+        "id": 26,
+        "number": 97,
+        "kind": "enqueue",
+        "status": "observed",
+        "entry_id": null,
+        "created": 1794972174.304193
+      },
+      {
+        "id": 27,
+        "number": 98,
+        "kind": "enqueue",
+        "status": "observed",
+        "entry_id": null,
+        "created": 1794972177.762465
+      },
+      {
+        "id": 28,
+        "number": 99,
+        "kind": "enqueue",
+        "status": "observed",
+        "entry_id": null,
+        "created": 1794972181.302006
+      },
+      {
+        "id": 29,
+        "number": 100,
+        "kind": "enqueue",
+        "status": "observed",
+        "entry_id": null,
+        "created": 1794972184.677985
+      },
+      {
+        "id": 30,
+        "number": 101,
+        "kind": "enqueue",
+        "status": "observed",
+        "entry_id": null,
+        "created": 1794972188.585929
+      }
+    ]
+  },
+  "native_conflict_proofs": [
+    {
+      "event": "held_conflict",
+      "number": 101,
+      "main": "f480055e5cbcaa13070363e02676d52d5f97ade9",
+      "head": "e3ecf547373ab501425255a238d9522e34d6c1ec",
+      "git_conflict_sha256": "a135adabcc7cd3100407e3c8abdff9ee36565c7ee9373f853b063d63ffd2470a"
+    }
+  ],
+  "controlled_crash": {
+    "signal_exit": -9,
+    "main": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+    "queued": 30
+  },
+  "writer_revocation": {
+    "app_id": 5803531,
+    "old_token_http": 401,
+    "coordinator_exit": 1,
+    "observer_did_not_replace_writer": true
+  },
+  "freeze_proofs": [
+    {
+      "host": "host-a",
+      "app_id": 5803531,
+      "branch": "agents/app-burst/final-sp9eje54/host-a/00",
+      "head": "d6663b9883ff683fede1a838a1f8ccc04a78f7f4",
+      "probe": "da163d25d4582d77efc3302a4cb6dd94d4e97892",
+      "denied": true,
+      "rejection": "remote: error: GH013: Repository rule violations found for refs/heads/agents/app-burst/final-sp9eje54/host-a/00.        \nremote: Review all repository rules at https://github.com/100latent/lit-merge-queue-sandbox/rules?ref=refs%2Fheads%2Fagents%2Fapp-burst%2Ffinal-sp9eje54%2Fai-01%2F00        \nremote: \nremote: - Cannot update this protected ref.        \nremote: \nerror: failed to push some refs to 'https://github.com/100latent/lit-merge-queue-sandbox.git'\n"
+    },
+    {
+      "host": "host-e",
+      "app_id": 5803532,
+      "branch": "agents/app-burst/final-sp9eje54/host-e/00",
+      "head": "2c95ad2cb3122c822a8456e95f59cc5e86245523",
+      "probe": "bd8f902c39b53878fe84b85b8dad75588f2d3bc7",
+      "denied": true,
+      "rejection": "remote: error: GH013: Repository rule violations found for refs/heads/agents/app-burst/final-sp9eje54/host-e/00.        \nremote: Review all repository rules at https://github.com/100latent/lit-merge-queue-sandbox/rules?ref=refs%2Fheads%2Fagents%2Fapp-burst%2Ffinal-sp9eje54%2Fai-06%2F00        \nremote: \nremote: - Cannot update this protected ref.        \nremote: \nerror: failed to push some refs to 'https://github.com/100latent/lit-merge-queue-sandbox.git'\n"
+    },
+    {
+      "host": "host-f",
+      "app_id": 5803533,
+      "branch": "agents/app-burst/final-sp9eje54/host-f/00",
+      "head": "cca49580390349e4a9353b83053de1a617e40454",
+      "probe": "c83aaa68d145cce8642d02ea1a4cbc4f4387cd5a",
+      "denied": true,
+      "rejection": "remote: error: GH013: Repository rule violations found for refs/heads/agents/app-burst/final-sp9eje54/host-f/00.        \nremote: Review all repository rules at https://github.com/100latent/lit-merge-queue-sandbox/rules?ref=refs%2Fheads%2Fagents%2Fapp-burst%2Ffinal-sp9eje54%2Fai-07%2F00        \nremote: \nremote: - Cannot update this protected ref.        \nremote: \nerror: failed to push some refs to 'https://github.com/100latent/lit-merge-queue-sandbox.git'\n"
+    }
+  ],
+  "proposals": [
+    {
+      "event": "published",
+      "host": "host-a",
+      "app": "100latent-lit-pilot-host-a",
+      "base": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+      "index": 1,
+      "head": "9d5a0664cfcad46f61df8b97809637dc6afdc72a",
+      "branch": "agents/app-burst/final-sp9eje54/host-a/01",
+      "path": "qualification/burst/final-sp9eje54/host-a-01.txt",
+      "content": "run=final-sp9eje54\nhost=host-a\nattempt=01\nbase=1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6\n",
+      "kind": "disjoint",
+      "pr": 72,
+      "node_id": "PR_kwDOVxXMNs8AAAABQAdfew",
+      "author": "100latent-lit-pilot-host-a[bot]",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/72",
+      "started_at": 1794971507.008103,
+      "finished_at": 1794971510.2970543
+    },
+    {
+      "event": "published",
+      "host": "host-a",
+      "app": "100latent-lit-pilot-host-a",
+      "base": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+      "index": 2,
+      "head": "fd56aa31b3af2907b80d8971687da916e04774dd",
+      "branch": "agents/app-burst/final-sp9eje54/host-a/02",
+      "path": "qualification/burst/final-sp9eje54/host-a-02.txt",
+      "content": "run=final-sp9eje54\nhost=host-a\nattempt=02\nbase=1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6\n",
+      "kind": "disjoint",
+      "pr": 78,
+      "node_id": "PR_kwDOVxXMNs8AAAABQAdf8A",
+      "author": "100latent-lit-pilot-host-a[bot]",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/78",
+      "started_at": 1794971507.0086353,
+      "finished_at": 1794971510.9438407
+    },
+    {
+      "event": "published",
+      "host": "host-a",
+      "app": "100latent-lit-pilot-host-a",
+      "base": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+      "index": 0,
+      "head": "d6663b9883ff683fede1a838a1f8ccc04a78f7f4",
+      "branch": "agents/app-burst/final-sp9eje54/host-a/00",
+      "path": "qualification/burst/final-sp9eje54/host-a-00.txt",
+      "content": "run=final-sp9eje54\nhost=host-a\nattempt=00\nbase=1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6\n",
+      "kind": "disjoint",
+      "pr": 74,
+      "node_id": "PR_kwDOVxXMNs8AAAABQAdfrQ",
+      "author": "100latent-lit-pilot-host-a[bot]",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/74",
+      "started_at": 1794971507.0077753,
+      "finished_at": 1794971510.9671412
+    },
+    {
+      "event": "published",
+      "host": "host-a",
+      "app": "100latent-lit-pilot-host-a",
+      "base": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+      "index": 3,
+      "head": "771a71eca7167cae4ad681ec4f42f5dc04a0e6c3",
+      "branch": "agents/app-burst/final-sp9eje54/host-a/03",
+      "path": "qualification/burst/final-sp9eje54/host-a-03.txt",
+      "content": "run=final-sp9eje54\nhost=host-a\nattempt=03\nbase=1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6\n",
+      "kind": "disjoint",
+      "pr": 81,
+      "node_id": "PR_kwDOVxXMNs8AAAABQAdiZA",
+      "author": "100latent-lit-pilot-host-a[bot]",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/81",
+      "started_at": 1794971510.2972007,
+      "finished_at": 1794971514.4362032
+    },
+    {
+      "event": "published",
+      "host": "host-a",
+      "app": "100latent-lit-pilot-host-a",
+      "base": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+      "index": 5,
+      "head": "7ab9366b0d7f345d038de87b98a82ababbf34eb3",
+      "branch": "agents/app-burst/final-sp9eje54/host-a/05",
+      "path": "qualification/burst/final-sp9eje54/host-a-05.txt",
+      "content": "run=final-sp9eje54\nhost=host-a\nattempt=05\nbase=1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6\n",
+      "kind": "disjoint",
+      "pr": 83,
+      "node_id": "PR_kwDOVxXMNs8AAAABQAdirg",
+      "author": "100latent-lit-pilot-host-a[bot]",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/83",
+      "started_at": 1794971510.9672608,
+      "finished_at": 1794971514.7709196
+    },
+    {
+      "event": "published",
+      "host": "host-a",
+      "app": "100latent-lit-pilot-host-a",
+      "base": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+      "index": 4,
+      "head": "0c89778de48ca02ec8babd395fcc154fbae13411",
+      "branch": "agents/app-burst/final-sp9eje54/host-a/04",
+      "path": "qualification/burst/final-sp9eje54/host-a-04.txt",
+      "content": "run=final-sp9eje54\nhost=host-a\nattempt=04\nbase=1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6\n",
+      "kind": "disjoint",
+      "pr": 85,
+      "node_id": "PR_kwDOVxXMNs8AAAABQAdi7w",
+      "author": "100latent-lit-pilot-host-a[bot]",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/85",
+      "started_at": 1794971510.9440117,
+      "finished_at": 1794971514.9433732
+    },
+    {
+      "event": "published",
+      "host": "host-a",
+      "app": "100latent-lit-pilot-host-a",
+      "base": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+      "index": 6,
+      "head": "11bc1f2e74c7fb917c3ab87c08bb030ec91ad3a3",
+      "branch": "agents/app-burst/final-sp9eje54/host-a/06",
+      "path": "qualification/burst/final-sp9eje54/host-a-06.txt",
+      "content": "run=final-sp9eje54\nhost=host-a\nattempt=06\nbase=1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6\n",
+      "kind": "disjoint",
+      "pr": 90,
+      "node_id": "PR_kwDOVxXMNs8AAAABQAdlqA",
+      "author": "100latent-lit-pilot-host-a[bot]",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/90",
+      "started_at": 1794971514.4364522,
+      "finished_at": 1794971518.9010055
+    },
+    {
+      "event": "published",
+      "host": "host-a",
+      "app": "100latent-lit-pilot-host-a",
+      "base": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+      "index": 7,
+      "head": "87a52d206c2407470d47c7850de5b9e3c8e5316a",
+      "branch": "agents/app-burst/final-sp9eje54/host-a/07",
+      "path": "qualification/burst/final-sp9eje54/host-a-07.txt",
+      "content": "run=final-sp9eje54\nhost=host-a\nattempt=07\nbase=1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6\n",
+      "kind": "disjoint",
+      "pr": 92,
+      "node_id": "PR_kwDOVxXMNs8AAAABQAdlvQ",
+      "author": "100latent-lit-pilot-host-a[bot]",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/92",
+      "started_at": 1794971514.771082,
+      "finished_at": 1794971519.030376
+    },
+    {
+      "event": "published",
+      "host": "host-a",
+      "app": "100latent-lit-pilot-host-a",
+      "base": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+      "index": 8,
+      "head": "3d7d1d11f48c829d8ae8e92db3968e887fb16d9d",
+      "branch": "agents/app-burst/final-sp9eje54/host-a/08",
+      "path": "qualification/burst/final-sp9eje54/host-a-08.txt",
+      "content": "run=final-sp9eje54\nhost=host-a\nattempt=08\nbase=1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6\n",
+      "kind": "disjoint",
+      "pr": 94,
+      "node_id": "PR_kwDOVxXMNs8AAAABQAdl2A",
+      "author": "100latent-lit-pilot-host-a[bot]",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/94",
+      "started_at": 1794971514.943537,
+      "finished_at": 1794971519.2220414
+    },
+    {
+      "event": "published",
+      "host": "host-a",
+      "app": "100latent-lit-pilot-host-a",
+      "base": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+      "index": 9,
+      "head": "e3ecf547373ab501425255a238d9522e34d6c1ec",
+      "branch": "agents/app-burst/final-sp9eje54/host-a/09",
+      "path": "qualification/burst/final-sp9eje54/shared.txt",
+      "content": "run=final-sp9eje54\nhost=host-a\nattempt=09\nbase=1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6\n",
+      "kind": "shared",
+      "pr": 101,
+      "node_id": "PR_kwDOVxXMNs8AAAABQAdocw",
+      "author": "100latent-lit-pilot-host-a[bot]",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/101",
+      "started_at": 1794971518.9010904,
+      "finished_at": 1794971523.195247
+    },
+    {
+      "event": "published",
+      "host": "host-e",
+      "app": "100latent-lit-pilot-host-e",
+      "base": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+      "index": 2,
+      "head": "5e7a794ce78b29cc3bb14936745318fdadff98ac",
+      "branch": "agents/app-burst/final-sp9eje54/host-e/02",
+      "path": "qualification/burst/final-sp9eje54/host-e-02.txt",
+      "content": "run=final-sp9eje54\nhost=host-e\nattempt=02\nbase=1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6\n",
+      "kind": "disjoint",
+      "pr": 73,
+      "node_id": "PR_kwDOVxXMNs8AAAABQAdfnA",
+      "author": "100latent-lit-pilot-host-e[bot]",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/73",
+      "started_at": 1794971507.0101924,
+      "finished_at": 1794971510.6832619
+    },
+    {
+      "event": "published",
+      "host": "host-e",
+      "app": "100latent-lit-pilot-host-e",
+      "base": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+      "index": 0,
+      "head": "2c95ad2cb3122c822a8456e95f59cc5e86245523",
+      "branch": "agents/app-burst/final-sp9eje54/host-e/00",
+      "path": "qualification/burst/final-sp9eje54/host-e-00.txt",
+      "content": "run=final-sp9eje54\nhost=host-e\nattempt=00\nbase=1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6\n",
+      "kind": "disjoint",
+      "pr": 75,
+      "node_id": "PR_kwDOVxXMNs8AAAABQAdfwA",
+      "author": "100latent-lit-pilot-host-e[bot]",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/75",
+      "started_at": 1794971507.0089169,
+      "finished_at": 1794971510.9308546
+    },
+    {
+      "event": "published",
+      "host": "host-e",
+      "app": "100latent-lit-pilot-host-e",
+      "base": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+      "index": 1,
+      "head": "88100599b4490f3bdcb3af71f89f132f7b724473",
+      "branch": "agents/app-burst/final-sp9eje54/host-e/01",
+      "path": "qualification/burst/final-sp9eje54/host-e-01.txt",
+      "content": "run=final-sp9eje54\nhost=host-e\nattempt=01\nbase=1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6\n",
+      "kind": "disjoint",
+      "pr": 76,
+      "node_id": "PR_kwDOVxXMNs8AAAABQAdfvg",
+      "author": "100latent-lit-pilot-host-e[bot]",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/76",
+      "started_at": 1794971507.0097115,
+      "finished_at": 1794971511.3324206
+    },
+    {
+      "event": "published",
+      "host": "host-e",
+      "app": "100latent-lit-pilot-host-e",
+      "base": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+      "index": 3,
+      "head": "41ef55476526a6e41f55d80f025a5503e47b6d9c",
+      "branch": "agents/app-burst/final-sp9eje54/host-e/03",
+      "path": "qualification/burst/final-sp9eje54/host-e-03.txt",
+      "content": "run=final-sp9eje54\nhost=host-e\nattempt=03\nbase=1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6\n",
+      "kind": "disjoint",
+      "pr": 82,
+      "node_id": "PR_kwDOVxXMNs8AAAABQAdicg",
+      "author": "100latent-lit-pilot-host-e[bot]",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/82",
+      "started_at": 1794971510.6833143,
+      "finished_at": 1794971514.487647
+    },
+    {
+      "event": "published",
+      "host": "host-e",
+      "app": "100latent-lit-pilot-host-e",
+      "base": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+      "index": 4,
+      "head": "17241b15f6b41d661509125c6c3c111ef74f33b0",
+      "branch": "agents/app-burst/final-sp9eje54/host-e/04",
+      "path": "qualification/burst/final-sp9eje54/host-e-04.txt",
+      "content": "run=final-sp9eje54\nhost=host-e\nattempt=04\nbase=1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6\n",
+      "kind": "disjoint",
+      "pr": 84,
+      "node_id": "PR_kwDOVxXMNs8AAAABQAdiuQ",
+      "author": "100latent-lit-pilot-host-e[bot]",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/84",
+      "started_at": 1794971510.930944,
+      "finished_at": 1794971514.8488724
+    },
+    {
+      "event": "published",
+      "host": "host-e",
+      "app": "100latent-lit-pilot-host-e",
+      "base": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+      "index": 5,
+      "head": "4940046defa330ba233770bb9c46e819fb503309",
+      "branch": "agents/app-burst/final-sp9eje54/host-e/05",
+      "path": "qualification/burst/final-sp9eje54/host-e-05.txt",
+      "content": "run=final-sp9eje54\nhost=host-e\nattempt=05\nbase=1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6\n",
+      "kind": "disjoint",
+      "pr": 88,
+      "node_id": "PR_kwDOVxXMNs8AAAABQAdjLQ",
+      "author": "100latent-lit-pilot-host-e[bot]",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/88",
+      "started_at": 1794971511.3324995,
+      "finished_at": 1794971515.3470955
+    },
+    {
+      "event": "published",
+      "host": "host-e",
+      "app": "100latent-lit-pilot-host-e",
+      "base": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+      "index": 6,
+      "head": "c91dd35aa3418b6e97ba0cb64a6bdb33e2bcbfdf",
+      "branch": "agents/app-burst/final-sp9eje54/host-e/06",
+      "path": "qualification/burst/final-sp9eje54/host-e-06.txt",
+      "content": "run=final-sp9eje54\nhost=host-e\nattempt=06\nbase=1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6\n",
+      "kind": "disjoint",
+      "pr": 91,
+      "node_id": "PR_kwDOVxXMNs8AAAABQAdlsQ",
+      "author": "100latent-lit-pilot-host-e[bot]",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/91",
+      "started_at": 1794971514.4877214,
+      "finished_at": 1794971519.1570458
+    },
+    {
+      "event": "published",
+      "host": "host-e",
+      "app": "100latent-lit-pilot-host-e",
+      "base": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+      "index": 7,
+      "head": "46e7da5758b6ba8c46a86090b0c62fbaddb95e04",
+      "branch": "agents/app-burst/final-sp9eje54/host-e/07",
+      "path": "qualification/burst/final-sp9eje54/host-e-07.txt",
+      "content": "run=final-sp9eje54\nhost=host-e\nattempt=07\nbase=1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6\n",
+      "kind": "disjoint",
+      "pr": 93,
+      "node_id": "PR_kwDOVxXMNs8AAAABQAdlzg",
+      "author": "100latent-lit-pilot-host-e[bot]",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/93",
+      "started_at": 1794971514.848921,
+      "finished_at": 1794971519.2645469
+    },
+    {
+      "event": "published",
+      "host": "host-e",
+      "app": "100latent-lit-pilot-host-e",
+      "base": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+      "index": 8,
+      "head": "4df529d7bf6a54dd1bc7ecd50d36ea08b484760d",
+      "branch": "agents/app-burst/final-sp9eje54/host-e/08",
+      "path": "qualification/burst/final-sp9eje54/host-e-08.txt",
+      "content": "run=final-sp9eje54\nhost=host-e\nattempt=08\nbase=1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6\n",
+      "kind": "disjoint",
+      "pr": 98,
+      "node_id": "PR_kwDOVxXMNs8AAAABQAdmPQ",
+      "author": "100latent-lit-pilot-host-e[bot]",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/98",
+      "started_at": 1794971515.347173,
+      "finished_at": 1794971519.9736116
+    },
+    {
+      "event": "published",
+      "host": "host-e",
+      "app": "100latent-lit-pilot-host-e",
+      "base": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+      "index": 9,
+      "head": "9640cb77d96002c88f7deb0660af0672489fdaf0",
+      "branch": "agents/app-burst/final-sp9eje54/host-e/09",
+      "path": "qualification/burst/final-sp9eje54/shared.txt",
+      "content": "run=final-sp9eje54\nhost=host-e\nattempt=09\nbase=1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6\n",
+      "kind": "shared",
+      "pr": 99,
+      "node_id": "PR_kwDOVxXMNs8AAAABQAdoWQ",
+      "author": "100latent-lit-pilot-host-e[bot]",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/99",
+      "started_at": 1794971519.15712,
+      "finished_at": 1794971523.0254035
+    },
+    {
+      "event": "published",
+      "host": "host-f",
+      "app": "100latent-lit-pilot-host-f",
+      "base": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+      "index": 0,
+      "head": "cca49580390349e4a9353b83053de1a617e40454",
+      "branch": "agents/app-burst/final-sp9eje54/host-f/00",
+      "path": "qualification/burst/final-sp9eje54/host-f-00.txt",
+      "content": "run=final-sp9eje54\nhost=host-f\nattempt=00\nbase=1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6\n",
+      "kind": "disjoint",
+      "pr": 77,
+      "node_id": "PR_kwDOVxXMNs8AAAABQAdf4Q",
+      "author": "100latent-lit-pilot-host-f[bot]",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/77",
+      "started_at": 1794971507.0087113,
+      "finished_at": 1794971510.9305553
+    },
+    {
+      "event": "published",
+      "host": "host-f",
+      "app": "100latent-lit-pilot-host-f",
+      "base": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+      "index": 2,
+      "head": "ec3eb2f262dceed0a2fe16b9d0757122b0b16697",
+      "branch": "agents/app-burst/final-sp9eje54/host-f/02",
+      "path": "qualification/burst/final-sp9eje54/host-f-02.txt",
+      "content": "run=final-sp9eje54\nhost=host-f\nattempt=02\nbase=1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6\n",
+      "kind": "disjoint",
+      "pr": 80,
+      "node_id": "PR_kwDOVxXMNs8AAAABQAdgGQ",
+      "author": "100latent-lit-pilot-host-f[bot]",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/80",
+      "started_at": 1794971507.0095544,
+      "finished_at": 1794971511.231136
+    },
+    {
+      "event": "published",
+      "host": "host-f",
+      "app": "100latent-lit-pilot-host-f",
+      "base": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+      "index": 1,
+      "head": "ce3035fd2827d94b815d81fa93fd07d817eb1473",
+      "branch": "agents/app-burst/final-sp9eje54/host-f/01",
+      "path": "qualification/burst/final-sp9eje54/host-f-01.txt",
+      "content": "run=final-sp9eje54\nhost=host-f\nattempt=01\nbase=1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6\n",
+      "kind": "disjoint",
+      "pr": 79,
+      "node_id": "PR_kwDOVxXMNs8AAAABQAdf-w",
+      "author": "100latent-lit-pilot-host-f[bot]",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/79",
+      "started_at": 1794971507.0089293,
+      "finished_at": 1794971511.372089
+    },
+    {
+      "event": "published",
+      "host": "host-f",
+      "app": "100latent-lit-pilot-host-f",
+      "base": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+      "index": 4,
+      "head": "922269727ce13c93a2e8fb66ffa06c32922d7c3e",
+      "branch": "agents/app-burst/final-sp9eje54/host-f/04",
+      "path": "qualification/burst/final-sp9eje54/host-f-04.txt",
+      "content": "run=final-sp9eje54\nhost=host-f\nattempt=04\nbase=1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6\n",
+      "kind": "disjoint",
+      "pr": 87,
+      "node_id": "PR_kwDOVxXMNs8AAAABQAdi-g",
+      "author": "100latent-lit-pilot-host-f[bot]",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/87",
+      "started_at": 1794971511.231206,
+      "finished_at": 1794971515.042101
+    },
+    {
+      "event": "published",
+      "host": "host-f",
+      "app": "100latent-lit-pilot-host-f",
+      "base": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+      "index": 3,
+      "head": "cc3d6330e68c278a31d366acf73637d2e894179a",
+      "branch": "agents/app-burst/final-sp9eje54/host-f/03",
+      "path": "qualification/burst/final-sp9eje54/host-f-03.txt",
+      "content": "run=final-sp9eje54\nhost=host-f\nattempt=03\nbase=1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6\n",
+      "kind": "disjoint",
+      "pr": 86,
+      "node_id": "PR_kwDOVxXMNs8AAAABQAdi9w",
+      "author": "100latent-lit-pilot-host-f[bot]",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/86",
+      "started_at": 1794971510.9306386,
+      "finished_at": 1794971515.0842297
+    },
+    {
+      "event": "published",
+      "host": "host-f",
+      "app": "100latent-lit-pilot-host-f",
+      "base": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+      "index": 5,
+      "head": "6904b11dcde89ce101c8329087c625d44cf01cc4",
+      "branch": "agents/app-burst/final-sp9eje54/host-f/05",
+      "path": "qualification/burst/final-sp9eje54/host-f-05.txt",
+      "content": "run=final-sp9eje54\nhost=host-f\nattempt=05\nbase=1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6\n",
+      "kind": "disjoint",
+      "pr": 89,
+      "node_id": "PR_kwDOVxXMNs8AAAABQAdjOQ",
+      "author": "100latent-lit-pilot-host-f[bot]",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/89",
+      "started_at": 1794971511.3721628,
+      "finished_at": 1794971515.5056171
+    },
+    {
+      "event": "published",
+      "host": "host-f",
+      "app": "100latent-lit-pilot-host-f",
+      "base": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+      "index": 7,
+      "head": "eb84bf2f198ff47ebe4c89472635a51dc6ec4703",
+      "branch": "agents/app-burst/final-sp9eje54/host-f/07",
+      "path": "qualification/burst/final-sp9eje54/host-f-07.txt",
+      "content": "run=final-sp9eje54\nhost=host-f\nattempt=07\nbase=1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6\n",
+      "kind": "disjoint",
+      "pr": 95,
+      "node_id": "PR_kwDOVxXMNs8AAAABQAdl_w",
+      "author": "100latent-lit-pilot-host-f[bot]",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/95",
+      "started_at": 1794971515.0843,
+      "finished_at": 1794971519.4116096
+    },
+    {
+      "event": "published",
+      "host": "host-f",
+      "app": "100latent-lit-pilot-host-f",
+      "base": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+      "index": 6,
+      "head": "d48044b53c3ffce1879aadf1c62083e78d3fc9d3",
+      "branch": "agents/app-burst/final-sp9eje54/host-f/06",
+      "path": "qualification/burst/final-sp9eje54/host-f-06.txt",
+      "content": "run=final-sp9eje54\nhost=host-f\nattempt=06\nbase=1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6\n",
+      "kind": "disjoint",
+      "pr": 96,
+      "node_id": "PR_kwDOVxXMNs8AAAABQAdmAw",
+      "author": "100latent-lit-pilot-host-f[bot]",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/96",
+      "started_at": 1794971515.042146,
+      "finished_at": 1794971519.55962
+    },
+    {
+      "event": "published",
+      "host": "host-f",
+      "app": "100latent-lit-pilot-host-f",
+      "base": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+      "index": 8,
+      "head": "023da0012f952e7fa9899e24c27a8cdcca2132a7",
+      "branch": "agents/app-burst/final-sp9eje54/host-f/08",
+      "path": "qualification/burst/final-sp9eje54/host-f-08.txt",
+      "content": "run=final-sp9eje54\nhost=host-f\nattempt=08\nbase=1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6\n",
+      "kind": "disjoint",
+      "pr": 97,
+      "node_id": "PR_kwDOVxXMNs8AAAABQAdmLA",
+      "author": "100latent-lit-pilot-host-f[bot]",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/97",
+      "started_at": 1794971515.5056956,
+      "finished_at": 1794971519.5759954
+    },
+    {
+      "event": "published",
+      "host": "host-f",
+      "app": "100latent-lit-pilot-host-f",
+      "base": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+      "index": 9,
+      "head": "454c0f5c12d12052dca53bdfcad5850963e6ccd9",
+      "branch": "agents/app-burst/final-sp9eje54/host-f/09",
+      "path": "qualification/burst/final-sp9eje54/shared.txt",
+      "content": "run=final-sp9eje54\nhost=host-f\nattempt=09\nbase=1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6\n",
+      "kind": "shared",
+      "pr": 100,
+      "node_id": "PR_kwDOVxXMNs8AAAABQAdoXw",
+      "author": "100latent-lit-pilot-host-f[bot]",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/100",
+      "started_at": 1794971519.4116783,
+      "finished_at": 1794971523.0332713
+    }
+  ],
+  "merges": [
+    {
+      "run_id": 44229865851,
+      "event": "merge_group",
+      "check_id": 134551974049,
+      "check_head": "612bc8fb5033b287b98dbc54519d8d4f52f643e5",
+      "checkout": "612bc8fb5033b287b98dbc54519d8d4f52f643e5",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44229865851",
+      "started_at": "2026-11-18T03:21:40Z",
+      "finished_at": "2026-11-18T03:26:49Z",
+      "pr": 72,
+      "head": "9d5a0664cfcad46f61df8b97809637dc6afdc72a",
+      "host": "host-a",
+      "author": "100latent-lit-pilot-host-a[bot]",
+      "kind": "disjoint",
+      "merged_sha": "612bc8fb5033b287b98dbc54519d8d4f52f643e5",
+      "pr_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/72"
+    },
+    {
+      "run_id": 44229867731,
+      "event": "merge_group",
+      "check_id": 134551980292,
+      "check_head": "98d06b0d8220d3c10f7bdb1f4422abfe9a2ea685",
+      "checkout": "98d06b0d8220d3c10f7bdb1f4422abfe9a2ea685",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44229867731",
+      "started_at": "2026-11-18T03:21:40Z",
+      "finished_at": "2026-11-18T03:25:32Z",
+      "pr": 73,
+      "head": "5e7a794ce78b29cc3bb14936745318fdadff98ac",
+      "host": "host-e",
+      "author": "100latent-lit-pilot-host-e[bot]",
+      "kind": "disjoint",
+      "merged_sha": "98d06b0d8220d3c10f7bdb1f4422abfe9a2ea685",
+      "pr_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/73"
+    },
+    {
+      "run_id": 44229868875,
+      "event": "merge_group",
+      "check_id": 134551983799,
+      "check_head": "3777b1982ff50ad270a0ca61d87d490f52b4d494",
+      "checkout": "3777b1982ff50ad270a0ca61d87d490f52b4d494",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44229868875",
+      "started_at": "2026-11-18T03:21:41Z",
+      "finished_at": "2026-11-18T03:27:04Z",
+      "pr": 74,
+      "head": "d6663b9883ff683fede1a838a1f8ccc04a78f7f4",
+      "host": "host-a",
+      "author": "100latent-lit-pilot-host-a[bot]",
+      "kind": "disjoint",
+      "merged_sha": "3777b1982ff50ad270a0ca61d87d490f52b4d494",
+      "pr_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/74"
+    },
+    {
+      "run_id": 44229870879,
+      "event": "merge_group",
+      "check_id": 134551990454,
+      "check_head": "aa73878eb874c5e5eb8c5bea27e48432e9a5810a",
+      "checkout": "aa73878eb874c5e5eb8c5bea27e48432e9a5810a",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44229870879",
+      "started_at": "2026-11-18T03:21:42Z",
+      "finished_at": "2026-11-18T03:26:06Z",
+      "pr": 75,
+      "head": "2c95ad2cb3122c822a8456e95f59cc5e86245523",
+      "host": "host-e",
+      "author": "100latent-lit-pilot-host-e[bot]",
+      "kind": "disjoint",
+      "merged_sha": "aa73878eb874c5e5eb8c5bea27e48432e9a5810a",
+      "pr_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/75"
+    },
+    {
+      "run_id": 44229872601,
+      "event": "merge_group",
+      "check_id": 134551995017,
+      "check_head": "cd704eae9341488cc9da66322632cb515890174c",
+      "checkout": "cd704eae9341488cc9da66322632cb515890174c",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44229872601",
+      "started_at": "2026-11-18T03:21:43Z",
+      "finished_at": "2026-11-18T03:26:48Z",
+      "pr": 76,
+      "head": "88100599b4490f3bdcb3af71f89f132f7b724473",
+      "host": "host-e",
+      "author": "100latent-lit-pilot-host-e[bot]",
+      "kind": "disjoint",
+      "merged_sha": "cd704eae9341488cc9da66322632cb515890174c",
+      "pr_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/76"
+    },
+    {
+      "run_id": 44229912528,
+      "event": "merge_group",
+      "check_id": 134552123390,
+      "check_head": "6b58ef869ee8ad8f2e7db965d8592a36e31b81cf",
+      "checkout": "6b58ef869ee8ad8f2e7db965d8592a36e31b81cf",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44229912528",
+      "started_at": "2026-11-18T03:22:02Z",
+      "finished_at": "2026-11-18T03:27:11Z",
+      "pr": 77,
+      "head": "cca49580390349e4a9353b83053de1a617e40454",
+      "host": "host-f",
+      "author": "100latent-lit-pilot-host-f[bot]",
+      "kind": "disjoint",
+      "merged_sha": "6b58ef869ee8ad8f2e7db965d8592a36e31b81cf",
+      "pr_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/77"
+    },
+    {
+      "run_id": 44229915694,
+      "event": "merge_group",
+      "check_id": 134552133366,
+      "check_head": "a18ef9f889be2dd6e063e89c81124aea2f898105",
+      "checkout": "a18ef9f889be2dd6e063e89c81124aea2f898105",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44229915694",
+      "started_at": "2026-11-18T03:22:03Z",
+      "finished_at": "2026-11-18T03:25:42Z",
+      "pr": 78,
+      "head": "fd56aa31b3af2907b80d8971687da916e04774dd",
+      "host": "host-a",
+      "author": "100latent-lit-pilot-host-a[bot]",
+      "kind": "disjoint",
+      "merged_sha": "a18ef9f889be2dd6e063e89c81124aea2f898105",
+      "pr_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/78"
+    },
+    {
+      "run_id": 44229916662,
+      "event": "merge_group",
+      "check_id": 134552136519,
+      "check_head": "40f0499629646b3c2f1b638a66982e79ef3ecf5a",
+      "checkout": "40f0499629646b3c2f1b638a66982e79ef3ecf5a",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44229916662",
+      "started_at": "2026-11-18T03:22:04Z",
+      "finished_at": "2026-11-18T03:26:10Z",
+      "pr": 79,
+      "head": "ce3035fd2827d94b815d81fa93fd07d817eb1473",
+      "host": "host-f",
+      "author": "100latent-lit-pilot-host-f[bot]",
+      "kind": "disjoint",
+      "merged_sha": "40f0499629646b3c2f1b638a66982e79ef3ecf5a",
+      "pr_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/79"
+    },
+    {
+      "run_id": 44229917934,
+      "event": "merge_group",
+      "check_id": 134552140080,
+      "check_head": "90b5b5f4c37ce7baad71d5bd2ec1b95e875550af",
+      "checkout": "90b5b5f4c37ce7baad71d5bd2ec1b95e875550af",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44229917934",
+      "started_at": "2026-11-18T03:22:05Z",
+      "finished_at": "2026-11-18T03:27:08Z",
+      "pr": 80,
+      "head": "ec3eb2f262dceed0a2fe16b9d0757122b0b16697",
+      "host": "host-f",
+      "author": "100latent-lit-pilot-host-f[bot]",
+      "kind": "disjoint",
+      "merged_sha": "90b5b5f4c37ce7baad71d5bd2ec1b95e875550af",
+      "pr_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/80"
+    },
+    {
+      "run_id": 44229919684,
+      "event": "merge_group",
+      "check_id": 134552145475,
+      "check_head": "6bada6c4125c836b55b927fdbe9ec43ebf660938",
+      "checkout": "6bada6c4125c836b55b927fdbe9ec43ebf660938",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44229919684",
+      "started_at": "2026-11-18T03:22:05Z",
+      "finished_at": "2026-11-18T03:26:04Z",
+      "pr": 81,
+      "head": "771a71eca7167cae4ad681ec4f42f5dc04a0e6c3",
+      "host": "host-a",
+      "author": "100latent-lit-pilot-host-a[bot]",
+      "kind": "disjoint",
+      "merged_sha": "6bada6c4125c836b55b927fdbe9ec43ebf660938",
+      "pr_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/81"
+    },
+    {
+      "run_id": 44229958410,
+      "event": "merge_group",
+      "check_id": 134552271050,
+      "check_head": "b669c423346c16e159f16349e0a4c7f5a99e3d70",
+      "checkout": "b669c423346c16e159f16349e0a4c7f5a99e3d70",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44229958410",
+      "started_at": "2026-11-18T03:22:25Z",
+      "finished_at": "2026-11-18T03:27:31Z",
+      "pr": 82,
+      "head": "41ef55476526a6e41f55d80f025a5503e47b6d9c",
+      "host": "host-e",
+      "author": "100latent-lit-pilot-host-e[bot]",
+      "kind": "disjoint",
+      "merged_sha": "b669c423346c16e159f16349e0a4c7f5a99e3d70",
+      "pr_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/82"
+    },
+    {
+      "run_id": 44229959525,
+      "event": "merge_group",
+      "check_id": 134552275100,
+      "check_head": "9e16b0a94b12b9716bb47c8176423e9edecea4ed",
+      "checkout": "9e16b0a94b12b9716bb47c8176423e9edecea4ed",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44229959525",
+      "started_at": "2026-11-18T03:22:25Z",
+      "finished_at": "2026-11-18T03:26:28Z",
+      "pr": 83,
+      "head": "7ab9366b0d7f345d038de87b98a82ababbf34eb3",
+      "host": "host-a",
+      "author": "100latent-lit-pilot-host-a[bot]",
+      "kind": "disjoint",
+      "merged_sha": "9e16b0a94b12b9716bb47c8176423e9edecea4ed",
+      "pr_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/83"
+    },
+    {
+      "run_id": 44229961591,
+      "event": "merge_group",
+      "check_id": 134552282208,
+      "check_head": "f8644c9fdabf2d503083165562e0781e932c641b",
+      "checkout": "f8644c9fdabf2d503083165562e0781e932c641b",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44229961591",
+      "started_at": "2026-11-18T03:22:26Z",
+      "finished_at": "2026-11-18T03:27:22Z",
+      "pr": 84,
+      "head": "17241b15f6b41d661509125c6c3c111ef74f33b0",
+      "host": "host-e",
+      "author": "100latent-lit-pilot-host-e[bot]",
+      "kind": "disjoint",
+      "merged_sha": "f8644c9fdabf2d503083165562e0781e932c641b",
+      "pr_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/84"
+    },
+    {
+      "run_id": 44229962936,
+      "event": "merge_group",
+      "check_id": 134552287093,
+      "check_head": "7bf9da6f2ac08f67264918d9cc467d2a9bab20eb",
+      "checkout": "7bf9da6f2ac08f67264918d9cc467d2a9bab20eb",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44229962936",
+      "started_at": "2026-11-18T03:22:27Z",
+      "finished_at": "2026-11-18T03:27:51Z",
+      "pr": 85,
+      "head": "0c89778de48ca02ec8babd395fcc154fbae13411",
+      "host": "host-a",
+      "author": "100latent-lit-pilot-host-a[bot]",
+      "kind": "disjoint",
+      "merged_sha": "7bf9da6f2ac08f67264918d9cc467d2a9bab20eb",
+      "pr_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/85"
+    },
+    {
+      "run_id": 44229964376,
+      "event": "merge_group",
+      "check_id": 134552291062,
+      "check_head": "ce3c747923c517d5e82d6a308a7ab1b8ba1546f2",
+      "checkout": "ce3c747923c517d5e82d6a308a7ab1b8ba1546f2",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44229964376",
+      "started_at": "2026-11-18T03:22:28Z",
+      "finished_at": "2026-11-18T03:26:00Z",
+      "pr": 86,
+      "head": "cc3d6330e68c278a31d366acf73637d2e894179a",
+      "host": "host-f",
+      "author": "100latent-lit-pilot-host-f[bot]",
+      "kind": "disjoint",
+      "merged_sha": "ce3c747923c517d5e82d6a308a7ab1b8ba1546f2",
+      "pr_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/86"
+    },
+    {
+      "run_id": 44229966226,
+      "event": "merge_group",
+      "check_id": 134552299340,
+      "check_head": "402c87bbfae4d712f0f8d50e1a3bcf30a22439ff",
+      "checkout": "402c87bbfae4d712f0f8d50e1a3bcf30a22439ff",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44229966226",
+      "started_at": "2026-11-18T03:22:29Z",
+      "finished_at": "2026-11-18T03:27:37Z",
+      "pr": 87,
+      "head": "922269727ce13c93a2e8fb66ffa06c32922d7c3e",
+      "host": "host-f",
+      "author": "100latent-lit-pilot-host-f[bot]",
+      "kind": "disjoint",
+      "merged_sha": "402c87bbfae4d712f0f8d50e1a3bcf30a22439ff",
+      "pr_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/87"
+    },
+    {
+      "run_id": 44229967595,
+      "event": "merge_group",
+      "check_id": 134552301719,
+      "check_head": "f579abf045955889a78f8b79090281e632202dd1",
+      "checkout": "f579abf045955889a78f8b79090281e632202dd1",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44229967595",
+      "started_at": "2026-11-18T03:22:29Z",
+      "finished_at": "2026-11-18T03:27:56Z",
+      "pr": 88,
+      "head": "4940046defa330ba233770bb9c46e819fb503309",
+      "host": "host-e",
+      "author": "100latent-lit-pilot-host-e[bot]",
+      "kind": "disjoint",
+      "merged_sha": "f579abf045955889a78f8b79090281e632202dd1",
+      "pr_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/88"
+    },
+    {
+      "run_id": 44230002877,
+      "event": "merge_group",
+      "check_id": 134552421295,
+      "check_head": "1e647f0afd0da30324df19fe6af575ea488cec3a",
+      "checkout": "1e647f0afd0da30324df19fe6af575ea488cec3a",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44230002877",
+      "started_at": "2026-11-18T03:22:48Z",
+      "finished_at": "2026-11-18T03:27:08Z",
+      "pr": 89,
+      "head": "6904b11dcde89ce101c8329087c625d44cf01cc4",
+      "host": "host-f",
+      "author": "100latent-lit-pilot-host-f[bot]",
+      "kind": "disjoint",
+      "merged_sha": "1e647f0afd0da30324df19fe6af575ea488cec3a",
+      "pr_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/89"
+    },
+    {
+      "run_id": 44230004444,
+      "event": "merge_group",
+      "check_id": 134552425751,
+      "check_head": "d6515d500af9c52174cda8c3674ccaeb4bbe4c39",
+      "checkout": "d6515d500af9c52174cda8c3674ccaeb4bbe4c39",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44230004444",
+      "started_at": "2026-11-18T03:22:49Z",
+      "finished_at": "2026-11-18T03:26:42Z",
+      "pr": 90,
+      "head": "11bc1f2e74c7fb917c3ab87c08bb030ec91ad3a3",
+      "host": "host-a",
+      "author": "100latent-lit-pilot-host-a[bot]",
+      "kind": "disjoint",
+      "merged_sha": "d6515d500af9c52174cda8c3674ccaeb4bbe4c39",
+      "pr_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/90"
+    },
+    {
+      "run_id": 44230006079,
+      "event": "merge_group",
+      "check_id": 134552431205,
+      "check_head": "760108768aa216f255ad65bf8d76ae155b48a13b",
+      "checkout": "760108768aa216f255ad65bf8d76ae155b48a13b",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44230006079",
+      "started_at": "2026-11-18T03:22:50Z",
+      "finished_at": "2026-11-18T03:28:10Z",
+      "pr": 91,
+      "head": "c91dd35aa3418b6e97ba0cb64a6bdb33e2bcbfdf",
+      "host": "host-e",
+      "author": "100latent-lit-pilot-host-e[bot]",
+      "kind": "disjoint",
+      "merged_sha": "760108768aa216f255ad65bf8d76ae155b48a13b",
+      "pr_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/91"
+    },
+    {
+      "run_id": 44230007321,
+      "event": "merge_group",
+      "check_id": 134552435324,
+      "check_head": "dd88aec2c6db057691c38233e047883a1accf83f",
+      "checkout": "dd88aec2c6db057691c38233e047883a1accf83f",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44230007321",
+      "started_at": "2026-11-18T03:22:50Z",
+      "finished_at": "2026-11-18T03:28:07Z",
+      "pr": 92,
+      "head": "87a52d206c2407470d47c7850de5b9e3c8e5316a",
+      "host": "host-a",
+      "author": "100latent-lit-pilot-host-a[bot]",
+      "kind": "disjoint",
+      "merged_sha": "dd88aec2c6db057691c38233e047883a1accf83f",
+      "pr_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/92"
+    },
+    {
+      "run_id": 44230008712,
+      "event": "merge_group",
+      "check_id": 134552440267,
+      "check_head": "674d1352e40821c8ce303bcb4f5c69d7ad5faef5",
+      "checkout": "674d1352e40821c8ce303bcb4f5c69d7ad5faef5",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44230008712",
+      "started_at": "2026-11-18T03:22:51Z",
+      "finished_at": "2026-11-18T03:27:58Z",
+      "pr": 93,
+      "head": "46e7da5758b6ba8c46a86090b0c62fbaddb95e04",
+      "host": "host-e",
+      "author": "100latent-lit-pilot-host-e[bot]",
+      "kind": "disjoint",
+      "merged_sha": "674d1352e40821c8ce303bcb4f5c69d7ad5faef5",
+      "pr_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/93"
+    },
+    {
+      "run_id": 44230010432,
+      "event": "merge_group",
+      "check_id": 134552446409,
+      "check_head": "4a795efb11900931d76dbb5ca5292d259c2ca744",
+      "checkout": "4a795efb11900931d76dbb5ca5292d259c2ca744",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44230010432",
+      "started_at": "2026-11-18T03:22:52Z",
+      "finished_at": "2026-11-18T03:26:29Z",
+      "pr": 94,
+      "head": "3d7d1d11f48c829d8ae8e92db3968e887fb16d9d",
+      "host": "host-a",
+      "author": "100latent-lit-pilot-host-a[bot]",
+      "kind": "disjoint",
+      "merged_sha": "4a795efb11900931d76dbb5ca5292d259c2ca744",
+      "pr_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/94"
+    },
+    {
+      "run_id": 44230043645,
+      "event": "merge_group",
+      "check_id": 134552556116,
+      "check_head": "59f5afc9f7810947126b7c9929236a0f7120ec01",
+      "checkout": "59f5afc9f7810947126b7c9929236a0f7120ec01",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44230043645",
+      "started_at": "2026-11-18T03:23:09Z",
+      "finished_at": "2026-11-18T03:27:15Z",
+      "pr": 95,
+      "head": "eb84bf2f198ff47ebe4c89472635a51dc6ec4703",
+      "host": "host-f",
+      "author": "100latent-lit-pilot-host-f[bot]",
+      "kind": "disjoint",
+      "merged_sha": "59f5afc9f7810947126b7c9929236a0f7120ec01",
+      "pr_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/95"
+    },
+    {
+      "run_id": 44230045305,
+      "event": "merge_group",
+      "check_id": 134552561726,
+      "check_head": "3839823c9660658113bc3aebf0f8fee253fd5f1f",
+      "checkout": "3839823c9660658113bc3aebf0f8fee253fd5f1f",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44230045305",
+      "started_at": "2026-11-18T03:23:10Z",
+      "finished_at": "2026-11-18T03:26:20Z",
+      "pr": 96,
+      "head": "d48044b53c3ffce1879aadf1c62083e78d3fc9d3",
+      "host": "host-f",
+      "author": "100latent-lit-pilot-host-f[bot]",
+      "kind": "disjoint",
+      "merged_sha": "3839823c9660658113bc3aebf0f8fee253fd5f1f",
+      "pr_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/96"
+    },
+    {
+      "run_id": 44230046307,
+      "event": "merge_group",
+      "check_id": 134552564664,
+      "check_head": "c666fd3b9336d7ecb718a129da06187b4df82b3a",
+      "checkout": "c666fd3b9336d7ecb718a129da06187b4df82b3a",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44230046307",
+      "started_at": "2026-11-18T03:23:11Z",
+      "finished_at": "2026-11-18T03:27:13Z",
+      "pr": 97,
+      "head": "023da0012f952e7fa9899e24c27a8cdcca2132a7",
+      "host": "host-f",
+      "author": "100latent-lit-pilot-host-f[bot]",
+      "kind": "disjoint",
+      "merged_sha": "c666fd3b9336d7ecb718a129da06187b4df82b3a",
+      "pr_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/97"
+    },
+    {
+      "run_id": 44230047885,
+      "event": "merge_group",
+      "check_id": 134552570354,
+      "check_head": "700379a3f9c38e09bb99cc7ba38975cf4834a2dd",
+      "checkout": "700379a3f9c38e09bb99cc7ba38975cf4834a2dd",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44230047885",
+      "started_at": "2026-11-18T03:23:11Z",
+      "finished_at": "2026-11-18T03:28:42Z",
+      "pr": 98,
+      "head": "4df529d7bf6a54dd1bc7ecd50d36ea08b484760d",
+      "host": "host-e",
+      "author": "100latent-lit-pilot-host-e[bot]",
+      "kind": "disjoint",
+      "merged_sha": "700379a3f9c38e09bb99cc7ba38975cf4834a2dd",
+      "pr_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/98"
+    },
+    {
+      "run_id": 44230049925,
+      "event": "merge_group",
+      "check_id": 134552576074,
+      "check_head": "f480055e5cbcaa13070363e02676d52d5f97ade9",
+      "checkout": "f480055e5cbcaa13070363e02676d52d5f97ade9",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44230049925",
+      "started_at": "2026-11-18T03:23:12Z",
+      "finished_at": "2026-11-18T03:27:15Z",
+      "pr": 99,
+      "head": "9640cb77d96002c88f7deb0660af0672489fdaf0",
+      "host": "host-e",
+      "author": "100latent-lit-pilot-host-e[bot]",
+      "kind": "shared",
+      "merged_sha": "f480055e5cbcaa13070363e02676d52d5f97ade9",
+      "pr_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/99"
+    }
+  ],
+  "pr_checks": [
+    {
+      "run_id": 44228688547,
+      "event": "pull_request",
+      "check_id": 134548103092,
+      "check_head": "9d5a0664cfcad46f61df8b97809637dc6afdc72a",
+      "checkout": "81201cc99458ed26e523355692ae06fddb1812c5",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44228688547",
+      "started_at": "2026-11-18T03:11:53Z",
+      "finished_at": "2026-11-18T03:15:40Z",
+      "pr": 72
+    },
+    {
+      "run_id": 44228872990,
+      "event": "pull_request",
+      "check_id": 134548718351,
+      "check_head": "fd56aa31b3af2907b80d8971687da916e04774dd",
+      "checkout": "e0beff797c7993676a6063880803946ad94ea741",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44228872990",
+      "started_at": "2026-11-18T03:13:27Z",
+      "finished_at": "2026-11-18T03:18:37Z",
+      "pr": 78
+    },
+    {
+      "run_id": 44228870828,
+      "event": "pull_request",
+      "check_id": 134548710870,
+      "check_head": "d6663b9883ff683fede1a838a1f8ccc04a78f7f4",
+      "checkout": "b9d85853f5aa2ec4cc4c65b7072072dc2a5c513c",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44228870828",
+      "started_at": "2026-11-18T03:13:26Z",
+      "finished_at": "2026-11-18T03:18:13Z",
+      "pr": 74
+    },
+    {
+      "run_id": 44228928814,
+      "event": "pull_request",
+      "check_id": 134548904598,
+      "check_head": "771a71eca7167cae4ad681ec4f42f5dc04a0e6c3",
+      "checkout": "11bd3c72f8397829a866e6fbfb5b073a319a4e9b",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44228928814",
+      "started_at": "2026-11-18T03:13:54Z",
+      "finished_at": "2026-11-18T03:17:44Z",
+      "pr": 81
+    },
+    {
+      "run_id": 44228935048,
+      "event": "pull_request",
+      "check_id": 134548924644,
+      "check_head": "7ab9366b0d7f345d038de87b98a82ababbf34eb3",
+      "checkout": "3a54eacad3ead6053e866d9f79cdce79774a496e",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44228935048",
+      "started_at": "2026-11-18T03:13:57Z",
+      "finished_at": "2026-11-18T03:19:07Z",
+      "pr": 83
+    },
+    {
+      "run_id": 44228829029,
+      "event": "pull_request",
+      "check_id": 134548569046,
+      "check_head": "0c89778de48ca02ec8babd395fcc154fbae13411",
+      "checkout": "42fdca9cf383daff89516c50abff3f89c21f0cfb",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44228829029",
+      "started_at": "2026-11-18T03:13:04Z",
+      "finished_at": "2026-11-18T03:18:07Z",
+      "pr": 85
+    },
+    {
+      "run_id": 44228878057,
+      "event": "pull_request",
+      "check_id": 134548735340,
+      "check_head": "11bc1f2e74c7fb917c3ab87c08bb030ec91ad3a3",
+      "checkout": "ba70dfbe63899a7c9a8833b34458cf722bdc0995",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44228878057",
+      "started_at": "2026-11-18T03:13:29Z",
+      "finished_at": "2026-11-18T03:17:50Z",
+      "pr": 90
+    },
+    {
+      "run_id": 44228940082,
+      "event": "pull_request",
+      "check_id": 134548940432,
+      "check_head": "87a52d206c2407470d47c7850de5b9e3c8e5316a",
+      "checkout": "3e2eb6f615485579c7c0ded24eea6381e5329940",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44228940082",
+      "started_at": "2026-11-18T03:13:59Z",
+      "finished_at": "2026-11-18T03:18:25Z",
+      "pr": 92
+    },
+    {
+      "run_id": 44228849141,
+      "event": "pull_request",
+      "check_id": 134548637177,
+      "check_head": "3d7d1d11f48c829d8ae8e92db3968e887fb16d9d",
+      "checkout": "d47ea1b8c80e5f2696b6aa4d67567a9704db372f",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44228849141",
+      "started_at": "2026-11-18T03:13:15Z",
+      "finished_at": "2026-11-18T03:18:17Z",
+      "pr": 94
+    },
+    {
+      "run_id": 44228717424,
+      "event": "pull_request",
+      "check_id": 134548195003,
+      "check_head": "e3ecf547373ab501425255a238d9522e34d6c1ec",
+      "checkout": "e54618e27ef2ccfbd2c6f969239db04ff703aa54",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44228717424",
+      "started_at": "2026-11-18T03:12:07Z",
+      "finished_at": "2026-11-18T03:17:13Z",
+      "pr": 101
+    },
+    {
+      "run_id": 44228859124,
+      "event": "pull_request",
+      "check_id": 134548672129,
+      "check_head": "5e7a794ce78b29cc3bb14936745318fdadff98ac",
+      "checkout": "76d77f0a6abbc2fb325d3e48210501ab5be02038",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44228859124",
+      "started_at": "2026-11-18T03:13:20Z",
+      "finished_at": "2026-11-18T03:16:47Z",
+      "pr": 73
+    },
+    {
+      "run_id": 44228891415,
+      "event": "pull_request",
+      "check_id": 134548780189,
+      "check_head": "2c95ad2cb3122c822a8456e95f59cc5e86245523",
+      "checkout": "a7c7300de1458890e1fbd14a102f1cc8cff9ae05",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44228891415",
+      "started_at": "2026-11-18T03:13:36Z",
+      "finished_at": "2026-11-18T03:18:27Z",
+      "pr": 75
+    },
+    {
+      "run_id": 44228918453,
+      "event": "pull_request",
+      "check_id": 134548870892,
+      "check_head": "88100599b4490f3bdcb3af71f89f132f7b724473",
+      "checkout": "a59ac10804abef2e47c9275d91df5348919f30d7",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44228918453",
+      "started_at": "2026-11-18T03:13:49Z",
+      "finished_at": "2026-11-18T03:16:58Z",
+      "pr": 76
+    },
+    {
+      "run_id": 44228900972,
+      "event": "pull_request",
+      "check_id": 134548812481,
+      "check_head": "41ef55476526a6e41f55d80f025a5503e47b6d9c",
+      "checkout": "26f1210465b99e09a294b67c875082ee2f0194b5",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44228900972",
+      "started_at": "2026-11-18T03:13:41Z",
+      "finished_at": "2026-11-18T03:18:46Z",
+      "pr": 82
+    },
+    {
+      "run_id": 44228859598,
+      "event": "pull_request",
+      "check_id": 134548673886,
+      "check_head": "17241b15f6b41d661509125c6c3c111ef74f33b0",
+      "checkout": "a088b82833069db844a76b83bb7a6a8461e663ac",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44228859598",
+      "started_at": "2026-11-18T03:13:20Z",
+      "finished_at": "2026-11-18T03:17:16Z",
+      "pr": 84
+    },
+    {
+      "run_id": 44228876956,
+      "event": "pull_request",
+      "check_id": 134548731349,
+      "check_head": "4940046defa330ba233770bb9c46e819fb503309",
+      "checkout": "0a76175e3516b208c2c8b8aad2b6dce07fb5a4bd",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44228876956",
+      "started_at": "2026-11-18T03:13:29Z",
+      "finished_at": "2026-11-18T03:18:15Z",
+      "pr": 88
+    },
+    {
+      "run_id": 44228936481,
+      "event": "pull_request",
+      "check_id": 134548929915,
+      "check_head": "c91dd35aa3418b6e97ba0cb64a6bdb33e2bcbfdf",
+      "checkout": "a6130e03fa5593bbc9e23f35439912110002cdb1",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44228936481",
+      "started_at": "2026-11-18T03:13:58Z",
+      "finished_at": "2026-11-18T03:18:59Z",
+      "pr": 91
+    },
+    {
+      "run_id": 44228898873,
+      "event": "pull_request",
+      "check_id": 134548805761,
+      "check_head": "46e7da5758b6ba8c46a86090b0c62fbaddb95e04",
+      "checkout": "8f19306e6824e079fe439ad92ecfad0f2cd9f35a",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44228898873",
+      "started_at": "2026-11-18T03:13:40Z",
+      "finished_at": "2026-11-18T03:18:46Z",
+      "pr": 93
+    },
+    {
+      "run_id": 44228871724,
+      "event": "pull_request",
+      "check_id": 134548715079,
+      "check_head": "4df529d7bf6a54dd1bc7ecd50d36ea08b484760d",
+      "checkout": "267f41d437a9229a5dd3436de42c71095929fb6e",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44228871724",
+      "started_at": "2026-11-18T03:13:26Z",
+      "finished_at": "2026-11-18T03:18:16Z",
+      "pr": 98
+    },
+    {
+      "run_id": 44228717430,
+      "event": "pull_request",
+      "check_id": 134548198104,
+      "check_head": "9640cb77d96002c88f7deb0660af0672489fdaf0",
+      "checkout": "3ea4b1504d686db830a623f6db42b9d27d0bd53a",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44228717430",
+      "started_at": "2026-11-18T03:12:07Z",
+      "finished_at": "2026-11-18T03:15:59Z",
+      "pr": 99
+    },
+    {
+      "run_id": 44228852367,
+      "event": "pull_request",
+      "check_id": 134548649192,
+      "check_head": "cca49580390349e4a9353b83053de1a617e40454",
+      "checkout": "31629fc40c1d3b621db08e69869952fc5587747d",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44228852367",
+      "started_at": "2026-11-18T03:13:16Z",
+      "finished_at": "2026-11-18T03:17:16Z",
+      "pr": 77
+    },
+    {
+      "run_id": 44228881048,
+      "event": "pull_request",
+      "check_id": 134548746121,
+      "check_head": "ec3eb2f262dceed0a2fe16b9d0757122b0b16697",
+      "checkout": "f565b8e2f7a1886b3b4b95b4eb814dc94ffbaf36",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44228881048",
+      "started_at": "2026-11-18T03:13:31Z",
+      "finished_at": "2026-11-18T03:18:35Z",
+      "pr": 80
+    },
+    {
+      "run_id": 44228834417,
+      "event": "pull_request",
+      "check_id": 134548587970,
+      "check_head": "ce3035fd2827d94b815d81fa93fd07d817eb1473",
+      "checkout": "4d1db2043044f4376ecf7d3e0d0618b6a2bcdfe8",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44228834417",
+      "started_at": "2026-11-18T03:13:07Z",
+      "finished_at": "2026-11-18T03:17:15Z",
+      "pr": 79
+    },
+    {
+      "run_id": 44228842211,
+      "event": "pull_request",
+      "check_id": 134548613328,
+      "check_head": "922269727ce13c93a2e8fb66ffa06c32922d7c3e",
+      "checkout": "3a1933c770fdaa0f06782b2797d47f768bd59e36",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44228842211",
+      "started_at": "2026-11-18T03:13:11Z",
+      "finished_at": "2026-11-18T03:16:27Z",
+      "pr": 87
+    },
+    {
+      "run_id": 44228889952,
+      "event": "pull_request",
+      "check_id": 134548779149,
+      "check_head": "cc3d6330e68c278a31d366acf73637d2e894179a",
+      "checkout": "ff63ee7615ed11fac464ac620bf75867a60b961d",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44228889952",
+      "started_at": "2026-11-18T03:13:35Z",
+      "finished_at": "2026-11-18T03:18:50Z",
+      "pr": 86
+    },
+    {
+      "run_id": 44228854405,
+      "event": "pull_request",
+      "check_id": 134548657169,
+      "check_head": "6904b11dcde89ce101c8329087c625d44cf01cc4",
+      "checkout": "cd181d66ee13872b94ec32b7f83db186531ee99a",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44228854405",
+      "started_at": "2026-11-18T03:13:18Z",
+      "finished_at": "2026-11-18T03:18:25Z",
+      "pr": 89
+    },
+    {
+      "run_id": 44228881049,
+      "event": "pull_request",
+      "check_id": 134548745960,
+      "check_head": "eb84bf2f198ff47ebe4c89472635a51dc6ec4703",
+      "checkout": "4f04a6ae2637f569fa0de2a602b1f629b4f71a73",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44228881049",
+      "started_at": "2026-11-18T03:13:31Z",
+      "finished_at": "2026-11-18T03:18:43Z",
+      "pr": 95
+    },
+    {
+      "run_id": 44228924745,
+      "event": "pull_request",
+      "check_id": 134548891768,
+      "check_head": "d48044b53c3ffce1879aadf1c62083e78d3fc9d3",
+      "checkout": "f946702a1cc4bfa35748259e3638b59bf53f9700",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44228924745",
+      "started_at": "2026-11-18T03:13:52Z",
+      "finished_at": "2026-11-18T03:18:53Z",
+      "pr": 96
+    },
+    {
+      "run_id": 44228895088,
+      "event": "pull_request",
+      "check_id": 134548792432,
+      "check_head": "023da0012f952e7fa9899e24c27a8cdcca2132a7",
+      "checkout": "acada120279a8520c8fe26f8bdf2d37f4d91152b",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44228895088",
+      "started_at": "2026-11-18T03:13:38Z",
+      "finished_at": "2026-11-18T03:18:31Z",
+      "pr": 97
+    },
+    {
+      "run_id": 44228717802,
+      "event": "pull_request",
+      "check_id": 134548196239,
+      "check_head": "454c0f5c12d12052dca53bdfcad5850963e6ccd9",
+      "checkout": "54e6a01cb510ce1ff2a07f76381e3dad6685e1ec",
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44228717802",
+      "started_at": "2026-11-18T03:12:07Z",
+      "finished_at": "2026-11-18T03:17:13Z",
+      "pr": 100
+    }
+  ],
+  "development_trial": {
+    "audit_directory": "<private-path>",
+    "summary": {
+      "proposals": 30,
+      "hosts": 3,
+      "app_identities": 3,
+      "disjoint_merged": 27,
+      "shared_merged": 1,
+      "conflicts_held": [
+        71,
+        70
+      ],
+      "denied_updates": 9,
+      "base": "4860f47935e97f4959e5968d79ab22195bad6a20",
+      "tip": "1aa4b032cc6229daa516cb0d9ac343b3cac5f4c6",
+      "pr_runs": {
+        "success": 30
+      },
+      "merge_group_runs": {
+        "success": 28
+      },
+      "peak_queue": {
+        "queue_depth": 30,
+        "running_groups": 28
+      },
+      "publication_window_seconds": 16.376584768295288,
+      "automatic_queue_cleanup_passed": true,
+      "operator_dequeued": [],
+      "api_merge_metadata_anomalies": [
+        {
+          "pr": 64,
+          "git_commit": "35f0ae9f91bd1237d9583bf1af04373c330d183b",
+          "timeline": {
+            "merged": true,
+            "headRefOid": "bc7f3acc4ed66cd5a86449bb93f610d31ecdbf21",
+            "timelineItems": {
+              "nodes": []
+            }
+          }
+        }
+      ]
+    },
+    "final_state": {
+      "proposals": [
+        {
+          "author": "100latent-lit-pilot-host-f[bot]",
+          "branch": "agents/app-burst/recovery-qem0lx8d/host-f/01",
+          "head": "514677f2eb62bab4f9e3a694127f4a62d89bf10d",
+          "kind": "disjoint",
+          "number": 42,
+          "phase": "merged"
+        },
+        {
+          "author": "100latent-lit-pilot-host-a[bot]",
+          "branch": "agents/app-burst/recovery-qem0lx8d/host-a/02",
+          "head": "be960daf077d79dc029e2c39e38a16358d935ddd",
+          "kind": "disjoint",
+          "number": 43,
+          "phase": "merged"
+        },
+        {
+          "author": "100latent-lit-pilot-host-a[bot]",
+          "branch": "agents/app-burst/recovery-qem0lx8d/host-a/01",
+          "head": "6e54930b6ae91e07c91661dd84b2c6167ac14901",
+          "kind": "disjoint",
+          "number": 44,
+          "phase": "merged"
+        },
+        {
+          "author": "100latent-lit-pilot-host-a[bot]",
+          "branch": "agents/app-burst/recovery-qem0lx8d/host-a/00",
+          "head": "6ca787fd36ccc1b33754ba238ec9f5425a0866af",
+          "kind": "disjoint",
+          "number": 45,
+          "phase": "merged"
+        },
+        {
+          "author": "100latent-lit-pilot-host-f[bot]",
+          "branch": "agents/app-burst/recovery-qem0lx8d/host-f/00",
+          "head": "0a075bb837fba289fb433d7b942400ffe936123b",
+          "kind": "disjoint",
+          "number": 46,
+          "phase": "merged"
+        },
+        {
+          "author": "100latent-lit-pilot-host-e[bot]",
+          "branch": "agents/app-burst/recovery-qem0lx8d/host-e/00",
+          "head": "e0006c04ce3c4b29dc37e15e65502207c5bf1b5a",
+          "kind": "disjoint",
+          "number": 47,
+          "phase": "merged"
+        },
+        {
+          "author": "100latent-lit-pilot-host-f[bot]",
+          "branch": "agents/app-burst/recovery-qem0lx8d/host-f/02",
+          "head": "7dc316e7377f9879b3619478b2d2d11cbee18634",
+          "kind": "disjoint",
+          "number": 48,
+          "phase": "merged"
+        },
+        {
+          "author": "100latent-lit-pilot-host-e[bot]",
+          "branch": "agents/app-burst/recovery-qem0lx8d/host-e/01",
+          "head": "508feec09266e0019e93e205744ee91029e52d05",
+          "kind": "disjoint",
+          "number": 49,
+          "phase": "merged"
+        },
+        {
+          "author": "100latent-lit-pilot-host-e[bot]",
+          "branch": "agents/app-burst/recovery-qem0lx8d/host-e/02",
+          "head": "846a59243b17c770f33dd58d95d55e3cc94f6f2c",
+          "kind": "disjoint",
+          "number": 50,
+          "phase": "merged"
+        },
+        {
+          "author": "100latent-lit-pilot-host-f[bot]",
+          "branch": "agents/app-burst/recovery-qem0lx8d/host-f/03",
+          "head": "09fb26c920d3c5c8419e7108e2531e27a0f17e11",
+          "kind": "disjoint",
+          "number": 51,
+          "phase": "merged"
+        },
+        {
+          "author": "100latent-lit-pilot-host-a[bot]",
+          "branch": "agents/app-burst/recovery-qem0lx8d/host-a/03",
+          "head": "cad66805d47578fdf1de547913cf58a12d98e710",
+          "kind": "disjoint",
+          "number": 52,
+          "phase": "merged"
+        },
+        {
+          "author": "100latent-lit-pilot-host-f[bot]",
+          "branch": "agents/app-burst/recovery-qem0lx8d/host-f/04",
+          "head": "36bbab0ef554a4ffadf3612c6e62b4ff40594951",
+          "kind": "disjoint",
+          "number": 53,
+          "phase": "merged"
+        },
+        {
+          "author": "100latent-lit-pilot-host-a[bot]",
+          "branch": "agents/app-burst/recovery-qem0lx8d/host-a/04",
+          "head": "5b54ba26ce19225be9d1e3bf31b09031829b1ef2",
+          "kind": "disjoint",
+          "number": 54,
+          "phase": "merged"
+        },
+        {
+          "author": "100latent-lit-pilot-host-a[bot]",
+          "branch": "agents/app-burst/recovery-qem0lx8d/host-a/05",
+          "head": "54bd19aa7d9cb192e6bbb088e73587d4fb39a919",
+          "kind": "disjoint",
+          "number": 55,
+          "phase": "merged"
+        },
+        {
+          "author": "100latent-lit-pilot-host-e[bot]",
+          "branch": "agents/app-burst/recovery-qem0lx8d/host-e/03",
+          "head": "9b56d416527ee7a39806e32c8c5cc0e39b03f311",
+          "kind": "disjoint",
+          "number": 56,
+          "phase": "merged"
+        },
+        {
+          "author": "100latent-lit-pilot-host-f[bot]",
+          "branch": "agents/app-burst/recovery-qem0lx8d/host-f/05",
+          "head": "1da6f1ba2052234b18f7fa4ab9665ff5e87c3b5c",
+          "kind": "disjoint",
+          "number": 57,
+          "phase": "merged"
+        },
+        {
+          "author": "100latent-lit-pilot-host-e[bot]",
+          "branch": "agents/app-burst/recovery-qem0lx8d/host-e/05",
+          "head": "c76cd4af1ce85a8cde033a95dc86855580e5122d",
+          "kind": "disjoint",
+          "number": 58,
+          "phase": "merged"
+        },
+        {
+          "author": "100latent-lit-pilot-host-e[bot]",
+          "branch": "agents/app-burst/recovery-qem0lx8d/host-e/04",
+          "head": "9640c649646b798eefac150f14242455c67159e8",
+          "kind": "disjoint",
+          "number": 59,
+          "phase": "merged"
+        },
+        {
+          "author": "100latent-lit-pilot-host-f[bot]",
+          "branch": "agents/app-burst/recovery-qem0lx8d/host-f/06",
+          "head": "2fe003861997f8a9dcf96696f45c0e7d005ab97d",
+          "kind": "disjoint",
+          "number": 60,
+          "phase": "merged"
+        },
+        {
+          "author": "100latent-lit-pilot-host-a[bot]",
+          "branch": "agents/app-burst/recovery-qem0lx8d/host-a/07",
+          "head": "56cc5c9267d1e75aaa12cbdf45e2e2eb22ca3c99",
+          "kind": "disjoint",
+          "number": 61,
+          "phase": "merged"
+        },
+        {
+          "author": "100latent-lit-pilot-host-a[bot]",
+          "branch": "agents/app-burst/recovery-qem0lx8d/host-a/06",
+          "head": "1c425e155aaceb69642b87a5b83b8368b340dcef",
+          "kind": "disjoint",
+          "number": 62,
+          "phase": "merged"
+        },
+        {
+          "author": "100latent-lit-pilot-host-f[bot]",
+          "branch": "agents/app-burst/recovery-qem0lx8d/host-f/07",
+          "head": "9d4ff69b368c9ce4a55e5b788e5da38f11088489",
+          "kind": "disjoint",
+          "number": 63,
+          "phase": "merged"
+        },
+        {
+          "author": "100latent-lit-pilot-host-a[bot]",
+          "branch": "agents/app-burst/recovery-qem0lx8d/host-a/08",
+          "head": "bc7f3acc4ed66cd5a86449bb93f610d31ecdbf21",
+          "kind": "disjoint",
+          "number": 64,
+          "phase": "merged"
+        },
+        {
+          "author": "100latent-lit-pilot-host-e[bot]",
+          "branch": "agents/app-burst/recovery-qem0lx8d/host-e/06",
+          "head": "1b8520c59e3fe8dc275b635a261a952aac45e469",
+          "kind": "disjoint",
+          "number": 65,
+          "phase": "merged"
+        },
+        {
+          "author": "100latent-lit-pilot-host-e[bot]",
+          "branch": "agents/app-burst/recovery-qem0lx8d/host-e/07",
+          "head": "43cc7a60de2c19715a97107222c54d78f40a34cb",
+          "kind": "disjoint",
+          "number": 66,
+          "phase": "merged"
+        },
+        {
+          "author": "100latent-lit-pilot-host-f[bot]",
+          "branch": "agents/app-burst/recovery-qem0lx8d/host-f/08",
+          "head": "324fce60d65253385b67ea49fb028c9653fc6377",
+          "kind": "disjoint",
+          "number": 67,
+          "phase": "merged"
+        },
+        {
+          "author": "100latent-lit-pilot-host-e[bot]",
+          "branch": "agents/app-burst/recovery-qem0lx8d/host-e/08",
+          "head": "655bc3cac7b0047781f4da82b863fc7a945d5a93",
+          "kind": "disjoint",
+          "number": 68,
+          "phase": "merged"
+        },
+        {
+          "author": "100latent-lit-pilot-host-a[bot]",
+          "branch": "agents/app-burst/recovery-qem0lx8d/host-a/09",
+          "head": "b640c8d582e219d013550aaf0d4fac765fd40747",
+          "kind": "shared",
+          "number": 69,
+          "phase": "merged"
+        },
+        {
+          "author": "100latent-lit-pilot-host-f[bot]",
+          "branch": "agents/app-burst/recovery-qem0lx8d/host-f/09",
+          "head": "2daca1e14838736df9b0877c5c5d73eb2fd11094",
+          "kind": "shared",
+          "number": 70,
+          "phase": "held_conflict"
+        },
+        {
+          "author": "100latent-lit-pilot-host-e[bot]",
+          "branch": "agents/app-burst/recovery-qem0lx8d/host-e/09",
+          "head": "417c4d3b6283cf7293f311587ea2ed4864c2b54c",
+          "kind": "shared",
+          "number": 71,
+          "phase": "held_conflict"
+        }
+      ],
+      "actions": [
+        {
+          "id": 1,
+          "number": 42,
+          "kind": "enqueue",
+          "status": "observed",
+          "entry_id": null,
+          "created": 1794970248.8250492
+        },
+        {
+          "id": 2,
+          "number": 43,
+          "kind": "enqueue",
+          "status": "observed",
+          "entry_id": null,
+          "created": 1794970252.430292
+        },
+        {
+          "id": 3,
+          "number": 44,
+          "kind": "enqueue",
+          "status": "observed",
+          "entry_id": null,
+          "created": 1794970256.006484
+        },
+        {
+          "id": 4,
+          "number": 45,
+          "kind": "enqueue",
+          "status": "observed",
+          "entry_id": null,
+          "created": 1794970259.538059
+        },
+        {
+          "id": 5,
+          "number": 46,
+          "kind": "enqueue",
+          "status": "observed",
+          "entry_id": null,
+          "created": 1794970263.1820018
+        },
+        {
+          "id": 6,
+          "number": 47,
+          "kind": "enqueue",
+          "status": "observed",
+          "entry_id": null,
+          "created": 1794970269.361464
+        },
+        {
+          "id": 7,
+          "number": 48,
+          "kind": "enqueue",
+          "status": "observed",
+          "entry_id": null,
+          "created": 1794970273.836906
+        },
+        {
+          "id": 8,
+          "number": 49,
+          "kind": "enqueue",
+          "status": "observed",
+          "entry_id": null,
+          "created": 1794970277.369823
+        },
+        {
+          "id": 9,
+          "number": 50,
+          "kind": "enqueue",
+          "status": "observed",
+          "entry_id": null,
+          "created": 1794970281.007564
+        },
+        {
+          "id": 10,
+          "number": 51,
+          "kind": "enqueue",
+          "status": "observed",
+          "entry_id": null,
+          "created": 1794970285.0445492
+        },
+        {
+          "id": 11,
+          "number": 52,
+          "kind": "enqueue",
+          "status": "observed",
+          "entry_id": null,
+          "created": 1794970288.721552
+        },
+        {
+          "id": 12,
+          "number": 53,
+          "kind": "enqueue",
+          "status": "observed",
+          "entry_id": null,
+          "created": 1794970292.678505
+        },
+        {
+          "id": 13,
+          "number": 54,
+          "kind": "enqueue",
+          "status": "observed",
+          "entry_id": null,
+          "created": 1794970296.125605
+        },
+        {
+          "id": 14,
+          "number": 55,
+          "kind": "enqueue",
+          "status": "observed",
+          "entry_id": null,
+          "created": 1794970299.654498
+        },
+        {
+          "id": 15,
+          "number": 56,
+          "kind": "enqueue",
+          "status": "observed",
+          "entry_id": null,
+          "created": 1794970303.696495
+        },
+        {
+          "id": 16,
+          "number": 57,
+          "kind": "enqueue",
+          "status": "observed",
+          "entry_id": null,
+          "created": 1794970307.4266
+        },
+        {
+          "id": 17,
+          "number": 58,
+          "kind": "enqueue",
+          "status": "observed",
+          "entry_id": null,
+          "created": 1794970311.17109
+        },
+        {
+          "id": 18,
+          "number": 59,
+          "kind": "enqueue",
+          "status": "observed",
+          "entry_id": null,
+          "created": 1794970314.870446
+        },
+        {
+          "id": 19,
+          "number": 60,
+          "kind": "enqueue",
+          "status": "observed",
+          "entry_id": null,
+          "created": 1794970319.410849
+        },
+        {
+          "id": 20,
+          "number": 61,
+          "kind": "enqueue",
+          "status": "observed",
+          "entry_id": null,
+          "created": 1794970322.739019
+        },
+        {
+          "id": 21,
+          "number": 62,
+          "kind": "enqueue",
+          "status": "observed",
+          "entry_id": null,
+          "created": 1794970326.2777019
+        },
+        {
+          "id": 22,
+          "number": 63,
+          "kind": "enqueue",
+          "status": "observed",
+          "entry_id": null,
+          "created": 1794970329.812331
+        },
+        {
+          "id": 23,
+          "number": 64,
+          "kind": "enqueue",
+          "status": "observed",
+          "entry_id": null,
+          "created": 1794970333.582446
+        },
+        {
+          "id": 24,
+          "number": 65,
+          "kind": "enqueue",
+          "status": "observed",
+          "entry_id": null,
+          "created": 1794970337.8908858
+        },
+        {
+          "id": 25,
+          "number": 66,
+          "kind": "enqueue",
+          "status": "observed",
+          "entry_id": null,
+          "created": 1794970341.7446148
+        },
+        {
+          "id": 26,
+          "number": 67,
+          "kind": "enqueue",
+          "status": "observed",
+          "entry_id": null,
+          "created": 1794970345.221347
+        },
+        {
+          "id": 27,
+          "number": 68,
+          "kind": "enqueue",
+          "status": "observed",
+          "entry_id": null,
+          "created": 1794970349.174625
+        },
+        {
+          "id": 28,
+          "number": 69,
+          "kind": "enqueue",
+          "status": "observed",
+          "entry_id": null,
+          "created": 1794970352.745584
+        },
+        {
+          "id": 29,
+          "number": 70,
+          "kind": "enqueue",
+          "status": "observed",
+          "entry_id": null,
+          "created": 1794970356.149867
+        },
+        {
+          "id": 30,
+          "number": 71,
+          "kind": "enqueue",
+          "status": "observed",
+          "entry_id": null,
+          "created": 1794970359.662844
+        }
+      ]
+    },
+    "source_changed_during_trial": true,
+    "findings": [
+      "GraphQL Bot identity format differs from REST",
+      "Queue entry absence preceded merged field visibility",
+      "Transient HTTP 502 interrupted the original test supervisor"
+    ]
+  },
+  "audit_directory": "<private-path>",
+  "manual_queue_cleanup": false,
+  "source_changed_during_final_trial": false,
+  "platform_regressions": {
+    "macos": 20,
+    "host-e-linux-arm64": 20,
+    "host-f-linux-arm64": 20
+  }
+}
