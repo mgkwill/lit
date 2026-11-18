@@ -44,16 +44,18 @@ class NoRedirect(HTTPRedirectHandler):
 
 
 class GitHub:
-    def __init__(self, url):
+    def __init__(self, url, token=None, observer_token=None):
         parsed = urlsplit(url)
         if url != "https://api.github.com" and not (
                 parsed.scheme == "http" and parsed.hostname == "127.0.0.1"
                 and parsed.port and not parsed.username and not parsed.path):
             raise ValueError("API must be GitHub or an explicit loopback test server")
+        if token is not None and not token:
+            raise ValueError("explicit writer credential is empty")
         self.url = url
         self.local = parsed.hostname == "127.0.0.1"
-        self.observer_token = os.environ.get("LIT_QUEUE_OBSERVER_TOKEN") or None
-        self.token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
+        self.observer_token = (os.environ.get("LIT_QUEUE_OBSERVER_TOKEN") or None) if observer_token is None else observer_token
+        self.token = token if token is not None else os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
         if not self.token:
             self.token = subprocess.check_output(
                 ["gh", "auth", "token", "--hostname", "github.com"], text=True, timeout=20).strip()
@@ -76,8 +78,8 @@ class GitHub:
             raise RuntimeError("GitHub returned GraphQL errors; reconcile intent before retrying")
         return result
 
-    def authenticate_writer(self, repo):
-        if self.observer_token:
+    def authenticate_writer(self, repo, force=False):
+        if self.observer_token or force:
             installed = self.api("installation/repositories", writer=True)
             if (installed["total_count"] != 1
                     or [r["full_name"] for r in installed["repositories"]] != [repo]):
@@ -93,6 +95,11 @@ class GitHub:
                   id headRefOid headRefName baseRefName merged closed mergeable
                   headRepository{nameWithOwner} author{__typename login}
                   mergeQueueEntry{id state headCommit{oid}}
+                  queueEvents:timelineItems(last:1,itemTypes:[ADDED_TO_MERGE_QUEUE_EVENT,REMOVED_FROM_MERGE_QUEUE_EVENT,MERGED_EVENT]) {
+                    nodes { __typename ... on RemovedFromMergeQueueEvent {
+                      id reason actor{__typename login}
+                    }}
+                  }
                 }
               }
             }""", "variables": {"owner": owner, "repo": name, "number": number}})
@@ -130,11 +137,14 @@ class GitHub:
         if not eligible:
             return False
         runs = self.api(f"repos/{repo}/actions/runs?head_sha={head}&event=pull_request&per_page=100")
-        return any(r["event"] == "pull_request" and r["head_sha"] == head
-                   and r["path"] == ".github/workflows/agent-merge-gate.yml"
-                   and r["conclusion"] == "success"
-                   and any(r["check_suite_id"] == c["check_suite"]["id"] for c in eligible)
-                   for r in runs["workflow_runs"])
+        relevant = [r for r in runs['workflow_runs'] if r['event'] == 'pull_request'
+                    and r['head_sha'] == head and r['path'] == '.github/workflows/agent-merge-gate.yml']
+        if not relevant:
+            return False
+        latest = max(relevant, key=lambda r: (r['created_at'], r['id']))
+        return (latest['status'] == 'completed' and latest['conclusion'] == 'success'
+                and any(latest['check_suite_id'] == c['check_suite']['id'] for c in eligible))
+
 
 
 def policies(github, manifest, specs):

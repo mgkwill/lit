@@ -1,0 +1,442 @@
+{
+  "repo": "100latent/lit-merge-queue-sandbox",
+  "main": "d021d9f8a86287da0a41ff230f96172a32a288d2",
+  "prs": {
+    "103": {
+      "number": 103,
+      "html_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/103",
+      "state": "closed",
+      "merged": false,
+      "merge_commit_sha": "b2a16bc9e9d53b81bccb1a080fc67b4760e82f96",
+      "head": "2e8c5907e19415f0631a182fedc695a39f418e57",
+      "branch": "agents/broker-pilot/ownership-20261118/host-a",
+      "author": "100latent-lit-pilot-host-a[bot]"
+    },
+    "104": {
+      "number": 104,
+      "html_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/104",
+      "state": "closed",
+      "merged": true,
+      "merge_commit_sha": "2d1ba011925a1f666e3d29e7010dcd466c983081",
+      "head": "d59a761543306f2cc85094ac8892333133a771f5",
+      "branch": "agents/broker-pilot/ownership-20261118/host-e",
+      "author": "100latent-lit-pilot-host-e[bot]"
+    },
+    "105": {
+      "number": 105,
+      "html_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/105",
+      "state": "closed",
+      "merged": false,
+      "merge_commit_sha": "a8c9073589b078640e2bc194a8166b4e79b05a3b",
+      "head": "cfc91852dd365fd9c955cd4fff81fcc36707926e",
+      "branch": "agents/broker-pilot/ownership-20261118/host-f",
+      "author": "100latent-lit-pilot-host-f[bot]"
+    },
+    "106": {
+      "number": 106,
+      "html_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/106",
+      "state": "closed",
+      "merged": false,
+      "merge_commit_sha": "d7cb380bb2602beba7e5786d86580a9ccc6e1ff7",
+      "head": "cfc91852dd365fd9c955cd4fff81fcc36707926e",
+      "branch": "agents/broker-pilot/ownership-20261118/host-f",
+      "author": "100latent-lit-pilot-host-f[bot]"
+    },
+    "107": {
+      "number": 107,
+      "html_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/107",
+      "state": "closed",
+      "merged": true,
+      "merge_commit_sha": "71af109992be14be6b31f8b45b45abf3f873d5d0",
+      "head": "a77cf625c9fc50dfc5f53cf4ec7f6640c0e8fe06",
+      "branch": "agents/broker-pilot/ownership-20261118-r2/host-f",
+      "author": "100latent-lit-pilot-host-f[bot]"
+    },
+    "108": {
+      "number": 108,
+      "html_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/108",
+      "state": "closed",
+      "merged": false,
+      "merge_commit_sha": "e175fbe6e56121bcacc525b082b7f2e7f617e99d",
+      "head": "760a49169763cba219bf19bddc80a68638b04455",
+      "branch": "agents/broker/attempt/95e5a0cd98e6088bc18f292a2358abd7",
+      "author": "100latent-lit-task-broker[bot]"
+    },
+    "109": {
+      "number": 109,
+      "html_url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/109",
+      "state": "closed",
+      "merged": true,
+      "merge_commit_sha": "d021d9f8a86287da0a41ff230f96172a32a288d2",
+      "head": "4a41d2f37f4e97dafff6d9162ea3fe1c1e8b5b75",
+      "branch": "agents/broker/attempt/c8fdd4524927384aa4347d91ab6bf092",
+      "author": "100latent-lit-task-broker[bot]"
+    }
+  },
+  "merge_group_proofs": [
+    {
+      "pr": 104,
+      "checked_sha": "2d1ba011925a1f666e3d29e7010dcd466c983081",
+      "run_id": 44264636939,
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44264636939",
+      "native_check_app": 15368,
+      "batch_regressions": 6,
+      "worker_fixture_sizes": [
+        10,
+        50,
+        100
+      ],
+      "manual_statuses": 0
+    },
+    {
+      "pr": 107,
+      "checked_sha": "71af109992be14be6b31f8b45b45abf3f873d5d0",
+      "run_id": 44265335562,
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44265335562",
+      "native_check_app": 15368,
+      "batch_regressions": 6,
+      "worker_fixture_sizes": [
+        10,
+        50,
+        100
+      ],
+      "manual_statuses": 0
+    },
+    {
+      "pr": 109,
+      "checked_sha": "d021d9f8a86287da0a41ff230f96172a32a288d2",
+      "run_id": 44266130739,
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44266130739",
+      "native_check_app": 15368,
+      "batch_regressions": 6,
+      "worker_fixture_sizes": [
+        10,
+        50,
+        100
+      ],
+      "manual_statuses": 0
+    }
+  ],
+  "original_main_rule_unchanged": true,
+  "original_worker_ownership_rules_unchanged": true,
+  "suspended_workers": [
+    {
+      "id": 183007293,
+      "app_id": 5803531,
+      "app_slug": "100latent-lit-pilot-host-a",
+      "suspended_at": "2026-11-18T07:54:43Z",
+      "repository_selection": "selected"
+    },
+    {
+      "id": 183007312,
+      "app_id": 5803532,
+      "app_slug": "100latent-lit-pilot-host-e",
+      "suspended_at": "2026-11-18T07:54:44Z",
+      "repository_selection": "selected"
+    },
+    {
+      "id": 183007323,
+      "app_id": 5803533,
+      "app_slug": "100latent-lit-pilot-host-f",
+      "suspended_at": "2026-11-18T07:54:45Z",
+      "repository_selection": "selected"
+    }
+  ],
+  "broker_installation": {
+    "id": 183217509,
+    "app_id": 5812726,
+    "app_slug": "100latent-lit-task-broker",
+    "permissions": {
+      "checks": "read",
+      "actions": "read",
+      "contents": "write",
+      "metadata": "read",
+      "pull_requests": "write",
+      "administration": "read"
+    },
+    "repository_selection": "selected"
+  },
+  "manual_statuses": 0,
+  "qualification_date": "2026-11-18",
+  "implementation_parent": "6159a48b949167f5304b276c740e98cddfcc123f",
+  "mit_baseline": "98c59bb2dbebcf7f575993a4ad89e1300a578c83",
+  "post_mit_upstream_source_used": false,
+  "reference_binary_invoked_this_task": false,
+  "endpoint": "https://192.0.2.10:19443",
+  "source_sha256": {
+    "tools/github_app_credentials.py": "e12ead9b4317fdb0c307d9d344256f7c793daf17b6b38c9155a5970741b452d5",
+    "tools/task_broker_freeze_proposal.py": "1c68554b64767720e5623233d28e01214c13801f3f6e8448705755b334679abc",
+    "tools/task_broker_policy_observer.py": "a9301e77eb10409cae4ade5124f04d834ad9e830491924b77ca2c5c354dd911a",
+    "tools/github_queue_coordinator.py": "9ec4f9a9af40aa180917df9e7291ba895acbbe1f0bd490d7b5d877c493384d33",
+    "tools/task_broker.py": "693a65b4760fc602ad63148be1854b1c55b09b289c73adbaea36dab4c3fae93c",
+    "tools/task_broker_client.py": "723c547fba332a3a07458f8cbd3f5a9b20bff6ed412d9eed3166ca8cf372edab",
+    "tools/task_ownership.py": "49ef08e5b0f7aa24c4eed1f05d98c1d2f21f3752136a01577fceb460cb70e204",
+    "tests/github_queue_coordinator_regression.py": "3418775a17159d4faeb38c30e8709112d42904a71ca248b475298cf79f595db6",
+    "tests/task_broker_regression.py": "8f7f9cbd701c0cd281c0671f81379f7307920d66235fcf35d8273dd5eb0f03aa"
+  },
+  "fixture_sha256": "afc6bd03129bfacd6c3983417233741f3e78f960cdcfa9b2f353a959bf124585",
+  "evidence_directory": "<private-path>",
+  "deployment": {
+    "deployed_sources_match": true,
+    "service_enabled": true,
+    "service_active": true,
+    "worker_can_read_broker_key": false,
+    "worker_can_read_authority": false,
+    "worker_can_modify_broker_code": false
+  },
+  "git_proof": {
+    "main": "d021d9f8a86287da0a41ff230f96172a32a288d2",
+    "fsck": "passed",
+    "credential": "broker-issued repository read only",
+    "parents": [
+      "71af109992be14be6b31f8b45b45abf3f873d5d0",
+      "4a41d2f37f4e97dafff6d9162ea3fe1c1e8b5b75"
+    ]
+  },
+  "ancestry_and_content": {
+    "main": "d021d9f8a86287da0a41ff230f96172a32a288d2",
+    "rejected_heads_not_ancestors": {
+      "103": "2e8c5907e19415f0631a182fedc695a39f418e57",
+      "105/106": "cfc91852dd365fd9c955cd4fff81fcc36707926e",
+      "108": "760a49169763cba219bf19bddc80a68638b04455"
+    },
+    "paths": {
+      "qualification/broker-pilot/ownership-20261118/host-e.txt": true,
+      "qualification/broker-pilot/ownership-20261118-r2/host-f.txt": true,
+      "qualification/broker-cutover/host-e.txt": true,
+      "qualification/broker-pilot/ownership-20261118/host-a.txt": false,
+      "qualification/broker-pilot/ownership-20261118/host-f.txt": false,
+      "qualification/broker-cutover/host-a.txt": false
+    },
+    "successor_content_verified": true
+  },
+  "native_regressions": {
+    "macOS arm64": {
+      "coordinator": 41,
+      "broker": 21,
+      "result": "passed",
+      "log": "local-regressions.log"
+    },
+    "host-a Linux x86_64": {
+      "coordinator": 41,
+      "broker": 21,
+      "result": "passed",
+      "log": "host-a-regressions.log"
+    },
+    "host-e Linux arm64": {
+      "coordinator": 41,
+      "broker": 21,
+      "result": "passed",
+      "log": "host-e-regressions.log"
+    },
+    "host-f Linux arm64": {
+      "coordinator": 41,
+      "broker": 21,
+      "result": "passed",
+      "log": "host-f-regressions.log"
+    }
+  },
+  "rust_regressions": {
+    "platform": "local macOS arm64",
+    "passed": 486,
+    "command": "cargo test --locked -- --test-threads=1",
+    "linux_full_suite_this_task": false
+  },
+  "worker_credential_probes": {
+    "host-a": {
+      "read_permissions": {
+        "contents": "read",
+        "pull_requests": "read"
+      },
+      "denied_routes": [
+        {
+          "route": "graphql.enqueuePullRequest",
+          "http": 200,
+          "errors": [
+            {
+              "type": "FORBIDDEN",
+              "path": [
+                "enqueuePullRequest"
+              ],
+              "extensions": {
+                "saml_failure": false,
+                "ip_allow_list_failure": false
+              },
+              "locations": [
+                {
+                  "line": 1,
+                  "column": 38
+                }
+              ],
+              "message": "Resource not accessible by integration"
+            }
+          ]
+        },
+        {
+          "route": "repos/100latent/lit-merge-queue-sandbox/git/refs",
+          "http": 403,
+          "message": "Resource not accessible by integration"
+        },
+        {
+          "route": "repos/100latent/lit-merge-queue-sandbox/pulls/106/merge-async",
+          "http": 403,
+          "message": "Resource not accessible by integration"
+        }
+      ],
+      "retired_writer": {
+        "host": "host-a",
+        "credential": "revoked",
+        "checks": [
+          {
+            "route": "installation/repositories",
+            "http": 403,
+            "message": "This GitHub App installation is currently suspended."
+          },
+          {
+            "route": "repos/100latent/lit-merge-queue-sandbox/git/refs",
+            "http": 403,
+            "message": "This GitHub App installation is currently suspended."
+          },
+          {
+            "route": "repos/100latent/lit-merge-queue-sandbox/pulls/106/merge-async",
+            "http": 403,
+            "message": "This GitHub App installation is currently suspended."
+          }
+        ]
+      }
+    },
+    "host-e": {
+      "read_permissions": {
+        "contents": "read",
+        "pull_requests": "read"
+      },
+      "denied_routes": [
+        {
+          "route": "graphql.enqueuePullRequest",
+          "http": 200,
+          "errors": [
+            {
+              "type": "FORBIDDEN",
+              "path": [
+                "enqueuePullRequest"
+              ],
+              "extensions": {
+                "saml_failure": false,
+                "ip_allow_list_failure": false
+              },
+              "locations": [
+                {
+                  "line": 1,
+                  "column": 38
+                }
+              ],
+              "message": "Resource not accessible by integration"
+            }
+          ]
+        },
+        {
+          "route": "repos/100latent/lit-merge-queue-sandbox/git/refs",
+          "http": 403,
+          "message": "Resource not accessible by integration"
+        },
+        {
+          "route": "repos/100latent/lit-merge-queue-sandbox/pulls/106/merge-async",
+          "http": 403,
+          "message": "Resource not accessible by integration"
+        }
+      ],
+      "retired_writer": {
+        "host": "host-e",
+        "credential": "revoked",
+        "checks": [
+          {
+            "route": "installation/repositories",
+            "http": 403,
+            "message": "This GitHub App installation is currently suspended."
+          },
+          {
+            "route": "repos/100latent/lit-merge-queue-sandbox/git/refs",
+            "http": 403,
+            "message": "This GitHub App installation is currently suspended."
+          },
+          {
+            "route": "repos/100latent/lit-merge-queue-sandbox/pulls/106/merge-async",
+            "http": 403,
+            "message": "This GitHub App installation is currently suspended."
+          }
+        ]
+      }
+    },
+    "host-f": {
+      "read_permissions": {
+        "contents": "read",
+        "pull_requests": "read"
+      },
+      "denied_routes": [
+        {
+          "route": "graphql.enqueuePullRequest",
+          "http": 200,
+          "errors": [
+            {
+              "type": "FORBIDDEN",
+              "path": [
+                "enqueuePullRequest"
+              ],
+              "extensions": {
+                "saml_failure": false,
+                "ip_allow_list_failure": false
+              },
+              "locations": [
+                {
+                  "line": 1,
+                  "column": 38
+                }
+              ],
+              "message": "Resource not accessible by integration"
+            }
+          ]
+        },
+        {
+          "route": "repos/100latent/lit-merge-queue-sandbox/git/refs",
+          "http": 403,
+          "message": "Resource not accessible by integration"
+        },
+        {
+          "route": "repos/100latent/lit-merge-queue-sandbox/pulls/106/merge-async",
+          "http": 403,
+          "message": "Resource not accessible by integration"
+        }
+      ],
+      "retired_writer": {
+        "host": "host-f",
+        "credential": "revoked",
+        "checks": [
+          {
+            "route": "installation/repositories",
+            "http": 403,
+            "message": "This GitHub App installation is currently suspended."
+          },
+          {
+            "route": "repos/100latent/lit-merge-queue-sandbox/git/refs",
+            "http": 403,
+            "message": "This GitHub App installation is currently suspended."
+          },
+          {
+            "route": "repos/100latent/lit-merge-queue-sandbox/pulls/106/merge-async",
+            "http": 403,
+            "message": "This GitHub App installation is currently suspended."
+          }
+        ]
+      }
+    }
+  },
+  "limitations": [
+    "Three-host authenticated pilot; no live 100-agent broker burst yet.",
+    "Regular UTF-8 additions/updates only; no binary, deletion or mode changes.",
+    "Unknown unregistered publications can orphan refs/PRs; no blind replay.",
+    "Single broker host and Mac login-session observer; no HA qualification; 30-day leaf certificate renewal required.",
+    "Privileged host/org operators are trusted; ARM clients use the existing lab account.",
+    "Recovery-branch CI changes not remotely qualified; sandbox Actions ran existing Rust and concurrency fixtures.",
+    "Full Rust suite rerun locally only; Python suites passed natively on four platforms."
+  ]
+}

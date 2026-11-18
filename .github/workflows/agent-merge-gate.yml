@@ -33,7 +33,9 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Test hosted queue coordinator recovery
-        run: python3 tests/github_queue_coordinator_regression.py
+        run: |
+          python3 tests/github_queue_coordinator_regression.py
+          python3 tests/task_broker_regression.py
 
       - name: Build and test batch rollback
         run: |

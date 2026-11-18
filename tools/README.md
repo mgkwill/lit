@@ -49,8 +49,9 @@ python3 tools/github_queue_coordinator.py --state /private/path/queue status
 Authentication comes from `GH_TOKEN`, `GITHUB_TOKEN`, or `gh auth token` for
 github.com. Tokens are never written to the state database or Git config.
 The credential needs access to read the repository's rules, PRs, checks and
-objects and to enqueue/dequeue and close PRs. The three publisher Apps retain their
-existing sandbox-only Contents and Pull Requests write permissions.
+objects and to enqueue/dequeue and close PRs. In the deployed broker pilot the three legacy worker App installations are
+suspended; only the separate broker App holds write credentials. Workers use
+individual TLS identities and repository-read tokens.
 
 When an App cannot see ruleset bypass actors or check provenance, provide
 `LIT_QUEUE_OBSERVER_TOKEN` from an existing operator credential. It is used
@@ -154,20 +155,29 @@ same request. Other tasks can still be claimed. A killed process releases the
 lock, while its bound attempt still requires remote retirement. The long-lived
 coordinator writer lock does not prevent scheduler claim/reassignment commands.
 
-This is an authority core for a trusted scheduler/broker. Do not expose `assign`,
-the authority filesystem/account, or the broker's GitHub write token to workers.
-Possession of the state database is administrative access. A worker capability
-is not an authenticated network API; workers need a broker that authenticates
-their identity before invoking these commands. The pilot Apps still capable of
-direct GitHub writes can bypass this client-side fence. Broker deployment and
-forge-level enforcement against such direct writes remain unqualified. No
-GitHub rules are weakened, no manual status is created, and no lease expiry,
-dependency scheduler or credential issuer is introduced here.
+The authenticated `task_broker.py` service exposes this authority over mutually
+authenticated TLS, with separate scheduler, worker and policy-observer roles.
+Workers receive only their own active claim capabilities. A separate sandbox App
+holds queue credentials on the broker host. Legacy worker write installations are suspended, so they cannot bypass the
+broker through GitHub. The original Actions-only rule retains no bypasses.
+An attempted extra main update restriction blocked GitHub's executor and was
+disabled; it is not the enforcement mechanism. The policy observer keeps operator credentials off the
+broker host and publication stops when its observations expire. See the
+[deployment and recovery contract](deployment/README.md).
+
+Keep the authority filesystem/account and administrative CLI inaccessible to
+workers. Privileged host and GitHub policy administrators remain trusted. No
+lease expiry or dependency scheduler is added. Broker-delivered GitHub credentials
+are repository-read only. Workers publish regular UTF-8 file proposals through
+`/propose`; the scheduler verifies and freezes the resulting ref before enrollment.
+Admission requires the newest relevant native preflight run to have passed; an
+older success for the same SHA cannot mask a new pending run.
 
 ## Regression tests
 
 ```sh
 python3 tests/github_queue_coordinator_regression.py
+python3 tests/task_broker_regression.py
 ```
 
 The tests exercise the public CLI against a stateful loopback HTTP forge and

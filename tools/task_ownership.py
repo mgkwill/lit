@@ -83,7 +83,7 @@ def assign(db, args):
 
 def binding(db, spec):
     row = db.execute('SELECT * FROM claims WHERE claim=?', (spec.get('claim'),)).fetchone()
-    if not row or any(spec.get(k) != row[k] for k in ('task', 'generation', 'base')) or spec['author'] != row['owner']:
+    if not row or any(spec.get(k) != row[k] for k in ('task', 'generation', 'base')) or spec.get('agent',spec['author']) != row['owner']:
         raise ValueError('proposal does not match its task assignment')
     return row
 

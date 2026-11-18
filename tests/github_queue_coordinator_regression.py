@@ -27,10 +27,16 @@ class Forge:
         self.main = "c" * 40
         self.mutations = []
         self.freeze = True
+        self.removal_event = None
         self.main_failures = 0
         self.freeze_reads = 0
         self.remove_freeze_on_recheck = False
         self.check_app = 15368
+        self.newer_preflight_pending = False
+        self.publication_calls = []
+        self.published_branch = None
+        self.drop_publication_reply = False
+        self.next_publication_number = 77
         self.author_type = "Bot"
         self.allow_observer = False
         self.snapshots = 0
@@ -48,6 +54,9 @@ class Forge:
                 pass
 
             def respond(self, body, code=200):
+                if forge.drop_publication_reply and self.command=='POST' and self.path.endswith('/pulls'):
+                    self.close_connection=True
+                    return
                 if (forge.allow_observer and self.headers.get("Authorization") == "Bearer good"
                         and "bypass_actors" in body):
                     body = {key: value for key, value in body.items() if key != "bypass_actors"}
@@ -76,6 +85,13 @@ class Forge:
                     else:
                         self.respond({"total_count": 1, "repositories": [
                             {"full_name": "100latent/lit-merge-queue-sandbox"}]})
+                elif '/git/commits/' in self.path:
+                    self.respond({'sha':'c'*40,'tree':{'sha':'d'*40}})
+                elif self.path.endswith('/rulesets/13'):
+                    self.respond({'target':'branch','enforcement':'active','bypass_actors':[
+                        {'actor_id':99,'actor_type':'Integration','bypass_mode':'exempt'}],
+                        'conditions':{'ref_name':{'include':['refs/heads/agents/broker/**/*'],'exclude':[]}},
+                        'rules':[{'type':'creation'},{'type':'update'},{'type':'deletion'}]})
                 elif self.path.endswith("/rulesets/10"):
                     if forge.main_failures:
                         forge.main_failures -= 1
@@ -102,9 +118,14 @@ class Forge:
                         "head_sha": forge.proposal["head"], "status": "completed", "conclusion": "success",
                         "app": {"id": forge.check_app}, "check_suite": {"id": 100}}]})
                 elif "/actions/runs?" in self.path:
-                    self.respond({"total_count": 1, "workflow_runs": [{"event": "pull_request",
-                        "head_sha": forge.proposal["head"], "check_suite_id": 100,
-                        "path": ".github/workflows/agent-merge-gate.yml", "conclusion": "success"}]})
+                    runs = [{"id":500,"created_at":"2026-11-17T00:00:00Z","status":"completed","event":"pull_request",
+                        "head_sha":forge.proposal["head"],"check_suite_id":100,
+                        "path":".github/workflows/agent-merge-gate.yml","conclusion":"success"}]
+                    if forge.newer_preflight_pending:
+                        runs.insert(0,runs[0]|{"id":501,"created_at":"2026-11-18T00:00:00Z",
+                            "status":"in_progress","conclusion":None,"check_suite_id":101})
+                    self.respond({"total_count":len(runs),"workflow_runs":runs})
+
                 else:
                     self.respond({"message": "Unexpected fixture endpoint"}, 404)
 
@@ -112,6 +133,21 @@ class Forge:
                 if not self.authorized():
                     return
                 request = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
+                if self.path!='/graphql':
+                    forge.publication_calls.append(self.path)
+                    if self.path.endswith('/git/trees'):
+                        self.respond({'sha':'d'*40})
+                    elif self.path.endswith('/git/commits'):
+                        self.respond({'sha':'e'*40})
+                    elif self.path.endswith('/git/refs'):
+                        forge.published_branch=request['ref'].removeprefix('refs/heads/')
+                        self.respond({'ref':request['ref'],'object':{'sha':'e'*40}})
+                    elif self.path.endswith('/pulls'):
+                        number=forge.next_publication_number;forge.next_publication_number+=1
+                        forge.proposal.update(number=number,head='e'*40,branch=request['head'],author='broker[bot]')
+                        self.respond({'number':number,'head':{'sha':'e'*40,'ref':request['head']},'user':{'login':'broker[bot]'}})
+                    else:self.respond({'message':'unexpected publication route'},404)
+                    return
                 operation = request["operationName"]
                 forge.calls.append(operation)
                 if operation == "QueueSnapshot":
@@ -127,6 +163,7 @@ class Forge:
                         "pullRequest": {"id": "PR_7", "headRefOid": p["head"],
                             "headRefName": p["branch"], "baseRefName": "main", "merged": forge.merged,
                             "closed": forge.closed, "mergeable": forge.mergeable,
+                            "queueEvents":{"nodes":[forge.removal_event] if forge.removal_event else []},
                             "headRepository": {"nameWithOwner": "100latent/lit-merge-queue-sandbox"},
                             "author": {"__typename": forge.author_type,
                                        "login": p["author"].removesuffix("[bot]")}, "mergeQueueEntry": {
@@ -441,6 +478,12 @@ class CoordinatorTests(unittest.TestCase):
         self.tick()
         self.assertTrue(self.remote.queued)
         self.assertEqual(self.remote.mutations, [])
+
+    def test_newer_pending_preflight_cannot_reuse_older_success_for_same_sha(self):
+        self.forge()
+        self.remote.newer_preflight_pending=True
+        self.tick()
+        self.assertEqual(self.remote.mutations,[])
 
     def test_queued_conflict_with_a_candidate_commit_is_preserved(self):
         self.git_fixture()

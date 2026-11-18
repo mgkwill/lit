@@ -1,0 +1,28 @@
+{
+  "state": "/var/lib/lit-task-broker",
+  "listen": "127.0.0.1",
+  "port": 19443,
+  "server_cert": "/etc/lit-task-broker/server.crt",
+  "server_key": "/etc/lit-task-broker/server.key",
+  "client_ca": "/etc/lit-task-broker/ca.crt",
+  "app_key": "/etc/lit-task-broker/broker-app.pem",
+  "installation_id": 12345,
+  "broker_app_id": 12346,
+  "broker_author": "broker-app[bot]",
+  "publication_ruleset": 12347,
+  "manifest": {
+    "repo": "100latent/lit-merge-queue-sandbox",
+    "main_ruleset": 27439049,
+    "freeze_ruleset": 12348
+  },
+  "worker_installations": {
+    "retired-worker-app[bot]": {"app_id": 12349, "installation_id": 12350}
+  },
+  "poll_seconds": 5,
+  "policy_ttl_seconds": 30,
+  "principals": {
+    "REPLACE_WITH_SHA256_OF_SCHEDULER_CERTIFICATE_DER": {"role": "scheduler", "owner": null},
+    "REPLACE_WITH_SHA256_OF_OBSERVER_CERTIFICATE_DER": {"role": "policy_observer", "owner": null},
+    "REPLACE_WITH_SHA256_OF_WORKER_CERTIFICATE_DER": {"role": "worker", "owner": "worker-001"}
+  }
+}

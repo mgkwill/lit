@@ -17,7 +17,9 @@ jobs:
         with:
           python-version: '3.12'
       - name: Test durable hosted queue recovery
-        run: python3 tests/github_queue_coordinator_regression.py
+        run: |
+          python3 tests/github_queue_coordinator_regression.py
+          python3 tests/task_broker_regression.py
 
   test:
     name: Test on ${{ matrix.os }}
