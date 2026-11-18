@@ -1,0 +1,142 @@
+{
+  "date": "2026-11-17",
+  "branch": "codex/mit-lit-recovery",
+  "base_commit": "cfdf7e69aa7f267ebe56c56c33de8bd427f8cd7a",
+  "mit_baseline": "98c59bb2dbebcf7f575993a4ad89e1300a578c83",
+  "reference_boundary": "No post-MIT implementation inspected or fetched for this work. Independently authored scheduler contract; no v1.8.0 source used.",
+  "source_sha256": {
+    "tools/github_queue_coordinator.py": "4a03f3b2a84c1cd5917eb915e27a96b2914a8abffbe1adc210b83c3ab20dd0b1",
+    "tools/task_ownership.py": "5bbe33bc591d358488d51fa1b35d944d480270b997b6f2ab106a9489bd744fe5",
+    "tests/github_queue_coordinator_regression.py": "cbc1c7a4404973b849ae3391efea64910914b96d4de7aed41b6cac6aea299660"
+  },
+  "coordinator_regressions": [
+    {
+      "host": "local",
+      "architecture": "arm64",
+      "tests": 40,
+      "passed": 40,
+      "exit_code": 0,
+      "versions": [
+        "macOS-27.2-arm64-arm-64bit-Mach-O",
+        "Python 3.14.3",
+        "git version 2.56.0"
+      ],
+      "log": "<private-path>"
+    },
+    {
+      "host": "host-a",
+      "architecture": "x86_64",
+      "tests": 40,
+      "passed": 40,
+      "exit_code": 0,
+      "versions": [
+        "host-a.lab.wsub.net",
+        "x86_64",
+        "Python 3.13.7",
+        "git version 2.51.0"
+      ],
+      "log": "<private-path>"
+    },
+    {
+      "host": "host-e",
+      "architecture": "aarch64",
+      "tests": 40,
+      "passed": 40,
+      "exit_code": 0,
+      "versions": [
+        "host-e.lab.wsub.net",
+        "aarch64",
+        "Python 3.12.3",
+        "git version 2.43.0"
+      ],
+      "log": "<private-path>"
+    },
+    {
+      "host": "host-f",
+      "architecture": "aarch64",
+      "tests": 40,
+      "passed": 40,
+      "exit_code": 0,
+      "versions": [
+        "host-f.lab.wsub.net",
+        "aarch64",
+        "Python 3.12.3",
+        "git version 2.43.0"
+      ],
+      "log": "<private-path>"
+    }
+  ],
+  "evidence_directory": "<private-path>",
+  "live_github_test": false,
+  "scope": "Native CLI processes, stateful loopback HTTP forge, SQLite authority, OS file locks, native Git fixtures. Single-machine authority tested separately on each host; no distributed filesystem authority claim.",
+  "remaining": [
+    "Authenticated credential broker and live hosted reassignment qualification, including direct-forge bypass prevention",
+    "Dependency-aware scheduling and advisory overlap hints",
+    "Operator-supported reconciliation of genuinely unobservable pending RPCs",
+    "Broader deferred history, hosting, identity and migration parity"
+  ],
+  "local_rust_regressions": {
+    "command": "cargo test --locked -- --test-threads=1",
+    "exit_code": 0,
+    "passed": 486,
+    "targets": [
+      {
+        "target": "Running unittests src/lib.rs (<private-path>)",
+        "passed": 67,
+        "failed": 0
+      },
+      {
+        "target": "Running unittests src/main.rs (<private-path>)",
+        "passed": 67,
+        "failed": 0
+      },
+      {
+        "target": "Running tests/adversarial_test.rs (<private-path>)",
+        "passed": 6,
+        "failed": 0
+      },
+      {
+        "target": "Running tests/agent_regressions.rs (<private-path>)",
+        "passed": 27,
+        "failed": 0
+      },
+      {
+        "target": "Running tests/command_tests.rs (<private-path>)",
+        "passed": 239,
+        "failed": 0
+      },
+      {
+        "target": "Running tests/concurrency_test.rs (<private-path>)",
+        "passed": 9,
+        "failed": 0
+      },
+      {
+        "target": "Running tests/feature_integration_test.rs (<private-path>)",
+        "passed": 38,
+        "failed": 0
+      },
+      {
+        "target": "Running tests/git_interop_regressions.rs (<private-path>)",
+        "passed": 8,
+        "failed": 0
+      },
+      {
+        "target": "Running tests/network_integration_test.rs (<private-path>)",
+        "passed": 15,
+        "failed": 0
+      },
+      {
+        "target": "Running tests/performance_benchmarks.rs (<private-path>)",
+        "passed": 9,
+        "failed": 0
+      },
+      {
+        "target": "Doc-tests lit",
+        "passed": 1,
+        "failed": 0
+      }
+    ],
+    "log": "<private-path>",
+    "scope": "Local macOS only. Existing compiler warnings; no failures."
+  }
+}

@@ -2,7 +2,9 @@
 
 `github_queue_coordinator.py` admits immutable, App-authored proposals to a
 GitHub merge queue and withdraws stale unmergeable entries only after native
-Git establishes a conflict. It does not push, merge, publish statuses, dispatch
+Git establishes a conflict. Task reassignment also withdraws and closes revoked
+proposals before a successor is granted publication authority. It does not push,
+merge, publish statuses, dispatch
 workflows, change permissions, or resolve conflicts. macOS and Linux are
 supported. The coordinator is separate from the v1.8.0 executable.
 
@@ -47,7 +49,7 @@ python3 tools/github_queue_coordinator.py --state /private/path/queue status
 Authentication comes from `GH_TOKEN`, `GITHUB_TOKEN`, or `gh auth token` for
 github.com. Tokens are never written to the state database or Git config.
 The credential needs access to read the repository's rules, PRs, checks and
-objects and to enqueue/dequeue PRs. The three publisher Apps retain their
+objects and to enqueue/dequeue and close PRs. The three publisher Apps retain their
 existing sandbox-only Contents and Pull Requests write permissions.
 
 When an App cannot see ruleset bypass actors or check provenance, provide
@@ -92,11 +94,75 @@ queued. A withdrawn conflict remains held for a new attempt to repair.
 Queued-conflict cleanup evaluates current main; it does not plan dependencies
 or predict whether a preceding proposal might later resolve the conflict.
 
-This is queue coordination for fixed attempts. It does not implement task
-reassignment, scheduler ownership leases, credential issuance or CI policy
-administration. A supervisor must preserve the state directory across
-process restarts. Do not use two independent state directories to coordinate
-the same cohort.
+A supervisor must preserve the state directory across process restarts. Use
+one local authority directory for the same cohort. SQLite and OS locks are
+single-machine authority primitives; do not copy the database to workers or
+use independent directories as competing authorities.
+
+## Task ownership and reassignment
+
+The trusted scheduler creates the first claim with expected generation zero:
+
+```sh
+python3 tools/github_queue_coordinator.py --state /private/path/queue assign task-42 \
+  --expect 0 --owner 'worker[bot]' --base cccccccccccccccccccccccccccccccccccccccc \
+  --request assignment-42-first
+```
+
+This returns task, generation, claim ID, owner, base, phase and a capability.
+Keep the capability out of logs. The scheduler authenticates the worker before
+delivering it. The owner is the worker's GitHub App bot login. Add the receipt's
+`task`, `generation`, `claim` and `base` fields to that attempt's proposal
+manifest. Submit a JSON object mapping claim IDs to capabilities on stdin:
+
+```sh
+python3 tools/github_queue_coordinator.py --state /private/path/queue \
+  register manifest.json --claims-stdin < /private/path/claim-capabilities.json
+```
+
+A bound attempt has exactly one immutable PR identity. Registration atomically
+checks capability, task, generation, owner and assigned base with the PR binding.
+The assigned base is recorded and matched; this does not prove Git ancestry.
+Once tasks exist, unowned registration is rejected. Legacy fixed-attempt states
+must use a fresh authority directory to enable ownership, avoiding silent upgrade
+of already-published work. Legacy states remain usable in fixed-attempt mode.
+
+To reassign, repeat `assign` with the current expected generation, a new owner
+and a new unique request ID. Generations never decrease. Concurrent claims or
+reassignments for the same expected generation have at most one winner. An
+identical request retries the same receipt; changing its arguments is rejected.
+A revoked request cannot resurrect its capability, even if ownership returns
+to the same bot later. Capability values are not stored or included in status;
+the private database contains their derivation key and must remain private.
+
+An unbound claim can transfer immediately. A bound claim advances the generation
+and revokes the old owner, but the successor starts `draining`, without a
+capability. The coordinator withdraws the old entry even if it is nonconflicting,
+then closes the old PR using GitHub's
+[closePullRequest mutation](https://docs.github.com/en/graphql/reference/pulls#closepullrequest).
+Only observing closed or merged **and no queue entry** retires that attempt and
+activates its successor. Replay the scheduler's reassignment request to obtain
+the now-active capability. A changed immutable identity or missing policy blocks
+handoff. Unknown remote effects stay journaled and are never blindly retried;
+closure fences pending effects without falsely reporting them as observed.
+An old attempt that merged before retirement is recorded as merged; reassignment
+does not undo a completed merge. The scheduler must choose the next base.
+
+Per-task OS locks cover the generation check, durable intent and remote call.
+An in-flight publication makes same-task reassignment return busy; retry the
+same request. Other tasks can still be claimed. A killed process releases the
+lock, while its bound attempt still requires remote retirement. The long-lived
+coordinator writer lock does not prevent scheduler claim/reassignment commands.
+
+This is an authority core for a trusted scheduler/broker. Do not expose `assign`,
+the authority filesystem/account, or the broker's GitHub write token to workers.
+Possession of the state database is administrative access. A worker capability
+is not an authenticated network API; workers need a broker that authenticates
+their identity before invoking these commands. The pilot Apps still capable of
+direct GitHub writes can bypass this client-side fence. Broker deployment and
+forge-level enforcement against such direct writes remain unqualified. No
+GitHub rules are weakened, no manual status is created, and no lease expiry,
+dependency scheduler or credential issuer is introduced here.
 
 ## Regression tests
 
@@ -107,6 +173,8 @@ python3 tests/github_queue_coordinator_regression.py
 The tests exercise the public CLI against a stateful loopback HTTP forge and
 real Git repositories. They kill coordinator processes after remote
 acceptance, drop replies, revoke credentials, compete for the writer lock,
-change heads and policies, and preserve unknown outcomes. Test API and Git
+change heads and policies, and preserve unknown outcomes. Task tests also race
+claims and reassignments, reject stale/forged capabilities, exercise A-to-B-to-A
+ownership, kill a publisher during reassignment, and lose retirement replies. Test API and Git
 remote overrides are limited to an explicit loopback fixture. Production
 traffic is restricted to api.github.com and github.com.

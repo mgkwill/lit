@@ -22,6 +22,7 @@ class Forge:
         self.candidate = None
         self.mergeable = "MERGEABLE"
         self.merged = False
+        self.closed = False
         self.complete_after_enqueue = False
         self.main = "c" * 40
         self.mutations = []
@@ -125,7 +126,7 @@ class Forge:
                         "ref": {"target": {"oid": forge.main}},
                         "pullRequest": {"id": "PR_7", "headRefOid": p["head"],
                             "headRefName": p["branch"], "baseRefName": "main", "merged": forge.merged,
-                            "closed": False, "mergeable": forge.mergeable,
+                            "closed": forge.closed, "mergeable": forge.mergeable,
                             "headRepository": {"nameWithOwner": "100latent/lit-merge-queue-sandbox"},
                             "author": {"__typename": forge.author_type,
                                        "login": p["author"].removesuffix("[bot]")}, "mergeQueueEntry": {
@@ -146,6 +147,8 @@ class Forge:
                         forge.queued = True
                     elif operation == "WithdrawProposal":
                         forge.queued = False
+                    elif operation == "CloseProposal":
+                        forge.closed = True
                     else:
                         self.respond({"errors": [{"message": "unexpected mutation"}]})
                         return
@@ -446,6 +449,230 @@ class CoordinatorTests(unittest.TestCase):
         self.remote.candidate = {"oid": self.remote.main}
         self.tick()
         self.assertTrue(self.remote.queued)
+        self.assertEqual(self.remote.mutations, [])
+
+
+class OwnershipTests(unittest.TestCase):
+    setUp = CoordinatorTests.setUp
+    cli = CoordinatorTests.cli
+    run_args = CoordinatorTests.run_args
+    tick = CoordinatorTests.tick
+
+    def assign(self, generation=0, owner='worker[bot]', request=None, expected=0, task='task-1'):
+        return self.cli('assign', task, '--expect', str(generation), '--owner', owner,
+                        '--base', 'c' * 40, '--request', request or f'{task}-{generation}-{owner}',
+                        expected=expected)
+
+    def bind(self, claim, expected=0, capability=None):
+        self.proposal.update({k: claim[k] for k in ('task', 'generation', 'claim', 'base')})
+        self.proposal['author'] = claim['owner']
+        self.manifest.write_text(json.dumps(self.payload))
+        result = subprocess.run([sys.executable, str(CLI), '--state', str(self.state),
+            'register', str(self.manifest), '--claims-stdin'], input=json.dumps({
+                claim['claim']: capability if capability is not None else claim.get('capability', '')}),
+            text=True, capture_output=True, timeout=15)
+        self.assertEqual(result.returncode, expected, result.stdout + result.stderr)
+
+    def owned_forge(self):
+        self.claim = self.assign()[0]
+        self.bind(self.claim)
+        self.remote = Forge(dict(self.proposal))
+        self.addCleanup(self.remote.close)
+
+    def test_retry_is_stable_and_revoked_retry_cannot_resurrect(self):
+        first = self.assign()[0]
+        self.assertEqual(first, self.assign()[0])
+        self.assign(1, 'second[bot]')
+        self.assign(expected=1)
+        self.assign(2, 'worker[bot]')
+        self.bind(first, expected=1)
+        self.assertNotIn(first['capability'], json.dumps(self.cli('status')))
+        for file in self.state.iterdir():
+            self.assertNotIn(first['capability'].encode(), file.read_bytes())
+
+    def test_request_cannot_change_shape(self):
+        self.assign(request='same')
+        self.assign(1, 'second[bot]', request='same', expected=1)
+
+    def test_competing_claims_and_reassignments_have_one_winner(self):
+        for generation in (0, 1):
+            processes = [subprocess.Popen([sys.executable, str(CLI), '--state', str(self.state),
+                'assign', 'task-1', '--expect', str(generation), '--owner', f'agent-{i}[bot]',
+                '--base', 'c' * 40, '--request', f'{generation}-{i}'],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) for i in range(12)]
+            results = [p.communicate(timeout=15) for p in processes]
+            self.assertEqual(sum(p.returncode == 0 for p in processes), 1, results)
+        claims = self.cli('status')[0]['claims']
+        self.assertEqual([c['generation'] for c in claims], [1, 2])
+
+    def test_binding_racing_reassignment_never_escapes_retirement(self):
+        for trial in range(8):
+            self.state = self.root / f'race-{trial}'
+            claim = self.assign()[0]
+            self.proposal.update({k: claim[k] for k in ('task', 'generation', 'claim', 'base')})
+            self.manifest.write_text(json.dumps(self.payload))
+            prefix = [sys.executable, str(CLI), '--state', str(self.state)]
+            binder = subprocess.Popen(prefix + ['register', str(self.manifest), '--claims-stdin'],
+                stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            assigner = subprocess.Popen(prefix + ['assign', 'task-1', '--expect', '1',
+                '--owner', 'second[bot]', '--base', 'c' * 40, '--request', 'race-next'],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            binder.communicate(json.dumps({claim['claim']: claim['capability']}), timeout=15)
+            assigner.communicate(timeout=15)
+            self.assertIn(binder.returncode, (0, 1))
+            self.assertIn(assigner.returncode, (0, 1))
+            next_claim = self.assign(1, 'second[bot]', request='race-next')[0]
+            current = self.cli('status')[0]
+            self.assertEqual(next_claim['phase'], 'draining' if current['proposals'] else 'active')
+            self.assertEqual(current['claims'][0]['phase'], 'revoked')
+            self.bind(claim, expected=1)
+
+    def test_capability_and_assignment_fields_are_enforced(self):
+        claim = self.assign()[0]
+        self.bind(claim, expected=1, capability='forged')
+        self.bind(claim, expected=1, capability='forged-\u2603')
+        for key, value in [('owner', 'impostor[bot]'), ('base', 'd' * 40),
+                           ('generation', 2), ('task', 'another'), ('claim', 'unknown')]:
+            self.bind(claim | {key: value}, expected=1)
+        self.bind(claim)
+        self.proposal['number'] = 8
+        self.bind(claim, expected=1)
+        self.proposal['number'] = 7
+        self.proposal['head'] = 'b' * 40
+        self.bind(claim, expected=1)
+
+    def test_owned_state_rejects_unowned_registration(self):
+        self.assign()
+        self.cli('register', str(self.manifest), expected=1)
+
+    def test_existing_legacy_state_cannot_silently_enable_ownership(self):
+        self.cli('register', str(self.manifest))
+        self.assign(expected=1)
+
+    def test_reassignment_retires_nonconflicting_queue_before_grant(self):
+        self.owned_forge()
+        self.tick()
+        pending = self.assign(1, 'second[bot]')[0]
+        self.assertEqual(pending['phase'], 'draining')
+        self.assertNotIn('capability', pending)
+        self.bind(self.claim, expected=1)
+        self.assign(2, 'third[bot]', expected=1)
+        self.tick()  # withdraw a valid candidate because its owner was revoked
+        self.assertFalse(self.remote.queued)
+        self.assertEqual(self.assign(1, 'second[bot]')[0]['phase'], 'draining')
+        self.tick()  # close old PR
+        self.assertTrue(self.remote.closed)
+        self.tick()  # observe closure, activate next attempt
+        next_claim = self.assign(1, 'second[bot]')[0]
+        self.assertEqual(next_claim['phase'], 'active')
+        self.assertIn('capability', next_claim)
+        self.assertEqual(self.remote.mutations, ['EnqueueProposal', 'WithdrawProposal', 'CloseProposal'])
+        self.tick()
+        self.assertEqual(len(self.remote.mutations), 3)
+
+    def test_reassignment_before_admission_only_closes_old_pr(self):
+        self.owned_forge()
+        self.assign(1, 'second[bot]')
+        self.tick()
+        self.tick()
+        self.assertEqual(self.remote.mutations, ['CloseProposal'])
+        self.assertEqual(self.assign(1, 'second[bot]')[0]['phase'], 'active')
+
+    def test_policy_or_identity_failure_keeps_new_owner_fenced(self):
+        self.owned_forge()
+        self.assign(1, 'second[bot]')
+        self.remote.freeze = False
+        self.tick(expected=1)
+        self.remote.freeze = True
+        self.remote.proposal['head'] = 'b' * 40
+        self.tick(expected=1)
+        self.assertEqual(self.assign(1, 'second[bot]')[0]['phase'], 'draining')
+        self.assertEqual(self.remote.mutations, [])
+
+    def test_inflight_publication_blocks_reassignment_but_not_other_tasks(self):
+        self.owned_forge()
+        self.remote.block_reply = True
+        process = subprocess.Popen(self.run_args(), env=dict(os.environ, GH_TOKEN='good',
+            LIT_QUEUE_OBSERVER_TOKEN=''), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        self.addCleanup(lambda: process.poll() is None and process.kill())
+        self.assertTrue(self.remote.applied.wait(5))
+        self.assign(1, 'second[bot]', expected=1)
+        self.assertEqual(self.assign(task='independent')[0]['phase'], 'active')
+        process.kill()
+        process.communicate(timeout=5)
+        self.remote.block_reply = False
+        self.remote.release.set()
+        self.assign(1, 'second[bot]')
+        self.tick()
+        self.tick()
+        self.tick()
+        self.assertEqual(self.assign(1, 'second[bot]')[0]['phase'], 'active')
+        self.assertEqual(self.remote.mutations.count('EnqueueProposal'), 1)
+
+    def test_lost_retirement_replies_reconcile_after_restart(self):
+        self.owned_forge()
+        self.tick()
+        self.assign(1, 'second[bot]')
+        self.remote.drop_reply = True
+        self.tick(expected=1)  # dequeue applied, reply lost
+        self.assertNotIn('capability', self.assign(1, 'second[bot]')[0])
+        self.tick(expected=1)  # close applied, reply lost
+        self.assertNotIn('capability', self.assign(1, 'second[bot]')[0])
+        self.remote.drop_reply = False
+        self.tick()
+        self.assertEqual(self.assign(1, 'second[bot]')[0]['phase'], 'active')
+        self.assertEqual(self.remote.mutations, ['EnqueueProposal', 'WithdrawProposal', 'CloseProposal'])
+
+    def test_merged_previous_attempt_is_accounted_before_grant(self):
+        self.owned_forge()
+        self.tick()
+        self.assign(1, 'second[bot]')
+        self.remote.merged = True
+        self.remote.queued = False
+        result = self.tick()
+        self.assertEqual(self.assign(1, 'second[bot]')[0]['phase'], 'active')
+        self.assertEqual(self.remote.mutations, ['EnqueueProposal'])
+        self.assertTrue(any(event.get('merged') is True for event in map(json.loads, result.stdout.splitlines())))
+
+    def test_new_generation_binds_a_distinct_pr_after_retirement(self):
+        self.owned_forge()
+        self.assign(1, 'second[bot]')
+        self.tick()
+        self.tick()
+        claim = self.assign(1, 'second[bot]')[0]
+        self.bind(claim, expected=1)  # cannot reuse the old PR number
+        self.proposal['number'] = 8
+        self.proposal['head'] = 'd' * 40
+        self.proposal['branch'] = 'agents/second/8'
+        self.bind(claim)
+        self.assertEqual(self.cli('status')[0]['claims'][-1]['proposal'], 8)
+        self.bind(self.claim, expected=1)
+
+    def test_revoked_writer_cannot_finish_handoff_using_observer(self):
+        self.owned_forge()
+        self.assign(1, 'second[bot]')
+        self.remote.allow_observer = True
+        self.tick(expected=1, token='revoked', observer='observer')
+        self.assertNotIn('capability', self.assign(1, 'second[bot]')[0])
+        self.assertEqual(self.remote.mutations, [])
+
+    def test_failed_multi_proposal_registration_rolls_back_claim_binding(self):
+        claim = self.assign()[0]
+        self.payload['proposals'].append(dict(self.proposal, number=8))
+        self.bind(claim, expected=1)
+        state = self.cli('status')[0]
+        self.assertIsNone(state['claims'][0]['proposal'])
+        self.assertEqual(state['proposals'], [])
+
+    def test_unknown_close_does_not_activate_or_blindly_retry(self):
+        self.owned_forge()
+        self.assign(1, 'second[bot]')
+        self.remote.drop_without_apply = True
+        self.tick(expected=1)
+        self.remote.drop_without_apply = False
+        self.tick()
+        self.assertFalse(self.remote.closed)
+        self.assertNotIn('capability', self.assign(1, 'second[bot]')[0])
         self.assertEqual(self.remote.mutations, [])
 
 

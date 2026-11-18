@@ -6,7 +6,8 @@ server-enforced immutability is part of the safety contract. Policy admins and
 the operator's credential source are trusted. No tokens are written to state.
 """
 import argparse
-from contextlib import contextmanager
+from contextlib import contextmanager, ExitStack
+import task_ownership as ownership
 import fcntl
 import hashlib
 import http.client
@@ -24,7 +25,7 @@ from urllib.parse import quote, urlsplit
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 CHECK = "Agent workflow candidate"
-TERMINAL = {"merged", "held_conflict", "superseded", "closed"}
+TERMINAL = {"merged", "held_conflict", "superseded", "closed", "ownership_retired"}
 
 
 class ApiError(RuntimeError):
@@ -105,12 +106,20 @@ class GitHub:
                 mergeQueueEntry{id}
               }}"""
             variables = {"pr": node, "head": head}
-        else:
+        elif kind == "close":
+            name = "CloseProposal"
+            query = """mutation CloseProposal($pr:ID!) {
+              result:closePullRequest(input:{pullRequestId:$pr}){pullRequest{id}}
+            }"""
+            variables = {"pr": node}
+        elif kind == "dequeue":
             name = "WithdrawProposal"
             query = """mutation WithdrawProposal($pr:ID!) {
               result:dequeuePullRequest(input:{id:$pr}){mergeQueueEntry{id}}
             }"""
             variables = {"pr": node}
+        else:
+            raise ValueError("unknown queue action")
         return self.api("graphql", {"operationName": name, "query": query, "variables": variables}, writer=True)
 
     def check(self, repo, head):
@@ -247,80 +256,117 @@ def tick(db, github, manifest, args):
     github.authenticate_writer(manifest["repo"])
     policies(github, manifest, specs)
     for row in sorted(rows, key=lambda r: (json.loads(r["spec"]).get("kind") == "shared", r["number"])):
-        if row["phase"] in TERMINAL:
-            continue
-        spec = json.loads(row["spec"])
-        number = spec["number"]
-        snapshot = github.snapshot(manifest["repo"], number)
-        pr = snapshot["pullRequest"]
-        if not identity(manifest["repo"], spec, pr):
-            record(db, number, "superseded")
-            continue
-        if pr["merged"] or pr["closed"]:
-            resolve(db, number)
-            record(db, number, "merged" if pr["merged"] else "closed")
-            continue
-        pending = db.execute("SELECT * FROM actions WHERE number=? AND status IN ('pending','acknowledged') ORDER BY id DESC LIMIT 1",
-                             (number,)).fetchone()
-        entry = pr["mergeQueueEntry"]
-        if entry:
-            if pending and pending["kind"] == "dequeue":
-                record(db, number, "awaiting_dequeue")
-                continue
-            resolve(db, number)
-            record(db, number, "queued")
-            since = row["stale_since"] if row["entry_id"] == entry["id"] else None
-            if not conflict_entry(pr):
-                with db:
-                    db.execute("UPDATE proposals SET stale_since=NULL,entry_id=? WHERE number=?",
-                               (entry["id"], number))
-                continue
-            since = since if since is not None else time.time()
-            with db:
-                db.execute("UPDATE proposals SET stale_since=?,entry_id=? WHERE number=?",
-                           (since, entry["id"], number))
-            if time.time() - since < args.stale_seconds:
-                continue
-            main = snapshot["ref"]["target"]["oid"]
-            proof = conflict_proof(github, manifest, spec, main, args)
-            if not proof:
-                continue
-            policies(github, manifest, specs)
-            latest = github.snapshot(manifest["repo"], number)
-            fresh = latest["pullRequest"]
-            if not identity(manifest["repo"], spec, fresh):
-                record(db, number, "superseded")
-                continue
-            current = fresh["mergeQueueEntry"]
-            if not current:
-                record(db, number, "held_conflict", **proof)
-            elif (latest["ref"]["target"]["oid"] == main and current["id"] == entry["id"]
-                  and conflict_entry(fresh)):
-                record(db, number, "queued", **proof)
-                action(db, github, number, "dequeue", fresh)
-            continue
-        if pending and pending["kind"] == "dequeue":
-            resolve(db, number)
-            record(db, number, "held_conflict")
-        elif pr["mergeable"] == "CONFLICTING":
-            resolve(db, number)
-            record(db, number, "held_conflict")
-        elif pending:
-            record(db, number, "unknown_enqueue")
-        elif row["phase"] in {"queued", "removed", "awaiting_outcome"}:
-            # Entry absence can precede the merged/closed fields becoming visible.
-            # 'removed' is reconciled for journals written by the initial build.
-            record(db, number, "awaiting_outcome")
-        elif github.check(manifest["repo"], spec["head"]):
-            policies(github, manifest, specs)
-            latest = github.snapshot(manifest["repo"], number)["pullRequest"]
-            if not identity(manifest["repo"], spec, latest):
-                record(db, number, "superseded")
-            elif not latest["mergeQueueEntry"] and not latest["merged"] and not latest["closed"]:
-                action(db, github, number, "enqueue", latest)
-        else:
-            record(db, number, "waiting_checks")
+        spec = json.loads(row['spec'])
+        with ExitStack() as locks:
+            if 'task' in spec:
+                locks.enter_context(ownership.fence(args.state, spec['task']))
+            proposal_tick(db, github, manifest, args, specs, row)
 
+
+def drain(db, github, manifest, specs, spec, claim):
+    if claim['phase'] == 'retired':
+        record(db, spec['number'], 'ownership_retired')
+        return
+    policies(github, manifest, specs)
+    pr = github.snapshot(manifest['repo'], spec['number'])['pullRequest']
+    if not identity(manifest['repo'], spec, pr):
+        raise RuntimeError('revoked proposal identity changed; task remains fenced')
+    number = spec['number']
+    if (pr['closed'] or pr['merged']) and not pr['mergeQueueEntry']:
+        with db:
+            db.execute("UPDATE actions SET status='fenced_by_closure' WHERE number=? AND status IN ('pending','acknowledged')", (number,))
+        ownership.retired(db, claim['claim'])
+        record(db, number, 'ownership_retired', merged=pr['merged'])
+        return
+    kind = 'dequeue' if pr['mergeQueueEntry'] else 'close'
+    pending = db.execute("SELECT 1 FROM actions WHERE number=? AND kind=? AND status IN ('pending','acknowledged')", (number, kind)).fetchone()
+    record(db, number, 'ownership_draining', generation=claim['generation'])
+    if not pending:
+        action(db, github, number, kind, pr)
+
+
+def proposal_tick(db, github, manifest, args, specs, row):
+    spec = json.loads(row["spec"])
+    if db.execute('SELECT 1 FROM tasks LIMIT 1').fetchone():
+        claim = ownership.binding(db, spec)
+        if claim['phase'] in ('revoked', 'retired'):
+            drain(db, github, manifest, specs, spec, claim)
+            return
+        if claim['phase'] != 'active':
+            raise RuntimeError('task is not active')
+    if row["phase"] in TERMINAL:
+        return
+    spec = json.loads(row["spec"])
+    number = spec["number"]
+    snapshot = github.snapshot(manifest["repo"], number)
+    pr = snapshot["pullRequest"]
+    if not identity(manifest["repo"], spec, pr):
+        record(db, number, "superseded")
+        return
+    if pr["merged"] or pr["closed"]:
+        resolve(db, number)
+        record(db, number, "merged" if pr["merged"] else "closed")
+        return
+    pending = db.execute("SELECT * FROM actions WHERE number=? AND status IN ('pending','acknowledged') ORDER BY id DESC LIMIT 1",
+                         (number,)).fetchone()
+    entry = pr["mergeQueueEntry"]
+    if entry:
+        if pending and pending["kind"] == "dequeue":
+            record(db, number, "awaiting_dequeue")
+            return
+        resolve(db, number)
+        record(db, number, "queued")
+        since = row["stale_since"] if row["entry_id"] == entry["id"] else None
+        if not conflict_entry(pr):
+            with db:
+                db.execute("UPDATE proposals SET stale_since=NULL,entry_id=? WHERE number=?",
+                           (entry["id"], number))
+            return
+        since = since if since is not None else time.time()
+        with db:
+            db.execute("UPDATE proposals SET stale_since=?,entry_id=? WHERE number=?",
+                       (since, entry["id"], number))
+        if time.time() - since < args.stale_seconds:
+            return
+        main = snapshot["ref"]["target"]["oid"]
+        proof = conflict_proof(github, manifest, spec, main, args)
+        if not proof:
+            return
+        policies(github, manifest, specs)
+        latest = github.snapshot(manifest["repo"], number)
+        fresh = latest["pullRequest"]
+        if not identity(manifest["repo"], spec, fresh):
+            record(db, number, "superseded")
+            return
+        current = fresh["mergeQueueEntry"]
+        if not current:
+            record(db, number, "held_conflict", **proof)
+        elif (latest["ref"]["target"]["oid"] == main and current["id"] == entry["id"]
+              and conflict_entry(fresh)):
+            record(db, number, "queued", **proof)
+            action(db, github, number, "dequeue", fresh)
+        return
+    if pending and pending["kind"] == "dequeue":
+        resolve(db, number)
+        record(db, number, "held_conflict")
+    elif pr["mergeable"] == "CONFLICTING":
+        resolve(db, number)
+        record(db, number, "held_conflict")
+    elif pending:
+        record(db, number, "unknown_enqueue")
+    elif row["phase"] in {"queued", "removed", "awaiting_outcome"}:
+        # Entry absence can precede the merged/closed fields becoming visible.
+        # 'removed' is reconciled for journals written by the initial build.
+        record(db, number, "awaiting_outcome")
+    elif github.check(manifest["repo"], spec["head"]):
+        policies(github, manifest, specs)
+        latest = github.snapshot(manifest["repo"], number)["pullRequest"]
+        if not identity(manifest["repo"], spec, latest):
+            record(db, number, "superseded")
+        elif not latest["mergeQueueEntry"] and not latest["merged"] and not latest["closed"]:
+            action(db, github, number, "enqueue", latest)
+    else:
+        record(db, number, "waiting_checks")
 
 def encoded(value):
     return json.dumps(value, sort_keys=True, separators=(",", ":"))
@@ -338,28 +384,36 @@ def writer(root):
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError:
             raise RuntimeError("another coordinator owns this state directory") from None
-        db = sqlite3.connect(root / "queue.sqlite")
-        db.row_factory = sqlite3.Row
-        db.execute("PRAGMA synchronous=FULL")
-        db.executescript("""
-            CREATE TABLE IF NOT EXISTS metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL);
-            CREATE TABLE IF NOT EXISTS proposals (
-                number INTEGER PRIMARY KEY, spec TEXT NOT NULL, phase TEXT NOT NULL,
-                stale_since REAL, entry_id TEXT);
-            CREATE TABLE IF NOT EXISTS actions (
-                id INTEGER PRIMARY KEY, number INTEGER NOT NULL, kind TEXT NOT NULL,
-                status TEXT NOT NULL, entry_id TEXT, created REAL NOT NULL);
-            CREATE TABLE IF NOT EXISTS events (
-                id INTEGER PRIMARY KEY, number INTEGER, kind TEXT NOT NULL,
-                data TEXT NOT NULL, created REAL NOT NULL);
-        """)
-        try:
+        with database(root) as db:
             yield db
-        finally:
-            db.close()
 
 
-def register(db, path):
+@contextmanager
+def database(root):
+    root.mkdir(mode=0o700, parents=True, exist_ok=True)
+    root.chmod(0o700)
+    db = sqlite3.connect(root / "queue.sqlite")
+    db.row_factory = sqlite3.Row
+    db.execute("PRAGMA synchronous=FULL")
+    db.executescript("""
+        CREATE TABLE IF NOT EXISTS metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL);
+        CREATE TABLE IF NOT EXISTS proposals (
+            number INTEGER PRIMARY KEY, spec TEXT NOT NULL, phase TEXT NOT NULL,
+            stale_since REAL, entry_id TEXT);
+        CREATE TABLE IF NOT EXISTS actions (
+            id INTEGER PRIMARY KEY, number INTEGER NOT NULL, kind TEXT NOT NULL,
+            status TEXT NOT NULL, entry_id TEXT, created REAL NOT NULL);
+        CREATE TABLE IF NOT EXISTS events (
+            id INTEGER PRIMARY KEY, number INTEGER, kind TEXT NOT NULL,
+            data TEXT NOT NULL, created REAL NOT NULL);
+    """)
+    ownership.initialize(db)
+    try:
+        yield db
+    finally:
+        db.close()
+
+def register(db, path, capabilities):
     manifest = json.loads(path.read_text())
     if not re.fullmatch(r"[A-Za-z0-9_-]+/[A-Za-z0-9_.-]+", manifest["repo"]):
         raise ValueError("expected owner/repository")
@@ -378,6 +432,16 @@ def register(db, path):
         subprocess.run(["git", "check-ref-format", "refs/heads/" + spec["branch"]], check=True,
                        capture_output=True)
     with db:
+        db.execute('BEGIN IMMEDIATE')
+        owned = db.execute('SELECT 1 FROM tasks LIMIT 1').fetchone()
+        for spec in specs:
+            if owned:
+                if (not isinstance(spec.get('task'), str) or not spec['task']
+                        or type(spec.get('generation')) is not int):
+                    raise ValueError('expected task and integer generation')
+                ownership.bind(db, spec, capabilities)
+            elif 'task' in spec:
+                raise ValueError('task authority is missing')
         current = db.execute("SELECT value FROM metadata WHERE key='manifest'").fetchone()
         if current and current[0] != encoded(manifest):
             raise ValueError("state is already bound to a different repository or policy")
@@ -392,7 +456,7 @@ def register(db, path):
 
 
 def status(db):
-    return {"proposals": [json.loads(row["spec"]) | {"phase": row["phase"]}
+    return {"claims": ownership.status(db), "proposals": [json.loads(row["spec"]) | {"phase": row["phase"]}
                           for row in db.execute("SELECT * FROM proposals ORDER BY number")],
             "actions": [dict(row) for row in db.execute("SELECT * FROM actions ORDER BY id")]}
 
@@ -403,6 +467,13 @@ def main():
     commands = parser.add_subparsers(dest="command", required=True)
     enrollment = commands.add_parser("register")
     enrollment.add_argument("manifest", type=Path)
+    enrollment.add_argument('--claims-stdin', action='store_true')
+    assign = commands.add_parser('assign', help='trusted scheduler CAS claim or reassignment')
+    assign.add_argument('task')
+    assign.add_argument('--expect', type=int, required=True)
+    assign.add_argument('--owner', required=True)
+    assign.add_argument('--base', required=True)
+    assign.add_argument('--request', required=True)
     commands.add_parser("status")
     run = commands.add_parser("run")
     run.add_argument("--api-url", default="https://api.github.com")
@@ -415,6 +486,14 @@ def main():
     try:
         if args.command == "run" and (args.stale_seconds < 0 or args.poll_seconds <= 0 or args.max_seconds <= 0):
             raise ValueError("stale threshold must be nonnegative and poll/deadline positive")
+        if args.command == 'assign':
+            if (not args.task or args.expect < 0 or not args.request
+                    or not re.fullmatch(r'[A-Za-z0-9-]+\[bot\]', args.owner)
+                    or not re.fullmatch(r'[0-9a-f]{40}', args.base)):
+                raise ValueError('invalid task assignment')
+            with database(args.state) as db, ownership.fence(args.state, args.task):
+                output(**ownership.assign(db, args))
+            return 0
         if args.command == "status":
             with sqlite3.connect(f"file:{args.state / 'queue.sqlite'}?mode=ro", uri=True) as db:
                 db.row_factory = sqlite3.Row
@@ -422,7 +501,14 @@ def main():
         else:
             with writer(args.state) as db:
                 if args.command == "register":
-                    register(db, args.manifest)
+                    capabilities = json.load(sys.stdin) if args.claims_stdin else {}
+                    if not isinstance(capabilities, dict) or not all(isinstance(k, str) and isinstance(v, str) for k, v in capabilities.items()):
+                        raise ValueError('expected claim-to-capability object on stdin')
+                    specs = json.loads(args.manifest.read_text())['proposals']
+                    with ExitStack() as locks:
+                        for task in sorted({s['task'] for s in specs if 'task' in s}):
+                            locks.enter_context(ownership.fence(args.state, task))
+                        register(db, args.manifest, capabilities)
                 else:
                     github = GitHub(args.api_url)
                     saved = db.execute("SELECT value FROM metadata WHERE key='manifest'").fetchone()
