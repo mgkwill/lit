@@ -36,6 +36,10 @@ class Forge:
         self.publication_calls = []
         self.published_branch = None
         self.drop_publication_reply = False
+        self.block_publication = False
+        self.publication_started = threading.Event()
+        self.publication_release = threading.Event()
+        self.publication_titles = []
         self.next_publication_number = 77
         self.author_type = "Bot"
         self.allow_observer = False
@@ -135,6 +139,10 @@ class Forge:
                 request = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
                 if self.path!='/graphql':
                     forge.publication_calls.append(self.path)
+                    if forge.block_publication and self.path.endswith('/git/trees'):
+                        forge.block_publication = False
+                        forge.publication_started.set()
+                        forge.publication_release.wait(20)
                     if self.path.endswith('/git/trees'):
                         self.respond({'sha':'d'*40})
                     elif self.path.endswith('/git/commits'):
@@ -143,6 +151,7 @@ class Forge:
                         forge.published_branch=request['ref'].removeprefix('refs/heads/')
                         self.respond({'ref':request['ref'],'object':{'sha':'e'*40}})
                     elif self.path.endswith('/pulls'):
+                        forge.publication_titles.append(request['title'])
                         number=forge.next_publication_number;forge.next_publication_number+=1
                         forge.proposal.update(number=number,head='e'*40,branch=request['head'],author='broker[bot]')
                         self.respond({'number':number,'head':{'sha':'e'*40,'ref':request['head']},'user':{'login':'broker[bot]'}})
@@ -203,6 +212,7 @@ class Forge:
         self.url = f"http://127.0.0.1:{self.server.server_port}"
 
     def close(self):
+        self.publication_release.set()
         self.release.set()
         self.server.shutdown()
         self.server.server_close()

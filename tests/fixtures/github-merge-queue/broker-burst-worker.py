@@ -39,11 +39,20 @@ def run(operation, root, url, action):
                               {'Content-Type': 'application/json'})
             try:
                 with opener.open(request, timeout=40) as response:
-                    return response.status, json.load(response)
+                    code, body = response.status, json.load(response)
+                if code == 202:
+                    # Poll an accepted operation; never resubmit a remote write.
+                    route = body['status_path'].lstrip('/')
+                    assert route.startswith('publication?claim=') and '/' not in route
+                    payload = None
+                    if time.monotonic() >= deadline: raise TimeoutError('publication pending')
+                    time.sleep(1)
+                    continue
+                return code, body
             except HTTPError as error:
                 with error:
                     code, body = error.code, json.load(error)
-                if retry and code == 409 and time.monotonic() < deadline:
+                if retry and code in (429,503) and body.get('retryable') is True and time.monotonic() < deadline:
                     busy += 1
                     time.sleep(min(3, .2 + busy * .08))
                     continue

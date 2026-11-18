@@ -96,13 +96,52 @@ authority path, signing key or credential permission request.
 | `GET /claims` | worker | Only its assignments; capability only while active |
 | `GET /repository-token` | worker | Only Contents/Pull requests read, for the one repository |
 | `POST /propose` | worker | Capability-bound GitHub publication; broker creates commit/ref/PR |
+| `GET /publication?claim=ID` | worker | Only that owner's active attempt; pending status or completed receipt |
 | `POST /register` | worker | Immutable, frozen proposal and capability; owner is derived from TLS |
 | `GET /health` | listed identities | Listener health and latest controller cycle/error classification |
 
 Use `task_broker_client.py --url https://HOST:PORT --cert CLIENT.crt --key CLIENT.key
 --ca CA.crt ROUTE`. Send POST JSON on stdin, never in arguments. `/assign`, `/claims`
 and `/repository-token` responses contain credentials: consume privately, not in
-shared logs. Retry busy HTTP 409 responses with the same idempotency identity.
+shared logs. API version 2 is reported by `/health`. The updated CLI waits for
+accepted publications and retries only explicitly retryable capacity/authority
+errors with the same bytes. `--no-wait` returns an admission receipt;
+`--claim ID publication` resumes polling. `--wait-seconds` bounds waiting. A wait
+timeout leaves accepted work intact; use its status URL, not a different request.
+
+`POST /propose` validates the active capability and durably admits work before
+returning HTTP 202 with `operation`, `state`, `status_path`, `retryable:false` and
+`poll_after_seconds`. Poll that exact same-origin status URL. HTTP 200 returns
+the completed publication receipt. HTTP clients that previously assumed every
+successful POST synchronously returned a PR must handle this versioned change.
+
+Pending admission defaults to 128 jobs total and four per logical owner, including
+running jobs. Configure positive integer `admission_limit` and
+`admission_per_owner` values up to 1024. Identical requests reuse their existing
+job even at capacity; changed requests for the same attempt are rejected.
+HTTP 429 `admission_full` and HTTP 503 `authority_busy`/`authority_unavailable`
+carry `retryable:true` and `Retry-After`. Rejections such as
+`publication_request_conflict`, `assignment_revoked`, `invalid_capability`, and
+`publication_outcome_unknown` carry `retryable:false`. Never treat every 409 as
+busy. A 202 means accepted: poll rather than repeatedly posting.
+
+The broker persists queued payloads without capabilities in its private authority
+database. One logical owner gets one turn before another waiting owner; jobs from
+each owner retain admission order. The turn cursor survives restart. Each native
+queue-controller turn handles at most four proposals before yielding to admission.
+This bounds controller work per turn, not provider-call duration or wall-clock
+latency. Reassignment is rechecked at execution under the task fence; a revoked
+queued attempt cannot publish. Workers cannot choose another owner's identity.
+
+Queued jobs survive restart. Jobs found running at restart return the existing
+published receipt if one was durably recorded; otherwise they become uncertain
+and are never automatically repeated. A provider failure after publication intent
+has the same conservative outcome. An unavailable policy/credential precondition
+before any publication intent leaves the accepted job queued, with a visible
+blocked reason and a paced server retry. Status polling itself never starts work.
+Scheduler `/status` shows job phases/errors but no queued file payloads or
+capabilities. Back up the whole authority database; there is no independent worker
+copy of admission state.
 
 A `/propose` body contains task, generation, claim, base, capability, request and
 `files`, for example `[{"path":"src/example.txt","content":"new bytes\n"}]`.
@@ -161,3 +200,6 @@ with the trusted operator, off broker and worker hosts.
 For rollback, stop broker and observer, preserve the database/frozen refs, and keep
 worker installations suspended. Do not restore raw worker write access while
 claiming broker enforcement. The original Actions-only rule stays intact.
+Drain or reconcile all admitted jobs before rolling back to a pre-v2 broker:
+older binaries do not process the admission table. Preserve that table and its
+unknown outcomes with the rest of the authority database.

@@ -18,6 +18,9 @@ from pathlib import Path
 import ssl
 import stat
 import sys
+from contextlib import nullcontext
+from urllib.parse import urlsplit, parse_qs
+import broker_admission as admission
 
 
 def private_file(path):
@@ -66,12 +69,15 @@ class Handler(BaseHTTPRequestHandler):
         pass
 
     def reply(self, code, data):
+        if 'error' in data:data={'retryable':False,**data}
         body=json.dumps(data).encode()
         self.send_response(code)
         self.send_header('Content-Type','application/json')
         self.send_header('Content-Length',str(len(body)))
         self.send_header('Cache-Control','no-store')
         self.send_header('X-Content-Type-Options','nosniff')
+        if data.get('retryable') or code==202:
+            self.send_header('Retry-After',str(data.get('poll_after_seconds',1)))
         self.end_headers()
         self.wfile.write(body)
 
@@ -81,15 +87,22 @@ class Handler(BaseHTTPRequestHandler):
         if not principal or self.headers.get('Origin'):
             return self.reply(403,{'error':'forbidden'})
         role=principal['role']
+        route=urlsplit(self.path).path
         if ((self.path in ('/assign','/status','/recover-removed') and role != 'scheduler')
                 or (self.path == '/policy' and role != 'policy_observer')
-                or (self.path in ('/claims','/repository-token','/register','/propose') and role!='worker')):
+                or (route in ('/claims','/repository-token','/register','/propose','/publication') and role!='worker')):
             return self.reply(403,{'error':'forbidden'})
         try:
             config=self.server.config
             state=Path(config['state'])
             if self.command == 'GET':
                 with queue.database(state) as db:
+                    if route=='/publication':
+                        query=parse_qs(urlsplit(self.path).query,keep_blank_values=True)
+                        if set(query)!={'claim'} or len(query['claim'])!=1 or not re.fullmatch(r'[0-9a-f]{32}',query['claim'][0]):
+                            raise admission.Rejected('invalid_publication_query',400)
+                        code,result=admission.status(db,principal,query['claim'][0])
+                        return self.reply(code,result)
                     if self.path == '/repository-token' and role == 'worker':
                         token=self.server.read_token_source()
                         if not token:raise RuntimeError('read credential unavailable')
@@ -105,10 +118,12 @@ class Handler(BaseHTTPRequestHandler):
                                 claims.append(ownership.receipt(db,fresh))
                         return self.reply(200,{'claims':claims})
                     if self.path == '/status' and role == 'scheduler':
-                        return self.reply(200,queue.status(db)|{'publications':[{'claim':r['claim'],'phase':r['phase'],'receipt':json.loads(r['receipt']) if r['receipt'] else None} for r in db.execute('SELECT * FROM publications')]})
+                        return self.reply(200,queue.status(db)|{
+                            'publication_jobs':[dict(r) for r in db.execute('SELECT id,claim,owner,phase,error FROM publication_jobs ORDER BY id')],
+                            'publications':[{'claim':r['claim'],'phase':r['phase'],'receipt':json.loads(r['receipt']) if r['receipt'] else None} for r in db.execute('SELECT * FROM publications')]})
                     if self.path == '/health':
                         return self.reply(200,{'service':'lit-task-broker','last_cycle':self.server.last_cycle,
-                                               'last_error':self.server.last_error})
+                                               'last_error':self.server.last_error,'api_version':2})
             if self.command != 'POST' or self.path not in ('/assign','/register','/policy','/recover-removed','/propose'):
                 return self.reply(404,{'error':'unknown_route'})
             lengths=self.headers.get_all('Content-Length',[])
@@ -121,7 +136,8 @@ class Handler(BaseHTTPRequestHandler):
                 raise ValueError('expected object')
             if self.path == '/propose':
                 if role!='worker':return self.reply(403,{'error':'worker_identity_required'})
-                return self.reply(200,propose(self.server,principal,body))
+                code,result=admission.submit(self.server,principal,body)
+                return self.reply(code,result)
             if self.path == '/recover-removed':
                 if (set(body)!={'number','event'} or type(body['number']) is not int or body['number']<=0
                         or not isinstance(body['event'],str) or not 0<len(body['event'])<=512):
@@ -177,16 +193,20 @@ class Handler(BaseHTTPRequestHandler):
                     path=Path(scratch)/'manifest.json';path.write_text(json.dumps(manifest))
                     queue.register(db,path,{spec['claim']:body['capability']})
             return self.reply(200,{'registered':spec['number']})
+        except admission.Rejected as error:
+            return self.reply(error.status,{'error':error.code,'retryable':error.retryable})
+        except ownership.AuthorityBusy:
+            return self.reply(503,{'error':'authority_busy','retryable':True})
         except (ValueError,RuntimeError,KeyError,TypeError):
-            return self.reply(409,{'error':'rejected_or_busy'})
+            return self.reply(409,{'error':'request_rejected','retryable':False})
         except (OSError,sqlite3.Error):
-            return self.reply(503,{'error':'authority_unavailable'})
+            return self.reply(503,{'error':'authority_unavailable','retryable':True})
 
     do_GET=dispatch
     do_POST=dispatch
 
 
-def propose(server,principal,body):
+def propose(server,principal,body,db=None):
     expected={'task','generation','claim','base','capability','request','files'}
     if (set(body)!=expected or any(not isinstance(body[k],str) for k in ('task','claim','base','capability','request'))
             or not 0<len(body['request'])<=256 or not isinstance(body['files'],list)
@@ -206,7 +226,7 @@ def propose(server,principal,body):
     if len(set(paths))!=len(paths):raise ValueError('duplicate publication paths')
     digest=hashlib.sha256(queue.encoded({k:v for k,v in body.items() if k!='capability'}).encode()).hexdigest()
     root=Path(server.config['state'])
-    with queue.writer(root) as db, ownership.fence(root,body['task']):
+    with (nullcontext(db) if db is not None else queue.writer(root)) as db, ownership.fence(root,body['task']):
         binding={k:body[k] for k in ('task','generation','claim','base')}|{'author':principal['owner']}
         claim=ownership.binding(db,binding)
         if (claim['phase']!='active' or claim['owner']!=principal['owner']
@@ -330,22 +350,28 @@ class PolicyGitHub(queue.GitHub):
 
 def coordinate(server, token_source, api_url):
     config=server.config;root=Path(config['state'])
-    args=SimpleNamespace(state=root,stale_seconds=config.get('stale_seconds',120),test_git_remote=None)
-    while not server.stopping.wait(config.get('poll_seconds',5)):
+    args=SimpleNamespace(state=root,stale_seconds=config.get('stale_seconds',120),test_git_remote=None,max_proposals=4)
+    next_tick=0
+    while not server.stopping.is_set():
         try:
+            admission.run_one(server,propose)
+            if time.monotonic()<next_tick:
+                server.stopping.wait(min(.1,config.get('poll_seconds',5)))
+                continue
             with queue.writer(root) as db:
                 saved=db.execute("SELECT value FROM metadata WHERE key='manifest'").fetchone()
-                if not saved:
-                    continue
-                manifest=json.loads(saved[0])
-                github=PolicyGitHub(server,api_url,token_source())
-                github.authenticate_writer(manifest['repo'],force=True)
-                queue.tick(db,github,manifest,args)
-            server.last_cycle=time.time();server.last_error=None
+                if saved:
+                    manifest=json.loads(saved[0])
+                    github=PolicyGitHub(server,api_url,token_source())
+                    github.authenticate_writer(manifest['repo'],force=True)
+                    queue.tick(db,github,manifest,args)
+            if saved:server.last_cycle=time.time();server.last_error=None
+            next_tick=time.monotonic()+config.get('poll_seconds',5)
         except Exception as error:
             # No provider errors, URLs, payloads, credentials or private paths in logs/API.
             server.last_error=type(error).__name__
             print(json.dumps({'event':'cycle_blocked','error':server.last_error}),flush=True)
+            server.stopping.wait(min(1,config.get('poll_seconds',5)))
 
 
 def main():
@@ -377,6 +403,9 @@ def main():
             raise ValueError('policy observation lifetime must be at most 30 seconds')
         if config.get('poll_seconds',1)<=0:
             raise ValueError('invalid polling interval')
+        if any(type(config.get(k,d)) is not int or not 1<=config.get(k,d)<=1024
+               for k,d in (('admission_limit',128),('admission_per_owner',4))):
+            raise ValueError('invalid admission limits')
         for fingerprint,principal in config['principals'].items():
             if (not re.fullmatch(r'[0-9a-f]{64}',fingerprint)
                     or principal['role'] not in ('scheduler','worker','policy_observer')
@@ -402,8 +431,9 @@ def main():
                     db.execute('INSERT INTO events(number,kind,data,created) VALUES (NULL,?,?,?)',
                         ('credential_separation_cutover',queue.encoded({'previous':old,'workers':config['worker_installations']}),time.time()))
             return 0
-        with queue.database(root) as db:
+        with queue.writer(root) as db:
             db.execute('CREATE TABLE IF NOT EXISTS publications(claim TEXT PRIMARY KEY,request TEXT UNIQUE NOT NULL,digest TEXT NOT NULL,phase TEXT NOT NULL,receipt TEXT)')
+            admission.initialize(db)
             saved=db.execute("SELECT value FROM metadata WHERE key='manifest'").fetchone()
             if saved and json.loads(saved[0])!=manifest:raise ValueError('explicit admission-state cutover required')
         tls=ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
@@ -436,13 +466,17 @@ def main():
         worker=threading.Thread(target=coordinate,args=(server,token_source,api_url),daemon=True)
         worker.start()
         if args.ready_file:
-            args.ready_file.write_text(json.dumps({'port':server.server_port}))
+            # Readers must never observe the empty/partial file created by open.
+            with tempfile.NamedTemporaryFile(mode='w',dir=args.ready_file.parent,
+                    prefix=args.ready_file.name+'.',delete=False) as ready:
+                json.dump({'port':server.server_port},ready)
+            Path(ready.name).replace(args.ready_file)
         try:
             server.serve_forever(poll_interval=.1)
         finally:
             server.stopping.set()
             server.server_close()
-    except (ValueError,OSError,KeyError) as error:
+    except (ValueError,OSError,KeyError,ownership.AuthorityBusy) as error:
         print(json.dumps({'event':'startup_failed','error':type(error).__name__}),file=sys.stderr)
         return 1
     return 0

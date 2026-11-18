@@ -15,6 +15,7 @@ from urllib.request import Request, urlopen
 from github_queue_coordinator_regression import Forge
 
 CLI = Path(__file__).resolve().parents[1] / 'tools/task_broker.py'
+CLIENT = CLI.with_name('task_broker_client.py')
 
 
 class BrokerTests(unittest.TestCase):
@@ -91,16 +92,22 @@ class BrokerTests(unittest.TestCase):
         request=Request(self.url+path, None if payload is None else json.dumps(payload).encode(),
                         {'Content-Type':'application/json'})
         deadline=time.monotonic()+5
+        accepted_codes=expected if isinstance(expected,tuple) else (expected,)
         while True:
             try:
                 with urlopen(request,context=context,timeout=5) as response:
                     code=response.status;body=json.load(response)
             except HTTPError as error:
                 code=error.code;body=json.load(error);error.close()
-            # Public contract: busy enrollment is retried with identical bytes.
-            # Negative/competing-claim cases still observe the first response.
-            if (code==409 and expected==200 and path in ('/register','/propose','/recover-removed','/assign')
-                    and body.get('error')=='rejected_or_busy' and time.monotonic()<deadline):
+            if code==202 and 202 not in accepted_codes:
+                self.assertLess(time.monotonic(),deadline,'publication stayed pending')
+                request=Request(self.url+body['status_path'])
+                time.sleep(.03)
+                continue
+            # Retry only explicitly transient responses with identical bytes.
+            # Competing claims include 503 and retain their first response.
+            if (code in (429,503) and code not in accepted_codes
+                    and body.get('retryable') and time.monotonic()<deadline):
                 time.sleep(.03)
                 continue
             break
@@ -260,7 +267,7 @@ class BrokerTests(unittest.TestCase):
         self.start()
         def claim(number):
             return self.call('admin','/assign',{'task':'race','expect':0,'owner':'worker[bot]',
-                'base':'c'*40,'request':'request-'+str(number)},expected=(200,409))
+                'base':'c'*40,'request':'request-'+str(number)},expected=(200,409,503))
         with ThreadPoolExecutor(max_workers=12) as pool:results=list(pool.map(claim,range(12)))
         self.assertEqual(sum('claim' in result for result in results),1)
         self.assertEqual(len(self.call('worker','/claims')['claims']),1)
@@ -289,6 +296,165 @@ class BrokerTests(unittest.TestCase):
         self.assertEqual(self.call('worker','/propose',body),receipt)
         self.call('worker','/register',{'proposal':receipt,'capability':claim['capability']})
         self.until(lambda s:s['proposals'][0]['phase']=='queued')
+
+    def test_publication_is_accepted_durably_before_remote_work_completes(self):
+        self.forge.block_publication = True
+        self.start();claim=self.assign()
+        body={k:claim[k] for k in ('task','generation','claim','base','capability')}
+        body.update(request='accepted-publication',files=[{'path':'src/a.txt','content':'change'}])
+        accepted=self.call('worker','/propose',body,expected=202)
+        self.assertIn(accepted['state'],('queued','running'))
+        self.assertFalse(accepted['retryable'])
+        self.assertTrue(self.forge.publication_started.wait(3))
+        pending=self.call('worker',accepted['status_path'],expected=202)
+        self.assertEqual(pending['state'],'running')
+        self.forge.publication_release.set()
+
+    def publication(self, task, owner='worker[bot]'):
+        claim=self.call('admin','/assign',{'task':task,'expect':0,'owner':owner,
+            'base':'c'*40,'request':'assign-'+task})
+        return {k:claim[k] for k in ('task','generation','claim','base','capability')}|{
+            'request':'publish-'+task,'files':[{'path':task+'.txt','content':task}]}
+
+    def test_waiting_owners_get_turns_before_a_flooding_owners_backlog(self):
+        self.forge.block_publication=True
+        self.start()
+        a=self.publication('a1');a2=self.publication('a2');a3=self.publication('a3')
+        b=self.publication('b1','second[bot]')
+        first=self.call('worker','/propose',a,expected=202)
+        self.assertTrue(self.forge.publication_started.wait(3))
+        waits=[(who,self.call(who,'/propose',body,expected=202)) for who,body in
+               [('worker',a2),('worker',a3),('other',b)]]
+        self.call('other',first['status_path'],expected=403)
+        self.forge.publication_release.set()
+        for who,accepted in waits:self.call(who,accepted['status_path'])
+        self.assertEqual(self.forge.publication_titles,
+            ['Task a1 attempt 1','Task b1 attempt 1','Task a2 attempt 1','Task a3 attempt 1'])
+
+    def test_capacity_is_retryable_but_changed_requests_are_permanent(self):
+        self.config.update(admission_limit=2,admission_per_owner=1)
+        self.forge.block_publication=True;self.start()
+        a=self.publication('a1');a2=self.publication('a2');b=self.publication('b1','second[bot]')
+        self.call('worker','/propose',a,expected=202)
+        self.assertTrue(self.forge.publication_started.wait(3))
+        self.assertEqual(self.call('worker','/propose',a,expected=202)['operation'],a['claim'])
+        denied=self.call('worker','/propose',a|{'request':'changed'},expected=409)
+        self.assertEqual(denied,{'error':'publication_request_conflict','retryable':False})
+        full=self.call('worker','/propose',a2,expected=429)
+        self.assertEqual(full,{'error':'admission_full','retryable':True})
+        accepted=self.call('other','/propose',b,expected=202)
+        self.forge.publication_release.set();self.call('other',accepted['status_path'])
+
+    def test_global_capacity_applies_across_distinct_owners(self):
+        self.config.update(admission_limit=1,admission_per_owner=4)
+        self.forge.block_publication=True;self.start()
+        first=self.publication('global-first');peer=self.publication('global-peer','second[bot]')
+        self.call('worker','/propose',first,expected=202)
+        self.assertTrue(self.forge.publication_started.wait(3))
+        rejected=self.call('other','/propose',peer,expected=429)
+        self.assertEqual(rejected,{'error':'admission_full','retryable':True})
+        self.assertEqual(len(self.call('admin','/status')['publication_jobs']),1)
+        self.forge.publication_release.set()
+
+    def test_killed_publication_is_unknown_while_queued_work_survives_restart(self):
+        self.forge.block_publication=True;self.start()
+        a=self.publication('interrupted');b=self.publication('queued')
+        accepted=self.call('worker','/propose',a,expected=202)
+        self.assertTrue(self.forge.publication_started.wait(3))
+        queued=self.call('worker','/propose',b,expected=202)
+        self.process.kill();self.process.wait(timeout=5)
+        self.forge.publication_release.set();(self.root/'ready.json').unlink();self.start()
+        unknown=self.call('worker',accepted['status_path'],expected=409)
+        self.assertEqual(unknown,{'error':'publication_outcome_unknown','retryable':False})
+        self.call('worker',queued['status_path'])
+        self.assertEqual(self.forge.publication_titles,['Task queued attempt 1'])
+        self.assertEqual(sum(p.endswith('/git/trees') for p in self.forge.publication_calls),2)
+
+    def test_reassignment_revokes_queued_work_before_it_can_publish(self):
+        self.forge.block_publication=True;self.start()
+        a=self.publication('active');b=self.publication('revoked','second[bot]')
+        self.call('worker','/propose',a,expected=202)
+        self.assertTrue(self.forge.publication_started.wait(3))
+        queued=self.call('other','/propose',b,expected=202)
+        self.call('admin','/assign',{'task':'revoked','expect':1,'owner':'worker[bot]',
+            'base':'c'*40,'request':'reassign-revoked'})
+        rejected=self.call('other',queued['status_path'],expected=409)
+        self.assertEqual(rejected,{'error':'assignment_revoked','retryable':False})
+        self.forge.publication_release.set()
+        self.call('worker','/propose',a)
+        time.sleep(.2)
+        self.assertEqual(self.forge.publication_titles,['Task active attempt 1'])
+
+    def client(self,*arguments,payload=None):
+        return subprocess.run([sys.executable,str(CLIENT),'--url',self.url,
+            '--cert',str(self.pki/'worker.crt'),'--key',str(self.pki/'worker.key'),
+            '--ca',str(self.pki/'ca.crt'),'--wait-seconds','5',*arguments],
+            input=None if payload is None else json.dumps(payload).encode(),capture_output=True,timeout=8)
+
+    def test_cli_can_return_an_admission_receipt_then_resume_by_claim(self):
+        self.forge.block_publication=True;self.start();body=self.publication('cli-resume')
+        pending=self.client('--no-wait','propose',payload=body)
+        self.assertEqual(pending.returncode,0,pending.stderr)
+        accepted=json.loads(pending.stdout)
+        self.assertEqual(accepted['operation'],body['claim'])
+        self.assertTrue(self.forge.publication_started.wait(3))
+        self.forge.publication_release.set()
+        completed=self.client('--claim',body['claim'],'publication')
+        self.assertEqual(completed.returncode,0,completed.stderr)
+        self.assertEqual(json.loads(completed.stdout)['task'],'cli-resume')
+
+    def test_cli_does_not_retry_an_unknown_publication(self):
+        self.forge.drop_publication_reply=True;self.start();body=self.publication('cli-unknown')
+        result=self.client('propose',payload=body)
+        self.assertEqual(result.returncode,1,result.stderr)
+        self.assertEqual(json.loads(result.stdout),{'retryable':False,'error':'publication_outcome_unknown'})
+        self.assertEqual(sum(p.endswith('/git/trees') for p in self.forge.publication_calls),1)
+
+    def test_thirty_publications_are_admitted_without_spinning_on_the_writer(self):
+        self.config['admission_per_owner']=32
+        self.forge.block_publication=True;self.start()
+        bodies=[self.publication('load-'+str(i),'worker[bot]' if i%2==0 else 'second[bot]') for i in range(30)]
+        first=self.call('worker','/propose',bodies[0],expected=202)
+        self.assertTrue(self.forge.publication_started.wait(3))
+        def submit(body):
+            who='worker' if int(body['task'].split('-')[-1])%2==0 else 'other'
+            return who,self.call(who,'/propose',body,expected=202)
+        with ThreadPoolExecutor(max_workers=12) as pool:accepted=list(pool.map(submit,bodies[1:]))
+        self.assertEqual(len({a['operation'] for _,a in accepted}|{first['operation']}),30)
+        self.forge.publication_release.set()
+        for who,operation in accepted:self.call(who,operation['status_path'])
+        self.assertEqual(len(self.forge.publication_titles),30)
+
+    def test_policy_blocked_admission_resumes_only_after_fresh_observation(self):
+        self.config['require_policy_observer']=True;self.forge.allow_observer=True
+        self.start();body=self.publication('policy-blocked')
+        accepted=self.call('worker','/propose',body,expected=202)
+        self.until(lambda s:s['publication_jobs'] and s['publication_jobs'][0]['error']=='publication_precondition_unavailable')
+        self.assertEqual(self.forge.publication_calls,[])
+        pending=self.call('worker',accepted['status_path'],expected=202)
+        self.assertEqual(pending['blocked_reason'],'publication_precondition_unavailable')
+        self.policy()
+        # Precondition retries are server-owned and paced independently of polls.
+        deadline=time.monotonic()+8
+        while time.monotonic()<deadline:
+            response=self.call('worker',accepted['status_path'],expected=(200,202))
+            if 'number' in response:break
+            time.sleep(.1)
+        else:self.fail('accepted publication did not resume')
+        self.assertEqual(len(self.forge.publication_titles),1)
+
+    def test_blocked_owner_keeps_fifo_order_without_blocking_other_owners(self):
+        self.forge.main_failures=1;self.start()
+        a=self.publication('first');a2=self.publication('second');b=self.publication('peer','second[bot]')
+        accepted=self.call('worker','/propose',a,expected=202)
+        self.until(lambda s:s['publication_jobs'] and s['publication_jobs'][0]['error']=='publication_precondition_unavailable')
+        self.call('worker','/propose',a2,expected=202)
+        peer=self.call('other','/propose',b,expected=202)
+        self.call('other',peer['status_path'])
+        self.assertEqual(self.forge.publication_titles,['Task peer attempt 1'])
+        self.until(lambda s:all(j['phase']=='done' for j in s['publication_jobs']))
+        self.assertEqual(self.forge.publication_titles,
+            ['Task peer attempt 1','Task first attempt 1','Task second attempt 1'])
 
     def test_worker_identity_does_not_require_a_separate_github_app(self):
         for principal in self.config['principals'].values():
@@ -342,7 +508,7 @@ class BrokerTests(unittest.TestCase):
         body={k:claim[k] for k in ('task','generation','claim','base','capability')}
         body.update(request='publication-path')
         for path in ('../escape','/absolute','.GiT/config','.github/workflows/inject.yml','a\\b'):
-            self.call('worker','/propose',body|{'files':[{'path':path,'content':'change'}]},expected=409)
+            self.call('worker','/propose',body|{'files':[{'path':path,'content':'change'}]},expected=400)
         self.assertEqual(self.forge.publication_calls,[])
 
     def test_mtls_and_role_boundaries(self):

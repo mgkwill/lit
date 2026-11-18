@@ -19,6 +19,8 @@
     "retired-worker-app[bot]": {"app_id": 12349, "installation_id": 12350}
   },
   "poll_seconds": 5,
+  "admission_limit": 128,
+  "admission_per_owner": 4,
   "policy_ttl_seconds": 30,
   "principals": {
     "REPLACE_WITH_SHA256_OF_SCHEDULER_CERTIFICATE_DER": {"role": "scheduler", "owner": null},

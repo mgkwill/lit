@@ -179,6 +179,13 @@ durable publication receipts bind each proposal to its authenticated owner.
 Host OS accounts remain a separate boundary: clients sharing an account can
 access that account's credentials, even when certificates are distinct.
 
+Broker API version 2 durably admits `/propose` requests with HTTP 202 and an
+owner-scoped publication status URL. A bounded queue serves logical owners in
+round-robin order. Updated CLI clients poll accepted operations and retry only
+explicitly transient 429/503 responses. Unknown publication outcomes and revoked
+assignments are permanent responses requiring reconciliation or a new fenced
+attempt. See the deployment guide for migration, capacity and restart semantics.
+
 ## Regression tests
 
 ```sh

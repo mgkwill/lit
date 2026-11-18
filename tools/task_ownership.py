@@ -8,6 +8,10 @@ import secrets
 import time
 
 
+class AuthorityBusy(RuntimeError):
+    """No operation started; the caller may retry the same request."""
+
+
 def initialize(db):
     db.executescript('''
       CREATE TABLE IF NOT EXISTS tasks(task TEXT PRIMARY KEY, generation INTEGER NOT NULL);
@@ -26,7 +30,7 @@ def fence(root, task):
         try:
             fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError:
-            raise RuntimeError('task publication or reassignment is in progress') from None
+            raise AuthorityBusy('task publication or reassignment is in progress') from None
         yield
 
 

@@ -265,12 +265,25 @@ def tick(db, github, manifest, args):
     specs = [json.loads(row["spec"]) for row in rows]
     github.authenticate_writer(manifest["repo"])
     policies(github, manifest, specs)
-    for row in sorted(rows, key=lambda r: (json.loads(r["spec"]).get("kind") == "shared", r["number"])):
+    ordered=sorted(rows, key=lambda r: (json.loads(r["spec"]).get("kind") == "shared", r["number"]))
+    limit=getattr(args,'max_proposals',None)
+    if limit is not None:
+        # Broker cycles yield between small batches so remote observations cannot
+        # monopolize publication. Standalone CLI ticks retain their full sweep.
+        eligible=[]
+        for row in ordered:
+            spec=json.loads(row['spec'])
+            revoked=('claim' in spec and ownership.binding(db,spec)['phase']=='revoked')
+            if row['phase'] not in TERMINAL or revoked:eligible.append(row)
+        cursor=getattr(args,'proposal_cursor',0)
+        ordered=([r for r in eligible if r['number']>cursor]+[r for r in eligible if r['number']<=cursor])[:limit]
+    for row in ordered:
         spec = json.loads(row['spec'])
         with ExitStack() as locks:
             if 'task' in spec:
                 locks.enter_context(ownership.fence(args.state, spec['task']))
             proposal_tick(db, github, manifest, args, specs, row)
+        if limit is not None:args.proposal_cursor=row['number']
 
 
 def drain(db, github, manifest, specs, spec, claim):
@@ -393,7 +406,7 @@ def writer(root):
         try:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError:
-            raise RuntimeError("another coordinator owns this state directory") from None
+            raise ownership.AuthorityBusy("another coordinator owns this state directory") from None
         with database(root) as db:
             yield db
 

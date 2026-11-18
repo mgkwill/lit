@@ -1,0 +1,290 @@
+{
+  "qualification_date": "2026-11-18",
+  "source_parent": "f1b5c8551bafc6dcaa03ae07e0c42f45ec7377a7",
+  "branch": "codex/mit-lit-recovery",
+  "mit_baseline": "98c59bb2dbebcf7f575993a4ad89e1300a578c83",
+  "post_mit_upstream_source_used": false,
+  "v1_8_0_invoked_this_task": false,
+  "api_version": 2,
+  "source_sha256": {
+    "tools/github_app_credentials.py": "e12ead9b4317fdb0c307d9d344256f7c793daf17b6b38c9155a5970741b452d5",
+    "tools/task_broker_freeze_proposal.py": "1c68554b64767720e5623233d28e01214c13801f3f6e8448705755b334679abc",
+    "tools/task_broker_policy_observer.py": "a9301e77eb10409cae4ade5124f04d834ad9e830491924b77ca2c5c354dd911a",
+    "tools/github_queue_coordinator.py": "3d92400357701ef15bc318d961eb288857bd29fc0a32b1462587bcd11ae0af4f",
+    "tools/task_broker.py": "6355e4776b3ff8c3c0da3c5197ce5d53aa603abffb247f2da0af79f8177386c6",
+    "tools/task_broker_client.py": "8036a306cefbe88cd116c36f009bc7f3821e6ff48ef4c9e5e4f4e4e5ceedd2d4",
+    "tools/task_ownership.py": "a8c9190d263d619ae23ba9dfa74db7101610634c3b47c562c92b6b96845a7add",
+    "tests/github_queue_coordinator_regression.py": "7b3af620d792ba4d52dc98cef866158a981dd53dab08952a8d60ad9d0ec48da1",
+    "tests/task_broker_regression.py": "c19fc7bd174752e2437753f117b377a0e5104f35695f33a0f8ac51a174e633cb",
+    "tools/broker_admission.py": "7aebe5877b135c7e9046f5d4073fdd460b595184d553d5e055a9b7cd432a6ba9"
+  },
+  "deployed_source_proof": {
+    "server_sources_match": true,
+    "client_sources_match_hosts": [
+      "host-a",
+      "host-e",
+      "host-f"
+    ],
+    "burst_worker_sha256": "8d86cb3b301d2d415be775ba6bf0bc90de172151dacdea3a6739f13da58df77c",
+    "source_sha256": {
+      "tools/github_app_credentials.py": "e12ead9b4317fdb0c307d9d344256f7c793daf17b6b38c9155a5970741b452d5",
+      "tools/task_broker_freeze_proposal.py": "1c68554b64767720e5623233d28e01214c13801f3f6e8448705755b334679abc",
+      "tools/task_broker_policy_observer.py": "a9301e77eb10409cae4ade5124f04d834ad9e830491924b77ca2c5c354dd911a",
+      "tools/github_queue_coordinator.py": "3d92400357701ef15bc318d961eb288857bd29fc0a32b1462587bcd11ae0af4f",
+      "tools/task_broker.py": "6355e4776b3ff8c3c0da3c5197ce5d53aa603abffb247f2da0af79f8177386c6",
+      "tools/task_broker_client.py": "8036a306cefbe88cd116c36f009bc7f3821e6ff48ef4c9e5e4f4e4e5ceedd2d4",
+      "tools/task_ownership.py": "a8c9190d263d619ae23ba9dfa74db7101610634c3b47c562c92b6b96845a7add",
+      "tests/github_queue_coordinator_regression.py": "7b3af620d792ba4d52dc98cef866158a981dd53dab08952a8d60ad9d0ec48da1",
+      "tests/task_broker_regression.py": "c19fc7bd174752e2437753f117b377a0e5104f35695f33a0f8ac51a174e633cb",
+      "tools/broker_admission.py": "7aebe5877b135c7e9046f5d4073fdd460b595184d553d5e055a9b7cd432a6ba9"
+    }
+  },
+  "native_regressions": {
+    "local": {
+      "coordinator": 41,
+      "broker": 32,
+      "result": "passed"
+    },
+    "host-a": {
+      "coordinator": 41,
+      "broker": 32,
+      "result": "passed"
+    },
+    "host-e": {
+      "coordinator": 41,
+      "broker": 32,
+      "result": "passed"
+    },
+    "host-f": {
+      "coordinator": 41,
+      "broker": 32,
+      "result": "passed"
+    }
+  },
+  "live_summary": {
+    "api_version": 2,
+    "hosts": [
+      "host-a",
+      "host-e",
+      "host-f"
+    ],
+    "accepted": 3,
+    "published": 3,
+    "retired": 3,
+    "duplicate_prs": 0,
+    "stale_capabilities_rejected": 3,
+    "main_unchanged": "47754eff72b37d84b15810dfa34929f6933b36fc",
+    "actions_only_rule_unchanged": true,
+    "native_statuses_created": 0,
+    "new_github_credentials_or_keys_distributed": false
+  },
+  "acceptances": {
+    "host-a": {
+      "acceptance_seconds": 0.30627616704441607,
+      "operation": "01fbe218091a248c867418bedf56db98",
+      "state": "queued",
+      "retryable": false,
+      "poll_after_seconds": 1,
+      "status_path": "/publication?claim=01fbe218091a248c867418bedf56db98",
+      "blocked_reason": null
+    },
+    "host-e": {
+      "acceptance_seconds": 0.35405337484553456,
+      "operation": "978e45e7e44c35393ccb661d4177b871",
+      "state": "queued",
+      "retryable": false,
+      "poll_after_seconds": 1,
+      "status_path": "/publication?claim=978e45e7e44c35393ccb661d4177b871",
+      "blocked_reason": null
+    },
+    "host-f": {
+      "acceptance_seconds": 0.33993004192598164,
+      "operation": "eca60e67d3ef5e5f48d9c75f3a06b7e9",
+      "state": "queued",
+      "retryable": false,
+      "poll_after_seconds": 1,
+      "status_path": "/publication?claim=eca60e67d3ef5e5f48d9c75f3a06b7e9",
+      "blocked_reason": null
+    }
+  },
+  "live_publications": [
+    {
+      "id": ".",
+      "owner": "100latent-lit-pilot-host-a[bot]",
+      "task": "admission-20261118-host-a",
+      "generation": 1,
+      "host": "host-a.lab.wsub.net",
+      "started": 1795015750.9418604,
+      "action": "publish",
+      "receipt": {
+        "agent": "100latent-lit-pilot-host-a[bot]",
+        "author": "100latent-lit-task-broker[bot]",
+        "base": "47754eff72b37d84b15810dfa34929f6933b36fc",
+        "branch": "agents/broker/attempt/01fbe218091a248c867418bedf56db98",
+        "claim": "01fbe218091a248c867418bedf56db98",
+        "generation": 1,
+        "head": "ab74e5b5c2e1a9fe0ae14bb81dd3594a35e9979b",
+        "number": 144,
+        "task": "admission-20261118-host-a"
+      },
+      "publication_replay_identical": true,
+      "finished": 1795015757.0046377,
+      "requests": 9,
+      "busy_retries": 0
+    },
+    {
+      "id": ".",
+      "owner": "100latent-lit-pilot-host-e[bot]",
+      "task": "admission-20261118-host-e",
+      "generation": 1,
+      "host": "host-e.lab.wsub.net",
+      "started": 1795015751.0235608,
+      "action": "publish",
+      "receipt": {
+        "agent": "100latent-lit-pilot-host-e[bot]",
+        "author": "100latent-lit-task-broker[bot]",
+        "base": "47754eff72b37d84b15810dfa34929f6933b36fc",
+        "branch": "agents/broker/attempt/978e45e7e44c35393ccb661d4177b871",
+        "claim": "978e45e7e44c35393ccb661d4177b871",
+        "generation": 1,
+        "head": "5452a5afa5d0080df9995b50b8b3f2d501ac4b6c",
+        "number": 145,
+        "task": "admission-20261118-host-e"
+      },
+      "publication_replay_identical": true,
+      "finished": 1795015764.1755898,
+      "requests": 16,
+      "busy_retries": 0
+    },
+    {
+      "id": ".",
+      "owner": "100latent-lit-pilot-host-f[bot]",
+      "task": "admission-20261118-host-f",
+      "generation": 1,
+      "host": "host-f.lab.wsub.net",
+      "started": 1795015751.0135777,
+      "action": "publish",
+      "receipt": {
+        "agent": "100latent-lit-pilot-host-f[bot]",
+        "author": "100latent-lit-task-broker[bot]",
+        "base": "47754eff72b37d84b15810dfa34929f6933b36fc",
+        "branch": "agents/broker/attempt/eca60e67d3ef5e5f48d9c75f3a06b7e9",
+        "claim": "eca60e67d3ef5e5f48d9c75f3a06b7e9",
+        "generation": 1,
+        "head": "74b526cb12c60856226eef5e601590b492ff3f12",
+        "number": 146,
+        "task": "admission-20261118-host-f"
+      },
+      "publication_replay_identical": true,
+      "finished": 1795015770.2305198,
+      "requests": 22,
+      "busy_retries": 0
+    }
+  ],
+  "stale_denials": {
+    "host-a": {
+      "retryable": false,
+      "error": "assignment_revoked"
+    },
+    "host-e": {
+      "retryable": false,
+      "error": "assignment_revoked"
+    },
+    "host-f": {
+      "retryable": false,
+      "error": "assignment_revoked"
+    }
+  },
+  "defaults": {
+    "pending_limit": 128,
+    "pending_per_owner": 4,
+    "native_proposals_per_turn": 4
+  },
+  "qualification_scope": {
+    "external_forge_load_jobs": 30,
+    "external_forge_authenticated_owners": 2,
+    "live_github_hosts": 3,
+    "live_github_prs": 3,
+    "new_live_prs_merged": 0,
+    "full_rust_suite_rerun": false,
+    "v2_live_30_or_100_identity_burst": false
+  },
+  "remaining": [
+    "Larger live v2 cohort qualification; the previous 30-identity burst qualified v1, not this new protocol.",
+    "Provider API throttling and production latency/load limits; per-turn bounds do not bound remote call duration.",
+    "Full Git object, binary, deletion and mode publication; current endpoint remains bounded regular UTF-8 additions/updates.",
+    "Task dependency/overlap scheduling and availability/credential-renewal work.",
+    "Hostile workers require separate OS isolation; this pilot reuses existing trusted host accounts.",
+    "Unknown unregistered publications may require operator reconciliation/orphan cleanup; no blind retry."
+  ],
+  "adverse_evidence": [
+    "The initial synchronous publication test timed out before durable admission was implemented.",
+    "An early executor loop held the writer lock while idle, starving registration; corrected before qualification.",
+    "An host-e run caught partially written readiness JSON; readiness publication is now atomic.",
+    "A new FIFO test caught same-owner overtaking during precondition backoff; only each owner's head is now eligible."
+  ],
+  "raw_evidence_directory": "<private-path>",
+  "evidence_sha256": {
+    "host-a-accepted.json": "3da86cc98592af53986f19b0836499538ee12897d330e568010c525b3e62269e",
+    "host-a-before-atomic-readiness.log": "581b28705d20f0e78485c94e6cd6ddbbc020bb064a8009b9d9a44da60c977d69",
+    "host-a-before-fifo-refinement.log": "2d7970b2e1bc29f00b63b18b8099c6f0c72655b140618028c31012366a94301d",
+    "host-a-publication.json": "b0dc76e3b1d6c169268ce2870554f29f54e6cb7c30a09dea8d1784fd081475cb",
+    "host-a-publish.log": "922bb90f1f2fcb731b3c081b7c7475dbfdb50925a9b337fc3ba62a92a2ecc212",
+    "host-a-regressions.log": "fc0b6b4e3daf51f806a074a0561135c45a584cfbd9b55766499b8f3fbca48e1d",
+    "host-a-stale-denied.json": "449ed09ff8bc9f92e5ba2f37151bdc9d3cc450537f50ba3e5b2eed1fdda690f3",
+    "host-e-accepted.json": "89a2d7413dea8e7daeebf915774ebbbd6f396947636a11ee746cfb886fb9c429",
+    "host-e-before-atomic-readiness.log": "33ff0ddbc8f92e88faa0c8f18e4c8195a7248d92b721c89f3bba0ba290583a64",
+    "host-e-before-fifo-refinement.log": "118d0f1a80f1d710830163d6eb5aef59852bbe5649c720188341361e0fa22ca1",
+    "host-e-publication.json": "343c35f4dd0f40d7a19e2a0920e0623aecb1bd73d6a3689cf0938750bb12476f",
+    "host-e-publish.log": "f62482e6ab6c8b82bd9e31c6a48e184843854f1a6aa3c6316c52d7110afb3ca3",
+    "host-e-regressions.log": "b880d67de0290e45ea932008500782087c02618b7d7cbfbf3eb8689a2c4f8579",
+    "host-e-stale-denied.json": "449ed09ff8bc9f92e5ba2f37151bdc9d3cc450537f50ba3e5b2eed1fdda690f3",
+    "host-f-accepted.json": "e4dce40fb9d8692c7175bcaf26a399c5c121299ad67a9a5de22b5efe67285285",
+    "host-f-before-atomic-readiness.log": "7f2459c38e8c14cb6ab49197a07afa5c6c5678cc96e071f3b4d6b3a773fd9339",
+    "host-f-before-fifo-refinement.log": "947870ff8d1d26029507d0971d350529b794e16ce47fcbe05ae010056059aefd",
+    "host-f-publication.json": "93d8a7a612b0c97e187d92f744fa17ed562ae1ca6d3ea4ba370334c88f90da88",
+    "host-f-publish.log": "cc23147e99eca6430e3c217ed18399983a1d797f2473ab12f13a2458fc1d7479",
+    "host-f-regressions.log": "a4a70deb4f8f28975a52d1ee1e0fb1d7a669f929146f43d608142e6d4bb71b92",
+    "host-f-stale-denied.json": "449ed09ff8bc9f92e5ba2f37151bdc9d3cc450537f50ba3e5b2eed1fdda690f3",
+    "cancel-retired-preflight-44336261572.log": "9d5dd578798143c8d22f2b740332afd6a49da2c5e830970b931dcb2176f05576",
+    "cancel-retired-preflight-44336289097.log": "c1e1017daef9e49e4c49d5a4859e255b9d78dc7538389ee1dfcdd41a7eef0aad",
+    "cancel-retired-preflight-44336300439.log": "79d639c9a3e434512875af028d17d9b828c82fd9d1283253d6ab628fd92deef6",
+    "deployed-source-proof.json": "ad8635df839624b6696f4557b2234e76adf116f831969437380f118d6d3f9f2c",
+    "freeze-144.log": "b861b44a7be5d6ded5937f6235e41f95d585a2fd311e90c32ccaf408fdf982f8",
+    "freeze-145.log": "103478683af71f616271945a3ecadd376e3ae3de9abef1f0e7ff5a99d7de1782",
+    "freeze-146.log": "5d3ac53e256ac8cf7ab8fde4f211ef2cbb12c6df4213eccbfa2abc832fd9beda",
+    "health-after-deploy.json": "9e72638f5fb588126ddeb674de5dc9afe8c9cacda6efd2664f12a2210d8baa59",
+    "live-publications.json": "0c53b9ef39de78ceea2d72cd9ddbbb362faba45f61617b5a1b478abcc0d5356c",
+    "live-retired-state.json": "60736d39021ebaaeee4ca016f9de2370718a114e952f6d7041569e265b01e21d",
+    "live-summary.json": "622bc951c2f75719f8b70dc3bf367aeafa7f46a1ff9bd9011b3c55a77d7a9ab3",
+    "local-before-atomic-readiness.log": "8c0b042ad06b25590639650d6f98766e972290be47bab823a641f3c69255b648",
+    "local-before-fifo-refinement.log": "7805039ff366e491da66d156940bc93bb9770449c5c890d26dfefcaa03c95540",
+    "local-regressions.log": "8c212f17491d948c5929416dccea736475edffcf18dde143d3be2b9f09ecab7e",
+    "main-rule-after.json": "694b1e87d28f8c45dce631ee6ad3874b2ec43682eaf582e54054e105316baec7",
+    "main-rule-before.json": "694b1e87d28f8c45dce631ee6ad3874b2ec43682eaf582e54054e105316baec7",
+    "pr-144.json": "7bd53615fff24df511a8e2162c35bab03e57e0059bd543a1a225bbdda585e894",
+    "pr-145.json": "2ba520331f03ebec1fc87e7c1706cd852ae592d196d351559a81a0ab994c4c9e",
+    "pr-146.json": "5ee62c0dd62348e444bde12670c9c70af1cd91e98bee514b25699e6ae38f8d34",
+    "source-before-atomic-readiness-sha256.json": "d9b9b6441e7a60d2ac441fa1263d24673396347260c5763ddbb4341bd9d784e7",
+    "source-before-atomic-readiness.tar": "ff28e7980efb89ef1abc4cbd083f6f94067949674bc9987415bd7be195f0c00b",
+    "source-before-fifo-refinement-sha256.json": "760a8237dbdb93fa9b613c097fe28e1262e425c3aab8b320f4afd286356cce67",
+    "source-before-fifo-refinement.tar": "0581129271bf14a9cdd203298fc5f81499a25d5089f008b59d4a33147c28bc8f",
+    "source-sha256.json": "86eec184ab453afad0e9f0eca1647d284f9bdc978ae43bf47601352d22a809ab",
+    "source.tar": "073a2266d59a039dd586ea059a6b6279e74d0ad5af512b4839f0568c7e23a171",
+    "final-health.json": "3ef2400739871e76fff86bcf70db39230f3c0a8007eb8748153be57411aac7f2",
+    "final-reconciliation.json": "31df9f69471d886a2ff6579a164b486a6fbc754aab32ba305dcf8518a03e2cdb"
+  },
+  "final_health": {
+    "service": "lit-task-broker",
+    "last_cycle": 1795016247.2045622,
+    "last_error": null,
+    "api_version": 2
+  },
+  "final_reconciliation": {
+    "admission_jobs_done": 3,
+    "pending_remote_effects": 0,
+    "native_queue_entries": 0,
+    "active_empty_successor_claims": 3,
+    "server_left_running": true
+  }
+}
