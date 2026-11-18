@@ -94,6 +94,10 @@ class GitHub:
                 pullRequest(number:$number) {
                   id headRefOid headRefName baseRefName merged closed mergeable
                   headRepository{nameWithOwner} author{__typename login}
+                  mergeCommit{oid}
+                  mergeEvents:timelineItems(last:2,itemTypes:[MERGED_EVENT]) {
+                    nodes { ... on MergedEvent { id createdAt mergeRefName commit{oid} } }
+                  }
                   mergeQueueEntry{id state headCommit{oid}}
                   queueEvents:timelineItems(last:1,itemTypes:[ADDED_TO_MERGE_QUEUE_EVENT,REMOVED_FROM_MERGE_QUEUE_EVENT,MERGED_EVENT]) {
                     nodes { __typename ... on RemovedFromMergeQueueEvent {
@@ -130,20 +134,30 @@ class GitHub:
         return self.api("graphql", {"operationName": name, "query": query, "variables": variables}, writer=True)
 
     def check(self, repo, head):
+        return self.actions_check(repo, head, 'pull_request') is not None
+
+    def actions_check(self, repo, head, event):
         checks = self.api(f"repos/{repo}/commits/{head}/check-runs?check_name={quote(CHECK)}&filter=latest&per_page=100")
         eligible = [c for c in checks["check_runs"] if c["name"] == CHECK
                     and c["head_sha"] == head and c["status"] == "completed"
                     and c["conclusion"] == "success" and c["app"]["id"] == 15368]
         if not eligible:
-            return False
-        runs = self.api(f"repos/{repo}/actions/runs?head_sha={head}&event=pull_request&per_page=100")
-        relevant = [r for r in runs['workflow_runs'] if r['event'] == 'pull_request'
+            return None
+        runs = self.api(f"repos/{repo}/actions/runs?head_sha={head}&event={event}&per_page=100")
+        relevant = [r for r in runs['workflow_runs'] if r['event'] == event
                     and r['head_sha'] == head and r['path'] == '.github/workflows/agent-merge-gate.yml']
         if not relevant:
-            return False
+            return None
         latest = max(relevant, key=lambda r: (r['created_at'], r['id']))
-        return (latest['status'] == 'completed' and latest['conclusion'] == 'success'
-                and any(latest['check_suite_id'] == c['check_suite']['id'] for c in eligible))
+        if latest['status'] != 'completed' or latest['conclusion'] != 'success':
+            return None
+        matching = [c for c in eligible if c['check_suite']['id'] == latest['check_suite_id']]
+        if not matching:
+            return None
+        return {'run_id': latest['id'], 'run_attempt': latest.get('run_attempt'),
+                'check_suite_id': latest['check_suite_id'],
+                'check_run_id': max(matching, key=lambda c: c.get('id', 0)).get('id'),
+                'app_id': 15368, 'event': event}
 
 
 
@@ -222,7 +236,8 @@ def conflict_entry(pr):
                  or (entry["state"] == "QUEUED" and pr["mergeable"] == "CONFLICTING")))
 
 
-def conflict_proof(github, manifest, spec, main, args):
+@contextmanager
+def git_mirror(github, manifest, args):
     if args.test_git_remote and not github.local:
         raise ValueError("a test Git remote is allowed only with a loopback API fixture")
     remote = args.test_git_remote or f"https://github.com/{manifest['repo']}.git"
@@ -241,23 +256,100 @@ def conflict_proof(github, manifest, spec, main, args):
                 "-c", "credential.username=x-access-token", "-c", "http.followRedirects=false",
                 *command], env=env, text=True, capture_output=True, timeout=90)
             if expected and result.returncode:
-                raise RuntimeError("Git conflict proof unavailable; no queue mutation performed")
+                raise RuntimeError("Git proof unavailable")
             return result
 
         if not mirror.exists():
             git("init", "--bare", "-q", str(mirror))
-        git("--git-dir", str(mirror), "fetch", "--no-tags", remote,
-            "refs/heads/main:refs/coordinator/main", spec["head"])
-        found = git("--git-dir", str(mirror), "rev-parse", "refs/coordinator/main").stdout.strip()
+        def in_mirror(*command, expected=True):
+            return git("--git-dir", str(mirror), *command, expected=expected)
+
+        yield in_mirror, remote
+
+
+def conflict_proof(github, manifest, spec, main, args):
+    with git_mirror(github, manifest, args) as (git, remote):
+        git("fetch", "--no-tags", remote, "refs/heads/main:refs/coordinator/main", spec["head"])
+        found = git("rev-parse", "refs/coordinator/main").stdout.strip()
         if found != main:
             return None
-        result = git("--git-dir", str(mirror), "merge-tree", "--write-tree", main, spec["head"], expected=False)
+        result = git("merge-tree", "--write-tree", main, spec["head"], expected=False)
         if result.returncode == 0:
             return None
         if result.returncode != 1 or "CONFLICT" not in result.stdout:
             raise RuntimeError("Git did not establish a merge conflict; refusing withdrawal")
         return {"main": main, "head": spec["head"],
                 "git_conflict_sha256": hashlib.sha256(result.stdout.encode()).hexdigest()}
+
+
+def integration_evidence(github, manifest, spec, snapshot, args):
+    """Prove a frozen proposal landed on main and Actions checked that exact merge."""
+    repo = manifest['repo']
+    pr = snapshot['pullRequest']
+    if not pr or not identity(repo, spec, pr) or not pr['merged'] or pr['mergeQueueEntry']:
+        return None, 'merge_identity_unconfirmed'
+    events = pr.get('mergeEvents', {}).get('nodes', [])
+    if len(events) != 1 or not events[0]:
+        return None, 'merge_event_unconfirmed'
+    event = events[0]
+    merge = (event.get('commit') or {}).get('oid', '')
+    if event.get('mergeRefName') not in ('main', 'refs/heads/main') or not event.get('id'):
+        return None, 'merge_event_unconfirmed'
+    main = snapshot['ref']['target']['oid']
+    if not all(isinstance(oid, str) and re.fullmatch(r'[0-9a-f]{40}', oid) for oid in (main, merge)):
+        return None, 'merge_event_unconfirmed'
+    check = github.actions_check(repo, merge, 'merge_group')
+    if not check or not check['check_run_id']:
+        return None, 'actions_check_unconfirmed'
+    with git_mirror(github, manifest, args) as (git, remote):
+        git('fetch', '--no-tags', remote, 'refs/heads/main:refs/coordinator/main')
+        # main may advance between API observation and fetch. It must still
+        # contain the observed main on its first-parent chain.
+        history = git('rev-list', '--first-parent', '--parents', 'refs/coordinator/main').stdout.splitlines()
+        observed = False
+        matches = []
+        for line in history:
+            commit, *parents = line.split()
+            if commit == main:
+                observed = True
+            if observed and len(parents) == 2 and parents[1] == spec['head']:
+                matches.append((commit, parents[0]))
+        if len(matches) != 1 or matches[0][0] != merge:
+            return None, 'git_history_unconfirmed'
+    summary = (pr.get('mergeCommit') or {}).get('oid')
+    return {
+        'version': 1, 'repository': repo, 'number': spec['number'],
+        'proposal': spec, 'pull_request_id': pr['id'], 'base_ref': 'refs/heads/main',
+        'observed_main': main, 'merge_commit': merge, 'first_parent': matches[0][1],
+        'merge_event_id': event['id'], 'merged_at': event.get('createdAt'),
+        'forge_summary_commit': summary,
+        'forge_summary_matches': None if summary is None else summary == merge,
+        'actions': check, 'verified_at': time.time(),
+    }, None
+
+
+def reconcile_integration(db, github, manifest, args):
+    # Verify at most one receipt after queue reconciliation. A missing receipt
+    # does not change the observed queue outcome or the ownership handoff.
+    row = db.execute("""SELECT p.number,p.spec FROM proposals p
+        LEFT JOIN integrations i ON i.number=p.number
+        WHERE i.receipt IS NULL AND coalesce(i.retry_after,0)<=? AND
+          (p.phase='merged' OR (p.phase='ownership_retired' AND EXISTS (
+            SELECT 1 FROM events e WHERE e.number=p.number AND e.kind='ownership_retired'
+            AND json_extract(e.data,'$.merged')=1)))
+        ORDER BY coalesce(i.retry_after,0),p.number LIMIT 1""", (time.time(),)).fetchone()
+    if not row:
+        return
+    try:
+        snapshot = github.snapshot(manifest['repo'], row['number'])
+        receipt, reason = integration_evidence(github, manifest, json.loads(row['spec']), snapshot, args)
+    except (OSError, RuntimeError, subprocess.SubprocessError, KeyError, TypeError, ValueError):
+        receipt, reason = None, 'integration_evidence_unavailable'
+    with db:
+        db.execute("""INSERT INTO integrations(number,receipt,reason,retry_after) VALUES (?,?,?,?)
+            ON CONFLICT(number) DO UPDATE SET receipt=excluded.receipt,
+            reason=excluded.reason,retry_after=excluded.retry_after""",
+            (row['number'], encoded(receipt) if receipt else None, reason, time.time() + 60))
 
 
 def tick(db, github, manifest, args):
@@ -284,6 +376,7 @@ def tick(db, github, manifest, args):
                 locks.enter_context(ownership.fence(args.state, spec['task']))
             proposal_tick(db, github, manifest, args, specs, row)
         if limit is not None:args.proposal_cursor=row['number']
+    reconcile_integration(db, github, manifest, args)
 
 
 def drain(db, github, manifest, specs, spec, claim):
@@ -296,10 +389,11 @@ def drain(db, github, manifest, specs, spec, claim):
         raise RuntimeError('revoked proposal identity changed; task remains fenced')
     number = spec['number']
     if (pr['closed'] or pr['merged']) and not pr['mergeQueueEntry']:
-        with db:
-            db.execute("UPDATE actions SET status='fenced_by_closure' WHERE number=? AND status IN ('pending','acknowledged')", (number,))
-        ownership.retired(db, claim['claim'])
+        db.execute("UPDATE actions SET status='fenced_by_closure' WHERE number=? AND status IN ('pending','acknowledged')", (number,))
+        # Preserve the observed merge before granting a successor. A restart
+        # between these commits still sees the revoked claim and resumes drain.
         record(db, number, 'ownership_retired', merged=pr['merged'])
+        ownership.retired(db, claim['claim'])
         return
     kind = 'dequeue' if pr['mergeQueueEntry'] else 'close'
     pending = db.execute("SELECT 1 FROM actions WHERE number=? AND kind=? AND status IN ('pending','acknowledged')", (number, kind)).fetchone()
@@ -426,6 +520,8 @@ def database(root):
         CREATE TABLE IF NOT EXISTS actions (
             id INTEGER PRIMARY KEY, number INTEGER NOT NULL, kind TEXT NOT NULL,
             status TEXT NOT NULL, entry_id TEXT, created REAL NOT NULL);
+        CREATE TABLE IF NOT EXISTS integrations (
+            number INTEGER PRIMARY KEY, receipt TEXT, reason TEXT, retry_after REAL NOT NULL);
         CREATE TABLE IF NOT EXISTS events (
             id INTEGER PRIMARY KEY, number INTEGER, kind TEXT NOT NULL,
             data TEXT NOT NULL, created REAL NOT NULL);
@@ -479,9 +575,21 @@ def register(db, path, capabilities):
 
 
 def status(db):
-    return {"claims": ownership.status(db), "proposals": [json.loads(row["spec"]) | {"phase": row["phase"]}
-                          for row in db.execute("SELECT * FROM proposals ORDER BY number")],
-            "actions": [dict(row) for row in db.execute("SELECT * FROM actions ORDER BY id")]}
+    integrations = {}
+    if db.execute("SELECT 1 FROM sqlite_master WHERE name='integrations'").fetchone():
+        integrations = {r['number']: r for r in db.execute('SELECT * FROM integrations')}
+    proposals = []
+    for row in db.execute("SELECT * FROM proposals ORDER BY number"):
+        proposal = json.loads(row['spec']) | {'phase': row['phase']}
+        integration = integrations.get(row['number'])
+        if integration and integration['receipt']:
+            proposal['integration'] = {'state': 'verified', 'receipt': json.loads(integration['receipt'])}
+        elif integration or row['phase'] == 'merged':
+            proposal['integration'] = {'state': 'pending',
+                                       'reason': integration['reason'] if integration else 'not_checked'}
+        proposals.append(proposal)
+    return {'claims': ownership.status(db), 'proposals': proposals,
+            'actions': [dict(row) for row in db.execute("SELECT * FROM actions ORDER BY id")]}
 
 
 def main():

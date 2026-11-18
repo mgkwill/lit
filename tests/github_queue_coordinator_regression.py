@@ -22,6 +22,11 @@ class Forge:
         self.candidate = None
         self.mergeable = "MERGEABLE"
         self.merged = False
+        self.merge_event = None
+        self.merge_summary = None
+        self.merge_check_head = None
+        self.merge_check_event = 'merge_group'
+        self.merge_check_suite = 100
         self.closed = False
         self.complete_after_enqueue = False
         self.main = "c" * 40
@@ -119,11 +124,13 @@ class Forge:
                                   "rules": [{"type": "update"}, {"type": "deletion"}]})
                 elif "/check-runs?" in self.path:
                     self.respond({"total_count": 1, "check_runs": [{"name": "Agent workflow candidate",
-                        "head_sha": forge.proposal["head"], "status": "completed", "conclusion": "success",
+                        "id": 5010, "head_sha": forge.merge_check_head or forge.proposal["head"], "status": "completed", "conclusion": "success",
                         "app": {"id": forge.check_app}, "check_suite": {"id": 100}}]})
                 elif "/actions/runs?" in self.path:
-                    runs = [{"id":500,"created_at":"2026-11-17T00:00:00Z","status":"completed","event":"pull_request",
-                        "head_sha":forge.proposal["head"],"check_suite_id":100,
+                    event = "merge_group" if "event=merge_group" in self.path else "pull_request"
+                    runs = [{"id":500,"created_at":"2026-11-17T00:00:00Z","status":"completed","event":forge.merge_check_event if event=="merge_group" else event,
+                        "head_sha":forge.merge_check_head if event=="merge_group" else forge.proposal["head"],
+                        "check_suite_id":forge.merge_check_suite if event=="merge_group" else 100,
                         "path":".github/workflows/agent-merge-gate.yml","conclusion":"success"}]
                     if forge.newer_preflight_pending:
                         runs.insert(0,runs[0]|{"id":501,"created_at":"2026-11-18T00:00:00Z",
@@ -172,6 +179,8 @@ class Forge:
                         "pullRequest": {"id": "PR_7", "headRefOid": p["head"],
                             "headRefName": p["branch"], "baseRefName": "main", "merged": forge.merged,
                             "closed": forge.closed, "mergeable": forge.mergeable,
+                            "mergeCommit": {"oid": forge.merge_summary} if forge.merge_summary else None,
+                            "mergeEvents": {"nodes": [forge.merge_event] if forge.merge_event else []},
                             "queueEvents":{"nodes":[forge.removal_event] if forge.removal_event else []},
                             "headRepository": {"nameWithOwner": "100latent/lit-merge-queue-sandbox"},
                             "author": {"__typename": forge.author_type,
@@ -278,6 +287,70 @@ class CoordinatorTests(unittest.TestCase):
         self.remote.queued = True
         self.remote.queue_state = "UNMERGEABLE"
         self.remote.mergeable = "UNKNOWN"
+        return git
+
+    def merged_fixture(self):
+        git = self.git_fixture(conflict=False)
+        previous = git('rev-parse', 'HEAD')
+        git('merge', '--no-ff', '-m', 'Merge proposal', self.proposal['head'])
+        merge = git('rev-parse', 'HEAD')
+        git('commit', '--allow-empty', '-qm', 'Later main advance')
+        self.remote.main = git('rev-parse', 'HEAD')
+        self.remote.queued = False
+        self.remote.merged = True
+        self.remote.merge_summary = previous
+        self.remote.merge_event = {'id': 'merge-event-210', 'commit': {'oid': merge},
+                                   'mergeRefName': 'main', 'createdAt': '2026-11-18T16:42:15Z'}
+        self.remote.merge_check_head = merge
+        return merge
+
+    def test_210_summary_mismatch_uses_main_history_event_and_exact_actions(self):
+        merge = self.merged_fixture()
+        self.tick()
+        status, = self.cli('status')
+        result = status['proposals'][0]['integration']
+        self.assertEqual(result['state'], 'verified')
+        receipt = result['receipt']
+        self.assertEqual(receipt['merge_commit'], merge)
+        self.assertEqual(receipt['proposal']['head'], self.proposal['head'])
+        self.assertEqual(receipt['merge_event_id'], 'merge-event-210')
+        self.assertEqual(receipt['forge_summary_commit'], self.remote.merge_summary)
+        self.assertFalse(receipt['forge_summary_matches'])
+        self.assertEqual(receipt['actions']['check_run_id'], 5010)
+        self.assertEqual(receipt['actions']['event'], 'merge_group')
+        self.remote.merge_event = None
+        self.tick()
+        self.assertEqual(self.cli('status')[0]['proposals'][0]['integration'], result)
+        self.assertEqual(self.remote.mutations, [])
+
+    def assert_integration_pending(self, reason):
+        self.tick()
+        proposal = self.cli('status')[0]['proposals'][0]
+        self.assertEqual(proposal['phase'], 'merged')
+        self.assertEqual(proposal['integration'], {'state': 'pending', 'reason': reason})
+        self.assertEqual(self.remote.mutations, [])
+
+    def test_merge_event_and_actions_cannot_substitute_for_git_history(self):
+        self.merged_fixture()
+        wrong = self.remote.merge_summary
+        self.remote.merge_event['commit']['oid'] = wrong
+        self.remote.merge_check_head = wrong
+        self.assert_integration_pending('git_history_unconfirmed')
+
+    def test_wrong_actions_suite_cannot_issue_receipt(self):
+        self.merged_fixture()
+        self.remote.merge_check_suite = 101
+        self.assert_integration_pending('actions_check_unconfirmed')
+
+    def test_pull_request_check_cannot_issue_merge_receipt(self):
+        self.merged_fixture()
+        self.remote.merge_check_event = 'pull_request'
+        self.assert_integration_pending('actions_check_unconfirmed')
+
+    def test_missing_merge_event_remains_pending(self):
+        self.merged_fixture()
+        self.remote.merge_event = None
+        self.assert_integration_pending('merge_event_unconfirmed')
 
     def tick(self, expected=0, token="good", extra=(), observer=""):
         result = subprocess.run(self.run_args() + list(extra), text=True, capture_output=True, timeout=20,
@@ -686,6 +759,8 @@ class OwnershipTests(unittest.TestCase):
         self.assertEqual(self.assign(1, 'second[bot]')[0]['phase'], 'active')
         self.assertEqual(self.remote.mutations, ['EnqueueProposal'])
         self.assertTrue(any(event.get('merged') is True for event in map(json.loads, result.stdout.splitlines())))
+        integration = self.cli('status')[0]['proposals'][0]['integration']
+        self.assertEqual(integration, {'state': 'pending', 'reason': 'merge_event_unconfirmed'})
 
     def test_new_generation_binds_a_distinct_pr_after_retirement(self):
         self.owned_forge()

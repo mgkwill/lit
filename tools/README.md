@@ -201,3 +201,24 @@ claims and reassignments, reject stale/forged capabilities, exercise A-to-B-to-A
 ownership, kill a publisher during reassignment, and lose retirement replies. Test API and Git
 remote overrides are limited to an explicit loopback fixture. Production
 traffic is restricted to api.github.com and github.com.
+
+## Verified integration receipts
+
+Coordinator CLI `status` and broker `GET /status` expose
+`proposals[].integration`. Treat a proposal as verified for downstream
+dependencies only when this field has `state: verified`. The existing
+`phase: merged` reports the forge's queue outcome and can precede verification.
+
+A receipt binds the registered proposal and PR to its merge event on main.
+Git must show a unique merge on the observed main's first-parent chain with
+the frozen proposal head as second parent. A successful native `merge_group`
+workflow and matching Actions check suite and check run must cover that exact
+merge SHA. The optional forge summary SHA and its agreement flag are included
+for diagnostics. [PR #210 mismatch](../tests/fixtures/github-merge-queue/BROKER-V2-BURST-2026-11-18.md)
+
+The authority database preserves receipts across restart. Each tick verifies at
+most one eligible proposal, including historical merges and retired attempts
+recorded as merged. Missing or inconsistent evidence leaves a pending reason
+and can be retried after 60 seconds. Standalone `run --watch` completion tracks
+queue outcomes. Run additional ticks for pending receipts. The broker
+reconciles during normal polling. Receipts record evidence at verification time.
