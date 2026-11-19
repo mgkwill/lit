@@ -864,6 +864,12 @@ class BrokerTests(unittest.TestCase):
         self.call('admin','/repository-token',expected=403)
         self.call('unlisted','/repository-token',expected=403)
 
+    def test_missing_reader_is_retryable_and_does_not_use_writer(self):
+        self.reader.write_text('')
+        self.start()
+        self.assertEqual(self.call('worker','/repository-token',expected=503),
+                         {'error':'repository_token_unavailable','retryable':True})
+
     def test_unknown_publication_is_not_replayed_or_admitted_by_stale_owner(self):
         self.start();claim=self.assign()
         body={k:claim[k] for k in ('task','generation','claim','base','capability')}

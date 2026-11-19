@@ -106,11 +106,10 @@ class Handler(BaseHTTPRequestHandler):
                         code,result=lookup(db,principal,query['claim'][0])
                         return self.reply(code,result)
                     if self.path == '/repository-token' and role == 'worker':
-                        token=self.server.read_token_source()
-                        if not token:raise RuntimeError('read credential unavailable')
+                        token,expires=repository_credentials(self.server,'repository_token_unavailable')
                         return self.reply(200,{'token':token,'repository':config['manifest']['repo'],
                             'permissions':{'contents':'read','pull_requests':'read'},
-                            'expires_at':getattr(self.server.read_token_source,'expires',time.time()+300)})
+                            'expires_at':expires})
                     if self.path == '/claims' and role == 'worker':
                         rows=list(db.execute('SELECT * FROM claims WHERE owner=? ORDER BY generation', (principal['owner'],)))
                         claims=[]
@@ -289,11 +288,16 @@ def verify_dependency_base(server, base, dependencies):
 
 
 def repository_reader(server, unavailable):
+    token,_=repository_credentials(server,unavailable)
+    return queue.GitHub(server.api_url,token=token,observer_token='')
+
+
+def repository_credentials(server, unavailable):
     try:
-        token = server.read_token_source()
+        token,expires = server.read_credentials()
         if not token:
             raise ValueError('repository reader unavailable')
-        return queue.GitHub(server.api_url,token=token,observer_token='')
+        return token,expires
     except (RuntimeError,ValueError,OSError):
         raise admission.Rejected(unavailable,503,True) from None
 
@@ -658,15 +662,15 @@ def main():
                 raise ValueError('test credentials require an explicit loopback forge')
             token_source=lambda:private_file(args.test_token_file).read_text().strip()
             if not args.test_read_token_file:raise ValueError('separate test reader credential required')
-            read_token_source=lambda:private_file(args.test_read_token_file).read_text().strip()
+            read_credentials=lambda:(private_file(args.test_read_token_file).read_text().strip(),time.time()+300)
         else:
             if config.get('require_policy_observer') is False:
                 raise ValueError('production requires a policy observer')
             token_source=InstallationToken(config['broker_app_id'],config['installation_id'],
                 private_file(config['app_key']),manifest['repo'])
-            read_token_source=InstallationToken(config['broker_app_id'],config['installation_id'],
-                private_file(config['app_key']),manifest['repo'],permissions={'contents':'read','pull_requests':'read'})
-        server.api_url=api_url;server.token_source=token_source;server.read_token_source=read_token_source
+            read_credentials=InstallationToken(config['broker_app_id'],config['installation_id'],
+                private_file(config['app_key']),manifest['repo'],permissions={'contents':'read','pull_requests':'read'}).credentials
+        server.api_url=api_url;server.token_source=token_source;server.read_credentials=read_credentials
         worker=threading.Thread(target=coordinate,args=(server,token_source,api_url),daemon=True)
         worker.start()
         if args.ready_file:

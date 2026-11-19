@@ -34,6 +34,9 @@ sandbox. It needs neither policy administration write, workflow/status write,
 nor access to other repositories. Keep its signing key on the broker host. Write
 and read tokens are issued with separate explicit permission subsets, checked
 against GitHub's returned scope, cached in memory and refreshed before expiry.
+Concurrent requests for the same token share one refresh. A failed refresh
+withholds credentials and pauses further refresh attempts for two seconds.
+The reader route returns retryable HTTP 503 while the credential is unavailable.
 An empty explicit writer credential never falls back to an operator environment.
 
 Create a namespace rule targeting `refs/heads/agents/broker/**/*` with creation,

@@ -4,6 +4,7 @@ from datetime import datetime
 import json
 from pathlib import Path
 import subprocess
+import threading
 import time
 from urllib.request import Request, build_opener
 from github_queue_coordinator import NoRedirect
@@ -15,6 +16,8 @@ class InstallationToken:
         self.key=Path(key);self.repo=repo
         self.permissions=permissions or {'contents':'write','pull_requests':'write','administration':'read','actions':'read','checks':'read'}
         self.current=None;self.expires=0
+        self.lock=threading.Lock()
+        self.retry_after=0
         self.opener=build_opener(NoRedirect())
 
     def api(self,path,jwt,payload=None):
@@ -26,8 +29,22 @@ class InstallationToken:
             return json.load(response)
 
     def __call__(self):
-        if self.current and time.time()<self.expires-120:
-            return self.current
+        return self.credentials()[0]
+
+    def credentials(self):
+        with self.lock:
+            if self.current and time.time()<self.expires-120:
+                return self.current,self.expires
+            if time.monotonic()<self.retry_after:
+                raise RuntimeError('broker installation token refresh unavailable')
+            try:
+                self.current,self.expires=self._refresh()
+            except Exception:
+                self.retry_after=time.monotonic()+2
+                raise RuntimeError('broker installation token refresh unavailable') from None
+            return self.current,self.expires
+
+    def _refresh(self):
         def b64(value):return base64.urlsafe_b64encode(value).rstrip(b'=')
         now=int(time.time())
         message=b64(b'{"alg":"RS256","typ":"JWT"}')+b'.'+b64(json.dumps({
@@ -47,6 +64,8 @@ class InstallationToken:
                 or issued['repository_selection']!='selected'
                 or issued.get('permissions')!=self.permissions|{'metadata':'read'}):
             raise RuntimeError('broker token repository scope differs')
-        self.current=issued['token']
-        self.expires=datetime.fromisoformat(issued['expires_at'].replace('Z','+00:00')).timestamp()
-        return self.current
+        token=issued['token']
+        expires=datetime.fromisoformat(issued['expires_at'].replace('Z','+00:00')).timestamp()
+        if not isinstance(token,str) or not token or expires<=time.time()+120:
+            raise RuntimeError('issued broker token has insufficient lifetime')
+        return token,expires
