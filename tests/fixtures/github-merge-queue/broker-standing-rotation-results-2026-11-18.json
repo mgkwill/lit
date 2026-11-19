@@ -1,0 +1,84 @@
+{
+  "verified_at": "2026-11-19T06:39:08.586726+00:00",
+  "repository": "100latent/lit-merge-queue-sandbox",
+  "broker_source": "cc36a28",
+  "client_certificate_authority_sha256": "d511e51f172c83f419e61c33515a5347a5d58a0bec16081c525209f3613c10c9",
+  "new_server_ca_sha256": "1d6bb1e8cd373a9bd232d987dfed3e123d9a7a3a7891f49b013e69bb82827c23",
+  "old_server_certificate_sha256": "2fb0a13b1474892c20925d159c28f740b3c4fa7beb31a070f0a4d7ea0f086151",
+  "new_server_certificate_sha256": "9cf2f21c2c7c0601166c08495fad87430d94bf6de2b75d95ee6bfe78174120a6",
+  "legacy_server_leaf_rejected_by_new_anchor": true,
+  "live_peer_sha256": "9cf2f21c2c7c0601166c08495fad87430d94bf6de2b75d95ee6bfe78174120a6",
+  "all_managed_clients_use_new_server_ca": true,
+  "retired_key_copies_removed": true,
+  "principals": {
+    "scheduler": {
+      "old": "57a3534d9d3d18647ac652514ea333a74e8f75f1a2f0d8b0ba7f96db410b4e7b",
+      "new": "2ebd0a0d246096bdf72ecf694d5dd458c5651ec25fc16b04ddd73e89cdcee94b",
+      "role": "scheduler",
+      "logical_owner": null,
+      "new_expires_at": "Dec 19 06:38:43 2026 GMT",
+      "old_returned_http_403": true,
+      "renewed_identity_and_scope_verified": true
+    },
+    "observer": {
+      "old": "ea0253a7c6575dc29d87bbe67774ee21ed389b7131140a25aa31c3ae470e6f76",
+      "new": "1d4e36f0c8bff28598a9ff820aa154bc8c32cd836da352095839df2781209029",
+      "role": "policy_observer",
+      "logical_owner": null,
+      "new_expires_at": "Dec 19 06:38:43 2026 GMT",
+      "old_returned_http_403": true,
+      "renewed_identity_and_scope_verified": true
+    },
+    "local-worker": {
+      "old": "f993d10f06a1fb7c8b389ab79502758a75bdb7771cbafa167bfd4ca1c69fb503",
+      "new": "649954329207aa4350acbcc91b1add310a6a6a6ba39037dc8e2a451d6466ab81",
+      "role": "worker",
+      "logical_owner": "100latent-lit-pilot-host-a[bot]",
+      "new_expires_at": "Dec 19 06:38:43 2026 GMT",
+      "old_returned_http_403": true,
+      "renewed_identity_and_scope_verified": true
+    },
+    "host-a": {
+      "old": "00a425b7fdff0e8219c6dd9f94f3353e62f10ac5d45c2ebff4816dbf01134fdc",
+      "new": "67838ba3b238986d363eb5edb91d775c0f9ba059ba2de955165059c85aec1d58",
+      "role": "worker",
+      "logical_owner": "100latent-lit-pilot-host-a[bot]",
+      "new_expires_at": "Dec 19 06:38:44 2026 GMT",
+      "old_returned_http_403": true,
+      "renewed_identity_and_scope_verified": true
+    },
+    "host-e": {
+      "old": "16e06868418d0171b152655f35f5502e8f92d53f522a2316fd20dccce2547619",
+      "new": "4b09c9c9c4cc731311ccba516961d5135eec37b09b6745b147bbae56918e566f",
+      "role": "worker",
+      "logical_owner": "100latent-lit-pilot-host-e[bot]",
+      "new_expires_at": "Dec 19 06:38:45 2026 GMT",
+      "old_returned_http_403": true,
+      "renewed_identity_and_scope_verified": true
+    },
+    "host-f": {
+      "old": "2ee49269bb38faf298a4b9ad7eac8c1d595661d462b24294f9bcd3d4fdf2e176",
+      "new": "e3f23805f41b84398e01eac91fc45bcaf0e3b1c37928e1e639a6965e3f6e3e21",
+      "role": "worker",
+      "logical_owner": "100latent-lit-pilot-host-f[bot]",
+      "new_expires_at": "Dec 19 06:38:46 2026 GMT",
+      "old_returned_http_403": true,
+      "renewed_identity_and_scope_verified": true
+    }
+  },
+  "actions_only_unchanged": true,
+  "native_queue_empty": true,
+  "live_health": {
+    "service": "lit-task-broker",
+    "last_cycle": 1795070344.7576058,
+    "last_error": null,
+    "api_version": 3
+  },
+  "final_live_health": {
+    "service": "lit-task-broker",
+    "last_cycle": 1795070387.1840913,
+    "last_error": null,
+    "api_version": 3
+  },
+  "operator_script_sha256": "e62207c02a69b0028a962e5b06d6d2e1ca283a0274913744b05bda4d47a3fceb"
+}
