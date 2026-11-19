@@ -60,5 +60,20 @@
     "temporary_units_state_and_credentials_removed": true,
     "native_evidence_path": "<private-path>",
     "systemd_evidence_path": "<private-path>"
+  },
+  "live_sandbox_validation": {
+    "canonical_primary": "host-a",
+    "temporary_standby": "host-b",
+    "planned_primary_stop": true,
+    "unattended_transfer_verified": true,
+    "seconds_to_verified_standby": 10.35,
+    "worker_cli_followed_standby": true,
+    "fresh_live_policy_on_standby": true,
+    "same_authority_after_failback": true,
+    "actions_only_all_rules_equal": true,
+    "verified_at": "2026-11-19T07:00:28.962875+00:00",
+    "temporary_services_and_key_copies_removed": true,
+    "source_commit": "fdff529d7d15c83fcffd37fa159e609ab6b0ac1a",
+    "operator_script_sha256": "77885e44df9c41ac4f2fd445e7f6f4528ed47a0137814757933c3073dc3897e1"
   }
 }
