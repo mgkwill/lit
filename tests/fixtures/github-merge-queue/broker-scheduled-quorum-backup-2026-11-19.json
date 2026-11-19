@@ -1,0 +1,114 @@
+{
+  "deployed_source": "9f915326a1ce38ebc4943e4c31a50220faa05ef7",
+  "mit_baseline": "98c59bb2dbebcf7f575993a4ad89e1300a578c83",
+  "live_schedule": {
+    "deployed_commit": "9f915326a1ce38ebc4943e4c31a50220faa05ef7",
+    "scheduler": "macOS launchd GUI domain",
+    "hourly_minute_pacific": 51,
+    "first_calendar_run_without_bootstrap_execution": true,
+    "first_run_exit_code": 0,
+    "published_archive_and_receipt": true,
+    "ciphertext_round_trip_verified": true,
+    "independent_head_verified": true,
+    "voter_storage_access": "read-only",
+    "archive_sha256": "c24e554e3611c8cebc1430a6b0bc9decaf4adfb775ec8cb1076f4337d2c9a508",
+    "ciphertext_sha256": "fdd2be657944779c6fb724d5c3392c96415e0ee82c5db3758ccf5bb84f870b40",
+    "epoch": 10,
+    "revision": 36,
+    "recovery_blockers": [],
+    "recovering_private_key_absent_from_scheduled_job_config": true,
+    "artifact_basename": "20261119T235107.207403Z-e10-r36",
+    "earlier_timed_capture_preserved_a_writer_blocker": {
+      "archive_sha256": "ca512652dd3acbce5a53152811da047e49ef9fbd9415a5c10d40d526f81e6548",
+      "recovery_blockers": [
+        "writer"
+      ],
+      "capture_preserved": true
+    }
+  },
+  "lab_timer": {
+    "archive_sha256": "cf3b49575a3f092f0c483c903573d84c51978a775ffca9e8597eedaa30a38668",
+    "ciphertext_sha256": "58806bb618e0b7ac847afd36ca8ee5d34eb0d2e1703bc269c1868c7d88dde2fb",
+    "source_revision": 6,
+    "archive_produced_by_observed_timed_launchd_run": true,
+    "count_of_schedule_invocations": 1,
+    "exit_code": 0,
+    "fixture_interval_seconds": 12,
+    "plaintext_latest_archive_absent_before_failure": true,
+    "private_recovery_key_absent_from_job_configuration": true
+  },
+  "physical_lab": {
+    "source_voters_on_separate_lab_hosts": true,
+    "hosts": [
+      "host-a",
+      "host-c",
+      "host-d"
+    ],
+    "architecture": "Linux x86_64",
+    "etcd_release": "3.7.4",
+    "etcd_binary_sha256": "6fcf4a133e477a2340c59a287461b4988f0ed5c7559ff4750a8695ac41ae5a2a",
+    "separate_source_and_replacement_tls_roots": true,
+    "ports_separate_from_live_services": true,
+    "restored_checkpoint_came_from_timed_launchd_run": true,
+    "two_source_voters_and_data_removed": [
+      "host-a",
+      "host-c"
+    ],
+    "original_hostd_voter_still_online": true,
+    "encrypted_archive_off_quorum": true,
+    "tampered_ciphertext_rejected": true,
+    "ciphertext_sha256": "58806bb618e0b7ac847afd36ca8ee5d34eb0d2e1703bc269c1868c7d88dde2fb",
+    "seconds_from_two_voter_loss_to_verified_new_checkpoint": 12.85,
+    "all_disposable_processes_and_state_removed": true
+  },
+  "minority_rejection": {
+    "linearizable_read_refused": true,
+    "checkpoint_acknowledgment_refused": true,
+    "provider_work_refused_before_credentials": true
+  },
+  "restored_checkpoint": {
+    "source_cluster": "2146601597561858081",
+    "destination_cluster": "10201050292395567606",
+    "new_epoch": 13,
+    "restored_revision": 6,
+    "restored_checkpoint_sha256": "f46307a6d401d180e36a82e1cdb8150b7aa36bdb17cab574a96bb1a040375f72",
+    "identical_checkpoint_and_active_capabilities": true,
+    "revoked_claim_still_revoked": true,
+    "latest_acknowledged_assignment_present": true,
+    "integration_receipt_preserved": true,
+    "stale_epoch_provider_request_refused": true,
+    "restore_retry_idempotent": true,
+    "stale_archive_refused": true,
+    "archive_digest_enforced": true,
+    "wrong_cluster_refused": true,
+    "verified_https_restore_then_checkpoint_accepted": true,
+    "post_restore_revision": 7
+  },
+  "continued_after_replacement_voter_loss": {
+    "recovered_quorum_accepted_checkpoint_with_one_voter_stopped": true,
+    "last_head": {
+      "holder": "standby",
+      "epoch": 13,
+      "revision": 8,
+      "sha256": "af0a06b1e2026e548be5eb815a244b401a9efb9d10b4618097fdacd4c34f3b3f",
+      "binding": {
+        "repo": "fixture/lit-quorum-recovery",
+        "main_ruleset": 10,
+        "freeze_ruleset": 11
+      }
+    }
+  },
+  "replacement_convergence": {
+    "all_three_replacement_voters_returned_the_same_latest_head": true,
+    "last_epoch": 13,
+    "last_revision": 8
+  },
+  "actions_only": {
+    "original_actions_only_rule_verified": true,
+    "live_ruleset_projection_sha256": "bd0215538187da8836c568b4817922bb29732aa669ca3cd818fc384293a57d73",
+    "archive_and_drill_had_no_live_rule_mutation": true
+  },
+  "macos_broker_regressions": 137,
+  "macos_stress_owners": 100,
+  "linux_arm64_quorum_regressions": 15
+}
