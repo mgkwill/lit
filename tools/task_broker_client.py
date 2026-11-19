@@ -83,6 +83,10 @@ def main():
                     raise
                 endpoint,standby=standby,None
                 continue
+            if (standby and payload is None and time.monotonic()<deadline and code==503
+                    and result.get('error')=='authority_unavailable' and result.get('retryable') is True):
+                endpoint,standby=standby,None
+                continue
             if args.no_wait or not (code==202 or (code in (429,503) and result.get('retryable') is True)):
                 print(json.dumps(result));return 0 if code in (200,202) else 1
             if code==202:

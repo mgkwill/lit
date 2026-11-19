@@ -328,10 +328,11 @@ does not delay the delivery of that observation to the standby.
 
 Configure workers with `task_broker_client.py --standby-url HTTPS_STANDBY`
 and a trust bundle that covers both brokers. The client can follow an admitted
-operation's status URL to the standby. It switches an unacknowledged POST
-only when the connection was refused or the name could not resolve, before
-the request could be sent. TLS validation errors and ambiguous writes stop
-the request without replaying it.
+operation's status URL to the standby. Reads also switch when the primary
+returns a retryable HTTP 503 with `authority_unavailable`. The client switches
+an unacknowledged POST only when the connection was refused or the name could
+not resolve, before the request could be sent. TLS validation errors and
+ambiguous writes stop the request without replaying it.
 
 Use `task_broker_failover.py watch --config FAILOVER.json` on the trusted
 management host. Start with an authenticated primary response. The watcher

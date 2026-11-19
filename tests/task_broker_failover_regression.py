@@ -9,7 +9,7 @@ import tempfile
 import unittest
 from types import SimpleNamespace
 from unittest.mock import patch
-from urllib.error import URLError
+from urllib.error import HTTPError, URLError
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'tools'))
 import task_broker_failover as failover
@@ -166,21 +166,40 @@ class FailoverTests(unittest.TestCase):
             stream.headers={'Retry-After':'.01'}
             return stream
         urls=['https://primary','https://standby']
-        calls=[response({'operation':claim,'status_path':path},202),
-               URLError(failover.ssl.SSLEOFError(8,'socket closed')),
-               response({'number':325,'claim':claim},200)]
         argv=['client','--url',urls[0],'--standby-url',urls[1],
               '--cert','client.crt','--ca','ca.crt','--key','client.key','propose']
+        unavailable=HTTPError(urls[0]+path,503,'Fenced',{'Retry-After':'.01'},
+                              io.BytesIO(b'{"error":"authority_unavailable","retryable":true}'))
+        for failure in (URLError(failover.ssl.SSLEOFError(8,'socket closed')),unavailable):
+            calls=[response({'operation':claim,'status_path':path},202),failure,
+                   response({'number':325,'claim':claim},200)]
+            stdin=SimpleNamespace(buffer=io.BytesIO(b'{"probe":"write"}'))
+            with (self.subTest(failure=type(failure).__name__),
+                  patch.object(client.sys,'argv',argv), patch.object(client.sys,'stdin',stdin),
+                  patch.object(client.ssl,'create_default_context'), patch.object(client,'build_opener') as opener,
+                  redirect_stdout(io.StringIO()) as out):
+                opener.return_value.open.side_effect=calls
+                self.assertEqual(client.main(),0)
+            self.assertEqual(json.loads(out.getvalue()),{'number':325,'claim':claim})
+            requests=[call.args[0] for call in opener.return_value.open.call_args_list]
+            self.assertEqual([(r.get_method(),r.full_url) for r in requests],
+                             [('POST',urls[0]+'/propose'),('GET',urls[0]+path),('GET',urls[1]+path)])
+
+    def test_client_does_not_replay_a_post_when_authority_is_unavailable(self):
+        argv=['client','--url','https://primary','--standby-url','https://standby',
+              '--cert','client.crt','--ca','ca.crt','--key','client.key','--no-wait','propose']
+        body=b'{"error":"authority_unavailable","retryable":true}'
         stdin=SimpleNamespace(buffer=io.BytesIO(b'{"probe":"write"}'))
         with (patch.object(client.sys,'argv',argv), patch.object(client.sys,'stdin',stdin),
               patch.object(client.ssl,'create_default_context'), patch.object(client,'build_opener') as opener,
               redirect_stdout(io.StringIO()) as out):
-            opener.return_value.open.side_effect=calls
-            self.assertEqual(client.main(),0)
-        self.assertEqual(json.loads(out.getvalue()),{'number':325,'claim':claim})
-        requests=[call.args[0] for call in opener.return_value.open.call_args_list]
-        self.assertEqual([(r.get_method(),r.full_url) for r in requests],
-                         [('POST',urls[0]+'/propose'),('GET',urls[0]+path),('GET',urls[1]+path)])
+            opener.return_value.open.side_effect=HTTPError('https://primary/propose',503,'Fenced',
+                                                           {},io.BytesIO(body))
+            self.assertEqual(client.main(),1)
+        self.assertEqual(json.loads(out.getvalue()),json.loads(body))
+        request=opener.return_value.open.call_args.args[0]
+        self.assertEqual((request.get_method(),request.full_url),('POST','https://primary/propose'))
+        self.assertEqual(opener.return_value.open.call_count,1)
 
     def test_client_fallback_distinguishes_connect_failure_from_uncertain_write(self):
         self.assertTrue(client.can_use_standby(URLError(ConnectionRefusedError()),False))
