@@ -166,6 +166,49 @@ class ReplicaTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError,'already bound'):
                 host.ready()
 
+    def test_watcher_restart_during_outage_reuses_only_the_armed_epoch(self):
+        class Manager:
+            url='https://replica'
+            call=lambda inner,route,data=b'':self.request('manager',route,data)
+        authority=Manager()
+        config={'ca':'ca.crt','cert':'client.crt','key':'client.key','replica':{},
+                'poll_seconds':.01,'failure_threshold':2,
+                'primary':{'url':'https://primary'},'standby':{'url':'https://standby'}}
+        journal=self.root/'handoff.json'
+        armed=self.root/'handoff.json.armed'
+        target={'binding':BINDING,'machine':'standby','replica_actor':'standby','replica_url':authority.url}
+        online={'last_error':None,'last_cycle':failover.time.time()}
+        def standby(action):
+            if action in ('ready','identity'):
+                return target
+            self.assertEqual(authority.call('/head')['holder'],'standby')
+
+        with (patch.object(failover.ssl,'create_default_context'), patch.object(replica,'Client',return_value=authority),
+              patch.object(failover,'Remote',return_value=standby), redirect_stdout(io.StringIO())):
+            with patch.object(failover,'reachable',return_value=False):
+                with self.assertRaisesRegex(RuntimeError,'authenticated primary baseline'):
+                    failover.watch(config,journal)
+            self.assertFalse(armed.exists())
+            with patch.object(failover,'reachable',side_effect=[online,KeyboardInterrupt()]):
+                with self.assertRaises(KeyboardInterrupt):
+                    failover.watch(config,journal)
+            self.assertFalse(journal.exists())
+            self.assertEqual(armed.stat().st_mode & 0o777,0o600)
+            with patch.object(failover,'reachable',side_effect=[False,False,online]):
+                failover.watch(config,journal)
+            self.assertEqual(authority.call('/head')['epoch'],2)
+            self.request('manager','/promote',{'from':'standby','to':'primary','epoch':2,'request':'b'*32})
+            saved=self.root/'stale-epoch.json'
+            armed.rename(saved.with_name(saved.name+'.armed'))
+            with patch.object(failover,'reachable',return_value=False) as probe:
+                with self.assertRaisesRegex(RuntimeError,'binding or epoch differs'):
+                    failover.watch(config,saved)
+                probe.assert_not_called()
+            with self.assertRaisesRegex(RuntimeError,'advanced beyond the armed epoch'):
+                failover.transfer_replica(authority,standby,saved,expected_epoch=1)
+            self.assertEqual(authority.call('/head')['epoch'],3)
+            self.assertFalse(saved.exists())
+
 
 if __name__=='__main__':
     unittest.main()

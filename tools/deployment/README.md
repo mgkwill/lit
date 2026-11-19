@@ -397,8 +397,11 @@ state and the active broker is outside this mode. A completed takeover changes
 the active actor. A returning original host stays fenced until the manager
 performs a deliberate handoff.
 
-After failback, keep the completed watcher journal and use a fresh path for
-the next takeover. A stopped standby may retain its private checkpoint and
+The watcher records the authenticated baseline in a private file beside the
+journal. It can restart during a primary outage within the same replica epoch
+and still requires consecutive probe failures before takeover. After failback,
+keep the completed journal and its baseline and use a fresh journal path.
+A stopped standby may retain its private checkpoint and
 replicated-authority marker. The readiness check verifies the cache's repository
 binding and refuses SQLite sidecars that require offline recovery. On startup
 the standby restores the current authoritative snapshot from the replica.

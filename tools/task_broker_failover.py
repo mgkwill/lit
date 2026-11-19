@@ -280,7 +280,7 @@ def transfer(primary, standby, journal):
     return intent
 
 
-def transfer_replica(authority, standby, journal):
+def transfer_replica(authority, standby, journal, expected_epoch=None):
     if journal.exists():
         intent=json.loads(private_file(journal).read_text())
         if intent.get('mode')!='replica':
@@ -289,6 +289,8 @@ def transfer_replica(authority, standby, journal):
         source=authority.call('/head')
         if source['holder']!='primary':
             raise RuntimeError('replica does not belong to the primary')
+        if expected_epoch is not None and source['epoch']!=expected_epoch:
+            raise RuntimeError('replica advanced beyond the armed epoch')
         target=standby('ready')
         if (target.get('replica_actor')!='standby' or target.get('replica_url')!=authority.url
                 or target['binding']!=source['binding']):
@@ -330,27 +332,50 @@ def reachable(url, context):
     return result
 
 
+def arm_replica_watch(authority, config, journal, probe):
+    head=authority.call('/head')
+    if head['holder']!='primary':
+        raise RuntimeError('replica does not belong to the primary')
+    state={'epoch':head['epoch'],'binding':head['binding'],'replica':authority.url,
+           'primary':config['primary']['url'],'standby':config['standby']['url']}
+    path=journal.with_name(journal.name+'.armed')
+    if os.path.lexists(path):
+        if json.loads(private_file(path).read_text())!=state:
+            raise RuntimeError('armed watcher binding or epoch differs')
+    else:
+        if not probe():
+            raise RuntimeError('start the watcher with an authenticated primary baseline')
+        sync_json(path,state)
+    return state['epoch']
+
+
 def watch(config, journal):
     context=ssl.create_default_context(cafile=config['ca'])
     context.load_cert_chain(config['cert'],config['key'])
-    primary=Remote(config['primary']) if 'replica' not in config else None
+    authority=None
+    if 'replica' in config:
+        from task_broker_replica import Client
+        authority=Client(config['replica'])
+    primary=Remote(config['primary']) if authority is None else None
     standby=Remote(config['standby'])
     url=config['primary']['url']
     wait=config.get('poll_seconds',5)
     threshold=config.get('failure_threshold',3)
     if not isinstance(wait,(int,float)) or not 0<wait<=60 or type(threshold) is not int or not 1<=threshold<=60:
         raise ValueError('invalid failure observation interval')
+    epoch=None
     if not journal.exists():
-        if not reachable(url,context):
+        if authority:
+            epoch=arm_replica_watch(authority,config,journal,lambda:reachable(url,context))
+        elif not reachable(url,context):
             raise RuntimeError('start the watcher with an authenticated primary baseline')
         print(json.dumps({'event':'watching_primary'}),flush=True)
         misses=0
         while misses<threshold:
             time.sleep(wait)
             misses=0 if reachable(url,context) else misses+1
-    if 'replica' in config:
-        from task_broker_replica import Client
-        receipt=transfer_replica(Client(config['replica']),standby,journal)
+    if authority is not None:
+        receipt=transfer_replica(authority,standby,journal,expected_epoch=epoch)
     else:
         receipt=transfer(primary,standby,journal)
     deadline=time.monotonic()+75
