@@ -37,6 +37,8 @@ class Forge:
         self.track_latest_publication = True
         self.removal_event = None
         self.main_failures = 0
+        self.main_fault_status = None
+        self.main_faults = []
         self.freeze_reads = 0
         self.remove_freeze_on_recheck = False
         self.check_app = 15368
@@ -54,6 +56,7 @@ class Forge:
         self.block_compare = False
         self.drop_publication_reply = False
         self.drop_blob_reply = False
+        self.publication_response_faults = {}
         self.block_publication = False
         self.publication_started = threading.Event()
         self.publication_release = threading.Event()
@@ -138,6 +141,11 @@ class Forge:
                         'conditions':{'ref_name':{'include':['refs/heads/agents/broker/**/*'],'exclude':[]}},
                         'rules':[{'type':'creation'},{'type':'update'},{'type':'deletion'}]})
                 elif self.path.endswith("/rulesets/10"):
+                    status = forge.main_fault_status
+                    if status is not None:
+                        forge.main_faults.append(status)
+                        self.respond({"message":"injected provider read failure"}, status)
+                        return
                     if forge.main_failures:
                         forge.main_failures -= 1
                         self.respond({"message": "temporary gateway error"}, 502)
@@ -203,6 +211,13 @@ class Forge:
                         number=forge.next_publication_number;forge.next_publication_number+=1
                         if forge.track_latest_publication:
                             forge.proposal.update(number=number,head=forge.published_head,branch=request['head'],author='broker[bot]')
+                        fault = forge.publication_response_faults.get(request['title'])
+                        if fault == 'disconnect':
+                            self.close_connection=True
+                            return
+                        if fault:
+                            self.respond({'message':'injected gateway failure after PR creation'},fault)
+                            return
                         self.respond({'number':number,'head':{'sha':forge.published_head,'ref':request['head']},'user':{'login':'broker[bot]'}})
                     else:self.respond({'message':'unexpected publication route'},404)
                     return

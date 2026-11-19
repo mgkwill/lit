@@ -1,0 +1,127 @@
+{
+  "broker_source_commit": "d5c85f06c0e2636c70daa6a3932e71f602862ed4",
+  "provider": "isolated loopback git/PR HTTP fixture",
+  "sandbox_policy_changed": false,
+  "tested_snapshot_sha256": {
+    "tests/agent_workflow_regression.py": "c0f3a11ae98452ad19719417df16ac89b12cb2055d0e00c8658cbadf0df4bd68",
+    "tests/github_queue_coordinator_regression.py": "bc204caae1e9cb1a23f098fc877604c4446638fca2d238d7eee81c0f02cad839",
+    "tests/remote_regression.py": "219d64da3e17b9236148f8032030cf27af08c5f8d1707d3d57de8ebd6802ea78",
+    "tests/sandbox_regression.py": "4e3b755ba240c221b11cee74693d3a7bba90f83a809c395e0f3fa81fa4aaf35a",
+    "tests/task_broker_provider_burst.py": "c6a34e3026f89c7cfc338659347d5bfe0106d7469d4dbcb16a725c84bc71fb65",
+    "tests/task_broker_regression.py": "1c0962567683c1b99f3e878a55efd78f746023e8ae669c84bc5d0d3d40b3e7ba",
+    "tools/broker_admission.py": "c9edebcc0c78668bd2f02e638cbf39b2402632659d4e5eac1a2c1181bc935077",
+    "tools/github_app_credentials.py": "e12ead9b4317fdb0c307d9d344256f7c793daf17b6b38c9155a5970741b452d5",
+    "tools/github_queue_coordinator.py": "e2b7a1dd0dbdd2c6c94a89db8fcc922bfb064cb0a7fe8377b92fa89137f66637",
+    "tools/task_broker.py": "8aed5c92b2ebac5edf77c132694238f8bcb246a1f0071284731403a97ef6539b",
+    "tools/task_broker_client.py": "4ef4f0470b93b42868002df63733098986a924ccb99895ce987daf39bc3c56b2",
+    "tools/task_broker_freeze_proposal.py": "1c68554b64767720e5623233d28e01214c13801f3f6e8448705755b334679abc",
+    "tools/task_broker_policy_observer.py": "a9301e77eb10409cae4ade5124f04d834ad9e830491924b77ca2c5c354dd911a",
+    "tools/task_ownership.py": "1afe5a56fcd7d5b479ad677c1d47d07952d3489d3c7d57854a25f3be0f57ddba"
+  },
+  "hosts": {
+    "local": {
+      "system": "Darwin",
+      "architecture": "arm64",
+      "distinct_tls_owners": 100,
+      "concurrent_clients": 16,
+      "admitted_during_provider_outage": 100,
+      "failed_precondition_reads": {
+        "429": 3,
+        "503": 2
+      },
+      "mutations_during_precondition_outage": 0,
+      "terminal_phases": {
+        "done": 98,
+        "unknown": 2
+      },
+      "post_apply_faults": [
+        "disconnect",
+        "http_502"
+      ],
+      "provider_pr_creations": 100,
+      "provider_write_calls": 400,
+      "writes_after_restart_and_replay": 0,
+      "stress_tests": 1,
+      "coordinator_and_broker_regressions": 92,
+      "log_sha256": "3f73bb6114b7ba57a3696e095f860384edfb92f8b029de69ed1c641f3866df18"
+    },
+    "host-a": {
+      "system": "Linux",
+      "architecture": "x86_64",
+      "distinct_tls_owners": 100,
+      "concurrent_clients": 16,
+      "admitted_during_provider_outage": 100,
+      "failed_precondition_reads": {
+        "429": 4,
+        "503": 2
+      },
+      "mutations_during_precondition_outage": 0,
+      "terminal_phases": {
+        "done": 98,
+        "unknown": 2
+      },
+      "post_apply_faults": [
+        "disconnect",
+        "http_502"
+      ],
+      "provider_pr_creations": 100,
+      "provider_write_calls": 400,
+      "writes_after_restart_and_replay": 0,
+      "stress_tests": 1,
+      "coordinator_and_broker_regressions": 92,
+      "log_sha256": "107dde3c1d17d242009b8bc1efe8c8cbb812d7b9a12a3f743c22ab457e1b494d"
+    },
+    "host-e": {
+      "system": "Linux",
+      "architecture": "aarch64",
+      "distinct_tls_owners": 100,
+      "concurrent_clients": 16,
+      "admitted_during_provider_outage": 100,
+      "failed_precondition_reads": {
+        "429": 7,
+        "503": 2
+      },
+      "mutations_during_precondition_outage": 0,
+      "terminal_phases": {
+        "done": 98,
+        "unknown": 2
+      },
+      "post_apply_faults": [
+        "disconnect",
+        "http_502"
+      ],
+      "provider_pr_creations": 100,
+      "provider_write_calls": 400,
+      "writes_after_restart_and_replay": 0,
+      "stress_tests": 1,
+      "coordinator_and_broker_regressions": 92,
+      "log_sha256": "b98ac40583a40c79be51e2088f1dce6cec550704b238fb5bc79d35fbfaf18431"
+    },
+    "host-f": {
+      "system": "Linux",
+      "architecture": "aarch64",
+      "distinct_tls_owners": 100,
+      "concurrent_clients": 16,
+      "admitted_during_provider_outage": 100,
+      "failed_precondition_reads": {
+        "429": 4,
+        "503": 2
+      },
+      "mutations_during_precondition_outage": 0,
+      "terminal_phases": {
+        "done": 98,
+        "unknown": 2
+      },
+      "post_apply_faults": [
+        "disconnect",
+        "http_502"
+      ],
+      "provider_pr_creations": 100,
+      "provider_write_calls": 400,
+      "writes_after_restart_and_replay": 0,
+      "stress_tests": 1,
+      "coordinator_and_broker_regressions": 92,
+      "log_sha256": "6bb32b9f9d63008c317e9d3a3ed16a71764e49e58fa8e463ca22770e2d398244"
+    }
+  }
+}
