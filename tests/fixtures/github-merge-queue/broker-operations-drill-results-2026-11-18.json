@@ -1,0 +1,291 @@
+{
+  "repository": "100latent/lit-merge-queue-sandbox",
+  "deployment": {
+    "source_commit": "cc36a28eaa68c072a62cc9fea246ec10c981f863",
+    "prior_commit": "5c69e8f1c9d7162bd2c7678bbc48a7f62d09e763",
+    "host": "host-a",
+    "changed_modules": [
+      "broker_admission.py",
+      "github_app_credentials.py",
+      "github_queue_coordinator.py",
+      "task_broker.py",
+      "task_broker_client.py",
+      "task_ownership.py"
+    ],
+    "installed_sha256": {
+      "broker_admission.py": "17fd8220b5f7c32d5137189c7ad9598bc2a61bb0a967ff4aec15480a3cc93a9f",
+      "github_app_credentials.py": "157b156773ee6b0a351da38d4ea8eb18834e95948142bf34d4ce1d9cabfe6a69",
+      "github_queue_coordinator.py": "0868582cf0ac155bf8bc1f75565513c559f063e72ae49a47beadf2f6a3eb56ce",
+      "task_broker.py": "7d641c422786de6d1d78b8c9696c016d0fd129aefab0a64318c65137703c1bdb",
+      "task_broker_client.py": "d2b6adf835c2b37976c0f2f31661bbc3bff87b2bdf877449cc47bd70672d8a51",
+      "task_broker_freeze_proposal.py": "1c68554b64767720e5623233d28e01214c13801f3f6e8448705755b334679abc",
+      "task_broker_policy_observer.py": "a9301e77eb10409cae4ade5124f04d834ad9e830491924b77ca2c5c354dd911a",
+      "task_ownership.py": "efa39b63de1e714722c6ead74eb2a30846ca9842aeb282c195aa4ed7feb6b8fe"
+    },
+    "api_version": 3,
+    "prior_journal_and_claims_preserved": true,
+    "policy_unchanged": true,
+    "verified_at": "2026-11-19T05:34:33.393954+00:00"
+  },
+  "drill": {
+    "run": "ops-drill-8754f538",
+    "primary": "host-a",
+    "standby": "host-b",
+    "git_file": "qualification/ops-drill-8754f538/handoff.txt",
+    "git_bytes_sha256": "b8f2228847d2302c0d58b9f27734afeae22c1234ce6261ab2577dc033d7f0f14",
+    "certificate_renewal": {
+      "old": {
+        "scheduler": {
+          "sha256": "90d5bc315a397bd743ee4423d43028d644b6b60dc9417cc52d3282e470bf8f88",
+          "serial": "5F6A9ED69D6140B994C237A67EC0F6F2",
+          "not_after": "Nov 20 05:38:31 2026 GMT"
+        },
+        "worker": {
+          "sha256": "c9887255d7c622573ac22215801aa206fa19a89a3880537b39602554c6956f05",
+          "serial": "1F2976037D1B384BFC83590560F5A063",
+          "not_after": "Nov 20 05:38:31 2026 GMT"
+        },
+        "policy_observer": {
+          "sha256": "3ba1638e31947c345e07c22b54a4340f0c2c0e533332ef0694caad51b6868eb4",
+          "serial": "3470A20335D02BF374932E049F26D899",
+          "not_after": "Nov 20 05:38:31 2026 GMT"
+        },
+        "server": {
+          "sha256": "6ad21b5752fb47218c94c0e190a55f84b826e3e7227f1ff48821b2cd7109d484",
+          "serial": "29ED739E06D0145E0AA5A3F11196168D",
+          "not_after": "Nov 20 05:38:35 2026 GMT"
+        }
+      },
+      "new": {
+        "scheduler": {
+          "sha256": "1fa271adcaf03e1168fc782db7f67f28503dbbb0193c77add6beac739b0f6e56",
+          "serial": "6A9B7A126C1F18F7C606FF71695846AD",
+          "not_after": "Dec 19 05:38:31 2026 GMT"
+        },
+        "worker": {
+          "sha256": "47d49048e60d14d204a5da93e8c5460607ea196c4224e9fb9767c3fe77c4cb5e",
+          "serial": "0DD1B99A4FAEBA75F54E3C6F23CA6BD2",
+          "not_after": "Dec 19 05:38:31 2026 GMT"
+        },
+        "policy_observer": {
+          "sha256": "4992dd8613225cf5f7b400933c6c2ad447fbdbfffeaec97d8fe57c8769fe1a2c",
+          "serial": "0F0481A7FDD1A49995253ED20B96B33E",
+          "not_after": "Dec 19 05:38:31 2026 GMT"
+        },
+        "server": {
+          "sha256": "499771bc5dc39d24291e127333a8bd5362a1f061da5a32c31a4b6d46cd2eaec5",
+          "serial": "6B219A8E63BF764E47C4DAE9CD6C0C63",
+          "not_after": "Dec 19 05:38:35 2026 GMT"
+        }
+      }
+    },
+    "certificate_authority_unchanged": true,
+    "unchanged_main_and_namespace_rules": true,
+    "verified_dependency": [
+      {
+        "task": "mixed-file-qf91uiyp-mixed",
+        "generation": 1,
+        "number": 324,
+        "merge_commit": "b2acf9bf1f68ee1b4a2a048b7203bbbac90cb702"
+      }
+    ],
+    "stale_base_refused": true,
+    "same_capability_after_rotation": true,
+    "read_token_scope_verified": true,
+    "receipt": {
+      "agent": "100latent-lit-pilot-host-a[bot]",
+      "author": "100latent-lit-task-broker[bot]",
+      "base": "b2acf9bf1f68ee1b4a2a048b7203bbbac90cb702",
+      "branch": "agents/broker/attempt/9414f84d2d0f0c9f4932fa42b7ca10db",
+      "generation": 1,
+      "head": "ff4df9f1136e891607f134880e6c2bb021bd1354",
+      "number": 325,
+      "task": "ops-drill-8754f538"
+    }
+  },
+  "timeline": [
+    {
+      "event": "primary_stopped",
+      "utc": "2026-11-19T05:38:38.655366+00:00",
+      "unit": {
+        "MainPID": "0",
+        "ActiveState": "inactive"
+      }
+    },
+    {
+      "event": "authority_snapshotted",
+      "utc": "2026-11-19T05:38:39.659162+00:00",
+      "sha256": "2a2e79881691607f7c2ebc3383882125abd28055cf55c401907e80ce79958598"
+    },
+    {
+      "event": "standby_took_authority",
+      "utc": "2026-11-19T05:38:45.663532+00:00",
+      "primary": {
+        "MainPID": "0",
+        "ActiveState": "inactive"
+      },
+      "standby": {
+        "MainPID": "261777",
+        "ActiveState": "active"
+      }
+    },
+    {
+      "event": "old_and_renewed_clients_accepted",
+      "utc": "2026-11-19T05:38:47.889007+00:00",
+      "roles": [
+        "scheduler",
+        "worker",
+        "policy_observer"
+      ]
+    },
+    {
+      "event": "queued_write_stayed_fenced_without_observer",
+      "utc": "2026-11-19T05:38:50.107551+00:00"
+    },
+    {
+      "event": "old_clients_denied_and_server_leaf_renewed",
+      "utc": "2026-11-19T05:38:52.218617+00:00",
+      "roles": [
+        "scheduler",
+        "worker",
+        "policy_observer"
+      ]
+    },
+    {
+      "event": "standby_published_existing_admission",
+      "utc": "2026-11-19T05:39:08.572581+00:00",
+      "pr": 325,
+      "head": "ff4df9f1136e891607f134880e6c2bb021bd1354"
+    },
+    {
+      "event": "standby_registered_pr",
+      "utc": "2026-11-19T05:39:14.707589+00:00",
+      "pr": 325
+    },
+    {
+      "event": "standby_stopped",
+      "utc": "2026-11-19T05:39:15.118743+00:00",
+      "unit": {
+        "MainPID": "0",
+        "ActiveState": "inactive"
+      }
+    },
+    {
+      "event": "standby_authority_restored_on_primary",
+      "utc": "2026-11-19T05:39:17.228522+00:00",
+      "sha256": "50f717d6705601b3d44f0fe1f64411adc3b92c9abcc035d00e6b46f1a19a4a62",
+      "backup_created": true
+    },
+    {
+      "event": "primary_authority_resumed",
+      "utc": "2026-11-19T05:39:21.943783+00:00",
+      "unit": {
+        "MainPID": "545498",
+        "ActiveState": "active"
+      }
+    },
+    {
+      "event": "failback_verified",
+      "utc": "2026-11-19T05:39:23.337759+00:00",
+      "pr": 325
+    },
+    {
+      "event": "temporary_standby_account_and_credentials_removed",
+      "utc": "2026-11-19T05:39:23.811403+00:00"
+    }
+  ],
+  "observed_handoff_times": {
+    "primary_stopped_to_standby_ready_seconds": 7.0,
+    "standby_stopped_to_primary_ready_seconds": 6.8
+  },
+  "failback_receipt_proof": {
+    "original_worker_recovered_identical_receipt": true,
+    "reconciliation_replay_identical": true,
+    "primary_backup_permissions": "0600",
+    "primary_api_version": 3
+  },
+  "live_actions_proof": {
+    "integration": {
+      "actions": {
+        "app_id": 15368,
+        "check_run_id": 135367971754,
+        "check_suite_id": 120368513826,
+        "event": "merge_group",
+        "run_attempt": 1,
+        "run_id": 44467271633
+      },
+      "base_ref": "refs/heads/main",
+      "first_parent": "b2acf9bf1f68ee1b4a2a048b7203bbbac90cb702",
+      "forge_summary_commit": "320b776f58c9b06ebc6e97deaf46eb4c4c292bd4",
+      "forge_summary_matches": true,
+      "merge_commit": "320b776f58c9b06ebc6e97deaf46eb4c4c292bd4",
+      "merge_event_id": "ME_lADOVxXMNs8AAAABgm2v-88AAAAIhmmaBw",
+      "merged_at": "2026-11-19T05:49:33Z",
+      "number": 325,
+      "observed_main": "320b776f58c9b06ebc6e97deaf46eb4c4c292bd4",
+      "proposal": {
+        "agent": "100latent-lit-pilot-host-a[bot]",
+        "author": "100latent-lit-task-broker[bot]",
+        "base": "b2acf9bf1f68ee1b4a2a048b7203bbbac90cb702",
+        "branch": "agents/broker/attempt/9414f84d2d0f0c9f4932fa42b7ca10db",
+        "generation": 1,
+        "head": "ff4df9f1136e891607f134880e6c2bb021bd1354",
+        "number": 325,
+        "task": "ops-drill-8754f538"
+      },
+      "pull_request_id": "PR_kwDOVxXMNs8AAAABQT0Q1Q",
+      "repository": "100latent/lit-merge-queue-sandbox",
+      "verified_at": 1795067379.4165812,
+      "version": 1
+    },
+    "pr_check": {
+      "event": "pull_request",
+      "head_sha": "ff4df9f1136e891607f134880e6c2bb021bd1354",
+      "run_id": 44466623072,
+      "run_attempt": 1,
+      "workflow_id": 421025082,
+      "workflow_path": ".github/workflows/agent-merge-gate.yml",
+      "check_run_id": 135365850926,
+      "check_suite_id": 120366803402,
+      "app_id": 15368,
+      "status": "completed",
+      "conclusion": "success",
+      "run_url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44466623072",
+      "job_id": 135365850926,
+      "job_completed_at": "2026-11-19T05:44:30Z"
+    },
+    "merge_group_check": {
+      "event": "merge_group",
+      "head_sha": "320b776f58c9b06ebc6e97deaf46eb4c4c292bd4",
+      "run_id": 44467271633,
+      "run_attempt": 1,
+      "workflow_id": 421025082,
+      "workflow_path": ".github/workflows/agent-merge-gate.yml",
+      "check_run_id": 135367971754,
+      "check_suite_id": 120368513826,
+      "app_id": 15368,
+      "status": "completed",
+      "conclusion": "success",
+      "run_url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44467271633",
+      "job_id": 135367971754,
+      "job_completed_at": "2026-11-19T05:49:00Z"
+    },
+    "main_after": "320b776f58c9b06ebc6e97deaf46eb4c4c292bd4",
+    "protected_main_rule_unchanged": true,
+    "frozen_exact_branch": true,
+    "native_queue_empty": true,
+    "git_file_sha256_verified_at_pr_and_merge": true,
+    "manual_statuses": 0,
+    "broker_health": {
+      "service": "lit-task-broker",
+      "last_cycle": 1795067385.4882708,
+      "last_error": null,
+      "api_version": 3
+    }
+  },
+  "operator_script_sha256": {
+    "operator-deploy.py": "2f66b01770cbb0927fc876f2b18cd9d8988b65d34588acde9eeab678727f16f9",
+    "operator-run.py": "bd3e4cc250846a77eaa77483c473029d77f19bb6ebb58b9d8c15c7199aac2665",
+    "operator-verify.py": "c0f9a6c233f23f8796e60c2dcf1eeec22268ddeae34c0b63f2ebbdfa055bdfd6"
+  }
+}
