@@ -465,7 +465,9 @@ Set `recipient` to the private-path copy of the public recovery certificate,
 
 The job verifies SQLite in memory and sends the archive to OpenSSL over stdin.
 It asks etcd for the writer key count and reads the independent manager head
-before and after capture. Each successful run publishes a directory with
+before and after capture. It retries a moving head or transient writer and
+retains a consistently captured archive with its blockers if a writer remains.
+Each successful run publishes a directory with
 `checkpoint.cms` and `receipt.json` together. The receipt records both digests,
 the observed head and any recovery blockers. The recovery private key can stay
 offline. Failed runs emit `quorum_backup_failed` without publishing a partial

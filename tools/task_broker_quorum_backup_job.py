@@ -24,10 +24,10 @@ def capture_confirmed(store, manager, manifest):
         before = decode_head(manager.call('/head'),manifest)
         report, archive = capture(store,manifest)
         after = decode_head(manager.call('/head'),manifest)
-        if before==report['head']==after:
+        if before==report['head']==after and (not report['writer_pending'] or attempt==2):
             return report, archive, after
         if attempt<2:
-            time.sleep(.25)
+            time.sleep(.25*(attempt+1))
     raise ReplicaUnavailable('acknowledged head changed during backup')
 
 

@@ -260,6 +260,17 @@ class QuorumTests(unittest.TestCase):
                 backup_job.run_backup(config,self.store,manager)
         self.assertEqual({f.name for f in Path(config['vault']).iterdir()},{'.quorum-backup.lock'})
 
+    def test_encrypted_job_retries_transient_writer_before_sealing(self):
+        manager=Mock()
+        manager.call.return_value=self.initial
+        records,cluster,_=self.store.read_backup_state()
+        replies=[(records,cluster,True),(records,cluster,False)]
+        with patch.object(backup_job.time,'sleep'), patch.object(self.store,'read_backup_state',side_effect=replies):
+            report,payload,head=backup_job.capture_confirmed(self.store,manager,BINDING)
+        self.assertEqual(head,self.initial)
+        self.assertEqual(report['recovery_blockers'],[])
+        self.assertFalse(json.loads(payload.split(b'\n',1)[0])['writer_pending'])
+
     def backup_config(self):
         vault=self.root/'vault'
         vault.mkdir(mode=0o700)
