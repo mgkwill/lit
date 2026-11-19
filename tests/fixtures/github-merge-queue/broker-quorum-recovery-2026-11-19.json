@@ -73,10 +73,94 @@
   "live_policy_read_only": {
     "original_actions_only_rule_verified": true,
     "all_three_live_rulesets_matched_last_verified_projection": true,
-    "policy_projection_sha256": "bd0215538187da8836c568b4817922bb29732aa669ca3cd818fc384293a57d73"
+    "policy_projection_sha256": "bd0215538187da8836c568b4817922bb29732aa669ca3cd818fc384293a57d73",
+    "final_live_policy_projection_reverified": true
   },
   "macos_broker_regressions": 133,
   "macos_stress_owners": 100,
   "linux_arm64_quorum_regressions": 11,
-  "disposable_containers_volumes_and_networks_removed": true
+  "disposable_containers_volumes_and_networks_removed": true,
+  "physical_lab_follow_up": {
+    "source_voters_on_separate_lab_hosts": true,
+    "hosts": [
+      "host-a",
+      "host-c",
+      "host-d"
+    ],
+    "architecture": "Linux x86_64",
+    "etcd_release": "3.7.4",
+    "etcd_binary_sha256": "6fcf4a133e477a2340c59a287461b4988f0ed5c7559ff4750a8695ac41ae5a2a",
+    "separate_source_and_replacement_tls_roots": true,
+    "ports_separate_from_live_services": true,
+    "two_source_voters_and_data_removed": [
+      "host-a",
+      "host-c"
+    ],
+    "original_hostd_voter_still_online": true,
+    "encrypted_archive_off_quorum": true,
+    "tampered_ciphertext_rejected": true,
+    "ciphertext_sha256": "15c5aaf9584d93ce5b193809b11090fe5f3ae40590108050f7cbb0209de012d0",
+    "seconds_from_two_voter_loss_to_verified_new_checkpoint": 10.86,
+    "all_disposable_processes_and_state_removed": true,
+    "backup": {
+      "backup_preserved_after_checkpoint_revision": 6,
+      "stale_backup_revision": 5,
+      "archive_bytes": 3222,
+      "archive_sha256": "ae86e96a98293a574147586c63067301cdd2c42bc4701f66ac12f3d9108fb12f",
+      "archive_mode": "0o600"
+    },
+    "original_minority": {
+      "linearizable_read_refused": true,
+      "checkpoint_acknowledgment_refused": true,
+      "provider_work_refused_before_credentials": true
+    },
+    "recovery": {
+      "source_cluster": "808233058155998200",
+      "destination_cluster": "1039456359721948617",
+      "new_epoch": 13,
+      "restored_revision": 6,
+      "restored_checkpoint_sha256": "752b57af6eca7715ac449ddee4a8f522f495213521efc8cd8ffd0e0bcf289c1e",
+      "identical_checkpoint_and_active_capabilities": true,
+      "revoked_claim_still_revoked": true,
+      "latest_acknowledged_assignment_present": true,
+      "integration_receipt_preserved": true,
+      "stale_epoch_provider_request_refused": true,
+      "restore_retry_idempotent": true,
+      "stale_archive_refused": true,
+      "archive_digest_enforced": true,
+      "wrong_cluster_refused": true,
+      "verified_https_restore_then_checkpoint_accepted": true,
+      "post_restore_revision": 7
+    },
+    "continued_quorum": {
+      "recovered_quorum_accepted_checkpoint_with_one_voter_stopped": true,
+      "last_head": {
+        "holder": "standby",
+        "epoch": 13,
+        "revision": 8,
+        "sha256": "38c7916784da0eb81708aaf715469ecb6d20397a7db2ad62561894165b050b92",
+        "binding": {
+          "repo": "fixture/lit-quorum-recovery",
+          "main_ruleset": 10,
+          "freeze_ruleset": 11
+        }
+      }
+    },
+    "replacement_convergence": {
+      "all_three_replacement_voters_returned_the_same_latest_head": true,
+      "last_epoch": 13,
+      "last_revision": 8
+    }
+  },
+  "live_read_only_encrypted_capture": {
+    "encrypted_live_backup_captured_and_round_tripped": true,
+    "off_voter_custody": "operator Mac",
+    "backup_epoch": 10,
+    "backup_revision": 36,
+    "archive_sha256": "c24e554e3611c8cebc1430a6b0bc9decaf4adfb775ec8cb1076f4337d2c9a508",
+    "independently_authenticated_head_matched_before_and_after": true,
+    "recovery_blockers": [],
+    "writer_pending_at_capture": false,
+    "live_quorum_access": "read only"
+  }
 }

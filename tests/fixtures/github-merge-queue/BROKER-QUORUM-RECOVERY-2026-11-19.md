@@ -38,6 +38,34 @@ The live quorum did not participate in the drill. The implementation
 used MIT-derived code and treated post-MIT upstream, including v1.8.0,
 as a black box.
 
+## Physical lab follow-up
+
+After SSH returned, the drill repeated with original and replacement
+voters on host-a, host-c and host-d. Each voter used private fixture data on
+its host. The two clusters used separate TLS roots and dedicated ports.
+Loss of the original host-a and host-c voters included deletion of their
+fixture data directories. The original host-d voter stayed online and
+refused reads, checkpoints and provider work.
+
+The replacement quorum restored the checkpoint from an authenticated
+encrypted copy held outside the voter hosts. The broker verified the
+checkpoint and acknowledged a new revision over mTLS in 10.86
+seconds from voter removal, with replacement voters already running.
+The replacement also wrote a checkpoint while host-c's replacement voter
+was stopped. All three replacement voters returned the final revision
+after it restarted. The disposable processes, data and listeners were
+removed.
+
+## Read-only live backup
+
+The operator captured a live archive at epoch 10, revision
+36. Independent authenticated head reads before and after
+capture matched the archive. There was no active writer reservation or
+recovery blocker at capture. An encrypted copy was written to the
+operator's private off-voter vault and decrypted back to the verified
+archive digest. The live Actions-only, freeze and namespace rulesets
+matched their recorded projections after the drill.
+
 All 133 broker regressions and the 100-owner stress test passed on macOS.
 All 11 quorum regressions passed in the Linux arm64 container.
 [Structured evidence](broker-quorum-recovery-2026-11-19.json) includes the source revision, artifact
