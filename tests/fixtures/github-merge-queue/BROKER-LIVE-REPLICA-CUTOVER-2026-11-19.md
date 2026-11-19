@@ -45,7 +45,11 @@ policy observer both require the management Mac to be available.
 
 Two repository-scoped writer canaries returned 403 during App suspension and
 200 after resumption. Each was explicitly revoked and then returned 401.
-A separate token expiry control was scheduled for 2026-11-19T16:25:15.050872+00:00.
+After the conservative expiry bound, the unrevoked pre-cutover canary
+returned 401 and a fresh replica token returned 200. The former broker
+cached writer tokens in memory. Individually identified canaries were
+explicitly revoked. Other previously issued tokens reached their
+documented lifetime after legacy signing ended.
 
 All 122 Python regressions and the 100-owner provider stress test passed on
 macOS, host-a, host-e and host-f. The macOS Rust suite, native and Git remote probes,

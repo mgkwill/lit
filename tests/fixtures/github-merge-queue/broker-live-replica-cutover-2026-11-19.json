@@ -156,7 +156,11 @@
       401
     ],
     "latest_possible_expiry_utc": "2026-11-19T16:25:15.050872+00:00",
-    "expiry_probe": null
+    "expiry_probe": {
+      "expired_http": 401,
+      "fresh_http": 200,
+      "checked_at": 1795105519.4462779
+    }
   },
   "native_regressions": {
     "local": {
@@ -260,6 +264,10 @@
     {
       "event": "live_watch_supervisor_armed_and_automatically_restarted",
       "utc": "2026-11-19T15:39:42.221032+00:00"
+    },
+    {
+      "event": "expired_legacy_writer_denied_fresh_replica_writer_allowed",
+      "utc": "2026-11-19T16:25:19.523885+00:00"
     }
   ]
 }
