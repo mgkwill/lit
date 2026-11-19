@@ -1,0 +1,31 @@
+{
+  "source": "host-a",
+  "standby": "host-b",
+  "test_scope": "disposable systemd units, live mTLS and loopback forge",
+  "source_management_unreachable_refused": true,
+  "automatic_takeover_after_sigkill": true,
+  "seconds_from_kill_to_verified_standby": 5.63,
+  "source_restart_denied_by_persistent_condition": true,
+  "same_claim_and_capability_on_standby": true,
+  "fresh_controller_cycle_verified": true,
+  "live_sandbox_broker_and_policy_unchanged": true,
+  "handoff": "d3b085b62a643bc671afc70f7a02173a",
+  "checkpoint_sha256": "4f91661a085bdf17c77d4aa973f9f03b7b0669773896d7e01dabac4218e93a37",
+  "code_sha256": {
+    "github_app_credentials.py": "157b156773ee6b0a351da38d4ea8eb18834e95948142bf34d4ce1d9cabfe6a69",
+    "task_broker_renew_client.py": "ee35446d88b84cdcb726a69039641461a0817201b39d505106fa768e0e2a0cda",
+    "task_broker_checkpoint.py": "1b8953087bb7cd0d0fb54fb0a3e5bc7d88703fa26bf9d3f7d15b89e8c8bb13b4",
+    "task_broker_freeze_proposal.py": "1c68554b64767720e5623233d28e01214c13801f3f6e8448705755b334679abc",
+    "task_broker_policy_observer.py": "a9301e77eb10409cae4ade5124f04d834ad9e830491924b77ca2c5c354dd911a",
+    "github_queue_coordinator.py": "da85f611ec8a219858a6c156622aaed7d10c912e9080bbede3ed84b40c0c44cd",
+    "task_broker.py": "0c3ae4d942e79aca6fde86069e431c0197caff62a763e100e65a8fa975d172d4",
+    "task_broker_failover.py": "34d9a980b368a0b99318f2cda7ac89e2272d52df5f661455e950ad6ae7cccb94",
+    "broker_admission.py": "17fd8220b5f7c32d5137189c7ad9598bc2a61bb0a967ff4aec15480a3cc93a9f",
+    "task_broker_client.py": "d2b6adf835c2b37976c0f2f31661bbc3bff87b2bdf877449cc47bd70672d8a51",
+    "task_ownership.py": "14d3cbae51c38cd08efabe5788aa3e457be53ca8f9fdf30e3a74d00959abac07"
+  },
+  "verified_at": "2026-11-19T06:51:36.532023+00:00",
+  "temporary_units_state_and_credentials_removed": true,
+  "operator_script_sha256": "18c78fe2e9e7953767faefc34c584c966c4fd2125f3c08e3ca671f8e65e1ead1",
+  "native_evidence_path": "<private-path>"
+}

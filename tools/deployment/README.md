@@ -116,6 +116,12 @@ errors with the same bytes. `--no-wait` returns an admission receipt;
 `--claim ID publication` or `--claim ID registration` resumes polling. `--wait-seconds` bounds waiting. A wait
 timeout leaves accepted work intact; use its status URL, not a different request.
 
+The client's `--ca` authenticates the broker's server certificate. The broker's
+`client_ca` authenticates the client leaves. The 100latent operator Mac uses
+`server-ca.crt` for its client commands and observer feed, and keeps `ca.crt` with
+the client certificate signer. The three managed worker profiles store server
+trust in their existing `ca.crt` files.
+
 ### Task dependencies
 
 The scheduler can post `{"task":"integration","requires":["parser","storage"]}`
@@ -310,6 +316,36 @@ directory in the primary config and keep it inside the unit's writable state
 path. Keep the prior directory as a private backup.
 Journaled uncertain writes stay fenced after a handoff and can be reconciled
 using the existing read-only proof route.
+
+### Unattended takeover
+
+Deploy the failover host adapter beside the broker modules on each systemd host.
+Provide a stopped standby under a dedicated service account, with an unused
+authority path, a trusted server certificate and the same repository and ruleset
+binding. Configure its authenticated policy observer separately. Configure clients
+or the routing layer to use the verified standby endpoint after promotion.
+
+Use `task_broker_failover.py watch --config FAILOVER.json` on the trusted
+management host. Start with an authenticated primary response. The watcher
+waits for consecutive HTTPS connection failures, checks the primary service
+has exited over pinned SSH, and installs a durable systemd start condition.
+It exercises that condition and proves the unit stays stopped before taking
+a fresh checkpoint. Missing management access, invalid credentials, unknown
+source state or an unverified fence prevents standby activation.
+
+The private config includes `journal`, `ca`, `cert`, `key`, and `primary` and
+`standby` objects with `host` (pinned SSH alias), `adapter` (remote module
+path), `config` (remote broker config), `unit`, and `url`. The optional
+`poll_seconds` and `failure_threshold` default to five seconds and three
+consecutive misses. Keep the journal and its temporary SQLite checkpoint on
+a private filesystem. Restart the watcher with the same configuration and
+journal to reconcile an interrupted transfer.
+
+The source fence remains on disk after promotion. For failback, first stop
+and verify the standby and transfer its latest state. Remove the source
+fence only after the returning host has the authoritative snapshot. A
+completely unreachable primary requires independent fencing and a current
+authority backup before any takeover.
 
 For rollback, stop broker and observer, preserve the database/frozen refs, and keep
 worker installations suspended. Do not restore raw worker write access while
