@@ -276,6 +276,15 @@ repository-read tokens remain valid until expiry/revocation. Renew 30-day pilot
 leaf certificates before expiry; update fingerprints and keep the CA signing key
 with the trusted operator, off broker and worker hosts.
 
+For client renewal, use `task_broker_renew_client.py` with `--config`,
+`--old-cert`, `--new-cert`, and `--output`. The `overlap` phase prepares a
+new private config allowing both certificates for the same principal. It
+verifies the replacement against the configured CA and checks that the
+expiration extends past the previous leaf. Install the overlap config and
+verify the replacement against the live broker. Then run `retire` using the
+installed overlap config to prepare the final allowlist. The command writes a
+new file each time. Keep the previous config for rollback.
+
 ## Authority handoff
 
 Use one active broker for the sandbox. Stop it and verify its process has exited
@@ -287,8 +296,7 @@ Across hosts, the trusted operator verifies single-writer handoff.
 Run `task_broker_checkpoint.py --config CONFIG export CHECKPOINT.sqlite` as the
 trusted authority account against a stopped and repository-bound broker.
 The private SQLite snapshot contains assignment authority. The command reports
-its SHA-256. Transfer
-it privately and run
+its SHA-256. Transfer it privately and run
 `task_broker_checkpoint.py --config STANDBY_CONFIG restore CHECKPOINT.sqlite --sha256 SHA`.
 Restore requires an unused database path, verifies integrity and the repository
 and ruleset binding, and refuses to overwrite existing authority. Configure TLS

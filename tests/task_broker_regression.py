@@ -20,6 +20,7 @@ from github_queue_coordinator_regression import Forge
 CLI = Path(__file__).resolve().parents[1] / 'tools/task_broker.py'
 CLIENT = CLI.with_name('task_broker_client.py')
 CHECKPOINT = CLI.with_name('task_broker_checkpoint.py')
+RENEW = CLI.with_name('task_broker_renew_client.py')
 
 
 class GitDataFixture:
@@ -147,6 +148,11 @@ class BrokerTests(unittest.TestCase):
     def checkpoint(self, config, *args):
         return subprocess.run([sys.executable,str(CHECKPOINT),'--config',str(config),*args],
                               capture_output=True,timeout=8)
+
+    def renew_worker(self, new, output, phase):
+        return subprocess.run([sys.executable,str(RENEW),'--config',str(self.path),
+            '--old-cert',str(self.pki/'worker.crt'),'--new-cert',str(self.pki/(new+'.crt')),
+            '--output',str(output),phase],capture_output=True,timeout=8)
 
     def call(self, name, path, payload=None, expected=200):
         context=ssl.create_default_context(cafile=str(self.pki/'ca.crt'))
@@ -1043,6 +1049,47 @@ class BrokerTests(unittest.TestCase):
         self.assertEqual(after['publications'],before['publications'])
         self.assertEqual(self.call('other','/propose',body,expected=409),unknown)
         self.assertEqual(self.forge.publication_calls,writes)
+
+    def test_certificate_renewal_holds_same_worker_scope_through_overlap_and_retirement(self):
+        def openssl(*args):
+            subprocess.run(['openssl',*args],cwd=self.pki,check=True,capture_output=True,timeout=12)
+        openssl('req','-newkey','rsa:2048','-nodes','-keyout','renewed.key','-out','renewed.csr','-subj','/CN=worker')
+        (self.pki/'renewed.key').chmod(0o600)
+        openssl('x509','-req','-in','renewed.csr','-CA','ca.crt','-CAkey','ca.key',
+                '-set_serial','16101','-out','renewed.crt','-days','30','-extfile','extensions')
+        self.start()
+        claim=self.assign()
+        original=self.path.read_bytes()
+        overlap=self.root/'overlap.json'
+        planned=self.renew_worker('renewed',overlap,'overlap')
+        self.assertEqual(planned.returncode,0,planned.stderr)
+        self.assertEqual(overlap.stat().st_mode & 0o777,0o600)
+        self.assertEqual(self.path.read_bytes(),original)
+        self.assertEqual(self.renew_worker('renewed',overlap,'overlap').returncode,1)
+        self.stop();(self.root/'ready.json').unlink()
+        self.config=json.loads(overlap.read_text());self.start()
+        self.assertEqual(self.call('worker','/claims'),{'claims':[claim]})
+        self.assertEqual(self.call('renewed','/claims'),{'claims':[claim]})
+        retired=self.root/'retired.json'
+        planned=self.renew_worker('renewed',retired,'retire')
+        self.assertEqual(planned.returncode,0,planned.stderr)
+        self.stop();(self.root/'ready.json').unlink()
+        self.config=json.loads(retired.read_text());self.start()
+        self.call('worker','/claims',expected=403)
+        self.assertEqual(self.call('renewed','/claims'),{'claims':[claim]})
+
+    def test_certificate_renewal_refuses_other_role_server_leaf_and_early_retire(self):
+        self.start()
+        path=self.root/'invalid-renewal.json'
+        for candidate,phase,error in (
+            ('admin','overlap','new certificate belongs to a different principal'),
+            ('server','overlap','certificate verification failed'),
+            ('unlisted','retire','install the overlap config first'),
+        ):
+            result=self.renew_worker(candidate,path,phase)
+            self.assertEqual(result.returncode,1)
+            self.assertEqual(json.loads(result.stderr)['error'],error)
+            self.assertFalse(path.exists())
 
 
 if __name__ == '__main__':
