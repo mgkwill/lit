@@ -20,7 +20,7 @@ from urllib.request import HTTPSHandler, build_opener
 
 from github_queue_coordinator import NoRedirect
 from task_broker import private_file
-from task_broker_checkpoint import export_checkpoint, install_new, restore_checkpoint, sha256, staging_file
+from task_broker_checkpoint import export_checkpoint, install_new, restore_checkpoint, sha256, staging_file, verify_checkpoint
 import task_ownership as ownership
 
 
@@ -95,7 +95,18 @@ class SystemdHost:
 
     def ready(self):
         self.stopped()
-        if self.marker.exists() or self.restored.exists() or (self.root/'queue.sqlite').exists():
+        database=self.root/'queue.sqlite'
+        if self.marker.exists() or self.restored.exists():
+            raise RuntimeError('standby is already bound or fenced')
+        if self.replica:
+            if self.replica['actor']!='standby':
+                raise RuntimeError('replicated standby has the wrong actor')
+            if any(os.path.lexists(database.with_name(database.name+suffix)) for suffix in ('-wal','-shm','-journal')):
+                raise RuntimeError('standby SQLite sidecar requires offline recovery')
+            if os.path.lexists(database):
+                private_file(self.root/'replicated-authority')
+                verify_checkpoint(private_file(database),self.binding)
+        elif os.path.lexists(database):
             raise RuntimeError('standby is already bound or fenced')
         return self.identity()
 

@@ -363,8 +363,14 @@ durable local storage. Its mTLS allowlist maps one certificate to each of
 `manifest`, the scoped App ID and installation ID, and the App signing key.
 Keep that key exclusively on the replica. Before converting an existing
 deployment, drain the old brokers, remove their signing keys, and revoke any
-writer installation tokens issued outside the replica. Keep each broker's
-replica client credential on its own host.
+writer installation tokens issued outside the replica. GitHub revokes an
+installation token using the token itself. When prior tokens cannot be
+recovered for revocation, end all legacy signing and wait through the latest
+possible expiry. Include the maximum remaining signing-JWT lifetime plus the
+one-hour installation-token lifetime when the last mint time is uncertain.
+Suspending an installation is temporary and resuming it can restore access
+to previously issued tokens. Keep each broker's replica client credential
+on its own host.
 
 Export the stopped broker's authority with the checkpoint tool. Run
 `task_broker_failover.py seed-replica --config MANAGER_CLIENT.json --checkpoint CHECKPOINT.sqlite`
@@ -389,6 +395,12 @@ replica is a single independent failure domain, and losing both its durable
 state and the active broker is outside this mode. A completed takeover changes
 the active actor. A returning original host stays fenced until the manager
 performs a deliberate handoff.
+
+After failback, keep the completed watcher journal and use a fresh path for
+the next takeover. A stopped standby may retain its private checkpoint and
+replicated-authority marker. The readiness check verifies the cache's repository
+binding and refuses SQLite sidecars that require offline recovery. On startup
+the standby restores the current authoritative snapshot from the replica.
 
 For rollback, stop broker and observer, preserve the database/frozen refs, and keep
 worker installations suspended. Do not restore raw worker write access while

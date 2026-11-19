@@ -10,6 +10,7 @@ import sys
 import tempfile
 import threading
 import unittest
+from unittest.mock import patch
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'tools'))
 import broker_admission as admission
@@ -132,8 +133,38 @@ class ReplicaTests(unittest.TestCase):
             journal=self.root/'handoff.json'
             first=failover.transfer_replica(Manager(),standby,journal)
             self.assertEqual(first,failover.transfer_replica(Manager(),standby,journal))
+            failback={'from':'standby','to':'primary','epoch':2,'request':'b'*32}
+            self.request('manager','/promote',failback)
+            second=failover.transfer_replica(Manager(),standby,self.root/'handoff-epoch-3.json')
         self.assertEqual(first['sha256'],hashlib.sha256(self.original).hexdigest())
-        self.assertEqual(calls,['ready','identity','start-replica','identity','start-replica'])
+        self.assertEqual(second['sha256'],first['sha256'])
+        self.assertNotEqual(second['handoff'],first['handoff'])
+        self.assertEqual(self.request('manager','/head')['epoch'],4)
+        self.assertEqual(calls,['ready','identity','start-replica','identity','start-replica',
+                                'ready','identity','start-replica'])
+
+    def test_replicated_standby_accepts_only_its_verified_previous_cache(self):
+        host=failover.SystemdHost('fixture.service',{'state':str(self.path.parent),'manifest':BINDING,
+            'replica':{'actor':'standby','url':'https://replica'}})
+        host.marker=self.root/'fence'
+        host.restored=self.root/'restored'
+        self.path.chmod(0o600)
+        with patch.object(host,'stopped'), patch.object(host,'identity',return_value={'replica_actor':'standby'}):
+            with self.assertRaises(FileNotFoundError):
+                host.ready()
+            (self.path.parent/'replicated-authority').touch(mode=0o600)
+            self.assertEqual(host.ready(),{'replica_actor':'standby'})
+            sidecar=self.path.with_name('queue.sqlite-wal')
+            sidecar.touch()
+            with self.assertRaisesRegex(RuntimeError,'sidecar'):
+                host.ready()
+            sidecar.unlink()
+            host.binding=BINDING | {'repo':'other/repository'}
+            with self.assertRaisesRegex(ValueError,'binding differs'):
+                host.ready()
+            host.replica=None
+            with self.assertRaisesRegex(RuntimeError,'already bound'):
+                host.ready()
 
 
 if __name__=='__main__':
