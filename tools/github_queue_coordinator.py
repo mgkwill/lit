@@ -633,6 +633,8 @@ def main():
     run.add_argument("--test-git-remote", help="local Git fixture, only with a loopback API")
     args = parser.parse_args()
     try:
+        if args.command != 'status' and (args.state/'replicated-authority').exists():
+            raise ValueError('use the replicated broker to mutate this authority')
         if args.command == "run" and (args.stale_seconds < 0 or args.poll_seconds <= 0 or args.max_seconds <= 0):
             raise ValueError("stale threshold must be nonnegative and poll/deadline positive")
         if args.command == 'assign':

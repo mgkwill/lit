@@ -55,6 +55,7 @@ class SystemdHost:
         self.unit=unit
         self.root=Path(config['state'])
         self.binding=config['manifest']
+        self.replica=config.get('replica')
         self.dropdir=Path('/etc/systemd/system')/(unit+'.d')
         self.marker=self.dropdir/'lit-failover.marker'
         self.condition=self.dropdir/'90-lit-failover.conf'
@@ -86,8 +87,11 @@ class SystemdHost:
         machine=Path('/etc/machine-id').read_bytes().strip()
         if not re.fullmatch(rb'[0-9a-f]{32}',machine):
             raise RuntimeError('machine identity unavailable')
-        return {'machine':hashlib.sha256(machine).hexdigest(),'binding':self.binding,
+        result={'machine':hashlib.sha256(machine).hexdigest(),'binding':self.binding,
                 'unit':self.unit,'state':str(self.root.resolve())}
+        if self.replica:
+            result.update(replica_actor=self.replica['actor'],replica_url=self.replica['url'])
+        return result
 
     def ready(self):
         self.stopped()
@@ -183,6 +187,15 @@ class SystemdHost:
         if self.properties()['ActiveState']!='active':
             raise RuntimeError('standby service did not activate')
 
+    def start_replica(self):
+        if not self.replica or self.replica.get('actor')!='standby' or self.marker.exists():
+            raise RuntimeError('replicated standby is not provisioned')
+        if self.properties()['ActiveState']!='active':
+            self.stopped()
+            self.service('start',self.unit)
+        if self.properties()['ActiveState']!='active':
+            raise RuntimeError('replicated standby did not activate')
+
 
 class Remote:
     def __init__(self, settings):
@@ -256,6 +269,33 @@ def transfer(primary, standby, journal):
     return intent
 
 
+def transfer_replica(authority, standby, journal):
+    if journal.exists():
+        intent=json.loads(private_file(journal).read_text())
+        if intent.get('mode')!='replica':
+            raise RuntimeError('different handoff journal mode')
+    else:
+        source=authority.call('/head')
+        if source['holder']!='primary':
+            raise RuntimeError('replica does not belong to the primary')
+        target=standby('ready')
+        if (target.get('replica_actor')!='standby' or target.get('replica_url')!=authority.url
+                or target['binding']!=source['binding']):
+            raise RuntimeError('standby is bound to a different replica or repository')
+        request={'from':'primary','to':'standby','epoch':source['epoch'],'request':secrets.token_hex(16)}
+        intent={'mode':'replica','request':request,'target':target}
+        sync_json(journal,intent)
+    if standby('identity')!=intent['target']:
+        raise RuntimeError('standby management identity changed')
+    # The independent holder switch is the fence. It serializes against
+    # in-flight provider requests and revokes the old actor at the witness.
+    receipt=authority.call('/promote',intent['request'])
+    if receipt['holder']!='standby' or receipt['epoch']!=intent['request']['epoch']+1:
+        raise RuntimeError('independent fencing was not confirmed')
+    standby('start-replica')
+    return {'handoff':intent['request']['request'],'sha256':receipt['sha256']}
+
+
 def reachable(url, context):
     endpoint=urlsplit(url)
     if endpoint.scheme!='https' or not endpoint.hostname or endpoint.username or endpoint.path or endpoint.query or endpoint.fragment:
@@ -282,7 +322,7 @@ def reachable(url, context):
 def watch(config, journal):
     context=ssl.create_default_context(cafile=config['ca'])
     context.load_cert_chain(config['cert'],config['key'])
-    primary=Remote(config['primary'])
+    primary=Remote(config['primary']) if 'replica' not in config else None
     standby=Remote(config['standby'])
     url=config['primary']['url']
     wait=config.get('poll_seconds',5)
@@ -297,7 +337,11 @@ def watch(config, journal):
         while misses<threshold:
             time.sleep(wait)
             misses=0 if reachable(url,context) else misses+1
-    receipt=transfer(primary,standby,journal)
+    if 'replica' in config:
+        from task_broker_replica import Client
+        receipt=transfer_replica(Client(config['replica']),standby,journal)
+    else:
+        receipt=transfer(primary,standby,journal)
     deadline=time.monotonic()+75
     while time.monotonic()<deadline:
         health=reachable(config['standby']['url'],context)
@@ -313,7 +357,11 @@ def watch(config, journal):
 def host(args):
     adapter=SystemdHost(args.unit,json.loads(private_file(args.config).read_text()))
     action=args.action
-    if action in ('identity','ready','offline'):
+    if action in ('identity','ready','offline','start-replica'):
+        if action=='start-replica':
+            adapter.start_replica()
+            print(json.dumps({'operation':action}))
+            return
         if action=='offline':
             adapter.stopped()
             print(json.dumps({'source_service_stopped':True}))
@@ -343,16 +391,24 @@ def main():
     use=parser.add_subparsers(dest='mode',required=True)
     watcher=use.add_parser('watch')
     watcher.add_argument('--config',type=Path,required=True)
+    seed=use.add_parser('seed-replica')
+    seed.add_argument('--config',type=Path,required=True)
+    seed.add_argument('--checkpoint',type=Path,required=True)
     manager=use.add_parser('host')
     manager.add_argument('--config',type=Path,required=True)
     manager.add_argument('--unit',required=True)
-    manager.add_argument('action',choices=('identity','ready','offline','fence','verify-fence','checkpoint','restore','activate'))
+    manager.add_argument('action',choices=('identity','ready','offline','fence','verify-fence','checkpoint','restore','activate','start-replica'))
     manager.add_argument('handoff',nargs='?')
     manager.add_argument('sha256',nargs='?')
     args=parser.parse_args()
     try:
         if args.mode=='host':
             host(args)
+        elif args.mode=='seed-replica':
+            from task_broker_replica import Client
+            config=json.loads(private_file(args.config).read_text())
+            result=Client(config).call('/bootstrap',b'{"holder":"primary"}\n'+private_file(args.checkpoint).read_bytes())
+            print(json.dumps(result))
         else:
             config=json.loads(private_file(args.config).read_text())
             journal=Path(config['journal'])

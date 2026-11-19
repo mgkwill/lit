@@ -355,6 +355,41 @@ fence only after the returning host has the authoritative snapshot. A
 completely unreachable primary requires independent fencing and a current
 authority backup before any takeover.
 
+### Replicated authority for whole-host loss
+
+Run `task_broker_replica.py --config CONFIG` on a separately powered host with
+durable local storage. Its mTLS allowlist maps one certificate to each of
+`manager`, `primary`, and `standby`. Configure the replica with the broker's
+`manifest`, the scoped App ID and installation ID, and the App signing key.
+Keep that key exclusively on the replica. Before converting an existing
+deployment, drain the old brokers, remove their signing keys, and revoke any
+writer installation tokens issued outside the replica. Keep each broker's
+replica client credential on its own host.
+
+Export the stopped broker's authority with the checkpoint tool. Run
+`task_broker_failover.py seed-replica --config MANAGER_CLIENT.json --checkpoint CHECKPOINT.sqlite`
+to seed the replica. The manager config has `url`, `ca`, `cert` and `key`.
+Each broker uses the same fields in its `replica` object plus its `actor`. On
+startup the assigned actor restores the replica's current snapshot. Run
+the watcher with a `replica` field containing its manager client config. In
+this mode it needs the primary HTTPS URL and only the standby's SSH details.
+Configure the standby and dual-endpoint observer before arming the watcher.
+
+In replicated mode, the broker serializes authority operations. It synchronously
+replicates durable intents before sending GitHub mutations and commits accepted
+work to the replica before acknowledging it. The replica holds the GitHub write
+credential and serializes promotion against remote calls it has already sent.
+Changing the active epoch rejects new writes and state updates from the old
+broker. Any previously issued request with an unknown result retains its
+replicated intent for reconciliation. The existing Actions and branch-policy
+checks continue to gate admission.
+
+If the replica cannot confirm authority, broker operations fail closed. The
+replica is a single independent failure domain, and losing both its durable
+state and the active broker is outside this mode. A completed takeover changes
+the active actor. A returning original host stays fenced until the manager
+performs a deliberate handoff.
+
 For rollback, stop broker and observer, preserve the database/frozen refs, and keep
 worker installations suspended. Do not restore raw worker write access while
 claiming broker enforcement. The original Actions-only rule stays intact.

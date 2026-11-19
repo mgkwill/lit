@@ -103,6 +103,8 @@ class Forge:
 
             def authorized(self):
                 allowed = ["Bearer good"] + (["Bearer observer"] if forge.allow_observer else [])
+                if getattr(forge,'allow_reader',False) and (self.command=='GET' or self.path=='/graphql'):
+                    allowed.append('Bearer fixture-read-only')
                 if self.command == 'GET' and any(path in self.path for path in ('/compare/','/pulls?','/git/ref/heads/')):
                     allowed = ['Bearer fixture-read-only']
                 if self.headers.get("Authorization") not in allowed:
@@ -206,6 +208,9 @@ class Forge:
                 if not self.authorized():
                     return
                 request = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
+                if self.headers.get("Authorization")=="Bearer fixture-read-only" and request.get('operationName')!='QueueSnapshot':
+                    self.respond({'message':'reader token cannot mutate provider state'},403)
+                    return
                 if self.path!='/graphql':
                     forge.publication_calls.append(self.path)
                     if forge.block_publication and self.path.endswith('/git/trees'):

@@ -69,6 +69,11 @@ class Handler(BaseHTTPRequestHandler):
         pass
 
     def reply(self, code, data):
+        replica = self.server.replica
+        if replica and code in (200,202):
+            if self.path!='/policy':
+                replica.sync()
+            replica.confirm()
         if 'error' in data:data={'retryable':False,**data}
         body=json.dumps(data).encode()
         self.send_response(code)
@@ -82,6 +87,16 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def dispatch(self):
+        if not self.server.replica:
+            return self.dispatch_request()
+        with self.server.replica_lock:
+            try:
+                self.server.replica.confirm()
+                return self.dispatch_request()
+            except OSError:
+                return self.reply(503,{'error':'authority_unavailable','retryable':True})
+
+    def dispatch_request(self):
         certificate=self.connection.getpeercert(binary_form=True)
         principal=self.server.config['principals'].get(hashlib.sha256(certificate).hexdigest())
         if not principal or self.headers.get('Origin'):
@@ -533,7 +548,17 @@ class PolicyGitHub(queue.GitHub):
 
     def api(self,path,payload=None,writer=False):
         if writer and self.server.config.get('require_policy_observer',True):self.observation()
-        actual=super().api(path,payload,writer)
+        replica=self.server.replica
+        if writer and replica:
+            if payload is None:
+                if path!='installation/repositories':
+                    raise ValueError('unexpected writer read')
+                actual=replica.send('/provider',{'operation':'installation'})
+            else:
+                replica.sync()
+                actual=replica.send('/provider',{'operation':'publish','path':path,'payload':payload})
+        else:
+            actual=super().api(path,payload,writer)
         if '/rulesets/' in path and 'bypass_actors' not in actual:
             observed=self.observation()['rules'].get(path.rsplit('/',1)[-1])
             if not observed or any(actual.get(k)!=observed.get(k) for k in ('target','enforcement','conditions','rules')):
@@ -544,6 +569,9 @@ class PolicyGitHub(queue.GitHub):
     def mutate(self,kind,node,head):
         if self.server.config.get('require_policy_observer',True):
             self.observation()
+        if self.server.replica:
+            self.server.replica.sync()
+            return self.server.replica.send('/provider',{'operation':'queue','kind':kind,'node':node,'head':head})
         return super().mutate(kind,node,head)
 
 
@@ -553,33 +581,46 @@ def coordinate(server, token_source, api_url):
     next_tick=0
     while not server.stopping.is_set():
         try:
-            for _ in range(8):
-                if not admission.run_registration(server):
-                    break
-            try:
-                if time.monotonic() >= next_tick:
-                    with queue.writer(root) as db:
-                        saved = db.execute("SELECT value FROM metadata WHERE key='manifest'").fetchone()
-                        if saved:
-                            manifest = json.loads(saved[0])
-                            github = PolicyGitHub(server, api_url, token_source())
-                            github.authenticate_writer(manifest['repo'], force=True)
-                            queue.tick(db, github, manifest, args)
-                    if saved:
-                        server.last_cycle = time.time()
-                        server.last_error = None
-                    next_tick = time.monotonic() + config.get('poll_seconds', 5)
-            finally:
-                # Publication checks its own policy. A failed reconciliation
-                # for one proposal must not suppress every publication turn.
-                if not server.stopping.is_set():
-                    admission.run_one(server, propose)
+            replica=server.replica
+            with server.replica_lock if replica else nullcontext():
+                if replica:
+                    replica.confirm()
+                try:
+                    next_tick=coordinate_turn(server,root,args,token_source,api_url,next_tick)
+                finally:
+                    if replica:
+                        replica.sync()
             server.stopping.wait(min(.1, config.get('poll_seconds', 5)))
         except Exception as error:
             # No provider errors, URLs, payloads, credentials or private paths in logs/API.
             server.last_error=type(error).__name__
             print(json.dumps({'event':'cycle_blocked','error':server.last_error}),flush=True)
             server.stopping.wait(min(1,config.get('poll_seconds',5)))
+
+
+def coordinate_turn(server,root,args,token_source,api_url,next_tick):
+    for _ in range(8):
+        if not admission.run_registration(server):
+            break
+    try:
+        if time.monotonic() >= next_tick:
+            with queue.writer(root) as db:
+                saved = db.execute("SELECT value FROM metadata WHERE key='manifest'").fetchone()
+                if saved:
+                    manifest = json.loads(saved[0])
+                    github = PolicyGitHub(server, api_url, token_source())
+                    github.authenticate_writer(manifest['repo'], force=True)
+                    queue.tick(db, github, manifest, args)
+            if saved:
+                server.last_cycle = time.time()
+                server.last_error = None
+            next_tick = time.monotonic() + server.config.get('poll_seconds', 5)
+    finally:
+        # Publication has its own policy checks and can proceed when an
+        # unrelated reconciliation read fails.
+        if not server.stopping.is_set():
+            admission.run_one(server, propose)
+    return next_tick
 
 
 def main():
@@ -624,6 +665,17 @@ def main():
         root=Path(config['state'])
         root.mkdir(mode=0o700,parents=True,exist_ok=True)
         service_locks.enter_context(ownership.broker_instance(root))
+        replica_marker=root/'replicated-authority'
+        if replica_marker.exists() and 'replica' not in config:
+            raise ValueError('replicated state requires its independent authority')
+        replica=None
+        if 'replica' in config:
+            if args.cutover_state or config.get('app_key') or args.test_token_file or args.test_read_token_file:
+                raise ValueError('replicated broker requires the independent writer')
+            from task_broker_replica import BrokerReplica
+            replica=BrokerReplica(config['replica'],root)
+            replica.restore(manifest)
+            replica_marker.touch(mode=0o600,exist_ok=True)
         if args.cutover_state:
             with queue.writer(root) as db:
                 saved=db.execute("SELECT value FROM metadata WHERE key='manifest'").fetchone()
@@ -647,6 +699,8 @@ def main():
             admission.initialize(db)
             saved=db.execute("SELECT value FROM metadata WHERE key='manifest'").fetchone()
             if saved and json.loads(saved[0])!=manifest:raise ValueError('explicit admission-state cutover required')
+        if replica:
+            replica.sync()
         tls=ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
         tls.minimum_version=ssl.TLSVersion.TLSv1_2
         tls.verify_mode=ssl.CERT_REQUIRED
@@ -654,13 +708,22 @@ def main():
         tls.load_cert_chain(config['server_cert'],str(private_file(config['server_key'])))
         server=Server((config['listen'],config['port']),Handler)
         server.tls=tls;server.config=config
+        server.replica=replica;server.replica_lock=threading.Lock()
         server.slots=threading.BoundedSemaphore(32)
         server.owners={p['owner'] for p in config['principals'].values() if p['role']=='worker'}
         server.last_cycle=None;server.last_error=None
         server.policy_lock=threading.Lock();server.policy=None;server.policy_received=0
         server.stopping=threading.Event()
         api_url=args.test_api_url or 'https://api.github.com'
-        if args.test_api_url or args.test_token_file or args.test_read_token_file:
+        if replica:
+            if args.test_api_url:
+                if not queue.GitHub(api_url,token='test',observer_token='').local:
+                    raise ValueError('replica test provider requires loopback')
+            elif config.get('require_policy_observer') is False:
+                raise ValueError('production requires a policy observer')
+            read_credentials=replica.credentials
+            token_source=replica.broker_token
+        elif args.test_api_url or args.test_token_file or args.test_read_token_file:
             if not args.test_api_url or not args.test_token_file or not queue.GitHub(api_url,token='test',observer_token='').local:
                 raise ValueError('test credentials require an explicit loopback forge')
             token_source=lambda:private_file(args.test_token_file).read_text().strip()
