@@ -19,7 +19,7 @@ import ssl
 import stat
 import sys
 from contextlib import nullcontext
-from urllib.parse import urlsplit, parse_qs
+from urllib.parse import urlsplit, parse_qs, urlencode
 import broker_admission as admission
 
 
@@ -88,7 +88,7 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply(403,{'error':'forbidden'})
         role=principal['role']
         route=urlsplit(self.path).path
-        if ((self.path in ('/assign','/dependencies','/status','/recover-removed') and role != 'scheduler')
+        if ((self.path in ('/assign','/dependencies','/status','/recover-removed','/reconcile-publication') and role != 'scheduler')
                 or (self.path == '/policy' and role != 'policy_observer')
                 or (route in ('/claims','/repository-token','/register','/propose',
                               '/publication','/registration') and role!='worker')):
@@ -129,7 +129,7 @@ class Handler(BaseHTTPRequestHandler):
                     if self.path == '/health':
                         return self.reply(200,{'service':'lit-task-broker','last_cycle':self.server.last_cycle,
                                                'last_error':self.server.last_error,'api_version':3})
-            if self.command != 'POST' or self.path not in ('/assign','/dependencies','/register','/policy','/recover-removed','/propose'):
+            if self.command != 'POST' or self.path not in ('/assign','/dependencies','/register','/policy','/recover-removed','/reconcile-publication','/propose'):
                 return self.reply(404,{'error':'unknown_route'})
             lengths=self.headers.get_all('Content-Length',[])
             if (len(lengths)!=1 or not lengths[0].isdigit() or not 0<int(lengths[0])<=65536
@@ -155,6 +155,11 @@ class Handler(BaseHTTPRequestHandler):
                         or not isinstance(body['event'],str) or not 0<len(body['event'])<=512):
                     raise ValueError('invalid removal recovery')
                 return self.reply(200,recover_removed(self.server,body['number'],body['event']))
+            if self.path == '/reconcile-publication':
+                if (set(body)!={'claim'} or not isinstance(body['claim'],str)
+                        or not re.fullmatch(r'[0-9a-f]{32}',body['claim'])):
+                    return self.reply(400,{'error':'invalid_publication_claim'})
+                return self.reply(200,reconcile_publication(self.server,state,body['claim']))
             if self.path == '/policy':
                 if set(body)!={'observed_at','rules','workers'} or not isinstance(body['observed_at'],(int,float)) or not math.isfinite(body['observed_at']):
                     raise ValueError('invalid observation')
@@ -220,13 +225,7 @@ def verify_dependency_base(server, base, dependencies):
     if not commits:
         return
     repo = server.config['manifest']['repo']
-    try:
-        token = server.read_token_source()
-        if not token:
-            raise ValueError('repository reader unavailable')
-        github = queue.GitHub(server.api_url,token=token,observer_token='')
-    except (RuntimeError,ValueError):
-        raise admission.Rejected('dependency_proof_unavailable',503,True) from None
+    github = repository_reader(server,'dependency_proof_unavailable')
     missing = set()
     for commit in sorted(commits):
         if not re.fullmatch(r'[0-9a-f]{40}',commit):
@@ -247,6 +246,16 @@ def verify_dependency_base(server, base, dependencies):
     if missing:
         raise ownership.DependenciesBlocked('dependency_base_unverified',
             [item['task'] for item in dependencies if item['merge_commit'] in missing])
+
+
+def repository_reader(server, unavailable):
+    try:
+        token = server.read_token_source()
+        if not token:
+            raise ValueError('repository reader unavailable')
+        return queue.GitHub(server.api_url,token=token,observer_token='')
+    except (RuntimeError,ValueError,OSError):
+        raise admission.Rejected(unavailable,503,True) from None
 
 
 def publication_entries(github, git_api, base_tree, files):
@@ -335,20 +344,90 @@ def propose(server,principal,body,db=None):
         tree=github.api(f'{git_api}/trees',{'base_tree':base_tree,'tree':entries},writer=True)
         commit=github.api(f'{git_api}/commits',{'message':'Task '+claim['task']+' attempt '+str(claim['generation']),
             'tree':tree['sha'],'parents':[claim['base']]},writer=True)
+        expected_head=commit['sha']
+        if not re.fullmatch(r'[0-9a-f]{40}',expected_head):
+            raise RuntimeError('invalid publication commit ID')
+        with db:
+            db.execute('INSERT INTO publication_heads VALUES (?,?)',(claim['claim'],expected_head))
         branch='agents/broker/attempt/'+claim['claim']
-        github.api(f'{git_api}/refs',{'ref':'refs/heads/'+branch,'sha':commit['sha']},writer=True)
+        github.api(f'{git_api}/refs',{'ref':'refs/heads/'+branch,'sha':expected_head},writer=True)
         pr=github.api(f'repos/{repo}/pulls',{'head':branch,'base':'main',
             'title':'Task '+claim['task']+' attempt '+str(claim['generation']),
             'body':'Broker publication for a TLS-authenticated task owner. Admission requires a frozen ref and active claim.'},writer=True)
-        if (pr['head']['sha']!=commit['sha'] or pr['head']['ref']!=branch
+        if (pr['head']['sha']!=expected_head or pr['head']['ref']!=branch
                 or pr['user']['login']!=server.config['broker_author']):
             raise RuntimeError('publication identity differs')
-        receipt={'number':pr['number'],'head':commit['sha'],'branch':branch,
-                 'author':server.config['broker_author'],'agent':principal['owner']}
-        receipt.update({k:claim[k] for k in ('task','generation','claim','base')})
+        receipt=publication_receipt(claim,expected_head,branch,server.config['broker_author'],pr['number'])
         with db:
             db.execute("UPDATE publications SET phase='published',receipt=? WHERE claim=?",(queue.encoded(receipt),claim['claim']))
         return receipt
+
+
+def publication_receipt(claim, head, branch, author, number):
+    return {'number':number,'head':head,'branch':branch,'author':author,'agent':claim['owner']} | {
+        k:claim[k] for k in ('task','generation','claim','base')}
+
+
+def reconcile_publication(server, state, claim_id):
+    with queue.database(state) as db:
+        initial=db.execute('SELECT task FROM claims WHERE claim=?',(claim_id,)).fetchone()
+        if not initial:
+            raise admission.Rejected('publication_not_found',404)
+        with ownership.fence(state,initial['task']):
+            claim=db.execute('SELECT * FROM claims WHERE claim=?',(claim_id,)).fetchone()
+            if claim['phase']!='active' or claim['owner'] not in server.owners:
+                raise admission.Rejected('assignment_revoked')
+            publication=db.execute('SELECT * FROM publications WHERE claim=?',(claim_id,)).fetchone()
+            job=db.execute('SELECT * FROM publication_jobs WHERE claim=?',(claim_id,)).fetchone()
+            if not publication or not job or publication['digest']!=job['digest']:
+                raise admission.Rejected('publication_not_found',404)
+            if publication['phase']=='published':
+                return json.loads(publication['receipt'])
+            if publication['phase']!='pending' or job['phase']!='unknown' or claim['proposal'] is not None:
+                raise admission.Rejected('publication_not_reconcilable')
+            intent=db.execute('SELECT head FROM publication_heads WHERE claim=?',(claim_id,)).fetchone()
+            if not intent:
+                raise admission.Rejected('publication_head_unrecorded')
+            head=intent['head']
+            branch='agents/broker/attempt/'+claim_id
+            repo=server.config['manifest']['repo']
+            author=server.config['broker_author']
+            number=observed_publication(server,repo,branch,head,author)
+            receipt=publication_receipt(claim,head,branch,author,number)
+            with db:
+                db.execute("UPDATE publications SET phase='published',receipt=? WHERE claim=?",
+                           (queue.encoded(receipt),claim_id))
+                db.execute("UPDATE publication_jobs SET phase='done',error=NULL,payload='{}' WHERE claim=?",(claim_id,))
+                db.execute('INSERT INTO events(number,kind,data,created) VALUES (?,?,?,?)',
+                           (number,'publication_reconciled',queue.encoded(receipt),time.time()))
+            return receipt
+
+
+def observed_publication(server, repo, branch, head, author):
+    unavailable='publication_proof_unavailable'
+    github=repository_reader(server,unavailable)
+    query=urlencode({'head':repo.split('/')[0]+':'+branch,'base':'main','state':'all','per_page':2})
+    try:
+        pulls=github.api(f'repos/{repo}/pulls?{query}')
+        ref=github.api(f'repos/{repo}/git/ref/heads/{branch}')
+    except queue.ApiError as error:
+        if error.code==404:
+            raise admission.Rejected('publication_not_observed') from None
+        raise admission.Rejected(unavailable,503,True) from None
+    except queue.ResponseUnavailable:
+        raise admission.Rejected(unavailable,503,True) from None
+    if not isinstance(pulls,list) or len(pulls)!=1:
+        raise admission.Rejected('publication_not_observed')
+    pr,=pulls
+    if (ref['ref']!='refs/heads/'+branch or ref['object']['type']!='commit' or ref['object']['sha']!=head
+            or pr['state']!='open' or pr['merged_at'] is not None
+            or pr['head']['ref']!=branch or pr['head']['sha']!=head
+            or (pr['head']['repo'] or {}).get('full_name')!=repo
+            or pr['base']['ref']!='main' or (pr['base']['repo'] or {}).get('full_name')!=repo
+            or pr['user']['type']!='Bot' or pr['user']['login']!=author
+            or type(pr['number']) is not int or pr['number']<=0):
+        raise admission.Rejected('publication_not_observed')
+    return pr['number']
 
 
 def recover_removed(server,number,event_id):

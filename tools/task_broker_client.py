@@ -22,7 +22,7 @@ def main():
     parser.add_argument('--wait-seconds',type=float,default=600)
     parser.add_argument('--no-wait',action='store_true')
     parser.add_argument('--claim')
-    parser.add_argument('route',choices=('claims','health','status','assign','dependencies','register','recover-removed','propose','publication','registration','repository-token'))
+    parser.add_argument('route',choices=('claims','health','status','assign','dependencies','register','recover-removed','reconcile-publication','propose','publication','registration','repository-token'))
     args=parser.parse_args()
     try:
         parsed=urlsplit(args.url)
@@ -33,7 +33,7 @@ def main():
         context=ssl.create_default_context(cafile=str(args.ca))
         context.load_cert_chain(str(args.cert),str(args.key))
         payload=None
-        if args.route in ('assign','dependencies','register','recover-removed','propose'):
+        if args.route in ('assign','dependencies','register','recover-removed','reconcile-publication','propose'):
             raw=sys.stdin.buffer.read(65537)
             if not 0<len(raw)<=65536:raise ValueError('invalid request length')
             payload=json.dumps(json.loads(raw)).encode()

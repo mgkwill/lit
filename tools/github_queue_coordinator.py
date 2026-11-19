@@ -74,7 +74,7 @@ class GitHub:
             raise ApiError(error.code) from None
         except (URLError, http.client.HTTPException, TimeoutError, json.JSONDecodeError):
             raise ResponseUnavailable("GitHub response unavailable; reconcile the durable intent before retrying") from None
-        if result.get("errors"):
+        if isinstance(result, dict) and result.get("errors"):
             raise RuntimeError("GitHub returned GraphQL errors; reconcile intent before retrying")
         return result
 

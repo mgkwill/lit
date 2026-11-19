@@ -30,3 +30,13 @@ after its create response was lost.
 
 [Structured results](broker-provider-failure-results-2026-11-18.json) include the tested source fingerprints and log
 hashes. Raw logs and the exact test snapshot are retained at `<private-path>`.
+
+## Receipt recovery follow-up
+
+The same four environments reran the 100-owner scenario with the reconciliation
+route. Each run kept both uncertain writes fenced through restart, recovered
+both exact PR receipts from read-only evidence, and observed zero extra provider
+writes. All 94 broker and coordinator regressions passed in each environment.
+A read-only query against live PR #324 also confirmed GitHub's branch-filtered
+PR listing and exact Git ref lookup. The fault and recovery exercise used the
+loopback provider. Raw logs and source fingerprints are at `<private-path>`.

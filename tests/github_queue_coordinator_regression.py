@@ -9,6 +9,7 @@ import threading
 import time
 import unittest
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from urllib.parse import parse_qs, urlsplit
 
 CLI = Path(__file__).resolve().parents[1] / "tools/github_queue_coordinator.py"
 
@@ -48,6 +49,9 @@ class Forge:
         self.truncate_base_tree = False
         self.published_branch = None
         self.published_head = None
+        self.published_refs = {}
+        self.published_prs = {}
+        self.publication_lookup_error = None
         self.compare_requests = []
         self.compare_results = {}
         self.compare_error = None
@@ -99,7 +103,7 @@ class Forge:
 
             def authorized(self):
                 allowed = ["Bearer good"] + (["Bearer observer"] if forge.allow_observer else [])
-                if self.command == 'GET' and '/compare/' in self.path:
+                if self.command == 'GET' and any(path in self.path for path in ('/compare/','/pulls?','/git/ref/heads/')):
                     allowed = ['Bearer fixture-read-only']
                 if self.headers.get("Authorization") not in allowed:
                     self.respond({"message": "Bad credentials"}, 401)
@@ -135,6 +139,20 @@ class Forge:
                     status = forge.compare_results.get((base,head), 'diverged')
                     self.respond({'status':status,'behind_by':0 if status=='ahead' else 1,
                                   'base_commit':{'sha':base}, 'merge_base_commit':{'sha':base}})
+                elif '/pulls?' in self.path:
+                    if forge.publication_lookup_error:
+                        self.respond({'message':'injected publication read failure'},forge.publication_lookup_error)
+                        return
+                    filters=parse_qs(urlsplit(self.path).query)
+                    branch,=filters['head']
+                    self.respond([pr for pr in forge.published_prs.values()
+                                  if branch=='100latent:'+pr['head']['ref'] and filters['base']==[pr['base']['ref']]])
+                elif '/git/ref/heads/' in self.path:
+                    ref='refs/heads/'+self.path.split('/git/ref/heads/',1)[1]
+                    if ref not in forge.published_refs:
+                        self.respond({'message':'unknown ref'},404)
+                        return
+                    self.respond({'ref':ref,'object':{'type':'commit','sha':forge.published_refs[ref]}})
                 elif self.path.endswith('/rulesets/13'):
                     self.respond({'target':'branch','enforcement':'active','bypass_actors':[
                         {'actor_id':99,'actor_type':'Integration','bypass_mode':'exempt'}],
@@ -205,12 +223,19 @@ class Forge:
                             forge.git_data.git('update-ref', request['ref'], request['sha'])
                         forge.published_branch=request['ref'].removeprefix('refs/heads/')
                         forge.published_head=request['sha']
+                        forge.published_refs[request['ref']]=request['sha']
                         self.respond({'ref':request['ref'],'object':{'sha':forge.published_head}})
                     elif self.path.endswith('/pulls'):
                         forge.publication_titles.append(request['title'])
                         number=forge.next_publication_number;forge.next_publication_number+=1
                         if forge.track_latest_publication:
                             forge.proposal.update(number=number,head=forge.published_head,branch=request['head'],author='broker[bot]')
+                        repo={'full_name':'100latent/lit-merge-queue-sandbox'}
+                        pr={'number':number,'state':'open','merged_at':None,
+                            'head':{'sha':forge.published_head,'ref':request['head'],'repo':repo},
+                            'base':{'ref':request['base'],'repo':repo},
+                            'user':{'login':'broker[bot]','type':'Bot'}}
+                        forge.published_prs[number]=pr
                         fault = forge.publication_response_faults.get(request['title'])
                         if fault == 'disconnect':
                             self.close_connection=True
@@ -218,7 +243,7 @@ class Forge:
                         if fault:
                             self.respond({'message':'injected gateway failure after PR creation'},fault)
                             return
-                        self.respond({'number':number,'head':{'sha':forge.published_head,'ref':request['head']},'user':{'login':'broker[bot]'}})
+                        self.respond(pr)
                     else:self.respond({'message':'unexpected publication route'},404)
                     return
                 operation = request["operationName"]

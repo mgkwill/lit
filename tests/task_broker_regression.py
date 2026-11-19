@@ -420,6 +420,8 @@ class BrokerTests(unittest.TestCase):
         body['files'] = [{'path':'binary','content':'/w==','encoding':'base64'}]
         result = self.call('worker','/propose',body,expected=409)
         self.assertEqual(result,{'error':'publication_outcome_unknown','retryable':False})
+        missing=self.call('admin','/reconcile-publication',{'claim':body['claim']},expected=409)
+        self.assertEqual(missing['error'],'publication_head_unrecorded')
         self.assertEqual(self.call('worker','/propose',body,expected=409),result)
         self.assertEqual(self.forge.publication_calls,['/repos/100latent/lit-merge-queue-sandbox/git/blobs'])
 
@@ -841,8 +843,64 @@ class BrokerTests(unittest.TestCase):
         self.assertEqual(self.forge.publication_calls,calls)
         self.assign(1,owner='second[bot]')
         self.call('worker','/propose',body,expected=409)
+        denied=self.call('admin','/reconcile-publication',{'claim':body['claim']},expected=409)
+        self.assertEqual(denied['error'],'assignment_revoked')
         self.assertEqual(self.forge.mutations,[])
         self.assertEqual(self.call('admin','/status')['proposals'],[])
+
+    def test_reconcile_lost_pr_response_after_restart_from_exact_read_only_proof(self):
+        self.forge.drop_publication_reply=True
+        self.start()
+        body=self.publication('recover-existing')
+        pending={'claim':body['claim']}
+        self.assertEqual(self.call('worker','/propose',body,expected=409)['error'],'publication_outcome_unknown')
+        writes=self.forge.publication_calls[:]
+        number,=self.forge.published_prs
+        self.assertEqual(self.call('worker','/reconcile-publication',pending,expected=403)['error'],'forbidden')
+        self.stop();(self.root/'ready.json').unlink();self.start()
+        self.forge.publication_lookup_error=502
+        unavailable=self.call('admin','/reconcile-publication',pending,expected=503)
+        self.assertEqual(unavailable,{'error':'publication_proof_unavailable','retryable':True})
+        self.forge.publication_lookup_error=None
+        receipt=self.call('admin','/reconcile-publication',pending)
+        self.assertEqual(receipt['number'],number)
+        self.assertEqual(receipt['head'],self.forge.published_head)
+        self.assertEqual(receipt['claim'],body['claim'])
+        self.assertEqual(self.call('admin','/reconcile-publication',pending),receipt)
+        self.assertEqual(self.call('worker','/propose',body),receipt)
+        self.assertEqual(self.call('worker','/publication?claim='+body['claim']),receipt)
+        self.assertEqual(self.forge.publication_calls,writes)
+        self.call('worker','/register',{'proposal':receipt,'capability':body['capability']})
+        self.until(lambda s:s['proposals'][0]['phase']=='queued')
+
+    def test_reconcile_rejects_absent_ambiguous_or_mismatched_provider_state(self):
+        self.forge.drop_publication_reply=True
+        self.start()
+        body=self.publication('not-provable')
+        selector={'claim':body['claim']}
+        self.call('worker','/propose',body,expected=409)
+        writes=self.forge.publication_calls[:]
+        number,=self.forge.published_prs
+        pr=self.forge.published_prs.pop(number)
+
+        def deny():
+            result=self.call('admin','/reconcile-publication',selector,expected=409)
+            self.assertEqual(result['error'],'publication_not_observed')
+
+        deny()
+        self.forge.published_prs[number]=pr
+        self.forge.published_prs[number+1]=pr | {'number':number+1}
+        deny()
+        self.forge.published_prs.pop(number+1)
+        ref='refs/heads/'+pr['head']['ref']
+        self.forge.published_refs[ref]='f'*40
+        deny()
+        self.forge.published_refs[ref]=pr['head']['sha']
+        self.forge.published_prs[number]=pr | {'user':{'type':'Bot','login':'unrelated[bot]'}}
+        deny()
+        self.assertEqual(self.forge.publication_calls,writes)
+        self.assertEqual(self.call('worker','/publication?claim='+body['claim'],expected=409)['error'],
+                         'publication_outcome_unknown')
 
     def test_publisher_rejects_path_and_workflow_escape(self):
         self.start();claim=self.assign()

@@ -32,6 +32,8 @@ def initialize(db):
     db.execute("""CREATE TABLE IF NOT EXISTS registration_jobs(
         id INTEGER PRIMARY KEY AUTOINCREMENT, claim TEXT UNIQUE NOT NULL,
         owner TEXT NOT NULL, spec TEXT NOT NULL, phase TEXT NOT NULL, error TEXT)""")
+    db.execute('''CREATE TABLE IF NOT EXISTS publication_heads(
+        claim TEXT PRIMARY KEY, head TEXT NOT NULL)''')
     # Published receipts are authoritative; everything else running at restart
     # is uncertain. Queued jobs have no external intent and remain executable.
     with db:

@@ -93,6 +93,7 @@ authority path, signing key or credential permission request.
 | `POST /assign` | scheduler | CAS task assignment: task, expect, owner, base, request |
 | `GET /status` | scheduler | Claim, dependency, proposal, action, publication and registration metadata, without credentials |
 | `POST /recover-removed` | scheduler | Consume one verified native removal receipt; never retry unknown RPCs |
+| `POST /reconcile-publication` | scheduler | Recover a receipt for an existing PR whose write response was lost |
 | `POST /policy` | policy observer | Fresh rules and suspended-writer observations |
 | `GET /claims` | worker | Only its assignments; capability only while active |
 | `GET /repository-token` | worker | Only Contents/Pull requests read, for the one repository |
@@ -230,10 +231,17 @@ replace native PR or merge-group checks.
 A registered attempt is bound to one PR. Reassignment revokes the old generation,
 withdraws and closes its PR, then withholds the successor capability until the old
 PR is observed closed/merged with no queue entry. Broker publication has a separate
-unregistered stage: if interrupted, it can leave an orphan ref/PR. Such an attempt
-cannot register after revocation, workers cannot enqueue it directly, and the
-broker never queues it without registration. Orphan cleanup remains an operator
-operation; an uncertain publication is not automatically repeated.
+unregistered stage and records the commit ID before creating the branch or PR.
+If a write response is lost, the scheduler can post `{"claim":"CLAIM_ID"}` to
+`/reconcile-publication`. The broker reads GitHub with repository-read credentials
+and recovers the receipt only if the current assignment, exact ref and commit,
+broker author, and a single open PR into sandbox main all match. The scheduler
+then freezes the ref and the worker registers through the usual Actions gate.
+
+An absent or mismatched PR, a missing recorded commit ID, or a revoked assignment
+leaves the uncertain outcome fenced. A retryable provider read error leaves the
+request unchanged. The route never repeats a provider write. Orphan cleanup
+remains an operator operation.
 
 Restart against the same state directory. Durable queue intents are reconciled,
 not blindly replayed. For a confirmed native `branch_protection_failure`, send

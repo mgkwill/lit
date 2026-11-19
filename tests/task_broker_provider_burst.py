@@ -97,6 +97,17 @@ class ProviderBurst(BrokerTests):
         self.assertEqual(self.forge.publication_calls,writes)
         self.assertEqual(self.forge.mutations,[])
         self.wait_jobs(lambda jobs,counts:counts==phases)
+
+        recovered=[]
+        for name,body in operations:
+            if name in fault_owners:
+                receipt=self.call('admin','/reconcile-publication',{'claim':body['claim']})
+                self.assertEqual(receipt['agent'],name)
+                self.assertEqual(self.call(name,'/propose',body),receipt)
+                recovered.append(receipt['number'])
+        self.assertEqual(len(set(recovered)),2)
+        self.wait_jobs(lambda jobs,counts:counts=={'done':size})
+        self.assertEqual(self.forge.publication_calls,writes)
         print(json.dumps({
             'system':platform.system(),'architecture':platform.machine(),
             'distinct_tls_owners':size,'concurrent_clients':16,
@@ -106,6 +117,8 @@ class ProviderBurst(BrokerTests):
             'post_apply_faults':['disconnect','http_502'],
             'provider_pr_creations':len(self.forge.publication_titles),
             'provider_write_calls':len(writes),'writes_after_restart_and_replay':0,
+            'unknown_receipts_recovered_by_read_only_proof':len(recovered),
+            'writes_after_reconciliation':0,
         }),flush=True)
 
 
