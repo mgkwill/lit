@@ -29,27 +29,27 @@
   "native_matrix": {
     "local": {
       "architecture": "arm64",
-      "regressions": 127,
+      "regressions": 129,
       "stress_owners": 100,
-      "log_sha256": "df93a249b2cb70d8a8a40b062e1ea1961c6fce0b20efe3ab5e385801289c3c86"
+      "log_sha256": "db72d9f3d79519508dca84da5555dadcdd34ec90299b435997983c2195e17c57"
     },
     "host-a": {
       "architecture": "x86_64",
-      "regressions": 127,
+      "regressions": 129,
       "stress_owners": 100,
-      "log_sha256": "05cd5da1413ad7c436005eb1dff0388a9bb3e7ddefc34685f60f733d671df7f6"
+      "log_sha256": "0ed0eb8d8f835e028d3a34335882d2b0311946301d7f960a72eb322e978a2645"
     },
     "host-e": {
       "architecture": "aarch64",
-      "regressions": 127,
+      "regressions": 129,
       "stress_owners": 100,
-      "log_sha256": "921ad32fa93b5a40574bc49f12fb986f75de4047770d204ffd8277e8953b24ce"
+      "log_sha256": "381a7361e92f2af8f1673954fa5b2ecef1dfe9cca61ae6193425637e87fce00a"
     },
     "host-f": {
       "architecture": "aarch64",
-      "regressions": 127,
+      "regressions": 129,
       "stress_owners": 100,
-      "log_sha256": "4724e3fdd1f27cabeb486f007911f4647d0868f1d2e6e147df859307a4045504"
+      "log_sha256": "187a685fce3c8c7debb95586d3962b74d966b2adca40fe4a37457c9bb51aa802"
     }
   },
   "local_quorum": {
@@ -154,6 +154,119 @@
     {
       "event": "returning_hostc_rejoined_without_authority_change",
       "utc": "2026-11-19T16:58:47.000549+00:00"
+    },
+    {
+      "event": "linux_watcher_armed_on_live_quorum",
+      "utc": "2026-11-19T16:59:19.180615+00:00"
+    },
+    {
+      "event": "both_mac_control_services_disabled_for_live_drill",
+      "utc": "2026-11-19T16:59:21.437152+00:00"
+    },
+    {
+      "event": "linux_watcher_completed_takeover_with_mac_services_offline",
+      "utc": "2026-11-19T17:00:50.733082+00:00"
+    },
+    {
+      "event": "independent_linux_scheduler_published_with_mac_services_offline",
+      "utc": "2026-11-19T17:01:06.687492+00:00"
+    },
+    {
+      "event": "joint_outage_preserved_standby_receipt_and_controller_cycle",
+      "utc": "2026-11-19T17:01:49.969305+00:00"
+    },
+    {
+      "event": "actions_verified_integration_while_mac_services_offline",
+      "utc": "2026-11-19T17:11:04.867778+00:00"
+    },
+    {
+      "event": "linux_failback_restored_primary_and_rearmed_watcher",
+      "utc": "2026-11-19T17:11:29.668323+00:00"
+    },
+    {
+      "event": "three_live_gateways_converged_and_both_receipts_verified",
+      "utc": "2026-11-19T17:11:50.167629+00:00"
     }
-  ]
+  ],
+  "management_mac_outage": {
+    "watcher_host": "host-d",
+    "policy_and_scheduler_host": "host-a",
+    "mac_observer_stopped": true,
+    "mac_watcher_stopped": true,
+    "publisher_credential_transfer": false,
+    "seconds_to_takeover": 53.81,
+    "original_claims_and_actions_retained": true,
+    "old_source_http": 503,
+    "standby_epoch": 9,
+    "actions_committed_while_mac_services_offline": true,
+    "actions": {
+      "number": 328,
+      "proposal_head": "154cab29d90b0be803676d17ae73acce0745a9d0",
+      "merge_commit": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+      "merge_event": "ME_lADOVxXMNs8AAAABgx8ckc8AAAAIijGW0A",
+      "first_parent": "4c055b0d11abc381e7ccea912a2de291f053e193",
+      "pull_request_actions": {
+        "event": "pull_request",
+        "head_sha": "154cab29d90b0be803676d17ae73acce0745a9d0",
+        "run_id": 44572536375,
+        "run_attempt": 1,
+        "workflow_id": 421025082,
+        "workflow_path": ".github/workflows/agent-merge-gate.yml",
+        "check_run_id": 135731210533,
+        "check_suite_id": 120653870417,
+        "app_id": 15368,
+        "status": "completed",
+        "conclusion": "success",
+        "run_url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44572536375"
+      },
+      "merge_group_actions": {
+        "event": "merge_group",
+        "head_sha": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "run_id": 44573593543,
+        "run_attempt": 1,
+        "workflow_id": 421025082,
+        "workflow_path": ".github/workflows/agent-merge-gate.yml",
+        "check_run_id": 135734973060,
+        "check_suite_id": 120656778739,
+        "app_id": 15368,
+        "status": "completed",
+        "conclusion": "success",
+        "run_url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44573593543"
+      },
+      "manual_statuses": 0,
+      "original_actions_only_rule_verified": true,
+      "native_git_parents_verified": true
+    }
+  },
+  "linux_watcher": {
+    "host": "host-d",
+    "armed_epoch": 8,
+    "separate_manager_certificate": true,
+    "local_systemd_adapter": true,
+    "primary_ssh_configured": false,
+    "standing_grants_unchanged": true,
+    "existing_hosta_github_login_observed_live_rules": true,
+    "linux_policy_delivery_confirmed": true
+  },
+  "linux_failback": {
+    "authority_epoch": 10,
+    "watcher_rearmed": true,
+    "watcher_restarted_after_process_loss": true,
+    "secondary_mac_observer_restored": true
+  },
+  "joint_outage_probe": {
+    "same_publication_receipt": true,
+    "new_controller_cycle": true,
+    "hostc_gateway_and_voter_offline": true,
+    "mac_observer_and_watcher_offline": true,
+    "active_epoch": 9
+  },
+  "final_live_health": {
+    "live_epoch": 10,
+    "both_qualified_integration_receipts_retained": true,
+    "consistent_views_across_all_three_gateways": true,
+    "linux_watcher_armed": true,
+    "queue_empty": true,
+    "sandbox_policy_verified": true
+  }
 }
