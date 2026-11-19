@@ -42,8 +42,12 @@ class Forge:
         self.check_app = 15368
         self.newer_preflight_pending = False
         self.publication_calls = []
+        self.git_data = None
+        self.truncate_base_tree = False
         self.published_branch = None
+        self.published_head = None
         self.drop_publication_reply = False
+        self.drop_blob_reply = False
         self.block_publication = False
         self.publication_started = threading.Event()
         self.publication_release = threading.Event()
@@ -67,6 +71,9 @@ class Forge:
 
             def respond(self, body, code=200):
                 if forge.drop_publication_reply and self.command=='POST' and self.path.endswith('/pulls'):
+                    self.close_connection=True
+                    return
+                if forge.drop_blob_reply and self.command=='POST' and self.path.endswith('/git/blobs'):
                     self.close_connection=True
                     return
                 if (forge.allow_observer and self.headers.get("Authorization") == "Bearer good"
@@ -98,7 +105,13 @@ class Forge:
                         self.respond({"total_count": 1, "repositories": [
                             {"full_name": "100latent/lit-merge-queue-sandbox"}]})
                 elif '/git/commits/' in self.path:
-                    self.respond({'sha':'c'*40,'tree':{'sha':'d'*40}})
+                    sha = self.path.rsplit('/', 1)[1]
+                    tree = forge.git_data.git('rev-parse', sha+'^{tree}').decode().strip() if forge.git_data else 'd'*40
+                    self.respond({'sha':sha,'tree':{'sha':tree}})
+                elif '/git/trees/' in self.path:
+                    sha = self.path.rsplit('/', 1)[1]
+                    entries = forge.git_data.entries(sha) if forge.git_data else []
+                    self.respond({'sha':sha,'tree':entries,'truncated':forge.truncate_base_tree})
                 elif self.path.endswith('/rulesets/13'):
                     self.respond({'target':'branch','enforcement':'active','bypass_actors':[
                         {'actor_id':99,'actor_type':'Integration','bypass_mode':'exempt'}],
@@ -153,19 +166,24 @@ class Forge:
                         forge.block_publication = False
                         forge.publication_started.set()
                         forge.publication_release.wait(20)
-                    if self.path.endswith('/git/trees'):
-                        self.respond({'sha':'d'*40})
+                    if self.path.endswith('/git/blobs'):
+                        self.respond({'sha':forge.git_data.blob(request)})
+                    elif self.path.endswith('/git/trees'):
+                        self.respond({'sha':forge.git_data.tree(request) if forge.git_data else 'd'*40})
                     elif self.path.endswith('/git/commits'):
-                        self.respond({'sha':'e'*40})
+                        self.respond({'sha':forge.git_data.commit(request) if forge.git_data else 'e'*40})
                     elif self.path.endswith('/git/refs'):
+                        if forge.git_data:
+                            forge.git_data.git('update-ref', request['ref'], request['sha'])
                         forge.published_branch=request['ref'].removeprefix('refs/heads/')
-                        self.respond({'ref':request['ref'],'object':{'sha':'e'*40}})
+                        forge.published_head=request['sha']
+                        self.respond({'ref':request['ref'],'object':{'sha':forge.published_head}})
                     elif self.path.endswith('/pulls'):
                         forge.publication_titles.append(request['title'])
                         number=forge.next_publication_number;forge.next_publication_number+=1
                         if forge.track_latest_publication:
-                            forge.proposal.update(number=number,head='e'*40,branch=request['head'],author='broker[bot]')
-                        self.respond({'number':number,'head':{'sha':'e'*40,'ref':request['head']},'user':{'login':'broker[bot]'}})
+                            forge.proposal.update(number=number,head=forge.published_head,branch=request['head'],author='broker[bot]')
+                        self.respond({'number':number,'head':{'sha':forge.published_head,'ref':request['head']},'user':{'login':'broker[bot]'}})
                     else:self.respond({'message':'unexpected publication route'},404)
                     return
                 operation = request["operationName"]

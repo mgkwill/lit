@@ -168,8 +168,9 @@ broker host and publication stops when its observations expire. See the
 Keep the authority filesystem/account and administrative CLI inaccessible to
 workers. Privileged host and GitHub policy administrators remain trusted. No
 lease expiry or dependency scheduler is added. Broker-delivered GitHub credentials
-are repository-read only. Workers publish regular UTF-8 file proposals through
-`/propose`; the scheduler verifies and freezes the resulting ref before enrollment.
+are repository-read only. Workers publish regular-file edits through `/propose`,
+including binary content, deletions, and executable-bit changes. The scheduler
+verifies and freezes the resulting ref before enrollment.
 Admission requires the newest relevant native preflight run to have passed; an
 older success for the same SHA cannot mask a new pending run.
 

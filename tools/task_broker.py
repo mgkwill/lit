@@ -187,25 +187,48 @@ class Handler(BaseHTTPRequestHandler):
     do_POST=dispatch
 
 
+def publication_entries(github, git_api, base_tree, files):
+    # Resolve edited paths against the immutable assignment base. Fetch only
+    # touched directories, at most once per distinct tree in this request.
+    trees = {}
+    entries = []
+    for file in files:
+        path = file['path']
+        parts = path.split('/')
+        tree = base_tree
+        previous = None
+        for i, part in enumerate(parts):
+            if tree not in trees:
+                if not re.fullmatch(r'[0-9a-f]{40}',tree):
+                    raise RuntimeError('invalid base tree ID')
+                result = github.api(f'{git_api}/trees/{tree}')
+                if result['sha'] != tree or result['truncated'] is not False:
+                    raise RuntimeError('incomplete or mismatched base tree')
+                trees[tree] = {item['path']: item for item in result['tree']}
+            previous = trees[tree].get(part)
+            if previous is None or i == len(parts) - 1:
+                break
+            if previous['type'] != 'tree' or previous['mode'] != '040000':
+                raise admission.Rejected('publication_path_not_regular')
+            tree = previous['sha']
+        if previous is not None and (previous['type'] != 'blob' or previous['mode'] not in admission.REGULAR_MODES):
+            raise admission.Rejected('publication_path_not_regular')
+        entry = {'path': path, 'type': 'blob'}
+        if 'content' in file:
+            entry.update(mode=file.get('mode', '100644'), content=file['content'])
+        else:
+            if previous is None:
+                raise admission.Rejected('publication_path_not_found')
+            sha = previous['sha']
+            if not re.fullmatch(r'[0-9a-f]{40}',sha):
+                raise RuntimeError('invalid base blob ID')
+            entry.update(mode=file.get('mode', previous['mode']), sha=None if 'delete' in file else sha)
+        entries.append(entry)
+    return entries
+
+
 def propose(server,principal,body,db=None):
-    expected={'task','generation','claim','base','capability','request','files'}
-    if (set(body)!=expected or any(not isinstance(body[k],str) for k in ('task','claim','base','capability','request'))
-            or not 0<len(body['request'])<=256 or not isinstance(body['files'],list)
-            or not 0<len(body['files'])<=32):
-        raise ValueError('invalid publication')
-    paths=[]
-    for file in body['files']:
-        if (not isinstance(file,dict) or set(file)!={'path','content'}
-                or not isinstance(file['path'],str) or not isinstance(file['content'],str)):
-            raise ValueError('expected regular UTF-8 files')
-        path=file['path'];parts=path.split('/')
-        if (not path or len(path)>1024 or '\\' in path or '\0' in path
-                or any(p in ('','.','..') or p.casefold()=='.git' for p in parts)
-                or path.startswith('.github/workflows/')):
-            raise ValueError('invalid publication path')
-        paths.append(path)
-    if len(set(paths))!=len(paths):raise ValueError('duplicate publication paths')
-    digest=hashlib.sha256(queue.encoded({k:v for k,v in body.items() if k!='capability'}).encode()).hexdigest()
+    _,digest=admission.request(body)
     root=Path(server.config['state'])
     with (nullcontext(db) if db is not None else queue.writer(root)) as db, ownership.fence(root,body['task']):
         binding={k:body[k] for k in ('task','generation','claim','base')}|{'author':principal['owner']}
@@ -232,16 +255,26 @@ def propose(server,principal,body,db=None):
                 or {r['type'] for r in namespace['rules']}!={'creation','update','deletion'}
                 or namespace.get('bypass_actors')!=[{'actor_id':server.config['broker_app_id'],'actor_type':'Integration','bypass_mode':'exempt'}]):
             raise RuntimeError('broker publication namespace protection required')
+        repo=server.config['manifest']['repo']
+        git_api=f'repos/{repo}/git'
+        base=github.api(f"{git_api}/commits/{claim['base']}")
+        if base['sha']!=claim['base']:
+            raise RuntimeError('mismatched publication base')
+        base_tree=base['tree']['sha']
+        entries=publication_entries(github,git_api,base_tree,body['files'])
         with db:
             db.execute("INSERT INTO publications VALUES (?,?,?,'pending',NULL)",(claim['claim'],request_key,digest))
-        repo=server.config['manifest']['repo']
-        base=github.api(f"repos/{repo}/git/commits/{claim['base']}")
-        tree=github.api(f'repos/{repo}/git/trees',{'base_tree':base['tree']['sha'],
-            'tree':[{'path':f['path'],'mode':'100644','type':'blob','content':f['content']} for f in body['files']]},writer=True)
-        commit=github.api(f'repos/{repo}/git/commits',{'message':'Task '+claim['task']+' attempt '+str(claim['generation']),
+        for file,entry in zip(body['files'],entries):
+            if file.get('encoding')=='base64':
+                blob=github.api(f'{git_api}/blobs',{'encoding':'base64','content':entry.pop('content')},writer=True)
+                if not re.fullmatch(r'[0-9a-f]{40}',blob['sha']):
+                    raise RuntimeError('invalid published blob ID')
+                entry['sha']=blob['sha']
+        tree=github.api(f'{git_api}/trees',{'base_tree':base_tree,'tree':entries},writer=True)
+        commit=github.api(f'{git_api}/commits',{'message':'Task '+claim['task']+' attempt '+str(claim['generation']),
             'tree':tree['sha'],'parents':[claim['base']]},writer=True)
         branch='agents/broker/attempt/'+claim['claim']
-        github.api(f'repos/{repo}/git/refs',{'ref':'refs/heads/'+branch,'sha':commit['sha']},writer=True)
+        github.api(f'{git_api}/refs',{'ref':'refs/heads/'+branch,'sha':commit['sha']},writer=True)
         pr=github.api(f'repos/{repo}/pulls',{'head':branch,'base':'main',
             'title':'Task '+claim['task']+' attempt '+str(claim['generation']),
             'body':'Broker publication for a TLS-authenticated task owner. Admission requires a frozen ref and active claim.'},writer=True)

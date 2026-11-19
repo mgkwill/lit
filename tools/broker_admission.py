@@ -3,6 +3,7 @@
 Only queued jobs may start. A process interrupted in 'running' never replays a
 GitHub mutation, even if the interruption preceded the first provider call.
 """
+import base64
 import hashlib
 import hmac
 import json
@@ -12,6 +13,9 @@ import time
 from pathlib import Path
 import github_queue_coordinator as queue
 import task_ownership as ownership
+
+
+REGULAR_MODES = ('100644', '100755')
 
 
 class Rejected(RuntimeError):
@@ -46,23 +50,49 @@ def request(body):
             or not 0<len(body['task'])<=256 or not 0<len(body['request'])<=256
             or not isinstance(body['files'],list) or not 0<len(body['files'])<=32):
         raise Rejected('invalid_publication',400)
-    paths=[]
+    paths=set()
     for file in body['files']:
-        if (not isinstance(file,dict) or set(file)!={'path','content'}
-                or not isinstance(file['path'],str) or not isinstance(file['content'],str)):
+        if not isinstance(file,dict) or not isinstance(file.get('path'),str):
             raise Rejected('invalid_publication',400)
         path=file['path']
-        if (not path or len(path)>1024 or '\\' in path or '\0' in path
-                or any(p in ('','.','..') or p.casefold()=='.git' for p in path.split('/'))
-                or path.startswith('.github/workflows/')):
+        parts=[p.casefold().rstrip(' .') for p in path.split('/')]
+        if (len(path)>1024 or '\\' in path or '\0' in path
+                or any(p in ('','.git','git~1') for p in parts)
+                or parts==['.github'] or parts[:2]==['.github','workflows']):
             raise Rejected('invalid_publication_path',400)
-        # Reject invalid Unicode before a job can reach the provider boundary.
-        try: path.encode('utf-8');file['content'].encode('utf-8')
-        except UnicodeError: raise Rejected('invalid_publication',400) from None
-        paths.append(path)
-    if len(set(paths))!=len(paths):raise Rejected('duplicate_publication_path',400)
+        if path in paths:
+            raise Rejected('duplicate_publication_path',400)
+        paths.add(path)
+        validate_file(file)
+    for path in paths:
+        parts=path.split('/')
+        if any('/'.join(parts[:i]) in paths for i in range(1,len(parts))):
+            raise Rejected('overlapping_publication_paths',400)
     public={k:v for k,v in body.items() if k!='capability'}
     return public, hashlib.sha256(queue.encoded(public).encode()).hexdigest()
+
+
+def validate_file(file):
+    try:
+        file['path'].encode('utf-8')
+        if set(file)=={'path','delete'} and file['delete'] is True:
+            return
+        if 'mode' in file and file['mode'] not in REGULAR_MODES:
+            raise ValueError
+        if set(file)=={'path','mode'}:
+            return
+        if (set(file)-{'path','content','encoding','mode'}
+                or not isinstance(file.get('content'),str)):
+            raise ValueError
+        encoding=file.get('encoding','utf-8')
+        content=file['content'].encode('utf-8')
+        if encoding=='utf-8':
+            return
+        if encoding=='base64' and base64.b64encode(base64.b64decode(content,validate=True))==content:
+            return
+    except ValueError:
+        pass
+    raise Rejected('invalid_publication',400)
 
 
 def active(db, principal, claim_id, capability=None):

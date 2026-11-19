@@ -1,4 +1,5 @@
 """Native CLI/TLS/HTTP regression seam for the authenticated task broker."""
+import base64
 from concurrent.futures import ThreadPoolExecutor
 import hashlib
 import json
@@ -16,6 +17,61 @@ from github_queue_coordinator_regression import Forge
 
 CLI = Path(__file__).resolve().parents[1] / 'tools/task_broker.py'
 CLIENT = CLI.with_name('task_broker_client.py')
+
+
+class GitDataFixture:
+    """Back the Forge's Git data endpoints with Git objects for byte-level checks."""
+
+    def __init__(self, root):
+        self.root = root
+        root.mkdir()
+        self.git('init', '--object-format=sha1')
+        self.git('config', 'user.name', 'Broker regression')
+        self.git('config', 'user.email', 'broker@example.invalid')
+        (root/'nested').mkdir()
+        (root/'nested'/'remove').write_text('remove me\n')
+        (root/'nested'/'mode-only').write_bytes(b'\x00\xffexisting\n')
+        (root/'keep').write_text('keep me\n')
+        (root/'link').symlink_to('keep')
+        self.git('add', '--all')
+        self.git('commit', '-m', 'Assignment base')
+        self.base = self.git('rev-parse', 'HEAD').decode().strip()
+
+    def git(self, *args, data=None):
+        return subprocess.run(['git', '-C', str(self.root), *args], input=data,
+                              check=True, capture_output=True).stdout
+
+    def entries(self, tree, *args):
+        result = []
+        for record in self.git('ls-tree', '-z', *args, tree).decode().split('\0')[:-1]:
+            meta, path = record.split('\t', 1)
+            mode, kind, sha = meta.split()
+            result.append({'path':path, 'mode':mode, 'type':kind, 'sha':sha})
+        return result
+
+    def blob(self, request):
+        if request['encoding'] != 'base64':
+            raise ValueError('expected a base64 blob')
+        return self.git('hash-object', '-w', '--stdin',
+                        data=base64.b64decode(request['content'], validate=True)).decode().strip()
+
+    def tree(self, request):
+        self.git('read-tree', request['base_tree'])
+        for entry in request['tree']:
+            path = entry['path']
+            if 'content' in entry:
+                sha = self.git('hash-object', '-w', '--stdin', data=entry['content'].encode()).decode().strip()
+            else:
+                sha = entry['sha']
+            if sha is None:
+                self.git('update-index', '--force-remove', '--', path)
+            else:
+                self.git('update-index', '--add', '--cacheinfo', ','.join((entry['mode'], sha, path)))
+        return self.git('write-tree').decode().strip()
+
+    def commit(self, request):
+        parent, = request['parents']
+        return self.git('commit-tree', request['tree'], '-p', parent, '-m', request['message']).decode().strip()
 
 
 class BrokerTests(unittest.TestCase):
@@ -297,6 +353,75 @@ class BrokerTests(unittest.TestCase):
         self.call('worker','/register',{'proposal':receipt,'capability':claim['capability']})
         self.until(lambda s:s['proposals'][0]['phase']=='queued')
 
+    def test_mixed_file_publication_produces_expected_git_commit(self):
+        git = self.forge.git_data = GitDataFixture(self.root/'git')
+        self.start()
+        data = bytes(range(256))
+        body = self.publication('mixed-files', base=git.base)
+        body['files'] = [
+            {'path':'nested/asset.bin','content':base64.b64encode(data).decode(),'encoding':'base64'},
+            {'path':'nested/remove','delete':True},
+            {'path':'nested/mode-only','mode':'100755'},
+            {'path':'bin/run','content':'#!/bin/sh\necho café\n','mode':'100755','encoding':'utf-8'},
+        ]
+        receipt = self.call('worker','/propose',body)
+        head = receipt['head']
+        self.assertEqual(git.git('rev-parse','refs/heads/'+receipt['branch']).decode().strip(),head)
+        self.assertEqual(git.git('rev-parse',head+'^').decode().strip(),git.base)
+        entries = {entry['path']:entry for entry in git.entries(head, '-r')}
+        self.assertEqual({path:entry['mode'] for path,entry in entries.items()}, {
+            'nested/asset.bin':'100644','nested/mode-only':'100755','bin/run':'100755',
+            'keep':'100644','link':'120000',
+        })
+        self.assertEqual(git.git('cat-file','blob',head+':nested/asset.bin'),data)
+        self.assertEqual(git.git('cat-file','blob',head+':bin/run'),'#!/bin/sh\necho café\n'.encode())
+        for path in ('nested/mode-only','keep','link'):
+            self.assertEqual(git.git('rev-parse',head+':'+path),git.git('rev-parse',git.base+':'+path))
+        calls = self.forge.publication_calls[:]
+        self.assertEqual(len(calls),5)
+        self.assertEqual(self.call('worker','/propose',body),receipt)
+        changed = body | {'files':body['files'][:2]+[{'path':'nested/mode-only','mode':'100644'}]+body['files'][3:]}
+        rejected = self.call('worker','/propose',changed,expected=409)
+        self.assertEqual(rejected['error'],'publication_request_conflict')
+        self.assertEqual(self.forge.publication_calls,calls)
+
+    def test_publication_prechecks_every_edit_before_blob_upload(self):
+        git = self.forge.git_data = GitDataFixture(self.root/'git')
+        self.start()
+        cases = [
+            ({'path':'missing','delete':True},'publication_path_not_found'),
+            ({'path':'missing/mode','mode':'100755'},'publication_path_not_found'),
+            ({'path':'nested','content':'replace directory'},'publication_path_not_regular'),
+            ({'path':'keep/child','content':'replace parent'},'publication_path_not_regular'),
+            ({'path':'link','delete':True},'publication_path_not_regular'),
+        ]
+        for i,(file,code) in enumerate(cases):
+            with self.subTest(file=file):
+                body = self.publication(f'invalid-base-edit-{i}',base=git.base)
+                body['files'] = [{'path':'binary','content':'/w==','encoding':'base64'},file]
+                rejected = self.call('worker','/propose',body,expected=409)
+                self.assertEqual(rejected['error'],code)
+        self.assertEqual(self.forge.publication_calls,[])
+
+    def test_truncated_base_tree_blocks_publication(self):
+        self.forge.truncate_base_tree = True
+        self.start()
+        body = self.publication('truncated-tree')
+        self.call('worker','/propose',body,expected=202)
+        self.until(lambda s:s['publication_jobs'][0]['error']=='publication_precondition_unavailable')
+        self.assertEqual(self.forge.publication_calls,[])
+
+    def test_lost_blob_response_is_unknown_and_never_replayed(self):
+        git = self.forge.git_data = GitDataFixture(self.root/'git')
+        self.forge.drop_blob_reply = True
+        self.start()
+        body = self.publication('lost-blob-response',base=git.base)
+        body['files'] = [{'path':'binary','content':'/w==','encoding':'base64'}]
+        result = self.call('worker','/propose',body,expected=409)
+        self.assertEqual(result,{'error':'publication_outcome_unknown','retryable':False})
+        self.assertEqual(self.call('worker','/propose',body,expected=409),result)
+        self.assertEqual(self.forge.publication_calls,['/repos/100latent/lit-merge-queue-sandbox/git/blobs'])
+
     def test_publication_is_accepted_durably_before_remote_work_completes(self):
         self.forge.block_publication = True
         self.start();claim=self.assign()
@@ -310,9 +435,9 @@ class BrokerTests(unittest.TestCase):
         self.assertEqual(pending['state'],'running')
         self.forge.publication_release.set()
 
-    def publication(self, task, owner='worker[bot]'):
+    def publication(self, task, owner='worker[bot]', base='c'*40):
         claim=self.call('admin','/assign',{'task':task,'expect':0,'owner':owner,
-            'base':'c'*40,'request':'assign-'+task})
+            'base':base,'request':'assign-'+task})
         return {k:claim[k] for k in ('task','generation','claim','base','capability')}|{
             'request':'publish-'+task,'files':[{'path':task+'.txt','content':task}]}
 
@@ -617,8 +742,32 @@ class BrokerTests(unittest.TestCase):
         self.start();claim=self.assign()
         body={k:claim[k] for k in ('task','generation','claim','base','capability')}
         body.update(request='publication-path')
-        for path in ('../escape','/absolute','.GiT/config','.github/workflows/inject.yml','a\\b'):
+        for path in ('../escape','/absolute','.GiT/config','.github/workflows/inject.yml','a\\b',
+                     '.github','.GitHub/Workflows','.GitHub/Workflows/gate.yml'):
             self.call('worker','/propose',body|{'files':[{'path':path,'content':'change'}]},expected=400)
+        for file in ({'path':'.github/workflows/gate.yml','delete':True},
+                     {'path':'.github/workflows/gate.yml','mode':'100755'}):
+            self.call('worker','/propose',body|{'files':[file]},expected=400)
+        self.assertEqual(self.forge.publication_calls,[])
+
+    def test_publisher_rejects_ambiguous_file_changes(self):
+        self.start()
+        body = self.publication('invalid-file-shape')
+        invalid = [
+            [{'path':'a','content':'/w','encoding':'base64'}],
+            [{'path':'a','content':'/x==','encoding':'base64'}],
+            [{'path':'a','content':'λ','encoding':'base64'}],
+            [{'path':'a','content':'x','encoding':'utf-16'}],
+            [{'path':'a','delete':1}],
+            [{'path':'a','delete':True,'content':'x'}],
+            [{'path':'a','mode':'120000','content':'b'}],
+            [{'path':'a','sha':'c'*40,'mode':'100644'}],
+            [{'path':'a','content':'x'},{'path':'a','delete':True}],
+            [{'path':'a/b','content':'x'},{'path':'a','delete':True}],
+        ]
+        for files in invalid:
+            with self.subTest(files=files):
+                self.call('worker','/propose',body|{'files':files},expected=400)
         self.assertEqual(self.forge.publication_calls,[])
 
     def test_mtls_and_role_boundaries(self):

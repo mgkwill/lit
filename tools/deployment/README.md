@@ -164,11 +164,26 @@ capabilities. Back up the whole authority database; there is no independent work
 copy of admission state.
 
 A `/propose` body contains task, generation, claim, base, capability, request and
-`files`, for example `[{"path":"src/example.txt","content":"new bytes\n"}]`.
-The first publisher supports regular UTF-8 file additions/updates, not deletion,
-binary upload, symlink/mode changes or arbitrary Git bundles. Parent traversal,
-Git metadata paths and workflow modifications are refused. Publication uses the
-assigned base and a broker-derived branch, and journals intent before mutations.
+`files`. The broker accepts up to 32 edits in a 64 KiB request body. Base64 bytes
+count toward that limit in their encoded form.
+
+| Edit | Entry in `files` |
+| --- | --- |
+| Write UTF-8 text | `{"path":"src/example.txt","content":"new text\n"}` |
+| Write binary bytes | `{"path":"assets/data.bin","content":"AP8=","encoding":"base64"}` |
+| Delete a file | `{"path":"src/obsolete.txt","delete":true}` |
+| Change only the mode | `{"path":"bin/run","mode":"100755"}` |
+
+Content writes accept `encoding` of `utf-8` (default) or canonical, padded
+`base64`, and `mode` of `100644` (default) or `100755`. Specify `100755` when
+replacing the contents of a file that should stay executable. A mode-only edit
+keeps the assigned base's blob. Mode-only edits and deletions require an existing
+regular file at that base. Each path may appear once. Overlapping paths, directory
+replacement, parent traversal, Git metadata paths and workflow modifications are
+refused. The publisher handles regular files. Symlinks, submodules and Git bundles
+are outside this contract. The broker checks every edit against the assigned base
+and journals intent before the first provider write to its derived branch or
+Git object store.
 An identical completed request returns its receipt; changed or genuinely unknown
 requests cannot blindly republish. Publication request IDs are attempt-scoped.
 
