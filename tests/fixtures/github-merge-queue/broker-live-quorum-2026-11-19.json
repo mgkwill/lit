@@ -1,0 +1,159 @@
+{
+  "deployed_source": "06dee2a4be4405e466545b4148dfa7ea9cc9d5c8",
+  "mit_baseline": "98c59bb2dbebcf7f575993a4ad89e1300a578c83",
+  "sandbox": "100latent/lit-merge-queue-sandbox",
+  "consensus_release": "etcd v3.7.4",
+  "voters": [
+    "host-a",
+    "host-c",
+    "host-d"
+  ],
+  "bundle_sha256": {
+    "broker_admission.py": "17fd8220b5f7c32d5137189c7ad9598bc2a61bb0a967ff4aec15480a3cc93a9f",
+    "github_app_credentials.py": "4c0511d77859414a2f3fd572b1e34d940a82a6b89b99227c14fee4374112d528",
+    "github_queue_coordinator.py": "30bbde5b7e00e3c0a3df1594f83e24c28dc6d0671267764c63a3081a7704e1c7",
+    "task_broker.py": "0412ac981e6bc38a5c30c9532473b1d80c8254b2f14984cd3f8dfe0edeb198c0",
+    "task_broker_checkpoint.py": "1b8953087bb7cd0d0fb54fb0a3e5bc7d88703fa26bf9d3f7d15b89e8c8bb13b4",
+    "task_broker_client.py": "bb23a82fe480b4720f4debcb2de434681317ed7ac40de88861f046addd28ddf0",
+    "task_broker_failover.py": "f65cd810450e83e5eb0fc5ecda2c9c8b00efc7bd3ed55a1498b724a42f06d445",
+    "task_broker_freeze_proposal.py": "1c68554b64767720e5623233d28e01214c13801f3f6e8448705755b334679abc",
+    "task_broker_policy_observer.py": "f1672d14e64f87e6e2480b66064f31c6e2e87b4c723aae03c42f9fac8ab60751",
+    "task_broker_quorum.py": "0c793adb648cdc82c54bd6c246919baa20e5ec5a996a057428c4faada2dcc543",
+    "task_broker_renew_client.py": "ee35446d88b84cdcb726a69039641461a0817201b39d505106fa768e0e2a0cda",
+    "task_broker_replica.py": "bd3103bc228b69d25f33fb4cd52bf3c9158ab2ed27e8e6fc44694bda3bf9a271",
+    "task_ownership.py": "14d3cbae51c38cd08efabe5788aa3e457be53ca8f9fdf30e3a74d00959abac07"
+  },
+  "linux_etcd_archive_sha256": "a0d47d07d081c12611fe69dc81a16ae8dd758401c0fe3a83d508823a1dac558e",
+  "initial_checkpoint_sha256": "dabbc4db8adcd6bfdc0567d63f603f2c3afa5f7c294fcbc7246064499dab24c0",
+  "prior_authority_preserved": true,
+  "native_matrix": {
+    "local": {
+      "architecture": "arm64",
+      "regressions": 127,
+      "stress_owners": 100,
+      "log_sha256": "df93a249b2cb70d8a8a40b062e1ea1961c6fce0b20efe3ab5e385801289c3c86"
+    },
+    "host-a": {
+      "architecture": "x86_64",
+      "regressions": 127,
+      "stress_owners": 100,
+      "log_sha256": "05cd5da1413ad7c436005eb1dff0388a9bb3e7ddefc34685f60f733d671df7f6"
+    },
+    "host-e": {
+      "architecture": "aarch64",
+      "regressions": 127,
+      "stress_owners": 100,
+      "log_sha256": "921ad32fa93b5a40574bc49f12fb986f75de4047770d204ffd8277e8953b24ce"
+    },
+    "host-f": {
+      "architecture": "aarch64",
+      "regressions": 127,
+      "stress_owners": 100,
+      "log_sha256": "4724e3fdd1f27cabeb486f007911f4647d0868f1d2e6e147df859307a4045504"
+    }
+  },
+  "local_quorum": {
+    "lost_majority_write_refused": true,
+    "replicas": 3,
+    "cas_winners": 1,
+    "tolerated_voter_loss": true,
+    "lost_majority_refused": true
+  },
+  "live_writer_revocation": {
+    "real_github": true,
+    "isolated_quorum_namespace": true,
+    "old_writer_http": 401,
+    "new_writer_http": 200,
+    "reserved_before_pause": true,
+    "new_epoch_selected": true,
+    "fixture_credentials_revoked": true
+  },
+  "hostc_outage": {
+    "seconds_to_fresh_cycle": 8.2,
+    "hostc_gateway_stopped": true,
+    "hostc_voter_stopped": true,
+    "authority_unchanged_after_voter_loss": true,
+    "active_broker": "primary",
+    "active_epoch": 8,
+    "actions": {
+      "number": 327,
+      "proposal_head": "9a03113042f2612ae575bb83c88ffa7d5c18dc89",
+      "merge_commit": "4c055b0d11abc381e7ccea912a2de291f053e193",
+      "merge_event": "ME_lADOVxXMNs8AAAABgxtne88AAAAIih5yfw",
+      "first_parent": "03d9140f8a706e3dfc2648c43ed32a9bc5c8b249",
+      "pull_request_actions": {
+        "event": "pull_request",
+        "head_sha": "9a03113042f2612ae575bb83c88ffa7d5c18dc89",
+        "run_id": 44570109653,
+        "run_attempt": 1,
+        "workflow_id": 421025082,
+        "workflow_path": ".github/workflows/agent-merge-gate.yml",
+        "check_run_id": 135722502540,
+        "check_suite_id": 120647173146,
+        "app_id": 15368,
+        "status": "completed",
+        "conclusion": "success",
+        "run_url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44570109653"
+      },
+      "merge_group_actions": {
+        "event": "merge_group",
+        "head_sha": "4c055b0d11abc381e7ccea912a2de291f053e193",
+        "run_id": 44571123176,
+        "run_attempt": 1,
+        "workflow_id": 421025082,
+        "workflow_path": ".github/workflows/agent-merge-gate.yml",
+        "check_run_id": 135726130124,
+        "check_suite_id": 120649968473,
+        "app_id": 15368,
+        "status": "completed",
+        "conclusion": "success",
+        "run_url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44571123176"
+      },
+      "manual_statuses": 0,
+      "original_actions_only_rule_verified": true,
+      "native_git_parents_verified": true
+    }
+  },
+  "timeline": [
+    {
+      "event": "quorum_members_staged",
+      "utc": "2026-11-19T16:46:21.009899+00:00"
+    },
+    {
+      "event": "quorum_bootstrapped_with_exact_checkpoint",
+      "utc": "2026-11-19T16:47:08.405851+00:00"
+    },
+    {
+      "event": "live_broker_using_quorum",
+      "utc": "2026-11-19T16:47:19.208939+00:00"
+    },
+    {
+      "event": "broker_retained_authority_while_hostc_services_offline",
+      "utc": "2026-11-19T16:47:29.278581+00:00"
+    },
+    {
+      "event": "quorum_published_live_proposal_while_hostc_offline",
+      "utc": "2026-11-19T16:47:45.095464+00:00"
+    },
+    {
+      "event": "linux_watcher_credentials_staged",
+      "utc": "2026-11-19T16:48:27.383295+00:00"
+    },
+    {
+      "event": "linux_policy_and_test_client_identities_staged",
+      "utc": "2026-11-19T16:51:08.549791+00:00"
+    },
+    {
+      "event": "real_github_token_revocation_fenced_stalled_quorum_writer",
+      "utc": "2026-11-19T16:53:24.029697+00:00"
+    },
+    {
+      "event": "actions_verified_integration_while_hostc_offline",
+      "utc": "2026-11-19T16:58:44.855171+00:00"
+    },
+    {
+      "event": "returning_hostc_rejoined_without_authority_change",
+      "utc": "2026-11-19T16:58:47.000549+00:00"
+    }
+  ]
+}
