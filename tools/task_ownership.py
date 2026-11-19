@@ -29,6 +29,8 @@ def initialize(db):
         UNIQUE(task,generation));
       CREATE TABLE IF NOT EXISTS task_dependencies(
         task TEXT NOT NULL, prerequisite TEXT NOT NULL, PRIMARY KEY(task,prerequisite));
+      CREATE TABLE IF NOT EXISTS task_path_hints(
+        task TEXT NOT NULL, path TEXT NOT NULL, PRIMARY KEY(task,path));
     ''')
 
 
@@ -87,6 +89,26 @@ def dependency_plan_status(db, task):
     ready, blocked = dependency_state(db, task)
     return {'task':task, 'requires':sorted([v['task'] for v in ready] + blocked),
             'verified':ready, 'blocked':blocked}
+
+
+def set_path_hints(db, task, paths):
+    db.execute('BEGIN IMMEDIATE')
+    with db:
+        previous = [r['path'] for r in db.execute(
+            'SELECT path FROM task_path_hints WHERE task=? ORDER BY path', (task,))]
+        if previous == paths:
+            return
+        db.execute('DELETE FROM task_path_hints WHERE task=?', (task,))
+        db.executemany('INSERT INTO task_path_hints VALUES (?,?)', ((task,path) for path in paths))
+        db.execute('INSERT INTO events(number,kind,data,created) VALUES (NULL,?,?,?)',
+                   ('task_paths_declared', json.dumps({'task':task,'paths':paths}), time.time()))
+
+
+def path_hints(db):
+    hints = {}
+    for row in db.execute('SELECT task,path FROM task_path_hints ORDER BY task,path'):
+        hints.setdefault(row['task'], []).append(row['path'])
+    return hints
 
 
 @contextmanager

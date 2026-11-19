@@ -88,7 +88,7 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply(403,{'error':'forbidden'})
         role=principal['role']
         route=urlsplit(self.path).path
-        if ((self.path in ('/assign','/dependencies','/status','/recover-removed','/reconcile-publication') and role != 'scheduler')
+        if ((self.path in ('/assign','/dependencies','/path-hints','/status','/recover-removed','/reconcile-publication') and role != 'scheduler')
                 or (self.path == '/policy' and role != 'policy_observer')
                 or (route in ('/claims','/repository-token','/register','/propose',
                               '/publication','/registration') and role!='worker')):
@@ -124,12 +124,13 @@ class Handler(BaseHTTPRequestHandler):
                             'registration_jobs':[dict(r) for r in db.execute('SELECT id,claim,owner,phase,error FROM registration_jobs ORDER BY id')],
                             'publication_jobs':[dict(r) for r in db.execute('SELECT id,claim,owner,phase,error FROM publication_jobs ORDER BY id')],
                             'publications':[{'claim':r['claim'],'phase':r['phase'],'receipt':json.loads(r['receipt']) if r['receipt'] else None} for r in db.execute('SELECT * FROM publications')],
+                            'path_hints':ownership.path_hints(db),
                             'dependency_plans':[ownership.dependency_plan_status(db,r['task']) for r in
                                 db.execute('SELECT DISTINCT task FROM task_dependencies ORDER BY task')]})
                     if self.path == '/health':
                         return self.reply(200,{'service':'lit-task-broker','last_cycle':self.server.last_cycle,
                                                'last_error':self.server.last_error,'api_version':3})
-            if self.command != 'POST' or self.path not in ('/assign','/dependencies','/register','/policy','/recover-removed','/reconcile-publication','/propose'):
+            if self.command != 'POST' or self.path not in ('/assign','/dependencies','/path-hints','/register','/policy','/recover-removed','/reconcile-publication','/propose'):
                 return self.reply(404,{'error':'unknown_route'})
             lengths=self.headers.get_all('Content-Length',[])
             if (len(lengths)!=1 or not lengths[0].isdigit() or not 0<int(lengths[0])<=65536
@@ -146,6 +147,17 @@ class Handler(BaseHTTPRequestHandler):
                     return self.reply(400,{'error':'invalid_dependency_plan'})
                 with queue.database(state) as db, ownership.fence(state,body['task']):
                     return self.reply(200,ownership.plan_dependencies(db,body['task'],body['requires']))
+            if self.path == '/path-hints':
+                if (set(body)!={'task','paths'} or not valid_task(body['task'])
+                        or not isinstance(body['paths'],list) or len(body['paths'])>32
+                        or not all(valid_hint_path(path) for path in body['paths'])
+                        or len(set(body['paths']))!=len(body['paths'])):
+                    return self.reply(400,{'error':'invalid_path_hints'})
+                with queue.database(state) as db:
+                    paths=sorted(body['paths'])
+                    ownership.set_path_hints(db,body['task'],paths)
+                    overlaps=active_path_overlaps(db,body['task'],paths)
+                    return self.reply(200,{'task':body['task'],'paths':paths,'overlaps':overlaps})
             if self.path == '/propose':
                 if role!='worker':return self.reply(403,{'error':'worker_identity_required'})
                 code,result=admission.submit(self.server,principal,body)
@@ -204,6 +216,34 @@ class Handler(BaseHTTPRequestHandler):
 
 def valid_task(name):
     return isinstance(name,str) and 0<len(name)<=256
+
+
+def valid_hint_path(path):
+    if not isinstance(path,str) or not 0<len(path)<=1024 or '\\' in path or '\0' in path:
+        return False
+    try:
+        path.encode('utf-8')
+    except UnicodeError:
+        return False
+    return all(part and part.casefold() not in ('.','..','.git') for part in path.split('/'))
+
+
+def active_path_overlaps(db, task, paths):
+    overlaps = {}
+    rows = db.execute('''SELECT h.task,h.path,c.generation,c.phase,p.phase AS proposal_phase
+        FROM task_path_hints h JOIN tasks t ON t.task=h.task
+        JOIN claims c ON c.task=t.task AND c.generation=t.generation
+        LEFT JOIN proposals p ON p.number=c.proposal
+        WHERE h.task!=? AND c.phase IN ('active','draining') ORDER BY h.task,h.path''', (task,))
+    for row in rows:
+        if row['proposal_phase'] in queue.TERMINAL:
+            continue
+        other=row['path']
+        if any(path==other or path.startswith(other+'/') or other.startswith(path+'/') for path in paths):
+            overlap=overlaps.setdefault(row['task'],{
+                'task':row['task'],'generation':row['generation'],'phase':row['phase'],'paths':[]})
+            overlap['paths'].append(other)
+    return list(overlaps.values())
 
 
 def assign_task(server, state, body):

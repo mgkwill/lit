@@ -167,8 +167,8 @@ broker host and publication stops when its observations expire. See the
 
 Keep the authority filesystem/account and administrative CLI inaccessible to
 workers. Privileged host and GitHub policy administrators remain trusted.
-The scheduler declares prerequisites before assignment and chooses when to retry
-blocked tasks. Broker-delivered GitHub credentials
+The scheduler declares prerequisites before assignment, checks advisory overlap
+hints, and chooses when to retry blocked tasks. Broker-delivered GitHub credentials
 are repository-read only. Workers publish regular-file edits through `/propose`,
 including binary content, deletions, and executable-bit changes. The scheduler
 verifies and freezes the resulting ref before enrollment.

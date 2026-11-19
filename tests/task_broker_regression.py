@@ -1,6 +1,7 @@
 """Native CLI/TLS/HTTP regression seam for the authenticated task broker."""
 import base64
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import closing
 import hashlib
 import json
 import os
@@ -453,7 +454,7 @@ class BrokerTests(unittest.TestCase):
         # coverage. This fixture represents its durable output to scheduling.
         proposal={k:claim[k] for k in ('task','base','generation','claim')} | self.spec | {'number':number}
         receipt={'number':number,'proposal':proposal,'merge_commit':merge}
-        with sqlite3.connect(self.root/'state'/'queue.sqlite') as db:
+        with closing(sqlite3.connect(self.root/'state'/'queue.sqlite')) as db, db:
             db.execute('UPDATE claims SET proposal=? WHERE claim=?',(number,claim['claim']))
             db.execute("INSERT OR IGNORE INTO proposals(number,spec,phase) VALUES (?,?,'merged')",
                        (number,json.dumps(proposal)))
@@ -493,7 +494,7 @@ class BrokerTests(unittest.TestCase):
         grant=self.dependency_assignment('downstream','e'*40)
         self.assertEqual(grant['phase'],'active')
         self.assertEqual(self.forge.compare_requests,[('d'*40,'e'*40)])
-        with sqlite3.connect(self.root/'state'/'queue.sqlite') as db:
+        with closing(sqlite3.connect(self.root/'state'/'queue.sqlite')) as db:
             event=json.loads(db.execute("SELECT data FROM events WHERE kind='task_assignment' ORDER BY id DESC").fetchone()[0])
         self.assertEqual(event['prerequisite_merges'],[
             {'task':'upstream','generation':1,'number':7,'merge_commit':'d'*40}])
@@ -548,6 +549,37 @@ class BrokerTests(unittest.TestCase):
                 self.forge.compare_release.set()
             self.assertEqual(grant.result()['error'],'prerequisite_merge_unverified')
         self.assertFalse(any(c['task']=='downstream' for c in self.call('admin','/status')['claims']))
+
+    def test_path_hints_are_durable_advisory_and_use_git_path_boundaries(self):
+        self.start()
+        first={'task':'first','paths':['src/parser','README.md','out']}
+        second={'task':'second','paths':['src/parser/lexer.rs','README.md','output/log','Src/parser']}
+        self.call('worker','/path-hints',first,expected=403)
+        self.assertEqual(self.call('admin','/path-hints',first)['overlaps'],[])
+        self.assertEqual(self.call('admin','/path-hints',second)['overlaps'],[])
+        self.dependency_assignment('first','c'*40)
+        result=self.call('admin','/path-hints',second)
+        self.assertEqual(result['overlaps'],[
+            {'task':'first','generation':1,'phase':'active','paths':['README.md','src/parser']}])
+        grant=self.dependency_assignment('second','c'*40)
+        self.assertEqual(grant['phase'],'active')
+        self.assertEqual(self.call('admin','/path-hints',first)['overlaps'],[
+            {'task':'second','generation':1,'phase':'active','paths':['README.md','src/parser/lexer.rs']}])
+        self.prerequisite_integration(grant,'d'*40)
+        self.stop();(self.root/'ready.json').unlink();self.start()
+        self.assertEqual(self.call('admin','/status')['path_hints'],
+                         {'first':sorted(first['paths']),'second':sorted(second['paths'])})
+        self.assertEqual(self.call('admin','/path-hints',first)['overlaps'],[])
+        self.call('admin','/path-hints',{'task':'first','paths':[]})
+        self.assertNotIn('first',self.call('admin','/status')['path_hints'])
+
+    def test_bad_path_hints_leave_the_previous_declaration_intact(self):
+        self.start()
+        self.call('admin','/path-hints',{'task':'feature','paths':['ok']})
+        for paths in (['../escape'],['/absolute'],['a//b'],['.GiT/config'],['a\\b'],['a','a'],[False]):
+            with self.subTest(paths=paths):
+                self.call('admin','/path-hints',{'task':'feature','paths':paths},expected=400)
+        self.assertEqual(self.call('admin','/status')['path_hints'],{'feature':['ok']})
 
     def registration(self, task, number, owner='worker[bot]'):
         claim = self.publication(task, owner)

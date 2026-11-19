@@ -90,6 +90,7 @@ authority path, signing key or credential permission request.
 | Route | Role | Contract |
 |---|---|---|
 | `POST /dependencies` | scheduler | Declare a task's prerequisites before its first assignment |
+| `POST /path-hints` | scheduler | Record a task's likely edit paths and check for overlapping assignments |
 | `POST /assign` | scheduler | CAS task assignment: task, expect, owner, base, request |
 | `GET /status` | scheduler | Claim, dependency, proposal, action, publication and registration metadata, without credentials |
 | `POST /recover-removed` | scheduler | Consume one verified native removal receipt; never retry unknown RPCs |
@@ -134,6 +135,14 @@ records. A blocked assignment returns HTTP 409 with prerequisite IDs and issues
 no capability. Choose a base that includes the required merges after they verify.
 A temporary provider failure during ancestry checks returns retryable HTTP 503.
 Use the broker API to assign a task whose base needs a remote ancestry check.
+
+For overlap hints, post `{"task":"parser","paths":["src/parser","README.md"]}`
+to `/path-hints`. The scheduler can declare up to 32 repository-relative files
+or directories and update the list as work changes. An empty list clears it.
+The response lists matching paths on current active or draining tasks. Git path
+components are case-sensitive, and a directory path matches its descendants.
+The hints are advisory. Assignment and publication still use ownership fencing,
+and the protected queue checks the actual integration candidate.
 
 `POST /propose` validates the active capability and durably admits work before
 returning HTTP 202 with `operation`, `state`, `status_path`, `retryable:false` and
