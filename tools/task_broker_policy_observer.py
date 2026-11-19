@@ -4,6 +4,7 @@ No GitHub token is read, exported, logged or sent to the broker. Expiry of the
 observer feed makes the broker refuse publication. Run under a trusted operator.
 """
 import argparse
+from concurrent.futures import ThreadPoolExecutor
 import json
 from pathlib import Path
 import ssl
@@ -15,18 +16,37 @@ from urllib.parse import urlsplit
 from github_queue_coordinator import NoRedirect
 
 
+def post_observation(url, context, payload):
+    opener=build_opener(NoRedirect(),HTTPSHandler(context=context))
+    try:
+        request=Request(url+'/policy',payload,{'Content-Type':'application/json'})
+        with opener.open(request,timeout=10) as response:
+            result=json.load(response)
+            return isinstance(result,dict) and result.get('accepted') is True
+    except (ValueError,OSError):
+        return False
+
+
+def deliver(urls, context, payload):
+    with ThreadPoolExecutor(max_workers=min(8,len(urls))) as pool:
+        return sum(pool.map(lambda url:post_observation(url,context,payload),urls))
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    for key in ('url','cert','key','ca','manifest'):parser.add_argument('--'+key,required=True)
+    parser.add_argument('--url',required=True,action='append')
+    for key in ('cert','key','ca','manifest'):parser.add_argument('--'+key,required=True)
     parser.add_argument('--gh',default='gh')
     parser.add_argument('--once',action='store_true')
     args=parser.parse_args()
     config=json.loads(Path(args.manifest).read_text())
-    origin=urlsplit(args.url)
-    if origin.scheme!='https' or origin.username or origin.path or origin.query or origin.fragment:
-        raise ValueError('expected HTTPS origin')
+    urls=list(dict.fromkeys(args.url))
+    for url in urls:
+        origin=urlsplit(url)
+        if (origin.scheme!='https' or not origin.hostname or origin.username is not None
+                or origin.path or origin.query or origin.fragment):
+            raise ValueError('expected HTTPS origin')
     context=ssl.create_default_context(cafile=args.ca);context.load_cert_chain(args.cert,args.key)
-    opener=build_opener(NoRedirect(),HTTPSHandler(context=context))
     while True:
         try:
             rules={}
@@ -47,9 +67,10 @@ def main():
                     raise RuntimeError('worker installation identity differs')
                 workers[owner]=expected|{'suspended_at':installed['suspended_at']}
             payload={'rules':rules,'workers':workers,'observed_at':time.time()}
-            request=Request(args.url+'/policy',json.dumps(payload).encode(),{'Content-Type':'application/json'})
-            with opener.open(request,timeout=10) as response:json.load(response)
-            print(json.dumps({'event':'policy_observed','rules':list(rules)}),flush=True)
+            accepted=deliver(urls,context,json.dumps(payload).encode())
+            if not accepted:
+                raise RuntimeError('no broker accepted the policy observation')
+            print(json.dumps({'event':'policy_observed','rules':list(rules),'accepted':accepted}),flush=True)
         except Exception as error:
             print(json.dumps({'event':'policy_observation_failed','error':type(error).__name__}),flush=True)
             if args.once:return 1

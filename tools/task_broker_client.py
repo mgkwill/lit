@@ -1,8 +1,10 @@
 """TLS-authenticated broker client. Send JSON requests on stdin, never argv."""
 import argparse
+import errno
 import json
 from pathlib import Path
 import ssl
+import socket
 import sys
 import time
 import math
@@ -13,9 +15,29 @@ from urllib.request import HTTPSHandler, Request, build_opener
 from github_queue_coordinator import NoRedirect
 
 
+def origin(url):
+    parsed=urlsplit(url)
+    if (parsed.scheme!='https' or not parsed.hostname or parsed.username is not None
+            or parsed.path or parsed.query or parsed.fragment):
+        raise ValueError('expected HTTPS origin')
+    return url
+
+
+def can_use_standby(error, pending_read):
+    reason=error.reason if isinstance(error,URLError) else error
+    if isinstance(reason,ssl.SSLError) and not isinstance(reason,ssl.SSLEOFError):
+        return False
+    if isinstance(reason,(ConnectionRefusedError,socket.gaierror)):
+        return True
+    return pending_read and (
+        isinstance(reason,(ConnectionError,TimeoutError,ssl.SSLEOFError))
+        or isinstance(reason,OSError) and reason.errno in (errno.ENETUNREACH,errno.EHOSTUNREACH))
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--url',required=True)
+    parser.add_argument('--standby-url')
     parser.add_argument('--cert',type=Path,required=True)
     parser.add_argument('--key',type=Path,required=True)
     parser.add_argument('--ca',type=Path,required=True)
@@ -25,9 +47,10 @@ def main():
     parser.add_argument('route',choices=('claims','health','status','assign','dependencies','path-hints','register','recover-removed','reconcile-publication','propose','publication','registration','repository-token'))
     args=parser.parse_args()
     try:
-        parsed=urlsplit(args.url)
-        if parsed.scheme!='https' or not parsed.hostname or parsed.username or parsed.path or parsed.query or parsed.fragment:
-            raise ValueError('expected HTTPS origin')
+        endpoint=origin(args.url)
+        standby=origin(args.standby_url) if args.standby_url is not None else None
+        if endpoint==standby:
+            raise ValueError('standby URL must be distinct')
         if not math.isfinite(args.wait_seconds) or not 0<args.wait_seconds<=86400:
             raise ValueError('invalid wait deadline')
         context=ssl.create_default_context(cafile=str(args.ca))
@@ -41,11 +64,12 @@ def main():
         if route in ('publication','registration'):
             if not args.claim or not re.fullmatch(r'[0-9a-f]{32}',args.claim):raise ValueError('claim required')
             route+='?claim='+args.claim
-        request=Request(args.url+'/'+route,payload,{'Content-Type':'application/json'})
+        path='/'+route
         opener=build_opener(NoRedirect(),HTTPSHandler(context=context))
         deadline=time.monotonic()+args.wait_seconds
         pending={}
         while True:
+            request=Request(endpoint+path,payload,{'Content-Type':'application/json'})
             try:
                 with opener.open(request,timeout=max(.01,min(35,deadline-time.monotonic()))) as response:
                     result=json.load(response);code=response.status
@@ -54,13 +78,18 @@ def main():
                 with error:
                     result=json.load(error);code=error.code
                     retry_after=error.headers.get('Retry-After','1')
+            except OSError as error:
+                if not standby or time.monotonic()>=deadline or not can_use_standby(error,payload is None):
+                    raise
+                endpoint,standby=standby,None
+                continue
             if args.no_wait or not (code==202 or (code in (429,503) and result.get('retryable') is True)):
                 print(json.dumps(result));return 0 if code in (200,202) else 1
             if code==202:
                 pending=result
                 path=result['status_path']
                 if not re.fullmatch(r'/(?:publication|registration)\?claim=[0-9a-f]{32}',path):raise ValueError('invalid status path')
-                request=Request(args.url+path)
+                payload=None
             delay=float(retry_after)
             if not math.isfinite(delay):raise ValueError('invalid retry delay')
             delay=max(.1,min(30,delay))

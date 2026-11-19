@@ -1,15 +1,20 @@
 """Test the unattended handoff journal and refusal paths."""
 import hashlib
+from contextlib import redirect_stdout
+import io
 import json
 from pathlib import Path
 import sys
 import tempfile
 import unittest
+from types import SimpleNamespace
 from unittest.mock import patch
 from urllib.error import URLError
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'tools'))
 import task_broker_failover as failover
+import task_broker_client as client
+import task_broker_policy_observer as observer
 
 
 class Peer:
@@ -151,6 +156,44 @@ class FailoverTests(unittest.TestCase):
             opener.return_value.open.side_effect=URLError(failover.ssl.SSLCertVerificationError(1,'untrusted'))
             with self.assertRaisesRegex(RuntimeError,'TLS verification failed'):
                 failover.reachable('https://primary',None)
+
+    def test_client_resumes_accepted_read_on_standby_without_reposting(self):
+        claim='d'*32
+        path='/publication?claim='+claim
+        def response(body,status):
+            stream=io.BytesIO(json.dumps(body).encode())
+            stream.status=status
+            stream.headers={'Retry-After':'.01'}
+            return stream
+        urls=['https://primary','https://standby']
+        calls=[response({'operation':claim,'status_path':path},202),
+               URLError(failover.ssl.SSLEOFError(8,'socket closed')),
+               response({'number':325,'claim':claim},200)]
+        argv=['client','--url',urls[0],'--standby-url',urls[1],
+              '--cert','client.crt','--ca','ca.crt','--key','client.key','propose']
+        stdin=SimpleNamespace(buffer=io.BytesIO(b'{"probe":"write"}'))
+        with (patch.object(client.sys,'argv',argv), patch.object(client.sys,'stdin',stdin),
+              patch.object(client.ssl,'create_default_context'), patch.object(client,'build_opener') as opener,
+              redirect_stdout(io.StringIO()) as out):
+            opener.return_value.open.side_effect=calls
+            self.assertEqual(client.main(),0)
+        self.assertEqual(json.loads(out.getvalue()),{'number':325,'claim':claim})
+        requests=[call.args[0] for call in opener.return_value.open.call_args_list]
+        self.assertEqual([(r.get_method(),r.full_url) for r in requests],
+                         [('POST',urls[0]+'/propose'),('GET',urls[0]+path),('GET',urls[1]+path)])
+
+    def test_client_fallback_distinguishes_connect_failure_from_uncertain_write(self):
+        self.assertTrue(client.can_use_standby(URLError(ConnectionRefusedError()),False))
+        self.assertFalse(client.can_use_standby(ConnectionResetError(),False))
+        self.assertTrue(client.can_use_standby(ConnectionResetError(),True))
+        self.assertFalse(client.can_use_standby(URLError(failover.ssl.SSLCertVerificationError()),True))
+
+    def test_observer_posts_to_reachable_standby_when_primary_is_down(self):
+        urls=['https://primary','https://standby']
+        payload=b'{"observed_at":1}'
+        with patch.object(observer,'post_observation',side_effect=lambda url,*_:url==urls[1]) as post:
+            self.assertEqual(observer.deliver(urls,None,payload),1)
+        self.assertEqual({call.args for call in post.call_args_list},{(url,None,payload) for url in urls})
 
 
 if __name__=='__main__':

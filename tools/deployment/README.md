@@ -322,8 +322,16 @@ using the existing read-only proof route.
 Deploy the failover host adapter beside the broker modules on each systemd host.
 Provide a stopped standby under a dedicated service account, with an unused
 authority path, a trusted server certificate and the same repository and ruleset
-binding. Configure its authenticated policy observer separately. Configure clients
-or the routing layer to use the verified standby endpoint after promotion.
+binding. Pass both trusted endpoints to the policy observer using repeated
+`--url` flags. One policy read supplies both endpoints. An unreachable primary
+does not delay the delivery of that observation to the standby.
+
+Configure workers with `task_broker_client.py --standby-url HTTPS_STANDBY`
+and a trust bundle that covers both brokers. The client can follow an admitted
+operation's status URL to the standby. It switches an unacknowledged POST
+only when the connection was refused or the name could not resolve, before
+the request could be sent. TLS validation errors and ambiguous writes stop
+the request without replaying it.
 
 Use `task_broker_failover.py watch --config FAILOVER.json` on the trusted
 management host. Start with an authenticated primary response. The watcher

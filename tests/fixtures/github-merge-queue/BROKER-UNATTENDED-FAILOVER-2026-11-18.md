@@ -25,3 +25,13 @@ for a whole-host loss with inaccessible state. Post-MIT upstream remained a
 black box.
 
 [Structured receipts](broker-unattended-failover-results-2026-11-18.json).
+
+## Client and observer continuation
+
+The follow-up drill required an authenticated policy observation. The same
+observer feed reached host-b after host-a exited. The CLI recovered the original
+claim through its configured standby URL. Verified takeover took
+7.94 seconds. All 115 regressions and
+the 100-identity provider-failure stress test passed on macOS, host-a, host-e,
+and host-f. The tests cover polling a transferred operation without resubmitting
+its POST and withholding fallback on ambiguous writes or TLS validation errors.
