@@ -1,0 +1,82 @@
+{
+  "implementation_commit": "698f6f0a3e784c1296bbde03f1a0dd4eb16fe2ac",
+  "mit_baseline": "98c59bb2dbebcf7f575993a4ad89e1300a578c83",
+  "environment": "Colima Linux arm64 lab with separate voter containers, volumes and internal networks",
+  "lab": {
+    "native_etcd_release": "3.7.4",
+    "linux_image": "sha256:4840d514c583a4d3d8cad3940e68dee6f0f6f3635c12fcd0a3d74c21a5b93a54",
+    "etcd_archive_sha256": "3f5d12a3b4119141bd5bc80a0a895100d049d6c85a2c76b1bb767204a899024a",
+    "operator_scenario_sha256": "76cffc6b3d2dccd86bfc68ae8bbea250bb7233b353ec1dcaacfe8ae07d9409f3",
+    "operator_runner_sha256": "e4d9d38e14b946a4c0fe6e44d53d21d036c5ce2689998854bf874560e03fb317",
+    "encrypted_custody": {
+      "ciphertext_sha256": "a1becd5f513d5c5f9f9ffb0b0dab9549e03a37da914958989f932ae2476c1bd2",
+      "verified_archive_restored_from_off_quorum_aes_256_gcm_copy": true,
+      "pre_loss_plaintext_copy_removed": true,
+      "tampered_ciphertext_rejected": true
+    },
+    "docker_platform": "Linux 6.8.0-117-generic aarch64",
+    "isolated_internal_networks": true,
+    "source_voters_permanently_removed": 2,
+    "discarded_voter_volumes": 2,
+    "original_minority_remained_online_during_restore": true,
+    "seconds_from_two_voter_loss_to_verified_checkpoint_after_restore": 20.3
+  },
+  "capture": {
+    "backup_preserved_after_checkpoint_revision": 6,
+    "stale_backup_revision": 5,
+    "archive_bytes": 3226,
+    "archive_sha256": "99363c33c0d59631cf166888c72e4dc7a31f714ca79b81148811e72c850d6b89",
+    "archive_mode": "0o600"
+  },
+  "original_minority": {
+    "linearizable_read_refused": true,
+    "checkpoint_acknowledgment_refused": true,
+    "provider_work_refused_before_credentials": true
+  },
+  "recovery": {
+    "source_cluster": "7700881770947747601",
+    "destination_cluster": "13674233237738350035",
+    "new_epoch": 13,
+    "restored_revision": 6,
+    "restored_checkpoint_sha256": "d3e150056625e45b37bcdcecb0ff85d6f2bcfe0f8fa6a9eed3d97058d0c1b942",
+    "identical_checkpoint_and_active_capabilities": true,
+    "revoked_claim_still_revoked": true,
+    "latest_acknowledged_assignment_present": true,
+    "integration_receipt_preserved": true,
+    "stale_epoch_provider_request_refused": true,
+    "restore_retry_idempotent": true,
+    "stale_archive_refused": true,
+    "archive_digest_enforced": true,
+    "wrong_cluster_refused": true,
+    "verified_https_restore_then_checkpoint_accepted": true,
+    "post_restore_revision": 7
+  },
+  "continued_quorum": {
+    "recovered_quorum_accepted_checkpoint_with_one_voter_stopped": true,
+    "last_head": {
+      "holder": "standby",
+      "epoch": 13,
+      "revision": 8,
+      "sha256": "e811b333e2b354fe61e080662a3430c2c113d585ee2aa572e235b3204ba8f166",
+      "binding": {
+        "repo": "fixture/lit-quorum-recovery",
+        "main_ruleset": 10,
+        "freeze_ruleset": 11
+      }
+    }
+  },
+  "replacement_convergence": {
+    "all_three_replacement_voters_returned_the_same_latest_head": true,
+    "last_epoch": 13,
+    "last_revision": 8
+  },
+  "live_policy_read_only": {
+    "original_actions_only_rule_verified": true,
+    "all_three_live_rulesets_matched_last_verified_projection": true,
+    "policy_projection_sha256": "bd0215538187da8836c568b4817922bb29732aa669ca3cd818fc384293a57d73"
+  },
+  "macos_broker_regressions": 133,
+  "macos_stress_owners": 100,
+  "linux_arm64_quorum_regressions": 11,
+  "disposable_containers_volumes_and_networks_removed": true
+}
