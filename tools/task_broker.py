@@ -90,18 +90,20 @@ class Handler(BaseHTTPRequestHandler):
         route=urlsplit(self.path).path
         if ((self.path in ('/assign','/status','/recover-removed') and role != 'scheduler')
                 or (self.path == '/policy' and role != 'policy_observer')
-                or (route in ('/claims','/repository-token','/register','/propose','/publication') and role!='worker')):
+                or (route in ('/claims','/repository-token','/register','/propose',
+                              '/publication','/registration') and role!='worker')):
             return self.reply(403,{'error':'forbidden'})
         try:
             config=self.server.config
             state=Path(config['state'])
             if self.command == 'GET':
                 with queue.database(state) as db:
-                    if route=='/publication':
+                    if route in ('/publication','/registration'):
                         query=parse_qs(urlsplit(self.path).query,keep_blank_values=True)
                         if set(query)!={'claim'} or len(query['claim'])!=1 or not re.fullmatch(r'[0-9a-f]{32}',query['claim'][0]):
-                            raise admission.Rejected('invalid_publication_query',400)
-                        code,result=admission.status(db,principal,query['claim'][0])
+                            raise admission.Rejected('invalid_'+route[1:]+'_query',400)
+                        lookup = admission.status if route=='/publication' else admission.registration_status
+                        code,result=lookup(db,principal,query['claim'][0])
                         return self.reply(code,result)
                     if self.path == '/repository-token' and role == 'worker':
                         token=self.server.read_token_source()
@@ -119,11 +121,12 @@ class Handler(BaseHTTPRequestHandler):
                         return self.reply(200,{'claims':claims})
                     if self.path == '/status' and role == 'scheduler':
                         return self.reply(200,queue.status(db)|{
+                            'registration_jobs':[dict(r) for r in db.execute('SELECT id,claim,owner,phase,error FROM registration_jobs ORDER BY id')],
                             'publication_jobs':[dict(r) for r in db.execute('SELECT id,claim,owner,phase,error FROM publication_jobs ORDER BY id')],
                             'publications':[{'claim':r['claim'],'phase':r['phase'],'receipt':json.loads(r['receipt']) if r['receipt'] else None} for r in db.execute('SELECT * FROM publications')]})
                     if self.path == '/health':
                         return self.reply(200,{'service':'lit-task-broker','last_cycle':self.server.last_cycle,
-                                               'last_error':self.server.last_error,'api_version':2})
+                                               'last_error':self.server.last_error,'api_version':3})
             if self.command != 'POST' or self.path not in ('/assign','/register','/policy','/recover-removed','/propose'):
                 return self.reply(404,{'error':'unknown_route'})
             lengths=self.headers.get_all('Content-Length',[])
@@ -169,30 +172,8 @@ class Handler(BaseHTTPRequestHandler):
                     return self.reply(400,{'error':'invalid_assignment'})
                 with queue.database(state) as db, ownership.fence(state,body['task']):
                     return self.reply(200,ownership.assign(db,SimpleNamespace(**body)))
-            if role != 'worker':
-                return self.reply(403,{'error':'worker_identity_required'})
-            if set(body)!={'proposal','capability'} or not isinstance(body['proposal'],dict) or not isinstance(body['capability'],str):
-                raise ValueError('invalid registration')
-            spec=body['proposal']
-            if (set(spec) not in ({'number','head','branch','author','task','generation','claim','base'},
-                                 {'number','head','branch','author','task','generation','claim','base','agent'})
-                    or not isinstance(spec['task'],str) or not isinstance(spec['claim'],str)):
-                raise ValueError('invalid proposal')
-            if spec.get('agent',spec['author'])!=principal['owner']:
-                return self.reply(403,{'error':'wrong_owner'})
-            with queue.writer(state) as db, ownership.fence(state,spec['task']):
-                if spec['author']!=principal['owner']:
-                    published=db.execute('SELECT receipt FROM publications WHERE claim=? AND phase=?',(spec['claim'],'published')).fetchone()
-                    if (spec['author']!=config['broker_author'] or not published or json.loads(published[0])!=spec):
-                        return self.reply(403,{'error':'unproven_broker_publication'})
-                claim=ownership.binding(db,spec)
-                if claim['owner']!=principal['owner']:
-                    return self.reply(403,{'error':'wrong_owner'})
-                manifest=config['manifest']|{'proposals':[spec]}
-                with tempfile.TemporaryDirectory(prefix='broker-registration-',dir=state) as scratch:
-                    path=Path(scratch)/'manifest.json';path.write_text(json.dumps(manifest))
-                    queue.register(db,path,{spec['claim']:body['capability']})
-            return self.reply(200,{'registered':spec['number']})
+            code,result=admission.submit_registration(self.server,principal,body)
+            return self.reply(code,result)
         except admission.Rejected as error:
             return self.reply(error.status,{'error':error.code,'retryable':error.retryable})
         except ownership.AuthorityBusy:
@@ -354,6 +335,9 @@ def coordinate(server, token_source, api_url):
     next_tick=0
     while not server.stopping.is_set():
         try:
+            for _ in range(8):
+                if not admission.run_registration(server):
+                    break
             admission.run_one(server,propose)
             if time.monotonic()<next_tick:
                 server.stopping.wait(min(.1,config.get('poll_seconds',5)))

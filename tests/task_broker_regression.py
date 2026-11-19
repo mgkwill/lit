@@ -316,6 +316,92 @@ class BrokerTests(unittest.TestCase):
         return {k:claim[k] for k in ('task','generation','claim','base','capability')}|{
             'request':'publish-'+task,'files':[{'path':task+'.txt','content':task}]}
 
+    def registration(self, task, number, owner='worker[bot]'):
+        claim = self.publication(task, owner)
+        proposal = self.spec | {key: claim[key] for key in ('task', 'generation', 'claim', 'base')}
+        proposal.update(number=number, author=owner, branch=f'agents/test/{number}')
+        return {'proposal': proposal, 'capability': claim['capability']}
+
+    def test_registration_admits_under_writer_contention_and_serves_owners_in_turn(self):
+        self.config['admission_per_owner'] = 2
+        self.config['admission_limit'] = 4
+        self.forge.block_publication = True
+        self.start()
+        blocking = self.publication('blocking')
+        jobs = [self.registration('first-a', 11), self.registration('second-a', 12),
+                self.registration('first-b', 21, 'second[bot]'),
+                self.registration('second-b', 22, 'second[bot]')]
+        overflow = self.registration('overflow', 13)
+        self.call('worker', '/propose', blocking, expected=202)
+        self.assertTrue(self.forge.publication_started.wait(3))
+        owners = ['worker', 'worker', 'other', 'other']
+        pending = []
+        for owner, job in zip(owners, jobs):
+            pending.append(self.call(owner, '/register', job, expected=202))
+        self.assertEqual(self.call('worker', '/register', jobs[0], expected=202), pending[0])
+        changed = jobs[0] | {'proposal': jobs[0]['proposal'] | {'number': 99}}
+        self.assertEqual(self.call('worker', '/register', changed, expected=409)['error'],
+                         'registration_request_conflict')
+        self.assertEqual(self.call('worker', '/register', overflow, expected=429)['error'], 'registration_full')
+        self.call('other', pending[0]['status_path'], expected=403)
+        self.call('admin', pending[0]['status_path'], expected=403)
+        self.call('observer', pending[0]['status_path'], expected=403)
+        self.forge.publication_release.set()
+        for owner, job, status in zip(owners, jobs, pending):
+            self.assertEqual(self.call(owner, status['status_path']), {'registered': job['proposal']['number']})
+        self.until(lambda _: (self.root/'service.log').read_text().count('registration_completed') == 4)
+        completed = [json.loads(line)['number'] for line in (self.root/'service.log').read_text().splitlines()
+                     if 'registration_completed' in line]
+        self.assertEqual(completed, [21, 11, 22, 12])
+        self.assertEqual(self.call('worker', '/register', jobs[0]), {'registered': 11})
+        collision = self.registration('collision', 11, 'second[bot]')
+        rejected = self.call('other', '/register', collision, expected=409)
+        self.assertEqual(rejected['error'], 'registration_rejected')
+
+    def test_registration_burst_is_accepted_without_writer_lock_retries(self):
+        self.config['admission_per_owner'] = 30
+        self.forge.block_publication = True
+        self.start()
+        blocking = self.publication('blocking')
+        jobs = [self.registration(f'burst-{i}', 100+i) for i in range(30)]
+        self.call('worker', '/propose', blocking, expected=202)
+        self.assertTrue(self.forge.publication_started.wait(3))
+        with ThreadPoolExecutor(max_workers=12) as pool:
+            accepted = list(pool.map(lambda body: self.call('worker', '/register', body, expected=(202, 503)), jobs))
+        self.assertTrue(all(r.get('state') == 'queued' for r in accepted), accepted)
+        self.assertEqual(len({r['operation'] for r in accepted}), 30)
+        self.forge.publication_release.set()
+        for result in accepted:
+            self.call('worker', result['status_path'])
+        self.assertEqual(len(self.call('admin', '/status')['proposals']), 30)
+
+    def test_queued_registration_survives_restart_and_rechecks_reassignment(self):
+        self.forge.block_publication = True
+        self.start()
+        blocking = self.publication('blocking')
+        keep = self.registration('keep', 11)
+        stale = self.registration('stale', 12)
+        self.call('worker', '/propose', blocking, expected=202)
+        self.assertTrue(self.forge.publication_started.wait(3))
+        submit = self.client('--no-wait', 'register', payload=keep)
+        self.assertEqual(submit.returncode, 0, submit.stderr)
+        accepted = json.loads(submit.stdout)
+        self.assertEqual(accepted['state'], 'queued')
+        revoked = self.call('worker', '/register', stale, expected=202)
+        self.call('admin', '/assign', {'task': 'stale', 'expect': 1, 'owner': 'second[bot]',
+                                     'base': 'c'*40, 'request': 'replace-stale'})
+        self.stop()
+        self.forge.publication_release.set()
+        (self.root/'ready.json').unlink()
+        self.start()
+        resume = self.client('--claim', accepted['operation'], 'registration')
+        self.assertEqual(resume.returncode, 0, resume.stderr)
+        self.assertEqual(json.loads(resume.stdout), {'registered': 11})
+        self.assertEqual(self.call('worker', revoked['status_path'], expected=409)['error'], 'assignment_revoked')
+        state = self.until(lambda value: all(r['phase'] != 'queued' for r in value['registration_jobs']))
+        self.assertEqual([r['number'] for r in state['proposals']], [11])
+        self.assertNotIn(keep['capability'], (self.root/'service.log').read_text())
+
     def test_waiting_owners_get_turns_before_a_flooding_owners_backlog(self):
         self.forge.block_publication=True
         self.start()

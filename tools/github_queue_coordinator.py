@@ -534,12 +534,20 @@ def database(root):
 
 def register(db, path, capabilities):
     manifest = json.loads(path.read_text())
+    specs = manifest.pop("proposals")
+    validate_registration(manifest, specs)
+    with db:
+        db.execute('BEGIN IMMEDIATE')
+        register_specs(db, manifest, specs, capabilities)
+    output(event="registered", proposals=len(specs))
+
+
+def validate_registration(manifest, specs):
     if not re.fullmatch(r"[A-Za-z0-9_-]+/[A-Za-z0-9_.-]+", manifest["repo"]):
         raise ValueError("expected owner/repository")
     for key in ("main_ruleset", "freeze_ruleset"):
         if type(manifest[key]) is not int or manifest[key] <= 0:
             raise ValueError("expected positive ruleset IDs")
-    specs = manifest.pop("proposals")
     if not specs or len({s["number"] for s in specs}) != len(specs):
         raise ValueError("expected unique proposals")
     for spec in specs:
@@ -548,30 +556,33 @@ def register(db, path, capabilities):
                 or not re.fullmatch(r"[A-Za-z0-9-]+\[bot\]", spec["author"])
                 or spec["branch"] == "main"):
             raise ValueError("invalid proposal identity")
-        subprocess.run(["git", "check-ref-format", "refs/heads/" + spec["branch"]], check=True,
-                       capture_output=True)
-    with db:
-        db.execute('BEGIN IMMEDIATE')
-        owned = db.execute('SELECT 1 FROM tasks LIMIT 1').fetchone()
-        for spec in specs:
-            if owned:
-                if (not isinstance(spec.get('task'), str) or not spec['task']
-                        or type(spec.get('generation')) is not int):
-                    raise ValueError('expected task and integer generation')
-                ownership.bind(db, spec, capabilities)
-            elif 'task' in spec:
-                raise ValueError('task authority is missing')
-        current = db.execute("SELECT value FROM metadata WHERE key='manifest'").fetchone()
-        if current and current[0] != encoded(manifest):
-            raise ValueError("state is already bound to a different repository or policy")
-        db.execute("INSERT OR IGNORE INTO metadata VALUES ('manifest', ?)", (encoded(manifest),))
-        for spec in specs:
-            current = db.execute("SELECT spec FROM proposals WHERE number=?", (spec["number"],)).fetchone()
-            if current and current[0] != encoded(spec):
-                raise ValueError("registered proposal identity cannot change")
-            db.execute("INSERT OR IGNORE INTO proposals(number,spec,phase) VALUES (?,?,'registered')",
-                       (spec["number"], encoded(spec)))
-    output(event="registered", proposals=len(specs))
+        result = subprocess.run(["git", "check-ref-format", "refs/heads/" + spec["branch"]],
+                                capture_output=True)
+        if result.returncode:
+            raise ValueError("invalid proposal branch")
+
+
+def register_specs(db, manifest, specs, capabilities):
+    """Bind validated proposals in the caller's write transaction."""
+    owned = db.execute('SELECT 1 FROM tasks LIMIT 1').fetchone()
+    for spec in specs:
+        current = db.execute("SELECT spec FROM proposals WHERE number=?", (spec["number"],)).fetchone()
+        if current and current[0] != encoded(spec):
+            raise ValueError("registered proposal identity cannot change")
+        if owned:
+            if (not isinstance(spec.get('task'), str) or not spec['task']
+                    or type(spec.get('generation')) is not int):
+                raise ValueError('expected task and integer generation')
+            ownership.bind(db, spec, capabilities)
+        elif 'task' in spec:
+            raise ValueError('task authority is missing')
+    current = db.execute("SELECT value FROM metadata WHERE key='manifest'").fetchone()
+    if current and current[0] != encoded(manifest):
+        raise ValueError("state is already bound to a different repository or policy")
+    db.execute("INSERT OR IGNORE INTO metadata VALUES ('manifest', ?)", (encoded(manifest),))
+    for spec in specs:
+        db.execute("INSERT OR IGNORE INTO proposals(number,spec,phase) VALUES (?,?,'registered')",
+                   (spec["number"], encoded(spec)))
 
 
 def status(db):

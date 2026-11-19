@@ -40,7 +40,7 @@ def run(operation, root, url, action):
         while True:
             attempts += 1
             if route == 'propose': publication_posts += 1
-            if route.startswith('publication?claim='): polls += 1
+            if route.startswith(('publication?claim=', 'registration?claim=')): polls += 1
             request = Request(url + '/' + route,
                               None if payload is None else json.dumps(payload).encode(),
                               {'Content-Type': 'application/json'})
@@ -53,7 +53,7 @@ def run(operation, root, url, action):
                                          'at':time.time(),'status_path':body['status_path']})
                     # Poll an accepted operation; never resubmit a remote write.
                     route = body['status_path'].lstrip('/')
-                    assert route.startswith('publication?claim=') and '/' not in route
+                    assert route.startswith(('publication?claim=', 'registration?claim=')) and '/' not in route
                     payload = None
                     if time.monotonic() >= deadline: raise TimeoutError('publication pending')
                     time.sleep(max(.1,min(5,body.get('poll_after_seconds',1))))

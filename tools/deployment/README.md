@@ -90,23 +90,24 @@ authority path, signing key or credential permission request.
 | Route | Role | Contract |
 |---|---|---|
 | `POST /assign` | scheduler | CAS task assignment: task, expect, owner, base, request |
-| `GET /status` | scheduler | Claim/proposal/action/publication metadata, without credentials |
+| `GET /status` | scheduler | Claim, proposal, action, publication and registration metadata, without credentials |
 | `POST /recover-removed` | scheduler | Consume one verified native removal receipt; never retry unknown RPCs |
 | `POST /policy` | policy observer | Fresh rules and suspended-writer observations |
 | `GET /claims` | worker | Only its assignments; capability only while active |
 | `GET /repository-token` | worker | Only Contents/Pull requests read, for the one repository |
 | `POST /propose` | worker | Capability-bound GitHub publication; broker creates commit/ref/PR |
 | `GET /publication?claim=ID` | worker | Only that owner's active attempt; pending status or completed receipt |
-| `POST /register` | worker | Immutable, frozen proposal and capability; owner is derived from TLS |
+| `POST /register` | worker | Durable registration of an immutable proposal using its active capability |
+| `GET /registration?claim=ID` | worker | Only that owner’s active attempt and its registration status |
 | `GET /health` | listed identities | Listener health and latest controller cycle/error classification |
 
 Use `task_broker_client.py --url https://HOST:PORT --cert CLIENT.crt --key CLIENT.key
 --ca CA.crt ROUTE`. Send POST JSON on stdin, never in arguments. `/assign`, `/claims`
 and `/repository-token` responses contain credentials: consume privately, not in
-shared logs. API version 2 is reported by `/health`. The updated CLI waits for
-accepted publications and retries only explicitly retryable capacity/authority
+shared logs. API version 3 is reported by `/health`. The updated CLI waits for
+accepted publications and registrations and retries only explicitly retryable capacity/authority
 errors with the same bytes. `--no-wait` returns an admission receipt;
-`--claim ID publication` resumes polling. `--wait-seconds` bounds waiting. A wait
+`--claim ID publication` or `--claim ID registration` resumes polling. `--wait-seconds` bounds waiting. A wait
 timeout leaves accepted work intact; use its status URL, not a different request.
 
 `POST /propose` validates the active capability and durably admits work before
@@ -114,6 +115,25 @@ returning HTTP 202 with `operation`, `state`, `status_path`, `retryable:false` a
 `poll_after_seconds`. Poll that exact same-origin status URL. HTTP 200 returns
 the completed publication receipt. HTTP clients that previously assumed every
 successful POST synchronously returned a PR must handle this versioned change.
+
+API v3 registration accepts `{"proposal": RECEIPT, "capability": "..."}` and
+returns HTTP 202 with the same admission envelope and a `/registration` status
+URL. Completion returns HTTP 200 with `{"registered": PR_NUMBER}`. Use the v3
+client before upgrading the broker, or update HTTP callers to poll on 202.
+Identical registration retries join the existing job, including at capacity.
+A changed proposal for the same attempt returns a permanent conflict. Stale
+claims are rechecked when the job runs. Job admission stores the proposal and
+owner without the capability. The registered binding and completed job commit
+in the same local transaction, so queued jobs resume after restart and completed
+jobs retain their result. Pause submissions and drain registration jobs before
+rolling back to a broker that lacks the registration queue.
+
+Registration has its own global and per-owner limits using the settings below.
+HTTP 429 `registration_full` returns `Retry-After`. The broker serves owners in
+rotation and retains FIFO order within each owner. It attempts up to eight
+registrations before yielding to publication and native queue reconciliation.
+Registration completion records the binding. Native queue entry still requires
+the original policy checks, frozen ref, and passing native Actions preflight.
 
 Pending admission defaults to 128 jobs total and four per logical owner, including
 running jobs. Configure positive integer `admission_limit` and
@@ -161,8 +181,8 @@ The trusted scheduler feeds the receipt to `task_broker_freeze_proposal.py`, usi
 its scheduler TLS identity and local `gh` login. That helper verifies the broker's
 receipt and live PR identity, and appends only its exact ref to the configured
 freeze rule. It never edits main's rule. Then the worker posts
-`{"proposal":RECEIPT,"capability":"..."}` to `/register`. The broker admits it only
-after the newest relevant native preflight has passed. An older success at the
+`{"proposal":RECEIPT,"capability":"..."}` to `/register`. The broker enqueues the registered proposal on GitHub after the newest relevant
+native preflight has passed. An older success at the
 same SHA cannot mask a new pending run. No manual statuses or workflow dispatch
 replace native PR or merge-group checks.
 

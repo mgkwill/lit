@@ -1,4 +1,4 @@
-"""Durable bounded publication admission; one round-robin turn per logical owner.
+"""Durable bounded broker admission with round-robin turns per logical owner.
 
 Only queued jobs may start. A process interrupted in 'running' never replays a
 GitHub mutation, even if the interruption preceded the first provider call.
@@ -25,6 +25,9 @@ def initialize(db):
         id INTEGER PRIMARY KEY AUTOINCREMENT, claim TEXT UNIQUE NOT NULL,
         owner TEXT NOT NULL, digest TEXT NOT NULL, payload TEXT NOT NULL,
         phase TEXT NOT NULL, error TEXT, next_at REAL NOT NULL DEFAULT 0)''')
+    db.execute("""CREATE TABLE IF NOT EXISTS registration_jobs(
+        id INTEGER PRIMARY KEY AUTOINCREMENT, claim TEXT UNIQUE NOT NULL,
+        owner TEXT NOT NULL, spec TEXT NOT NULL, phase TEXT NOT NULL, error TEXT)""")
     # Published receipts are authoritative; everything else running at restart
     # is uncertain. Queued jobs have no external intent and remain executable.
     with db:
@@ -128,14 +131,13 @@ def run_one(server,publish):
         for row in db.execute("SELECT * FROM publication_jobs WHERE phase='queued' ORDER BY id"):
             heads.setdefault(row['owner'],row)
         ready=[row for row in heads.values() if row['next_at']<=time.time()]
-        if not ready:return False
-        last=db.execute("SELECT value FROM metadata WHERE key='admission_last_owner'").fetchone()
-        owners=sorted({r['owner'] for r in ready})
-        owner=next((o for o in owners if not last or o>last[0]),owners[0])
-        job=next(r for r in ready if r['owner']==owner)
+        job = next_owner_job(db, ready, 'admission_last_owner')
+        if not job:
+            return False
+        owner = job['owner']
         with db:
-            db.execute("UPDATE publication_jobs SET phase='running' WHERE id=?",(job['id'],))
-            db.execute("INSERT INTO metadata VALUES ('admission_last_owner',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",(owner,))
+            db.execute("UPDATE publication_jobs SET phase='running' WHERE id=?", (job['id'],))
+            save_turn(db, 'admission_last_owner', owner)
         try:
             if owner not in server.owners:raise Rejected('identity_revoked')
             claim=active(db,{'owner':owner},job['claim'])
@@ -157,4 +159,121 @@ def run_one(server,publish):
                               (phase,code,time.time()+5,job['id']))
         else:
             with db:db.execute("UPDATE publication_jobs SET phase='done',error=NULL,payload='{}' WHERE id=?",(job['id'],))
+        return True
+
+
+
+def next_owner_job(db, jobs, cursor):
+    """Take the oldest eligible job for the next owner in cyclic order."""
+    heads = {}
+    for job in jobs:
+        heads.setdefault(job['owner'], job)
+    if not heads:
+        return None
+    last = db.execute("SELECT value FROM metadata WHERE key=?", (cursor,)).fetchone()
+    owners = sorted(heads)
+    owner = next((name for name in owners if not last or name > last[0]), owners[0])
+    return heads[owner]
+
+
+def save_turn(db, cursor, owner):
+    db.execute("""INSERT INTO metadata VALUES (?,?)
+        ON CONFLICT(key) DO UPDATE SET value=excluded.value""", (cursor, owner))
+
+
+def registration_status(db, principal, claim_id):
+    active(db, principal, claim_id)
+    job = db.execute("SELECT spec,phase,error FROM registration_jobs WHERE claim=?", (claim_id,)).fetchone()
+    if not job:
+        raise Rejected('registration_not_found', 404)
+    if job['phase'] == 'done':
+        return 200, {'registered': json.loads(job['spec'])['number']}
+    if job['phase'] == 'rejected':
+        raise Rejected(job['error'])
+    return 202, {'operation': claim_id, 'state': 'queued', 'retryable': False,
+                 'poll_after_seconds': 1, 'status_path': '/registration?claim='+claim_id}
+
+
+def verify_registration(db, config, principal, spec, capability=None):
+    claim = active(db, principal, spec['claim'], capability)
+    if any(claim[k] != spec[k] for k in ('task', 'generation', 'base')):
+        raise Rejected('assignment_mismatch')
+    if spec['author'] != principal['owner']:
+        published = db.execute("SELECT receipt FROM publications WHERE claim=? AND phase='published'",
+                               (spec['claim'],)).fetchone()
+        if spec['author'] != config['broker_author'] or not published or json.loads(published[0]) != spec:
+            raise Rejected('unproven_broker_publication', 403)
+    return claim
+
+
+def submit_registration(server, principal, body):
+    required = {'number', 'head', 'branch', 'author', 'task', 'generation', 'claim', 'base'}
+    spec = body.get('proposal')
+    if (set(body) != {'proposal', 'capability'} or not isinstance(body['capability'], str)
+            or not isinstance(spec, dict) or spec.keys() not in (required, required | {'agent'})
+            or any(not isinstance(spec[k], str) for k in required - {'number', 'generation'})
+            or type(spec['generation']) is not int or not re.fullmatch(r'[0-9a-f]{32}', spec['claim'])):
+        raise Rejected('invalid_registration')
+    owner = principal['owner']
+    if spec.get('agent', spec['author']) != owner:
+        raise Rejected('wrong_owner', 403)
+    config = server.config
+    queue.validate_registration(config['manifest'], [spec])
+    claim_id = spec['claim']
+    encoded = queue.encoded(spec)
+    with queue.database(Path(config['state'])) as db:
+        with db:
+            db.execute('BEGIN IMMEDIATE')
+            claim = verify_registration(db, config, principal, spec, body['capability'])
+            existing = db.execute("SELECT spec FROM registration_jobs WHERE claim=?", (claim_id,)).fetchone()
+            if existing:
+                if existing['spec'] != encoded:
+                    raise Rejected('registration_request_conflict')
+            elif claim['proposal'] is not None:
+                saved = db.execute("SELECT spec FROM proposals WHERE number=?", (claim['proposal'],)).fetchone()
+                if not saved or saved['spec'] != encoded:
+                    raise Rejected('attempt_already_bound')
+                return 200, {'registered': claim['proposal']}
+            else:
+                total, own = db.execute("""SELECT count(*), count(CASE WHEN owner=? THEN 1 END)
+                    FROM registration_jobs WHERE phase='queued'""", (owner,)).fetchone()
+                if total >= config.get('admission_limit', 128) or own >= config.get('admission_per_owner', 4):
+                    raise Rejected('registration_full', 429, True)
+                db.execute("INSERT INTO registration_jobs(claim,owner,spec,phase) VALUES (?,?,?,'queued')",
+                           (claim_id, owner, encoded))
+        return registration_status(db, principal, claim_id)
+
+
+def run_registration(server):
+    config = server.config
+    root = Path(config['state'])
+    cursor = 'registration_last_owner'
+    with queue.writer(root) as db:
+        jobs = db.execute("SELECT * FROM registration_jobs WHERE phase='queued' ORDER BY id")
+        job = next_owner_job(db, jobs, cursor)
+        if not job:
+            return False
+        owner, claim_id = job['owner'], job['claim']
+        spec = json.loads(job['spec'])
+        try:
+            with ownership.fence(root, spec['task']), db:
+                db.execute('BEGIN IMMEDIATE')
+                if owner not in server.owners:
+                    raise Rejected('identity_revoked')
+                verify_registration(db, config, {'owner': owner}, spec)
+                queue.register_specs(db, config['manifest'], [spec],
+                                     {claim_id: ownership.token(db, claim_id)})
+                db.execute("UPDATE registration_jobs SET phase='done' WHERE id=?", (job['id'],))
+                save_turn(db, cursor, owner)
+        except ownership.AuthorityBusy:
+            with db:
+                save_turn(db, cursor, owner)
+        except (Rejected, ValueError) as error:
+            code = error.code if isinstance(error, Rejected) else 'registration_rejected'
+            with db:
+                db.execute("UPDATE registration_jobs SET phase='rejected',error=? WHERE id=?",
+                           (code, job['id']))
+                save_turn(db, cursor, owner)
+        else:
+            queue.output(event='registration_completed', number=spec['number'])
         return True

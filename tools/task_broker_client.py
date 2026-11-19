@@ -22,7 +22,7 @@ def main():
     parser.add_argument('--wait-seconds',type=float,default=600)
     parser.add_argument('--no-wait',action='store_true')
     parser.add_argument('--claim')
-    parser.add_argument('route',choices=('claims','health','status','assign','register','recover-removed','propose','publication','repository-token'))
+    parser.add_argument('route',choices=('claims','health','status','assign','register','recover-removed','propose','publication','registration','repository-token'))
     args=parser.parse_args()
     try:
         parsed=urlsplit(args.url)
@@ -38,7 +38,7 @@ def main():
             if not 0<len(raw)<=65536:raise ValueError('invalid request length')
             payload=json.dumps(json.loads(raw)).encode()
         route=args.route
-        if route=='publication':
+        if route in ('publication','registration'):
             if not args.claim or not re.fullmatch(r'[0-9a-f]{32}',args.claim):raise ValueError('claim required')
             route+='?claim='+args.claim
         request=Request(args.url+'/'+route,payload,{'Content-Type':'application/json'})
@@ -59,7 +59,7 @@ def main():
             if code==202:
                 pending=result
                 path=result['status_path']
-                if not re.fullmatch(r'/publication\?claim=[0-9a-f]{32}',path):raise ValueError('invalid status path')
+                if not re.fullmatch(r'/(?:publication|registration)\?claim=[0-9a-f]{32}',path):raise ValueError('invalid status path')
                 request=Request(args.url+path)
             delay=float(retry_after)
             if not math.isfinite(delay):raise ValueError('invalid retry delay')
