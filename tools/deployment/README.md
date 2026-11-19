@@ -445,6 +445,66 @@ adapter instead of SSH. Its service account must be able to manage the pinned
 broker unit. Arm it and verify both broker endpoints see fresh policy
 observations before disconnecting the operator machine.
 
+### Quorum backup and recovery
+
+Run the backup from a trusted quorum client. It captures the authority head,
+compressed SQLite checkpoint and writer presence in one linearizable read. The
+archive contains claim authority. Keep it in private encrypted storage away from
+the voter failure domain. A capture records writer presence without exporting
+the GitHub token. The reported recovery blockers identify unsettled work.
+
+```sh
+umask 077
+mkdir -m 700 /secure/lit-backups
+python3 -B tools/task_broker_quorum_backup.py --config /secure/source.json \
+  backup /secure/lit-backups/checkpoint.lit-quorum
+python3 -B tools/task_broker_quorum_backup.py --config /secure/source.json \
+  inspect /secure/lit-backups/checkpoint.lit-quorum
+```
+
+For portable storage, an operator can seal the archive to the recovery
+certificate before transferring it off the quorum hosts. Keep the private
+decrypting key under separate recovery custody. Decrypt into a private staging
+file and verify the archive digest before activation.
+
+```sh
+openssl cms -encrypt -binary -aes-256-gcm -outform DER \
+  -in /secure/lit-backups/checkpoint.lit-quorum \
+  -out /secure/lit-backups/checkpoint.cms /secure/recovery-recipient.crt
+```
+
+Keep the emitted archive SHA-256 separately. For a planned recovery, stop new
+admission, settle pending publications and registrations, and verify the forge
+queue and Actions receipts. Stop and fence the former brokers and writer gateways.
+Record the final authority head independently through the manager's authenticated
+`GET /head` and capture its matching archive while quorum is still available.
+
+After permanent majority loss, bring up a fresh three-voter etcd cluster with
+separate origins, peer membership and TLS credentials. Keep the broker gateway
+offline until the replacement authority has been seeded. Use the new etcd cluster
+ID from an independently verified member status and the old acknowledged Lit head
+saved before the loss. If the watermark is missing, the archive is behind it,
+or provider outcomes are unresolved, inspect the archive and reconcile with the
+forge before returning the broker to service.
+
+```sh
+python3 -B tools/task_broker_quorum_backup.py --config /secure/replacement.json \
+  restore /secure/lit-backups/checkpoint.lit-quorum \
+  --expected-head /secure/independent/last-acknowledged-head.json \
+  --sha256 "$ARCHIVE_SHA256" --target-cluster-id "$NEW_CLUSTER_ID" \
+  --holder standby
+```
+
+Restore preserves the Lit checkpoint revision and advances the Lit epoch. It
+seeds the head and checkpoint atomically in the new cluster and accepts retries
+against the exact seeded state. Use distinct trust and endpoints so surviving
+old members and gateways remain fenced. Verify all replacement gateways return
+the same head. Start the chosen broker with an empty private cache, reconnect
+fresh policy observers, verify the exact protected rules and native Actions
+checks, and rearm the watcher at the new epoch. This procedure transfers Lit's
+authority keys into a new etcd keyspace. Other etcd keyspaces require their own
+backup and recovery.
+
 For rollback, stop broker and observer, preserve the database/frozen refs, and keep
 worker installations suspended. Do not restore raw worker write access while
 claiming broker enforcement. The original Actions-only rule stays intact.

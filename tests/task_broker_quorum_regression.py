@@ -16,15 +16,17 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'tools'))
 import broker_admission as admission
 import github_queue_coordinator as queue
 import task_broker_policy_observer as observer
+import task_broker_quorum_backup as backup
 import task_broker_replica as replica
-from task_broker_quorum import QuorumAuthority, Record, Rejected, ReplicaUnavailable
+from task_broker_quorum import EtcdStore, QuorumAuthority, Record, Rejected, ReplicaUnavailable
 
 BINDING={'repo':'100latent/lit-merge-queue-sandbox','main_ruleset':10,'freeze_ruleset':11}
 
 
 class Store:
-    def __init__(self):
+    def __init__(self,cluster_id='1'):
         self.values={}
+        self.cluster_id=cluster_id
         self.lock=threading.Lock()
         self.revision=0
         self.online=True
@@ -34,6 +36,9 @@ class Store:
             if not self.online:
                 raise ReplicaUnavailable('fixture quorum down')
             return {name:self.values[name] for name in names if name in self.values}
+
+    def read_with_cluster(self,*names):
+        return self.read(*names), self.cluster_id
 
     def change(self,records,changes):
         with self.lock:
@@ -163,6 +168,53 @@ class QuorumTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError,'bypass visibility'):
             observer.observation(config,lambda path:{'id':int(path.split('/')[-1])})
 
+    def test_backup_preserves_the_exact_revision_and_fences_the_old_epoch(self):
+        path=self.root/'saved.lit-quorum'
+        captured=backup.backup(self.store,BINDING,path)
+        self.assertEqual(path.stat().st_mode & 0o777,0o600)
+        self.assertEqual(captured['recovery_blockers'],[])
+        self.assertEqual(captured['head'],self.initial)
+        with self.assertRaises(FileExistsError):
+            backup.backup(self.store,BINDING,path)
+        target=Store('2')
+        result=backup.restore(target,BINDING,path,self.initial,captured['archive_sha256'],'standby')
+        self.assertEqual(result['head'],self.initial|{'holder':'standby','epoch':8})
+        self.assertEqual(backup.restore(target,BINDING,path,self.initial,captured['archive_sha256'],'standby'),result)
+        restored=QuorumAuthority(self.root,BINDING,target,self.mint,lambda:None,lambda:None,self.github)
+        self.assertEqual(restored.request('standby','/snapshot',b'',8,4),self.checkpoint.read_bytes())
+        with self.assertRaises(Rejected):
+            restored.request('primary','/snapshot',b'',7,4)
+
+    def test_restore_checks_watermark_checksum_and_replacement_cluster(self):
+        path=self.root/'saved.lit-quorum'
+        captured=backup.backup(self.store,BINDING,path)
+        target=Store('2')
+        with self.assertRaisesRegex(Rejected,'watermark'):
+            backup.restore(target,BINDING,path,self.initial|{'revision':5},captured['archive_sha256'],'primary')
+        with self.assertRaisesRegex(Rejected,'archive digest'):
+            backup.restore(target,BINDING,path,self.initial,'a'*64,'primary')
+        with self.assertRaisesRegex(Rejected,'pinned new quorum'):
+            backup.restore(self.store,BINDING,path,self.initial,captured['archive_sha256'],'primary')
+        self.assertFalse(target.values)
+        target.change({'head':None},{'head':b'different authority'})
+        with self.assertRaisesRegex(Rejected,'already holds'):
+            backup.restore(target,BINDING,path,self.initial,captured['archive_sha256'],'primary')
+        self.assertEqual(target.read('head')['head'].data,b'different authority')
+
+    def test_inflight_backup_excludes_writer_credentials_and_refuses_activation(self):
+        with closing(sqlite3.connect(self.checkpoint)) as db, db:
+            db.execute("INSERT INTO actions VALUES (1,2,'enqueue','pending',NULL,0)")
+        head=self.old.request('primary','/checkpoint',self.checkpoint.read_bytes(),7,4)
+        self.store.change({'writer':None},{'writer':b'{"token":"fixture-sensitive-token","started":1}'})
+        path=self.root/'inflight.lit-quorum'
+        result=backup.backup(self.store,BINDING,path)
+        self.assertEqual(result['recovery_blockers'],['actions','writer'])
+        self.assertNotIn(b'fixture-sensitive-token',path.read_bytes())
+        target=Store('3')
+        with self.assertRaisesRegex(Rejected,'unresolved'):
+            backup.restore(target,BINDING,path,head,result['archive_sha256'],'standby')
+        self.assertFalse(target.values)
+
 
 class GatewayClientTests(unittest.TestCase):
     def client(self):
@@ -190,6 +242,19 @@ class GatewayClientTests(unittest.TestCase):
         requests=[call.args[0] for call in opener.open.call_args_list]
         self.assertEqual([r.full_url for r in requests],['https://primary/provider','https://alternate/provider'])
         self.assertEqual(requests[0].data,requests[1].data)
+
+    def test_cluster_identity_is_checked_before_a_pinned_store_write(self):
+        config={'urls':['https://one','https://two','https://three'],
+                'ca':'ca.crt','cert':'client.crt','key':'client.key'}
+        with patch.object(replica.ssl,'create_default_context'):
+            store=EtcdStore(config,BINDING['repo'],cluster_id='6')
+        with patch.object(store,'opener') as opener:
+            opener.open.return_value=io.BytesIO(b'{"header":{"cluster_id":"7"}}')
+            with self.assertRaises(ReplicaUnavailable):
+                store.change({'head':None},{'head':b'must not be sent'})
+        opener.open.assert_called_once()
+        request,=opener.open.call_args.args
+        self.assertEqual(json.loads(request.data),{'compare':[],'success':[]})
 
 
 if __name__=='__main__':

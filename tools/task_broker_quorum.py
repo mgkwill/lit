@@ -22,6 +22,13 @@ def encode(value):
     return base64.b64encode(value).decode('ascii')
 
 
+def checked_cluster_id(value):
+    if (not isinstance(value,str) or not re.fullmatch(r'[1-9][0-9]{0,19}',value)
+            or int(value)>=2**64):
+        raise ValueError('expected an etcd cluster ID')
+    return value
+
+
 @dataclass(frozen=True)
 class Record:
     revision: int
@@ -30,8 +37,9 @@ class Record:
 
 class EtcdStore:
     """Use linearizable reads and compare-and-swap over the etcd v3 gateway."""
-    def __init__(self, config, repo):
+    def __init__(self, config, repo, cluster_id=None):
         self.urls = tuple(config['urls'])
+        self.cluster_id = checked_cluster_id(cluster_id) if cluster_id is not None else None
         if len(set(self.urls)) != len(self.urls) or len(self.urls) < 3:
             raise ValueError('quorum requires separate configured etcd members')
         for url in self.urls:
@@ -47,18 +55,27 @@ class EtcdStore:
     def key(self, name):
         return encode((self.prefix+name).encode())
 
+    def post(self, url, data):
+        request = Request(url+'/v3/kv/txn',data,{'Content-Type':'application/json'})
+        with self.opener.open(request,timeout=2) as result:
+            raw = result.read(MAX_REPLY+1)
+            if len(raw)>MAX_REPLY:
+                raise ValueError('quorum response is too large')
+            response = json.loads(raw)
+        if self.cluster_id is not None and response['header']['cluster_id']!=self.cluster_id:
+            raise ValueError('quorum endpoint belongs to another cluster')
+        return response
+
     def transaction(self, compares, operations):
         data = queue.encoded({'compare':compares,'success':operations}).encode()
         if len(data)>MAX_REPLY:
             raise Rejected('quorum request is too large')
         for url in self.urls:
-            request = Request(url+'/v3/kv/txn',data,{'Content-Type':'application/json'})
             try:
-                with self.opener.open(request,timeout=2) as result:
-                    raw = result.read(MAX_REPLY+1)
-                    if len(raw)>MAX_REPLY:
-                        raise ReplicaUnavailable('quorum response is too large')
-                    return json.loads(raw)
+                if self.cluster_id is not None and compares:
+                    # Verify this origin before writing, including on retries.
+                    self.post(url,b'{"compare":[],"success":[]}')
+                return self.post(url,data)
             except HTTPError as error:
                 with error:
                     if error.code not in (500,502,503,504):
@@ -72,7 +89,7 @@ class EtcdStore:
                 raise ReplicaUnavailable('invalid quorum response') from None
         raise ReplicaUnavailable('quorum is unavailable')
 
-    def read(self, *names):
+    def read_with_cluster(self, *names):
         response = self.transaction([], [{'request_range':{'key':self.key(name)}} for name in names])
         ranges = response.get('responses',[])
         if len(ranges)!=len(names):
@@ -83,6 +100,10 @@ class EtcdStore:
                 if name in records or row['key']!=self.key(name):
                     raise ReplicaUnavailable('unexpected quorum range result')
                 records[name] = Record(int(row['mod_revision']),base64.b64decode(row['value'],validate=True))
+        return records, checked_cluster_id(response['header']['cluster_id'])
+
+    def read(self, *names):
+        records, _ = self.read_with_cluster(*names)
         return records
 
     def change(self, records, changes):
