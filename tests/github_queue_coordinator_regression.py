@@ -46,6 +46,12 @@ class Forge:
         self.truncate_base_tree = False
         self.published_branch = None
         self.published_head = None
+        self.compare_requests = []
+        self.compare_results = {}
+        self.compare_error = None
+        self.compare_started = threading.Event()
+        self.compare_release = threading.Event()
+        self.block_compare = False
         self.drop_publication_reply = False
         self.drop_blob_reply = False
         self.block_publication = False
@@ -90,6 +96,8 @@ class Forge:
 
             def authorized(self):
                 allowed = ["Bearer good"] + (["Bearer observer"] if forge.allow_observer else [])
+                if self.command == 'GET' and '/compare/' in self.path:
+                    allowed = ['Bearer fixture-read-only']
                 if self.headers.get("Authorization") not in allowed:
                     self.respond({"message": "Bad credentials"}, 401)
                     return False
@@ -112,6 +120,18 @@ class Forge:
                     sha = self.path.rsplit('/', 1)[1]
                     entries = forge.git_data.entries(sha) if forge.git_data else []
                     self.respond({'sha':sha,'tree':entries,'truncated':forge.truncate_base_tree})
+                elif '/compare/' in self.path:
+                    base, head = self.path.rsplit('/', 1)[1].split('?', 1)[0].split('...')
+                    forge.compare_requests.append((base,head))
+                    if forge.block_compare:
+                        forge.compare_started.set()
+                        forge.compare_release.wait(20)
+                    if forge.compare_error:
+                        self.respond({'message':'comparison unavailable'}, forge.compare_error)
+                        return
+                    status = forge.compare_results.get((base,head), 'diverged')
+                    self.respond({'status':status,'behind_by':0 if status=='ahead' else 1,
+                                  'base_commit':{'sha':base}, 'merge_base_commit':{'sha':base}})
                 elif self.path.endswith('/rulesets/13'):
                     self.respond({'target':'branch','enforcement':'active','bypass_actors':[
                         {'actor_id':99,'actor_type':'Integration','bypass_mode':'exempt'}],
@@ -244,6 +264,7 @@ class Forge:
         self.url = f"http://127.0.0.1:{self.server.server_port}"
 
     def close(self):
+        self.compare_release.set()
         self.publication_release.set()
         self.release.set()
         self.server.shutdown()

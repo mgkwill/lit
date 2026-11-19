@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import sqlite3
 import ssl
 import subprocess
 import sys
@@ -440,6 +441,111 @@ class BrokerTests(unittest.TestCase):
             'base':base,'request':'assign-'+task})
         return {k:claim[k] for k in ('task','generation','claim','base','capability')}|{
             'request':'publish-'+task,'files':[{'path':task+'.txt','content':task}]}
+
+    def dependency_assignment(self, task, base, expected=200, request=None):
+        return self.call('admin','/assign',{'task':task,'expect':0,'owner':'worker[bot]',
+            'base':base,'request':request or 'dependency-assign-'+task},expected=expected)
+
+    def prerequisite_integration(self, claim, merge, number=7):
+        # The coordinator's Git/Actions receipt verification has independent
+        # coverage. This fixture represents its durable output to scheduling.
+        proposal={k:claim[k] for k in ('task','base','generation','claim')} | self.spec | {'number':number}
+        receipt={'number':number,'proposal':proposal,'merge_commit':merge}
+        with sqlite3.connect(self.root/'state'/'queue.sqlite') as db:
+            db.execute('UPDATE claims SET proposal=? WHERE claim=?',(number,claim['claim']))
+            db.execute("INSERT OR IGNORE INTO proposals(number,spec,phase) VALUES (?,?,'merged')",
+                       (number,json.dumps(proposal)))
+            if merge:
+                db.execute('INSERT OR REPLACE INTO integrations(number,receipt,retry_after) VALUES (?,?,0)',
+                           (number,json.dumps(receipt)))
+
+    def test_durable_scheduler_plan_requires_exact_verified_merges(self):
+        self.start()
+        upstream=self.dependency_assignment('upstream','c'*40)
+        plan={'task':'downstream','requires':['upstream']}
+        self.call('worker','/dependencies',plan,expected=403)
+        expected={'task':'downstream','requires':['upstream'],'blocked':['upstream'],'verified':[]}
+        self.assertEqual(self.call('admin','/dependencies',plan),expected)
+        self.prerequisite_integration(upstream,None)
+        self.stop();(self.root/'ready.json').unlink();self.start()
+        self.assertEqual(self.call('admin','/status')['dependency_plans'],[expected])
+        denied=self.dependency_assignment('downstream','d'*40,expected=409)
+        self.assertEqual(denied,{'error':'prerequisite_merge_unverified','prerequisites':['upstream'],'retryable':False})
+        self.assertFalse(any(c['task']=='downstream' for c in self.call('admin','/status')['claims']))
+        self.prerequisite_integration(upstream,'d'*40)
+        denied=self.dependency_assignment('downstream','e'*40,expected=409)
+        self.assertEqual(denied['error'],'dependency_base_unverified')
+        self.forge.compare_error=503
+        denied=self.dependency_assignment('downstream','f'*40,expected=503)
+        self.assertEqual(denied.get('error'),'dependency_proof_unavailable')
+        grant=self.dependency_assignment('downstream','d'*40)
+        self.assertEqual(grant['phase'],'active')
+
+    def test_dependency_base_accepts_descendant_and_replays_original_grant(self):
+        self.start()
+        upstream=self.dependency_assignment('upstream','c'*40)
+        self.prerequisite_integration(upstream,'d'*40)
+        self.call('admin','/dependencies',{'task':'downstream','requires':['upstream']})
+        self.call('admin','/dependencies',{'task':'late','requires':['upstream']})
+        self.forge.compare_results[('d'*40,'e'*40)]='ahead'
+        grant=self.dependency_assignment('downstream','e'*40)
+        self.assertEqual(grant['phase'],'active')
+        self.assertEqual(self.forge.compare_requests,[('d'*40,'e'*40)])
+        with sqlite3.connect(self.root/'state'/'queue.sqlite') as db:
+            event=json.loads(db.execute("SELECT data FROM events WHERE kind='task_assignment' ORDER BY id DESC").fetchone()[0])
+        self.assertEqual(event['prerequisite_merges'],[
+            {'task':'upstream','generation':1,'number':7,'merge_commit':'d'*40}])
+        self.call('admin','/assign',{'task':'upstream','expect':1,'owner':'second[bot]',
+            'base':'e'*40,'request':'reassign-upstream'})
+        blocked=self.dependency_assignment('late','d'*40,expected=409)
+        self.assertEqual(blocked['error'],'prerequisite_merge_unverified')
+        self.assertEqual(self.dependency_assignment('downstream','e'*40),grant)
+        self.assertEqual(self.forge.compare_requests,[('d'*40,'e'*40)])
+
+    def test_dependency_plan_rejects_cycles_and_retroactive_edits(self):
+        self.start()
+        self.call('admin','/dependencies',{'task':'a','requires':['b']})
+        self.call('admin','/dependencies',{'task':'b','requires':['a']},expected=409)
+        self.call('admin','/dependencies',{'task':'a','requires':['c']},expected=409)
+        self.call('admin','/dependencies',{'task':'a','requires':['a']},expected=409)
+        self.call('admin','/dependencies',{'task':'a','requires':['b','b']},expected=409)
+        self.dependency_assignment('b','c'*40)
+        self.call('admin','/dependencies',{'task':'b','requires':['c']},expected=409)
+        self.assertEqual(self.call('admin','/status')['dependency_plans'],
+                         [{'task':'a','requires':['b'],'verified':[],'blocked':['b']}])
+
+    def test_assignment_requires_all_prerequisites_in_its_base(self):
+        self.start()
+        first=self.dependency_assignment('first','c'*40)
+        second=self.dependency_assignment('second','c'*40)
+        plan={'task':'join','requires':['second','first']}
+        self.call('admin','/dependencies',plan)
+        self.prerequisite_integration(first,'d'*40)
+        self.assertEqual(self.dependency_assignment('join','e'*40,expected=409)['prerequisites'],['second'])
+        self.prerequisite_integration(second,'e'*40,number=8)
+        self.assertEqual(self.dependency_assignment('join','e'*40,expected=409)['prerequisites'],['first'])
+        self.forge.compare_results[('d'*40,'e'*40)]='ahead'
+        self.assertEqual(self.dependency_assignment('join','e'*40)['phase'],'active')
+        self.assertEqual(self.call('admin','/dependencies',plan)['blocked'],[])
+
+    def test_dependency_reassignment_during_base_proof_does_not_grant(self):
+        self.start()
+        upstream=self.dependency_assignment('upstream','c'*40)
+        self.prerequisite_integration(upstream,'d'*40)
+        self.call('admin','/dependencies',{'task':'downstream','requires':['upstream']})
+        self.forge.compare_results[('d'*40,'e'*40)]='ahead'
+        self.forge.block_compare=True
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            grant=pool.submit(self.dependency_assignment,'downstream','e'*40,409)
+            try:
+                self.assertTrue(self.forge.compare_started.wait(3))
+                # The slow provider check cannot hold the authority writer.
+                self.call('admin','/assign',{'task':'upstream','expect':1,'owner':'second[bot]',
+                    'base':'e'*40,'request':'reassign-during-comparison'})
+            finally:
+                self.forge.compare_release.set()
+            self.assertEqual(grant.result()['error'],'prerequisite_merge_unverified')
+        self.assertFalse(any(c['task']=='downstream' for c in self.call('admin','/status')['claims']))
 
     def registration(self, task, number, owner='worker[bot]'):
         claim = self.publication(task, owner)

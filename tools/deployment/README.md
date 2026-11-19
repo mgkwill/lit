@@ -89,8 +89,9 @@ authority path, signing key or credential permission request.
 
 | Route | Role | Contract |
 |---|---|---|
+| `POST /dependencies` | scheduler | Declare a task's prerequisites before its first assignment |
 | `POST /assign` | scheduler | CAS task assignment: task, expect, owner, base, request |
-| `GET /status` | scheduler | Claim, proposal, action, publication and registration metadata, without credentials |
+| `GET /status` | scheduler | Claim, dependency, proposal, action, publication and registration metadata, without credentials |
 | `POST /recover-removed` | scheduler | Consume one verified native removal receipt; never retry unknown RPCs |
 | `POST /policy` | policy observer | Fresh rules and suspended-writer observations |
 | `GET /claims` | worker | Only its assignments; capability only while active |
@@ -109,6 +110,29 @@ accepted publications and registrations and retries only explicitly retryable ca
 errors with the same bytes. `--no-wait` returns an admission receipt;
 `--claim ID publication` or `--claim ID registration` resumes polling. `--wait-seconds` bounds waiting. A wait
 timeout leaves accepted work intact; use its status URL, not a different request.
+
+### Task dependencies
+
+The scheduler can post `{"task":"integration","requires":["parser","storage"]}`
+to `/dependencies` before the task's first assignment. A plan has up to 32
+distinct prerequisite task IDs. Prerequisites can be declared in any order.
+The broker rejects cycles, and the scheduler can safely replay an identical plan.
+Plans are durable and immutable. To change a plan, use a new task ID.
+
+The scheduler chooses the owner and base and calls `/assign` as usual. A task
+with prerequisites needs a verified integration receipt for each prerequisite's
+current generation. A merge reported by GitHub can precede receipt verification.
+The selected base must equal or descend from every required merge. The broker
+checks ancestry with its repository-read credential, then rechecks the receipt
+generations inside the assignment transaction. The grant event records the
+prerequisite merges. An identical, already-granted assignment request replays
+its original result.
+
+`/status` includes each plan's blocked prerequisite IDs and verified merge
+records. A blocked assignment returns HTTP 409 with prerequisite IDs and issues
+no capability. Choose a base that includes the required merges after they verify.
+A temporary provider failure during ancestry checks returns retryable HTTP 503.
+Use the broker API to assign a task whose base needs a remote ancestry check.
 
 `POST /propose` validates the active capability and durably admits work before
 returning HTTP 202 with `operation`, `state`, `status_path`, `retryable:false` and

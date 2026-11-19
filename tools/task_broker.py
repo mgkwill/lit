@@ -88,7 +88,7 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply(403,{'error':'forbidden'})
         role=principal['role']
         route=urlsplit(self.path).path
-        if ((self.path in ('/assign','/status','/recover-removed') and role != 'scheduler')
+        if ((self.path in ('/assign','/dependencies','/status','/recover-removed') and role != 'scheduler')
                 or (self.path == '/policy' and role != 'policy_observer')
                 or (route in ('/claims','/repository-token','/register','/propose',
                               '/publication','/registration') and role!='worker')):
@@ -123,11 +123,13 @@ class Handler(BaseHTTPRequestHandler):
                         return self.reply(200,queue.status(db)|{
                             'registration_jobs':[dict(r) for r in db.execute('SELECT id,claim,owner,phase,error FROM registration_jobs ORDER BY id')],
                             'publication_jobs':[dict(r) for r in db.execute('SELECT id,claim,owner,phase,error FROM publication_jobs ORDER BY id')],
-                            'publications':[{'claim':r['claim'],'phase':r['phase'],'receipt':json.loads(r['receipt']) if r['receipt'] else None} for r in db.execute('SELECT * FROM publications')]})
+                            'publications':[{'claim':r['claim'],'phase':r['phase'],'receipt':json.loads(r['receipt']) if r['receipt'] else None} for r in db.execute('SELECT * FROM publications')],
+                            'dependency_plans':[ownership.dependency_plan_status(db,r['task']) for r in
+                                db.execute('SELECT DISTINCT task FROM task_dependencies ORDER BY task')]})
                     if self.path == '/health':
                         return self.reply(200,{'service':'lit-task-broker','last_cycle':self.server.last_cycle,
                                                'last_error':self.server.last_error,'api_version':3})
-            if self.command != 'POST' or self.path not in ('/assign','/register','/policy','/recover-removed','/propose'):
+            if self.command != 'POST' or self.path not in ('/assign','/dependencies','/register','/policy','/recover-removed','/propose'):
                 return self.reply(404,{'error':'unknown_route'})
             lengths=self.headers.get_all('Content-Length',[])
             if (len(lengths)!=1 or not lengths[0].isdigit() or not 0<int(lengths[0])<=65536
@@ -137,6 +139,13 @@ class Handler(BaseHTTPRequestHandler):
             body=json.loads(self.rfile.read(int(lengths[0])))
             if not isinstance(body,dict):
                 raise ValueError('expected object')
+            if self.path == '/dependencies':
+                if (set(body)!={'task','requires'} or not valid_task(body['task'])
+                        or not isinstance(body['requires'],list) or not 0<len(body['requires'])<=32
+                        or not all(valid_task(name) for name in body['requires'])):
+                    return self.reply(400,{'error':'invalid_dependency_plan'})
+                with queue.database(state) as db, ownership.fence(state,body['task']):
+                    return self.reply(200,ownership.plan_dependencies(db,body['task'],body['requires']))
             if self.path == '/propose':
                 if role!='worker':return self.reply(403,{'error':'worker_identity_required'})
                 code,result=admission.submit(self.server,principal,body)
@@ -164,18 +173,19 @@ class Handler(BaseHTTPRequestHandler):
             if self.path == '/assign':
                 if set(body)!={'task','expect','owner','base','request'}:
                     raise ValueError('invalid assignment')
-                if (not isinstance(body['task'],str) or not 0<len(body['task'])<=256
+                if (not valid_task(body['task'])
                         or type(body['expect']) is not int or body['expect']<0
                         or not isinstance(body['request'],str) or not 0<len(body['request'])<=256
                         or not isinstance(body['base'],str) or not re.fullmatch(r'[0-9a-f]{40}',body['base'])
                         or body['owner'] not in self.server.owners):
                     return self.reply(400,{'error':'invalid_assignment'})
-                with queue.database(state) as db, ownership.fence(state,body['task']):
-                    return self.reply(200,ownership.assign(db,SimpleNamespace(**body)))
+                return self.reply(200,assign_task(self.server,state,body))
             code,result=admission.submit_registration(self.server,principal,body)
             return self.reply(code,result)
         except admission.Rejected as error:
             return self.reply(error.status,{'error':error.code,'retryable':error.retryable})
+        except ownership.DependenciesBlocked as error:
+            return self.reply(409,{'error':error.code,'prerequisites':error.prerequisites})
         except ownership.AuthorityBusy:
             return self.reply(503,{'error':'authority_busy','retryable':True})
         except (ValueError,RuntimeError,KeyError,TypeError):
@@ -185,6 +195,58 @@ class Handler(BaseHTTPRequestHandler):
 
     do_GET=dispatch
     do_POST=dispatch
+
+
+def valid_task(name):
+    return isinstance(name,str) and 0<len(name)<=256
+
+
+def assign_task(server, state, body):
+    with queue.database(state) as db:
+        dependencies = []
+        if not db.execute('SELECT 1 FROM claims WHERE request=?', (body['request'],)).fetchone():
+            dependencies, blocked = ownership.dependency_state(db,body['task'])
+            if blocked:
+                raise ownership.DependenciesBlocked('prerequisite_merge_unverified',blocked)
+            verify_dependency_base(server,body['base'],dependencies)
+        # The comparison is against immutable Git SHAs. Recheck generations
+        # and receipts in the assignment transaction after the provider read.
+        with ownership.fence(state,body['task']):
+            return ownership.assign(db,SimpleNamespace(**body),dependencies)
+
+
+def verify_dependency_base(server, base, dependencies):
+    commits = {item['merge_commit'] for item in dependencies} - {base}
+    if not commits:
+        return
+    repo = server.config['manifest']['repo']
+    try:
+        token = server.read_token_source()
+        if not token:
+            raise ValueError('repository reader unavailable')
+        github = queue.GitHub(server.api_url,token=token,observer_token='')
+    except (RuntimeError,ValueError):
+        raise admission.Rejected('dependency_proof_unavailable',503,True) from None
+    missing = set()
+    for commit in sorted(commits):
+        if not re.fullmatch(r'[0-9a-f]{40}',commit):
+            raise ValueError('invalid prerequisite merge ID')
+        try:
+            result = github.api(f'repos/{repo}/compare/{commit}...{base}?per_page=1')
+        except queue.ApiError as error:
+            if error.code in (404,422):
+                missing.add(commit)
+                continue
+            raise admission.Rejected('dependency_proof_unavailable',503,True) from None
+        except queue.ResponseUnavailable:
+            raise admission.Rejected('dependency_proof_unavailable',503,True) from None
+        if (result.get('status')!='ahead' or result.get('behind_by')!=0
+                or (result.get('base_commit') or {}).get('sha')!=commit
+                or (result.get('merge_base_commit') or {}).get('sha')!=commit):
+            missing.add(commit)
+    if missing:
+        raise ownership.DependenciesBlocked('dependency_base_unverified',
+            [item['task'] for item in dependencies if item['merge_commit'] in missing])
 
 
 def publication_entries(github, git_api, base_tree, files):

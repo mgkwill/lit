@@ -166,8 +166,9 @@ broker host and publication stops when its observations expire. See the
 [deployment and recovery contract](deployment/README.md).
 
 Keep the authority filesystem/account and administrative CLI inaccessible to
-workers. Privileged host and GitHub policy administrators remain trusted. No
-lease expiry or dependency scheduler is added. Broker-delivered GitHub credentials
+workers. Privileged host and GitHub policy administrators remain trusted.
+The scheduler declares prerequisites before assignment and chooses when to retry
+blocked tasks. Broker-delivered GitHub credentials
 are repository-read only. Workers publish regular-file edits through `/propose`,
 including binary content, deletions, and executable-bit changes. The scheduler
 verifies and freezes the resulting ref before enrollment.
@@ -209,6 +210,9 @@ Coordinator CLI `status` and broker `GET /status` expose
 `proposals[].integration`. Treat a proposal as verified for downstream
 dependencies only when this field has `state: verified`. The existing
 `phase: merged` reports the forge's queue outcome and can precede verification.
+The broker's scheduler-only `/dependencies` route records prerequisite task IDs.
+Assignment then requires that each current prerequisite generation has a verified
+merge and that the proposed base contains those merges.
 
 A receipt binds the registered proposal and PR to its merge event on main.
 Git must show a unique merge on the observed main's first-parent chain with
