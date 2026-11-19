@@ -112,14 +112,22 @@ def path_hints(db):
 
 
 @contextmanager
-def fence(root, task):
-    name = hashlib.sha256(task.encode()).hexdigest()
-    with (root / ('task-' + name + '.lock')).open('a') as handle:
+def state_lock(root, filename, busy):
+    with (root / filename).open('a') as handle:
         try:
             fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError:
-            raise AuthorityBusy('task publication or reassignment is in progress') from None
+            raise AuthorityBusy(busy) from None
         yield
+
+
+def broker_instance(root):
+    return state_lock(root, 'broker-service.lock', 'broker service owns this state directory')
+
+
+def fence(root, task):
+    name = hashlib.sha256(task.encode()).hexdigest()
+    return state_lock(root, 'task-' + name + '.lock', 'task publication or reassignment is in progress')
 
 
 def token(db, claim):

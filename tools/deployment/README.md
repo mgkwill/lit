@@ -276,6 +276,33 @@ repository-read tokens remain valid until expiry/revocation. Renew 30-day pilot
 leaf certificates before expiry; update fingerprints and keep the CA signing key
 with the trusted operator, off broker and worker hosts.
 
+## Authority handoff
+
+Use one active broker for the sandbox. Stop it and verify its process has exited
+before moving authority. Keep the standby stopped until you have verified the
+source shutdown. A broker holds `broker-service.lock` for its lifetime. This
+excludes a second broker and checkpoint operations in the same state directory.
+Across hosts, the trusted operator verifies single-writer handoff.
+
+Run `task_broker_checkpoint.py --config CONFIG export CHECKPOINT.sqlite` as the
+trusted authority account against a stopped and repository-bound broker.
+The private SQLite snapshot contains assignment authority. The command reports
+its SHA-256. Transfer
+it privately and run
+`task_broker_checkpoint.py --config STANDBY_CONFIG restore CHECKPOINT.sqlite --sha256 SHA`.
+Restore requires an unused database path, verifies integrity and the repository
+and ruleset binding, and refuses to overwrite existing authority. Configure TLS
+and the scoped App key separately. Keep the CA signing key with the trusted
+operator. The standby needs a fresh authenticated policy observation before
+provider mutations.
+
+Fail back by stopping and verifying the standby, exporting its newer checkpoint,
+and restoring into an unused state directory on the primary. Select that
+directory in the primary config and keep it inside the unit's writable state
+path. Keep the prior directory as a private backup.
+Journaled uncertain writes stay fenced after a handoff and can be reconciled
+using the existing read-only proof route.
+
 For rollback, stop broker and observer, preserve the database/frozen refs, and keep
 worker installations suspended. Do not restore raw worker write access while
 claiming broker enforcement. The original Actions-only rule stays intact.

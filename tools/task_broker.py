@@ -18,7 +18,7 @@ from pathlib import Path
 import ssl
 import stat
 import sys
-from contextlib import nullcontext
+from contextlib import ExitStack, nullcontext
 from urllib.parse import urlsplit, parse_qs, urlencode
 import broker_admission as admission
 
@@ -591,6 +591,7 @@ def main():
     parser.add_argument('--test-read-token-file',type=Path)
     parser.add_argument('--cutover-state',action='store_true')
     args=parser.parse_args()
+    service_locks=ExitStack()
     try:
         config=json.loads(private_file(args.config).read_text())
         manifest=config['manifest']
@@ -621,6 +622,8 @@ def main():
                         or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.:\[\]-]{0,127}',principal['owner'])))):
                 raise ValueError('invalid principal')
         root=Path(config['state'])
+        root.mkdir(mode=0o700,parents=True,exist_ok=True)
+        service_locks.enter_context(ownership.broker_instance(root))
         if args.cutover_state:
             with queue.writer(root) as db:
                 saved=db.execute("SELECT value FROM metadata WHERE key='manifest'").fetchone()
@@ -687,6 +690,8 @@ def main():
     except (ValueError,OSError,KeyError,ownership.AuthorityBusy) as error:
         print(json.dumps({'event':'startup_failed','error':type(error).__name__}),file=sys.stderr)
         return 1
+    finally:
+        service_locks.close()
     return 0
 
 

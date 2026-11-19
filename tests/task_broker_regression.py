@@ -19,6 +19,7 @@ from github_queue_coordinator_regression import Forge
 
 CLI = Path(__file__).resolve().parents[1] / 'tools/task_broker.py'
 CLIENT = CLI.with_name('task_broker_client.py')
+CHECKPOINT = CLI.with_name('task_broker_checkpoint.py')
 
 
 class GitDataFixture:
@@ -142,6 +143,10 @@ class BrokerTests(unittest.TestCase):
     def stop(self):
         if self.process.poll() is None:
             self.process.terminate();self.process.wait(timeout=5)
+
+    def checkpoint(self, config, *args):
+        return subprocess.run([sys.executable,str(CHECKPOINT),'--config',str(config),*args],
+                              capture_output=True,timeout=8)
 
     def call(self, name, path, payload=None, expected=200):
         context=ssl.create_default_context(cafile=str(self.pki/'ca.crt'))
@@ -980,6 +985,64 @@ class BrokerTests(unittest.TestCase):
         self.call('worker','/assign',{},expected=403)
         self.call('worker','/status',expected=403)
         self.assertEqual(self.call('worker','/claims')['claims'],[])
+
+    def test_broker_lifetime_fence_refuses_a_second_process_and_export(self):
+        self.start()
+        result=subprocess.run([sys.executable,str(CLI),'--config',str(self.path),
+            '--test-api-url',self.forge.url,'--test-token-file',str(self.token),
+            '--test-read-token-file',str(self.reader)],capture_output=True,timeout=5)
+        self.assertEqual(result.returncode,1)
+        self.assertEqual(json.loads(result.stderr),{'event':'startup_failed','error':'AuthorityBusy'})
+        target=self.root/'checkpoint.sqlite'
+        attempted=self.checkpoint(self.path,'export',str(target))
+        self.assertEqual(attempted.returncode,1)
+        self.assertEqual(json.loads(attempted.stderr)['error'],'AuthorityBusy')
+        self.assertFalse(target.exists())
+        self.call('worker','/health')
+
+    def test_checkpoint_restores_claims_and_unknown_intent_without_replay(self):
+        self.start()
+        self.register(self.assign())
+        self.until(lambda s:s['proposals'][0]['phase']=='queued')
+        self.forge.drop_publication_reply=True
+        body=self.publication('checkpoint-unknown','second[bot]')
+        unknown=self.call('other','/propose',body,expected=409)
+        self.assertEqual(unknown['error'],'publication_outcome_unknown')
+        before=self.call('admin','/status')
+        claims=self.call('other','/claims')
+        writes=self.forge.publication_calls[:]
+        self.stop();(self.root/'ready.json').unlink()
+        (Path(self.config['state'])/'queue.sqlite').chmod(0o600)
+
+        archive=self.root/'checkpoint.sqlite'
+        exported=self.checkpoint(self.path,'export',str(archive))
+        self.assertEqual(exported.returncode,0,exported.stderr)
+        self.assertEqual(archive.stat().st_mode & 0o777,0o600)
+        digest=json.loads(exported.stdout)['sha256']
+        self.assertEqual(digest,hashlib.sha256(archive.read_bytes()).hexdigest())
+        self.assertEqual(self.checkpoint(self.path,'export',str(archive)).returncode,1)
+
+        self.config['state']=str(self.root/'standby')
+        different=dict(self.config,manifest=self.config['manifest']|{'freeze_ruleset':99})
+        candidate=self.root/'standby.json'
+        candidate.write_text(json.dumps(different));candidate.chmod(0o600)
+        target=Path(self.config['state'])/'queue.sqlite'
+        self.assertEqual(self.checkpoint(candidate,'restore',str(archive),'--sha256',digest).returncode,1)
+        self.assertFalse(target.exists())
+        candidate.write_text(json.dumps(self.config))
+        self.assertEqual(self.checkpoint(candidate,'restore',str(archive),'--sha256','0'*64).returncode,1)
+        self.assertFalse(target.exists())
+        restored=self.checkpoint(candidate,'restore',str(archive),'--sha256',digest)
+        self.assertEqual(restored.returncode,0,restored.stderr)
+        self.assertEqual(target.read_bytes(),archive.read_bytes())
+        self.assertEqual(self.checkpoint(candidate,'restore',str(archive),'--sha256',digest).returncode,1)
+        self.start()
+        self.assertEqual(self.call('other','/claims'),claims)
+        after=self.call('admin','/status')
+        self.assertEqual(after['claims'],before['claims'])
+        self.assertEqual(after['publications'],before['publications'])
+        self.assertEqual(self.call('other','/propose',body,expected=409),unknown)
+        self.assertEqual(self.forge.publication_calls,writes)
 
 
 if __name__ == '__main__':

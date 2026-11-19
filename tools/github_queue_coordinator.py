@@ -8,7 +8,6 @@ the operator's credential source are trusted. No tokens are written to state.
 import argparse
 from contextlib import contextmanager, ExitStack
 import task_ownership as ownership
-import fcntl
 import hashlib
 import http.client
 import json
@@ -509,13 +508,8 @@ def output(**record):
 @contextmanager
 def writer(root):
     root.mkdir(mode=0o700, parents=True, exist_ok=True)
-    with (root / "writer.lock").open("a") as lock:
-        try:
-            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        except BlockingIOError:
-            raise ownership.AuthorityBusy("another coordinator owns this state directory") from None
-        with database(root) as db:
-            yield db
+    with ownership.state_lock(root, "writer.lock", "another coordinator owns this state directory"), database(root) as db:
+        yield db
 
 
 @contextmanager
