@@ -62,18 +62,24 @@ identity and its journal; `systemctl is-active` alone is insufficient.
 ## Read-only policy observer
 
 GitHub omitted bypass actors from the broker App's ruleset responses even with
-Administration read. Never interpret omission as an empty list. The separate
-observer runs on the operator's Mac using the existing `gh` login. It only reads
-the configured main/freeze/namespace rules and the configured worker installation
-states, then sends filtered metadata over mTLS. It never reads, exports or sends
-the GitHub credential to the broker.
+Administration read. Never interpret omission as an empty list. The observer
+reads the configured main/freeze/namespace rules and the configured worker
+installation states, then sends filtered metadata over mTLS. GitHub credentials
+stay in the observer process and are never sent to the broker.
 
 Run `task_broker_policy_observer.py` with `--url`, `--ca`, `--cert`, `--key`,
-`--manifest` and the installed `--gh` path. The public observer manifest contains
+`--manifest` and either the `--gh` path or `--github-app PRIVATE_CONFIG`.
+The App configuration contains `repo`, `app_id`, `installation_id` and `key`.
+Use a dedicated App installed only on the sandbox with repository Administration
+write and organization Administration read. The former is required to see
+`bypass_actors`. Organization Administration read lets the observer verify
+installations across the organization. Run its read-only API client under a separate trusted
+service account. The public observer manifest contains
 `repo`, `main_ruleset`, `freeze_ruleset`, `publication_ruleset` and
 `worker_installations` from service configuration. `--once` checks one delivery;
-otherwise it refreshes every five seconds. Supervise it in the operator's launchd
-login session. The feed expires within 30 seconds, rejects stale/replayed records,
+otherwise it refreshes every five seconds. Give redundant observers their own
+mTLS identities and supervise them on separate hosts. The feed expires within
+30 seconds, rejects stale/replayed records,
 and must show every retired worker App still suspended. Visible policy fields
 are compared against fresh direct GitHub reads; authenticated observations fill
 only hidden bypass data. Freshness and revocation are checked at mutations.
@@ -405,6 +411,39 @@ A stopped standby may retain its private checkpoint and
 replicated-authority marker. The readiness check verifies the cache's repository
 binding and refuses SQLite sidecars that require offline recovery. On startup
 the standby restores the current authoritative snapshot from the replica.
+
+### Quorum authority
+
+Configure three etcd voters on separate hosts with durable storage and mutual
+TLS for peer and client traffic. Use an independent CA for the quorum. Give only
+trusted replica services access to its client keys and storage. The database
+contains checkpoints and short-lived GitHub writer tokens. Set etcd's maximum
+request size to at least 16 MiB and provision storage for checkpoint revisions.
+The application rejects uncompressed checkpoints above 128 MiB and compressed
+checkpoints above 8 MiB. Monitor storage quota and compact old MVCC revisions.
+
+In each replica service config, set `quorum` to `urls`, `ca`, `cert` and `key`.
+Each service uses the same pinned repository binding and a copy of the scoped
+writer App key, held by its private service account. Use `alternates` in broker
+and manager replica client settings to list the other replica HTTPS origins.
+For migration, stop the legacy broker and writer, export the stopped authority
+and bootstrap the quorum with the verified snapshot, a new epoch, and the
+current checkpoint revision. Start brokers using the quorum before admitting
+new work. Keep the legacy service stopped once the quorum begins accepting work.
+
+Every provider send reserves a fresh sandbox writer token in a quorum
+transaction conditioned on the current epoch and revision. Promotion revokes
+an outstanding token at GitHub and requires HTTP 401 before advancing the
+epoch. Returning requests use the token recorded for their original turn.
+Uncertain effects retain their durable broker intent for reconciliation.
+After 75 seconds a surviving gateway can also fence an abandoned turn for
+the same broker actor. Losing the majority refuses new work.
+
+Run a supervised watcher on a surviving management host. When the watcher
+shares a host with the standby, `standby.local` selects the local systemd host
+adapter instead of SSH. Its service account must be able to manage the pinned
+broker unit. Arm it and verify both broker endpoints see fresh policy
+observations before disconnecting the operator machine.
 
 For rollback, stop broker and observer, preserve the database/frozen refs, and keep
 worker installations suspended. Do not restore raw worker write access while

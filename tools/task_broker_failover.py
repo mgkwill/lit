@@ -211,6 +211,11 @@ class SystemdHost:
 class Remote:
     def __init__(self, settings):
         self.settings=settings
+        self.local=settings.get('local') is True
+        if self.local:
+            if 'host' in settings:
+                raise ValueError('local management cannot name an SSH host')
+            return
         alias=settings['host']
         if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.@-]+',alias):
             raise ValueError('invalid management host')
@@ -218,9 +223,9 @@ class Remote:
 
     def __call__(self, action, *args, data=None):
         s=self.settings
-        remote=['sudo','-n','python3','-B',s['adapter'],'host','--config',s['config'],
-                '--unit',s['unit'],action,*args]
-        process=subprocess.run(self.ssh+[shlex.join(remote)],input=data,capture_output=True,timeout=90)
+        host_command=['python3','-B',s['adapter'],'host','--config',s['config'],'--unit',s['unit'],action,*args]
+        command=host_command if self.local else self.ssh+[shlex.join(['sudo','-n',*host_command])]
+        process=subprocess.run(command,input=data,capture_output=True,timeout=90)
         if process.returncode:
             diagnostic='management connection or host operation failed'
             try:

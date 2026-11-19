@@ -9,12 +9,13 @@ from pathlib import Path
 import re
 import sqlite3
 import ssl
+import socket
 import stat
 import sys
 import tempfile
 import threading
 import time
-from urllib.error import HTTPError
+from urllib.error import HTTPError, URLError
 from urllib.parse import urlsplit
 from urllib.request import HTTPSHandler, Request, build_opener
 
@@ -129,8 +130,9 @@ class Authority:
                 return self.provider(json.loads(data))
             raise Rejected('unknown replica operation')
 
-    def provider(self, request):
-        github = self.github()
+    def provider(self, request, github=None):
+        if github is None:
+            github = self.github()
         if request == {'operation':'installation'}:
             return github.api('installation/repositories', writer=True)
         if request.get('operation') == 'queue':
@@ -155,10 +157,16 @@ class Authority:
 class Client:
     def __init__(self, config):
         self.url = config['url']
-        origin = urlsplit(self.url)
-        if (origin.scheme != 'https' or not origin.hostname or origin.username is not None
-                or origin.path or origin.query or origin.fragment):
-            raise ValueError('replica requires a pinned HTTPS origin')
+        extra = config.get('alternates', [])
+        if not isinstance(extra,list) or len(extra)>4 or not all(isinstance(url,str) for url in extra):
+            raise ValueError('invalid replica alternate origins')
+        self.urls = list(dict.fromkeys([self.url,*extra]))
+        self.active_url = self.url
+        for url in self.urls:
+            origin = urlsplit(url)
+            if (origin.scheme != 'https' or not origin.hostname or origin.username is not None
+                    or origin.path or origin.query or origin.fragment):
+                raise ValueError('replica requires a pinned HTTPS origin')
         ctx = ssl.create_default_context(cafile=config['ca'])
         ctx.load_cert_chain(config['cert'],config['key'])
         self.opener = build_opener(queue.NoRedirect(),HTTPSHandler(context=ctx))
@@ -169,17 +177,31 @@ class Client:
         headers = {}
         if epoch is not None:
             headers = {'X-Lit-Epoch':str(epoch),'X-Lit-Revision':str(revision)}
-        try:
-            with self.opener.open(Request(self.url+route,data,headers),timeout=45) as response:
-                if binary:
-                    return response.read(MAX_SNAPSHOT+1)
-                return json.load(response)
-        except HTTPError as error:
-            if route == '/provider' and error.headers.get('X-Lit-Provider') == 'github':
-                raise queue.ApiError(error.code) from None
-            raise ReplicaUnavailable('independent authority unavailable or fenced') from None
-        except (OSError,ValueError):
-            raise ReplicaUnavailable('independent authority response unavailable') from None
+        retryable = route in ('/head','/snapshot','/reader','/broker-reader','/checkpoint','/promote')
+        for url in dict.fromkeys([self.active_url,*self.urls]):
+            timeout = 45 if len(self.urls)==1 or route in ('/provider','/promote') else 3
+            try:
+                with self.opener.open(Request(url+route,data,headers),timeout=timeout) as response:
+                    result = response.read(MAX_SNAPSHOT+1) if binary else json.load(response)
+            except HTTPError as error:
+                with error:
+                    if route == '/provider' and error.headers.get('X-Lit-Provider') == 'github':
+                        raise queue.ApiError(error.code) from None
+                    if retryable and error.code==503:
+                        continue
+                raise ReplicaUnavailable('independent authority unavailable or fenced') from None
+            except OSError as error:
+                cause = error.reason if isinstance(error,URLError) else error
+                if isinstance(cause,ssl.SSLCertVerificationError):
+                    raise ReplicaUnavailable('authority TLS verification failed') from None
+                if retryable or isinstance(cause,(ConnectionRefusedError,socket.gaierror)):
+                    continue
+                raise ReplicaUnavailable('independent authority response unavailable') from None
+            except ValueError:
+                raise ReplicaUnavailable('invalid authority response') from None
+            self.active_url = url
+            return result
+        raise ReplicaUnavailable('independent authority response unavailable')
 
 
 class BrokerReplica:
@@ -311,11 +333,15 @@ def main():
     mode = root.lstat().st_mode
     if not stat.S_ISDIR(mode) or mode & 0o077:
         raise ValueError('replica state requires a private directory')
-    if (len(config['actors'])!=3 or set(config['actors'].values())!={'manager','primary','standby'}
+    roles = list(config['actors'].values())
+    if (set(roles)!={'manager','primary','standby'} or roles.count('primary')!=1 or roles.count('standby')!=1
             or not all(re.fullmatch(r'[0-9a-f]{64}',fingerprint) for fingerprint in config['actors'])):
         raise ValueError('replica needs distinct manager, primary and standby identities')
     repo = config['manifest']['repo']
+    quorum = config.get('quorum')
     if args.test_api_url:
+        if quorum:
+            raise ValueError('live quorum requires scoped GitHub credentials')
         if not queue.GitHub(args.test_api_url,token='test',observer_token='').local:
             raise ValueError('test provider requires loopback')
         def github():
@@ -331,8 +357,8 @@ def main():
             permissions=WORKER_READ).credentials
         broker_reader = InstallationToken(config['broker_app_id'],config['installation_id'],key,repo,
             permissions=BROKER_READ).credentials
-        def github():
-            return queue.GitHub('https://api.github.com',token=writer(),observer_token='')
+        def github(token=None):
+            return queue.GitHub('https://api.github.com',token=token if token is not None else writer(),observer_token='')
     ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
     ctx.minimum_version = ssl.TLSVersion.TLSv1_2
     ctx.verify_mode = ssl.CERT_REQUIRED
@@ -341,7 +367,12 @@ def main():
     with state_lock(root,'replica-service.lock','replica already running'), Server((config['listen'],config['port']),Handler) as server:
         server.tls = ctx
         server.slots = threading.BoundedSemaphore(16)
-        server.authority = Authority(root,config['manifest'],github,reader,broker_reader)
+        if quorum:
+            from task_broker_quorum import EtcdStore, QuorumAuthority
+            server.authority = QuorumAuthority(root,config['manifest'],EtcdStore(quorum,repo),
+                                               lambda:writer.mint()[0],reader,broker_reader,github)
+        else:
+            server.authority = Authority(root,config['manifest'],github,reader,broker_reader)
         server.actors = config['actors']
         print(json.dumps({'port':server.server_port}),flush=True)
         server.serve_forever()

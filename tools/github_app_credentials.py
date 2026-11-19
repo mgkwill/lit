@@ -38,13 +38,13 @@ class InstallationToken:
             if time.monotonic()<self.retry_after:
                 raise RuntimeError('broker installation token refresh unavailable')
             try:
-                self.current,self.expires=self._refresh()
+                self.current,self.expires=self.mint()
             except Exception:
                 self.retry_after=time.monotonic()+2
                 raise RuntimeError('broker installation token refresh unavailable') from None
             return self.current,self.expires
 
-    def _refresh(self):
+    def mint(self):
         def b64(value):return base64.urlsafe_b64encode(value).rstrip(b'=')
         now=int(time.time())
         message=b64(b'{"alg":"RS256","typ":"JWT"}')+b'.'+b64(json.dumps({
