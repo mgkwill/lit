@@ -32,6 +32,9 @@ class Forge:
         self.main = "c" * 40
         self.mutations = []
         self.freeze = True
+        self.extra_frozen_refs = []
+        self.snapshot_numbers = []
+        self.track_latest_publication = True
         self.removal_event = None
         self.main_failures = 0
         self.freeze_reads = 0
@@ -120,7 +123,7 @@ class Forge:
                         forge.freeze = False
                     self.respond({"target": "branch", "enforcement": "active" if forge.freeze else "disabled",
                                   "bypass_actors": [], "conditions": {"ref_name": {
-                                      "include": ["refs/heads/" + forge.proposal["branch"]], "exclude": []}},
+                                      "include": ["refs/heads/" + forge.proposal["branch"]] + forge.extra_frozen_refs, "exclude": []}},
                                   "rules": [{"type": "update"}, {"type": "deletion"}]})
                 elif "/check-runs?" in self.path:
                     self.respond({"total_count": 1, "check_runs": [{"name": "Agent workflow candidate",
@@ -160,7 +163,8 @@ class Forge:
                     elif self.path.endswith('/pulls'):
                         forge.publication_titles.append(request['title'])
                         number=forge.next_publication_number;forge.next_publication_number+=1
-                        forge.proposal.update(number=number,head='e'*40,branch=request['head'],author='broker[bot]')
+                        if forge.track_latest_publication:
+                            forge.proposal.update(number=number,head='e'*40,branch=request['head'],author='broker[bot]')
                         self.respond({'number':number,'head':{'sha':'e'*40,'ref':request['head']},'user':{'login':'broker[bot]'}})
                     else:self.respond({'message':'unexpected publication route'},404)
                     return
@@ -168,6 +172,7 @@ class Forge:
                 forge.calls.append(operation)
                 if operation == "QueueSnapshot":
                     forge.snapshots += 1
+                    forge.snapshot_numbers.append(request["variables"]["number"])
                     if forge.replace_head_on_second_read and forge.snapshots == 2:
                         forge.proposal["head"] = "b" * 40
                     p = forge.proposal

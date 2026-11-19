@@ -74,6 +74,15 @@ def active(db, principal, claim_id, capability=None):
     return row
 
 
+def poll_delay(db, *, publication):
+    """Pace read traffic during a burst while keeping small queues responsive."""
+    if publication:
+        backlog = db.execute("SELECT count(*) FROM publication_jobs WHERE phase IN ('queued','running')").fetchone()[0]
+        return min(12, max(1, (backlog + 3) // 4))
+    backlog = db.execute("SELECT count(*) FROM registration_jobs WHERE phase='queued'").fetchone()[0]
+    return min(6, max(1, (backlog + 7) // 8))
+
+
 def status(db,principal,claim_id):
     active(db,principal,claim_id)
     job=db.execute('SELECT * FROM publication_jobs WHERE claim=?',(claim_id,)).fetchone()
@@ -85,7 +94,7 @@ def status(db,principal,claim_id):
     if job['phase'] in ('unknown','rejected'):
         raise Rejected(job['error'] or 'publication_outcome_unknown')
     return 202,{'operation':claim_id,'state':job['phase'],'retryable':False,
-        'poll_after_seconds':max(1,min(5,math.ceil(job['next_at']-time.time()))),
+        'poll_after_seconds':max(poll_delay(db, publication=True), min(5, math.ceil(job['next_at']-time.time()))),
         'status_path':'/publication?claim='+claim_id,
         'blocked_reason':job['error']}
 
@@ -191,7 +200,7 @@ def registration_status(db, principal, claim_id):
     if job['phase'] == 'rejected':
         raise Rejected(job['error'])
     return 202, {'operation': claim_id, 'state': 'queued', 'retryable': False,
-                 'poll_after_seconds': 1, 'status_path': '/registration?claim='+claim_id}
+                 'poll_after_seconds': poll_delay(db, publication=False), 'status_path': '/registration?claim='+claim_id}
 
 
 def verify_registration(db, config, principal, spec, capability=None):

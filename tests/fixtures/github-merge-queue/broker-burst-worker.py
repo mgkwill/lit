@@ -55,8 +55,8 @@ def run(operation, root, url, action):
                     route = body['status_path'].lstrip('/')
                     assert route.startswith(('publication?claim=', 'registration?claim=')) and '/' not in route
                     payload = None
-                    if time.monotonic() >= deadline: raise TimeoutError('publication pending')
-                    time.sleep(max(.1,min(5,body.get('poll_after_seconds',1))))
+                    if time.monotonic() >= deadline: raise TimeoutError('broker operation pending')
+                    time.sleep(max(.1,min(30,body.get('poll_after_seconds',1))))
                     continue
                 return code, body
             except HTTPError as error:
@@ -166,8 +166,8 @@ def main():
     args = parser.parse_args()
     assert socket.gethostname().split('.')[0] == args.host
     operations = json.load(sys.stdin)
-    assert 0 < len(operations) <= 30
-    assert 1 <= args.concurrency <= 30
+    assert 0 < len(operations) <= 40
+    assert 1 <= args.concurrency <= 40
     with ThreadPoolExecutor(max_workers=args.concurrency) as pool:
         futures = [pool.submit(run, op, args.profiles, args.url, args.action) for op in operations]
         for future in futures:

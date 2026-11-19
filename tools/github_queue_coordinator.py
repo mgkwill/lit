@@ -362,20 +362,33 @@ def tick(db, github, manifest, args):
     if limit is not None:
         # Broker cycles yield between small batches so remote observations cannot
         # monopolize publication. Standalone CLI ticks retain their full sweep.
-        eligible=[]
+        retiring, ordinary = [], []
         for row in ordered:
-            spec=json.loads(row['spec'])
-            revoked=('claim' in spec and ownership.binding(db,spec)['phase']=='revoked')
-            if row['phase'] not in TERMINAL or revoked:eligible.append(row)
-        cursor=getattr(args,'proposal_cursor',0)
-        ordered=([r for r in eligible if r['number']>cursor]+[r for r in eligible if r['number']<=cursor])[:limit]
+            spec = json.loads(row['spec'])
+            if 'claim' in spec and ownership.binding(db, spec)['phase'] == 'revoked':
+                retiring.append(row)
+            elif row['phase'] not in TERMINAL:
+                ordinary.append(row)
+
+        def rotate(rows, cursor):
+            return [r for r in rows if r['number'] > cursor] + [r for r in rows if r['number'] <= cursor]
+
+        retire_limit = limit if not ordinary else max(1, limit - 1)
+        priority = rotate(retiring, getattr(args, 'retirement_cursor', 0))[:retire_limit]
+        remaining = rotate(ordinary, getattr(args, 'proposal_cursor', 0))[:limit-len(priority)]
+        ordered = priority + remaining
+        priority_numbers = {row['number'] for row in priority}
     for row in ordered:
         spec = json.loads(row['spec'])
+        if limit is not None:
+            # Advance even on a transient failure so one stuck task cannot
+            # monopolize its lane. Each lane retains its own rotation.
+            cursor_name = 'retirement_cursor' if row['number'] in priority_numbers else 'proposal_cursor'
+            setattr(args, cursor_name, row['number'])
         with ExitStack() as locks:
             if 'task' in spec:
                 locks.enter_context(ownership.fence(args.state, spec['task']))
             proposal_tick(db, github, manifest, args, specs, row)
-        if limit is not None:args.proposal_cursor=row['number']
     reconcile_integration(db, github, manifest, args)
 
 

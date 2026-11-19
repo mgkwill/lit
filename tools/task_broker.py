@@ -338,19 +338,25 @@ def coordinate(server, token_source, api_url):
             for _ in range(8):
                 if not admission.run_registration(server):
                     break
-            admission.run_one(server,propose)
-            if time.monotonic()<next_tick:
-                server.stopping.wait(min(.1,config.get('poll_seconds',5)))
-                continue
-            with queue.writer(root) as db:
-                saved=db.execute("SELECT value FROM metadata WHERE key='manifest'").fetchone()
-                if saved:
-                    manifest=json.loads(saved[0])
-                    github=PolicyGitHub(server,api_url,token_source())
-                    github.authenticate_writer(manifest['repo'],force=True)
-                    queue.tick(db,github,manifest,args)
-            if saved:server.last_cycle=time.time();server.last_error=None
-            next_tick=time.monotonic()+config.get('poll_seconds',5)
+            try:
+                if time.monotonic() >= next_tick:
+                    with queue.writer(root) as db:
+                        saved = db.execute("SELECT value FROM metadata WHERE key='manifest'").fetchone()
+                        if saved:
+                            manifest = json.loads(saved[0])
+                            github = PolicyGitHub(server, api_url, token_source())
+                            github.authenticate_writer(manifest['repo'], force=True)
+                            queue.tick(db, github, manifest, args)
+                    if saved:
+                        server.last_cycle = time.time()
+                        server.last_error = None
+                    next_tick = time.monotonic() + config.get('poll_seconds', 5)
+            finally:
+                # Publication checks its own policy. A failed reconciliation
+                # for one proposal must not suppress every publication turn.
+                if not server.stopping.is_set():
+                    admission.run_one(server, propose)
+            server.stopping.wait(min(.1, config.get('poll_seconds', 5)))
         except Exception as error:
             # No provider errors, URLs, payloads, credentials or private paths in logs/API.
             server.last_error=type(error).__name__

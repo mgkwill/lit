@@ -223,3 +223,12 @@ claiming broker enforcement. The original Actions-only rule stays intact.
 Drain or reconcile all admitted jobs before rolling back to a pre-v2 broker:
 older binaries do not process the admission table. Preserve that table and its
 unknown outcomes with the rest of the authority database.
+
+During bursts, clients should honor `Retry-After` on pending operations. The
+broker increases the interval with backlog, up to 12 seconds for publication
+and six for registration. The coordinator gives revoked attempts up to three
+of its four reconciliation slots when other proposals are waiting. Each group
+rotates independently, and a due reconciliation turn runs before the next
+publication. An in-flight provider call or a native merge that already finished
+can still affect the handoff. The successor grant continues to require observed
+retirement.

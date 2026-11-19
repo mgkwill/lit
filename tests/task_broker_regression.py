@@ -358,6 +358,28 @@ class BrokerTests(unittest.TestCase):
         rejected = self.call('other', '/register', collision, expected=409)
         self.assertEqual(rejected['error'], 'registration_rejected')
 
+    def test_revoked_queue_entry_gets_a_turn_ahead_of_new_registrations(self):
+        self.start()
+        claim = self.assign()
+        self.register(claim)
+        self.until(lambda s: s['proposals'][0]['phase'] == 'queued')
+        jobs = [self.registration(f'ordinary-{n}', n) for n in range(101, 104)]
+        for n in range(101, 104):
+            self.forge.extra_frozen_refs.append(f'refs/heads/agents/test/{n}')
+        self.forge.track_latest_publication = False
+        self.forge.block_publication = True
+        self.call('worker', '/propose', self.publication('blocking'), expected=202)
+        self.assertTrue(self.forge.publication_started.wait(3))
+        for job in jobs:
+            self.call('worker', '/register', job, expected=202)
+        self.assign(1, owner='second[bot]')
+        self.forge.snapshot_numbers.clear()
+        self.forge.publication_release.set()
+        self.until(lambda s: s['proposals'][0]['phase'] == 'ownership_retired')
+        self.assertEqual(self.forge.snapshot_numbers[0], 7)
+        self.assertIn(101, self.forge.snapshot_numbers)
+        self.assertEqual(self.forge.mutations, ['EnqueueProposal', 'WithdrawProposal', 'CloseProposal'])
+
     def test_registration_burst_is_accepted_without_writer_lock_retries(self):
         self.config['admission_per_owner'] = 30
         self.forge.block_publication = True
@@ -370,6 +392,7 @@ class BrokerTests(unittest.TestCase):
             accepted = list(pool.map(lambda body: self.call('worker', '/register', body, expected=(202, 503)), jobs))
         self.assertTrue(all(r.get('state') == 'queued' for r in accepted), accepted)
         self.assertEqual(len({r['operation'] for r in accepted}), 30)
+        self.assertGreater(max(r['poll_after_seconds'] for r in accepted), 1)
         self.forge.publication_release.set()
         for result in accepted:
             self.call('worker', result['status_path'])
@@ -507,6 +530,7 @@ class BrokerTests(unittest.TestCase):
             return who,self.call(who,'/propose',body,expected=202)
         with ThreadPoolExecutor(max_workers=12) as pool:accepted=list(pool.map(submit,bodies[1:]))
         self.assertEqual(len({a['operation'] for _,a in accepted}|{first['operation']}),30)
+        self.assertGreater(max(a['poll_after_seconds'] for _, a in accepted), 1)
         self.forge.publication_release.set()
         for who,operation in accepted:self.call(who,operation['status_path'])
         self.assertEqual(len(self.forge.publication_titles),30)
