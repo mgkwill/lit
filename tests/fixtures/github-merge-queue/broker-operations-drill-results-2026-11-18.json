@@ -287,5 +287,27 @@
     "operator-deploy.py": "2f66b01770cbb0927fc876f2b18cd9d8988b65d34588acde9eeab678727f16f9",
     "operator-run.py": "bd3e4cc250846a77eaa77483c473029d77f19bb6ebb58b9d8c15c7199aac2665",
     "operator-verify.py": "c0f9a6c233f23f8796e60c2dcf1eeec22268ddeae34c0b63f2ebbdfa055bdfd6"
+  },
+  "checkpoint_smoke": {
+    "checkpoint": {
+      "operation": "export",
+      "sha256": "2a2e79881691607f7c2ebc3383882125abd28055cf55c401907e80ce79958598",
+      "repository": "100latent/lit-merge-queue-sandbox"
+    },
+    "copied_tables_match": true,
+    "restored_bytes_match": true,
+    "row_counts": {
+      "claims": 226,
+      "proposals": 222,
+      "actions": 271,
+      "events": 814,
+      "publication_jobs": 181,
+      "registration_jobs": 110
+    },
+    "source_commit": "86f7a4f3205b1ab3fe6d2efe8cf5ea8506f73dc0",
+    "host": "host-a",
+    "source_kind": "private pre-failback backup",
+    "unchanged_primary_pid": true,
+    "protected_main_rule_unchanged": true
   }
 }

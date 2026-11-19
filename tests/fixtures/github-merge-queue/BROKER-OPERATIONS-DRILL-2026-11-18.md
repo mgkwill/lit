@@ -52,3 +52,12 @@ remained a black box.
 
 [Structured results](broker-operations-drill-results-2026-11-18.json) contain timestamps and fingerprints. Raw
 receipts and operator scripts are retained at `<private-path>`.
+
+## Follow-up tooling verification
+
+The guarded checkpoint tool exported and restored a private copy of the actual
+pre-failback backup on host-a. The restored SQLite file matched the checkpoint
+bytes, and every row of the backup matched after restore. The live broker PID
+and Actions-only rule remained stable during the smoke test. The checkpoint
+and client renewal tools also passed the 104 regressions and 100-identity
+provider-failure stress test on macOS, host-a, host-e, and host-f.
