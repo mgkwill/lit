@@ -1,10 +1,17 @@
 {
   "baseline_source": "98c59bb2dbebcf7f575993a4ad89e1300a578c83",
   "live_service_source": "7a0d7bc651d4c55dd7af809bb11f1381f59adcea",
-  "live_adapter_and_client": {
+  "first_updated_adapter_and_client": {
     "commit": "30a3b00c5e1255dcfd4182b79a1048d745d6250b",
     "files": {
       "task_broker_failover.py": "f6c8fbb3d3e4be57485f1fb340fa168daf563c33be17b12904ea2e71b299f14d",
+      "task_broker_client.py": "bb23a82fe480b4720f4debcb2de434681317ed7ac40de88861f046addd28ddf0"
+    }
+  },
+  "live_adapter_and_client": {
+    "commit": "4dbf53c2e5f4dc4e4d433fc904501bad5edcc54d",
+    "files": {
+      "task_broker_failover.py": "50e748327a8ce646b96a709fd2299daec5bd9b3ff29a29bbc6a8454d164dcb05",
       "task_broker_client.py": "bb23a82fe480b4720f4debcb2de434681317ed7ac40de88861f046addd28ddf0"
     }
   },
@@ -57,6 +64,42 @@
     "durable_authority_identical": true,
     "claims_unchanged": true,
     "controller_returned_to_fresh_cycle": true
+  },
+  "watcher_restart": {
+    "watcher_restarted_during_network_outage": true,
+    "prior_authenticated_baseline_reused": true,
+    "seconds": 9.48,
+    "source_broker_kept_running": true,
+    "watcher_primary_network_denials": 2,
+    "source_ssh_not_configured": true,
+    "old_broker_http": 503,
+    "cache_reused": true,
+    "from_epoch": 5,
+    "promoted_epoch": 6,
+    "failback_epoch": 7,
+    "standby_cli_recovered_existing_publication": true,
+    "verified_integration_preserved": true
+  },
+  "watcher_supervision": {
+    "supervisor": "macOS launchd",
+    "watcher_source": "4dbf53c2e5f4dc4e4d433fc904501bad5edcc54d",
+    "module_sha256": {
+      "task_broker_failover.py": "50e748327a8ce646b96a709fd2299daec5bd9b3ff29a29bbc6a8454d164dcb05",
+      "github_queue_coordinator.py": "30bbde5b7e00e3c0a3df1594f83e24c28dc6d0671267764c63a3081a7704e1c7",
+      "task_broker.py": "0412ac981e6bc38a5c30c9532473b1d80c8254b2f14984cd3f8dfe0edeb198c0",
+      "task_broker_checkpoint.py": "1b8953087bb7cd0d0fb54fb0a3e5bc7d88703fa26bf9d3f7d15b89e8c8bb13b4",
+      "task_broker_replica.py": "b0954924039b562e9ccf53d19a0a2ff2c61b61b15a32b976d9b01be10ee1e809",
+      "task_ownership.py": "14d3cbae51c38cd08efabe5788aa3e457be53ca8f9fdf30e3a74d00959abac07",
+      "github_app_credentials.py": "157b156773ee6b0a351da38d4ea8eb18834e95948142bf34d4ce1d9cabfe6a69",
+      "broker_admission.py": "17fd8220b5f7c32d5137189c7ad9598bc2a61bb0a967ff4aec15480a3cc93a9f"
+    },
+    "armed_epoch": 7,
+    "automatic_restart_after_termination": true,
+    "private_epoch_baseline_reused": true,
+    "initial_authority_preserved": true,
+    "failure_threshold": 3,
+    "poll_seconds": 5,
+    "source_ssh_configured": false
   },
   "github": {
     "number": 326,
@@ -118,27 +161,27 @@
   "native_regressions": {
     "local": {
       "architecture": "arm64",
-      "regressions": 121,
+      "regressions": 122,
       "stress_owners": 100,
-      "log_sha256": "822d1dda11c74264d20950d8fafd24f28241c00fd549cc3c9d3d52f9fb0e7c72"
+      "log_sha256": "7de803489da7998c9d4141c0bdd25262885466afe0b1c55942308b75a89cb00a"
     },
     "host-a": {
       "architecture": "x86_64",
-      "regressions": 121,
+      "regressions": 122,
       "stress_owners": 100,
-      "log_sha256": "8e4c310b3a2f297aa5d3b0c71a9264d8ede4a29f57f6eb4e74b7a03b580ada9d"
+      "log_sha256": "ec67721acbc59289bc82efc03d454b3fb180e981af7060ecf6b8f7214ed53969"
     },
     "host-e": {
       "architecture": "aarch64",
-      "regressions": 121,
+      "regressions": 122,
       "stress_owners": 100,
-      "log_sha256": "7742cbf2cd31d3b8dae200cad3f05af199c6b89b0597f7ea91e2ed49a5ffbd37"
+      "log_sha256": "f1d18f63708dd59b0bb2ac96e97e1871a5ac757ced8ce7e83815c37a8faf6774"
     },
     "host-f": {
       "architecture": "aarch64",
-      "regressions": 121,
+      "regressions": 122,
       "stress_owners": 100,
-      "log_sha256": "4ffa0cd458c8f2834995c3c79ac962a621b54d1dcf69fbc9cb46ed2e807d297c"
+      "log_sha256": "015569be5d0b6fcb127f3463822dc6f666e69c2812b606b18f39cd38c36491ff"
     }
   },
   "timeline": [
@@ -205,6 +248,18 @@
     {
       "event": "live_replica_outage_failed_closed_and_same_authority_recovered",
       "utc": "2026-11-19T15:33:57.819445+00:00"
+    },
+    {
+      "event": "restarted_watcher_promoted_with_source_already_unreachable",
+      "utc": "2026-11-19T15:37:03.501236+00:00"
+    },
+    {
+      "event": "replicated_authority_returned_to_hosta",
+      "utc": "2026-11-19T15:37:09.823948+00:00"
+    },
+    {
+      "event": "live_watch_supervisor_armed_and_automatically_restarted",
+      "utc": "2026-11-19T15:39:42.221032+00:00"
     }
   ]
 }

@@ -17,8 +17,8 @@ stayed powered on during the exercise.
 host-d published and registered [PR #326](https://github.com/100latent/lit-merge-queue-sandbox/pull/326).
 host-a recovered that receipt after failback. GitHub Actions passed the
 [pull request check](https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44554064268) on the proposal head
-\`caaf9548f5ae814abe26c5ecef8a28ca17dff1d4\` and the [merge-group check](https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44554920786)
-on the exact merged Git commit \`03d9140f8a706e3dfc2648c43ed32a9bc5c8b249\`.
+`caaf9548f5ae814abe26c5ecef8a28ca17dff1d4` and the [merge-group check](https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44554920786)
+on the exact merged Git commit `03d9140f8a706e3dfc2648c43ed32a9bc5c8b249`.
 A Git fetch verified both merge parents and the
 published file's bytes. The Actions-only main rule and broker namespace rule
 matched their original projections. The freeze rule gained the proposal's exact
@@ -33,11 +33,21 @@ host-c service outage refused a new assignment with HTTP 503. On restart,
 the replica returned the identical authority and the primary resumed its
 controller cycle.
 
+In a third rehearsal, the watcher restarted after losing its connection to
+host-a. It recovered the authenticated baseline from its private arm record
+and promoted host-d in 9.48 seconds. The broker
+client retrieved the existing publication through the standby, and the
+verified integration receipt survived the subsequent failback. Launchd now
+supervises the watcher on the operator's Mac. The watcher reused its private
+baseline after a termination and automatic restart, with the live authority
+and policy verified before and after the restart. The watcher and the
+policy observer both require the management Mac to be available.
+
 Two repository-scoped writer canaries returned 403 during App suspension and
 200 after resumption. Each was explicitly revoked and then returned 401.
 A separate token expiry control was scheduled for 2026-11-19T16:25:15.050872+00:00.
 
-All 121 Python regressions and the 100-owner provider stress test passed on
+All 122 Python regressions and the 100-owner provider stress test passed on
 macOS, host-a, host-e and host-f. The macOS Rust suite, native and Git remote probes,
 and strict sandbox checks also passed. All implementation and regression source
 came from the MIT-derived branch. The v1.8.0 release remained a black box.
