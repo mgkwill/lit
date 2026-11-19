@@ -1,0 +1,210 @@
+{
+  "baseline_source": "98c59bb2dbebcf7f575993a4ad89e1300a578c83",
+  "live_service_source": "7a0d7bc651d4c55dd7af809bb11f1381f59adcea",
+  "live_adapter_and_client": {
+    "commit": "30a3b00c5e1255dcfd4182b79a1048d745d6250b",
+    "files": {
+      "task_broker_failover.py": "f6c8fbb3d3e4be57485f1fb340fa168daf563c33be17b12904ea2e71b299f14d",
+      "task_broker_client.py": "bb23a82fe480b4720f4debcb2de434681317ed7ac40de88861f046addd28ddf0"
+    }
+  },
+  "live_service_module_sha256": {
+    "broker_admission.py": "17fd8220b5f7c32d5137189c7ad9598bc2a61bb0a967ff4aec15480a3cc93a9f",
+    "github_app_credentials.py": "157b156773ee6b0a351da38d4ea8eb18834e95948142bf34d4ce1d9cabfe6a69",
+    "github_queue_coordinator.py": "30bbde5b7e00e3c0a3df1594f83e24c28dc6d0671267764c63a3081a7704e1c7",
+    "task_broker.py": "0412ac981e6bc38a5c30c9532473b1d80c8254b2f14984cd3f8dfe0edeb198c0",
+    "task_broker_checkpoint.py": "1b8953087bb7cd0d0fb54fb0a3e5bc7d88703fa26bf9d3f7d15b89e8c8bb13b4",
+    "task_broker_client.py": "360e1d3a6d25417196db1846ff29b2d9db24cc24a54a71419abcf5b8d0efaa01",
+    "task_broker_failover.py": "92c2c6ece60e5053a860ced1146c7f9818b114e2411d6d2ead25212a7bf71e96",
+    "task_broker_freeze_proposal.py": "1c68554b64767720e5623233d28e01214c13801f3f6e8448705755b334679abc",
+    "task_broker_policy_observer.py": "e8f82de1934e8666624ee391baf6d1bca5a40b920f2bcaa38412638b0d810df5",
+    "task_broker_renew_client.py": "ee35446d88b84cdcb726a69039641461a0817201b39d505106fa768e0e2a0cda",
+    "task_broker_replica.py": "b0954924039b562e9ccf53d19a0a2ff2c61b61b15a32b976d9b01be10ee1e809",
+    "task_ownership.py": "14d3cbae51c38cd08efabe5788aa3e457be53ca8f9fdf30e3a74d00959abac07"
+  },
+  "authority_seed_sha256": "f0ae26f3fc05dc81b64fd01e650c5a7fcf1f898c1ca000a60e0b9fcbeada8edc",
+  "sandbox": "100latent/lit-merge-queue-sandbox",
+  "baseline_authority_preserved": true,
+  "writer_key_runtime_host": "host-c",
+  "writer_removed_from_old_service": true,
+  "first_takeover": {
+    "seconds": 21.7,
+    "host": "host-d",
+    "witness": "host-c",
+    "source": "host-a",
+    "source_broker_paused": true,
+    "source_ssh_not_configured_in_watcher": true,
+    "source_actor_denied_both_epochs": true,
+    "source_mtls_status_fenced_after_resume": true,
+    "claims_and_publications_match": true,
+    "new_epoch": 2
+  },
+  "repeat_takeover": {
+    "seconds": 8.29,
+    "source_broker_kept_running": true,
+    "watcher_primary_network_denials": 2,
+    "source_ssh_not_configured": true,
+    "old_broker_http": 503,
+    "cache_reused": true,
+    "from_epoch": 3,
+    "promoted_epoch": 4,
+    "failback_epoch": 5,
+    "standby_cli_recovered_existing_publication": true,
+    "verified_integration_preserved": true
+  },
+  "witness_restart": {
+    "outage_assignment_http": 503,
+    "durable_authority_identical": true,
+    "claims_unchanged": true,
+    "controller_returned_to_fresh_cycle": true
+  },
+  "github": {
+    "number": 326,
+    "merge_commit": "03d9140f8a706e3dfc2648c43ed32a9bc5c8b249",
+    "first_parent": "320b776f58c9b06ebc6e97deaf46eb4c4c292bd4",
+    "merge_event_id": "ME_lADOVxXMNs8AAAABgwG6rc8AAAAIiZC_bg",
+    "preflight": {
+      "event": "pull_request",
+      "head_sha": "caaf9548f5ae814abe26c5ecef8a28ca17dff1d4",
+      "run_id": 44554064268,
+      "run_attempt": 1,
+      "workflow_id": 421025082,
+      "workflow_path": ".github/workflows/agent-merge-gate.yml",
+      "check_run_id": 135665232909,
+      "check_suite_id": 120603257926,
+      "app_id": 15368,
+      "status": "completed",
+      "conclusion": "success",
+      "run_url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44554064268"
+    },
+    "merge_group": {
+      "event": "merge_group",
+      "head_sha": "03d9140f8a706e3dfc2648c43ed32a9bc5c8b249",
+      "run_id": 44554920786,
+      "run_attempt": 1,
+      "workflow_id": 421025082,
+      "workflow_path": ".github/workflows/agent-merge-gate.yml",
+      "check_run_id": 135668280994,
+      "check_suite_id": 120605603202,
+      "app_id": 15368,
+      "status": "completed",
+      "conclusion": "success",
+      "run_url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44554920786"
+    },
+    "manual_statuses": 0,
+    "actions_only": true,
+    "queue_empty": true
+  },
+  "legacy_writers": {
+    "suspension_probe_http": [
+      403,
+      403
+    ],
+    "resumed_probe_http": [
+      200,
+      200
+    ],
+    "explicit_revocation_http": [
+      204,
+      204
+    ],
+    "revoked_probe_http": [
+      401,
+      401
+    ],
+    "latest_possible_expiry_utc": "2026-11-19T16:25:15.050872+00:00",
+    "expiry_probe": null
+  },
+  "native_regressions": {
+    "local": {
+      "architecture": "arm64",
+      "regressions": 121,
+      "stress_owners": 100,
+      "log_sha256": "822d1dda11c74264d20950d8fafd24f28241c00fd549cc3c9d3d52f9fb0e7c72"
+    },
+    "host-a": {
+      "architecture": "x86_64",
+      "regressions": 121,
+      "stress_owners": 100,
+      "log_sha256": "8e4c310b3a2f297aa5d3b0c71a9264d8ede4a29f57f6eb4e74b7a03b580ada9d"
+    },
+    "host-e": {
+      "architecture": "aarch64",
+      "regressions": 121,
+      "stress_owners": 100,
+      "log_sha256": "7742cbf2cd31d3b8dae200cad3f05af199c6b89b0597f7ea91e2ed49a5ffbd37"
+    },
+    "host-f": {
+      "architecture": "aarch64",
+      "regressions": 121,
+      "stress_owners": 100,
+      "log_sha256": "4ffa0cd458c8f2834995c3c79ac962a621b54d1dcf69fbc9cb46ed2e807d297c"
+    }
+  },
+  "timeline": [
+    {
+      "event": "replica_and_standby_staged",
+      "utc": "2026-11-19T15:15:05.336784+00:00"
+    },
+    {
+      "event": "primary_stopped_and_authority_snapshotted",
+      "utc": "2026-11-19T15:15:22.566633+00:00"
+    },
+    {
+      "event": "installation_suspension_and_resume_verified",
+      "utc": "2026-11-19T15:15:27.472125+00:00"
+    },
+    {
+      "event": "primary_restored_after_revocation_gate",
+      "utc": "2026-11-19T15:15:32.744852+00:00"
+    },
+    {
+      "event": "primary_stopped_and_authority_snapshotted",
+      "utc": "2026-11-19T15:20:04.816440+00:00"
+    },
+    {
+      "event": "legacy_minter_stopped_and_key_unlinked",
+      "utc": "2026-11-19T15:20:05.050953+00:00"
+    },
+    {
+      "event": "independent_authority_bootstrapped",
+      "utc": "2026-11-19T15:20:44.401127+00:00"
+    },
+    {
+      "event": "live_replicated_primary_healthy",
+      "utc": "2026-11-19T15:21:40.522893+00:00"
+    },
+    {
+      "event": "hosta_broker_paused_watch_has_no_source_management",
+      "utc": "2026-11-19T15:21:56.274826+00:00"
+    },
+    {
+      "event": "replicated_standby_promoted_and_old_actor_fenced",
+      "utc": "2026-11-19T15:22:20.360067+00:00"
+    },
+    {
+      "event": "standby_published_and_registered_live_pr",
+      "utc": "2026-11-19T15:22:32.610772+00:00"
+    },
+    {
+      "event": "replicated_authority_returned_to_hosta",
+      "utc": "2026-11-19T15:22:37.594130+00:00"
+    },
+    {
+      "event": "replicated_failover_pr_merged_with_actions",
+      "utc": "2026-11-19T15:33:05.325710+00:00"
+    },
+    {
+      "event": "rearmed_standby_restored_state_while_source_running_and_fenced",
+      "utc": "2026-11-19T15:33:24.401932+00:00"
+    },
+    {
+      "event": "replicated_authority_returned_to_hosta",
+      "utc": "2026-11-19T15:33:30.795140+00:00"
+    },
+    {
+      "event": "live_replica_outage_failed_closed_and_same_authority_recovered",
+      "utc": "2026-11-19T15:33:57.819445+00:00"
+    }
+  ]
+}
