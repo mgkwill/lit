@@ -1,0 +1,372 @@
+{
+  "repository": "100latent/lit-merge-queue-sandbox",
+  "fixture_prefix": "qualification/mixed-file-qf91uiyp",
+  "deployment": {
+    "commit": "5c69e8f1c9d7162bd2c7678bbc48a7f62d09e763",
+    "previous_commit": "924dc16",
+    "host": "host-a",
+    "installed_sha256": {
+      "broker_admission.py": "c9edebcc0c78668bd2f02e638cbf39b2402632659d4e5eac1a2c1181bc935077",
+      "github_app_credentials.py": "e12ead9b4317fdb0c307d9d344256f7c793daf17b6b38c9155a5970741b452d5",
+      "github_queue_coordinator.py": "e2b7a1dd0dbdd2c6c94a89db8fcc922bfb064cb0a7fe8377b92fa89137f66637",
+      "task_broker.py": "e10509e3f0cd7db5528ea9157210829f17427d8d3594cd20dc25fca9083f91ea",
+      "task_broker_client.py": "c11aaba462f4c34110458249bd45fe8fbeba0e1645e7a5556e22399b14ddb65f",
+      "task_broker_freeze_proposal.py": "1c68554b64767720e5623233d28e01214c13801f3f6e8448705755b334679abc",
+      "task_broker_policy_observer.py": "a9301e77eb10409cae4ade5124f04d834ad9e830491924b77ca2c5c354dd911a",
+      "task_ownership.py": "a8c9190d263d619ae23ba9dfa74db7101610634c3b47c562c92b6b96845a7add"
+    },
+    "changed_modules": [
+      "broker_admission.py",
+      "task_broker.py"
+    ],
+    "previous_sha256": {
+      "broker_admission.py": "a4ec072d63913a0927f3bba070918b60c034cc4fffce1e2aa4c039d08fa0de56",
+      "task_broker.py": "b47668466d6a4d29893cea651f738f12c921946851972c08d5083c285b0c6d31"
+    },
+    "health": {
+      "service": "lit-task-broker",
+      "last_cycle": 1795062377.1660788,
+      "last_error": null,
+      "api_version": 3
+    },
+    "utc": "2026-11-19T04:26:19.000954+00:00",
+    "state_and_configuration_preserved": true
+  },
+  "actions_only": {
+    "main_ruleset_id": 27439049,
+    "protected_main": {
+      "name": "Require GitHub merge queue on sandbox main",
+      "target": "branch",
+      "enforcement": "active",
+      "conditions": {
+        "ref_name": {
+          "exclude": [],
+          "include": [
+            "refs/heads/main"
+          ]
+        }
+      },
+      "rules": [
+        {
+          "type": "deletion"
+        },
+        {
+          "type": "non_fast_forward"
+        },
+        {
+          "type": "pull_request",
+          "parameters": {
+            "required_approving_review_count": 0,
+            "dismiss_stale_reviews_on_push": false,
+            "required_reviewers": [],
+            "require_code_owner_review": false,
+            "dismissal_restriction": {
+              "enabled": false,
+              "allowed_actors": []
+            },
+            "require_last_push_approval": false,
+            "required_review_thread_resolution": false,
+            "require_extra_approval_for_unattributed_changes": true,
+            "allowed_merge_methods": [
+              "merge"
+            ]
+          }
+        },
+        {
+          "type": "required_status_checks",
+          "parameters": {
+            "strict_required_status_checks_policy": false,
+            "do_not_enforce_on_create": false,
+            "required_status_checks": [
+              {
+                "context": "Agent workflow candidate",
+                "integration_id": 15368
+              }
+            ]
+          }
+        },
+        {
+          "type": "merge_queue",
+          "parameters": {
+            "merge_method": "MERGE",
+            "max_entries_to_build": 1,
+            "min_entries_to_merge": 1,
+            "max_entries_to_merge": 1,
+            "min_entries_to_merge_wait_minutes": 0,
+            "grouping_strategy": "ALLGREEN",
+            "check_response_timeout_minutes": 20
+          }
+        }
+      ],
+      "bypass_actors": []
+    },
+    "main_snapshot_unchanged": true,
+    "broker_namespace_snapshot_unchanged": true,
+    "freeze_ruleset_id": 27529010,
+    "freeze_refs_before": 219,
+    "freeze_refs_after": 221,
+    "manual_statuses_posted": false
+  },
+  "pull_requests": {
+    "seed": {
+      "published_head": "6cbb3f06f82d8f1b849075afdb400297147afe7d",
+      "assigned_base": "7a4110c4fdd69ba891474572d8132389eee955fa",
+      "pull_request": 323,
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/323",
+      "git_head": {
+        "obsolete.txt": {
+          "path": "qualification/mixed-file-qf91uiyp/obsolete.txt",
+          "mode": "100644",
+          "blob": "4edeba8d42c1568c5cb2f55bf916769a7388068e",
+          "sha256": "a678822e94a57ce248ccc42104bd41a07900faa276304be502dc14c93c99b6cf"
+        },
+        "mode.sh": {
+          "path": "qualification/mixed-file-qf91uiyp/mode.sh",
+          "mode": "100644",
+          "blob": "87f56e1d3ebb0074c4153717fd9de8f765b885bc",
+          "sha256": "86a5c821e13ab0126e31bf1743e69ec2ee2a9052dd279f12e3b1c83f59f3465e"
+        },
+        "asset.bin": null
+      },
+      "git_landed": {
+        "obsolete.txt": {
+          "path": "qualification/mixed-file-qf91uiyp/obsolete.txt",
+          "mode": "100644",
+          "blob": "4edeba8d42c1568c5cb2f55bf916769a7388068e",
+          "sha256": "a678822e94a57ce248ccc42104bd41a07900faa276304be502dc14c93c99b6cf"
+        },
+        "mode.sh": {
+          "path": "qualification/mixed-file-qf91uiyp/mode.sh",
+          "mode": "100644",
+          "blob": "87f56e1d3ebb0074c4153717fd9de8f765b885bc",
+          "sha256": "86a5c821e13ab0126e31bf1743e69ec2ee2a9052dd279f12e3b1c83f59f3465e"
+        },
+        "asset.bin": null
+      },
+      "merge_parents": [
+        "7a4110c4fdd69ba891474572d8132389eee955fa",
+        "6cbb3f06f82d8f1b849075afdb400297147afe7d"
+      ],
+      "integration": {
+        "actions": {
+          "app_id": 15368,
+          "check_run_id": 135340801842,
+          "check_suite_id": 120346663747,
+          "event": "merge_group",
+          "run_attempt": 1,
+          "run_id": 44458960184
+        },
+        "base_ref": "refs/heads/main",
+        "first_parent": "7a4110c4fdd69ba891474572d8132389eee955fa",
+        "forge_summary_commit": "fa6530098a7c7238cd2f3512c819585718b01fe0",
+        "forge_summary_matches": true,
+        "merge_commit": "fa6530098a7c7238cd2f3512c819585718b01fe0",
+        "merge_event_id": "ME_lADOVxXMNs8AAAABgmEAa88AAAAIhiZnlA",
+        "merged_at": "2026-11-19T04:37:52Z",
+        "number": 323,
+        "observed_main": "fa6530098a7c7238cd2f3512c819585718b01fe0",
+        "pull_request_id": "PR_kwDOVxXMNs8AAAABQTKFRw",
+        "repository": "100latent/lit-merge-queue-sandbox",
+        "verified_at": 1795063077.0973568,
+        "version": 1,
+        "proposal": {
+          "agent": "100latent-lit-pilot-host-a[bot]",
+          "author": "100latent-lit-task-broker[bot]",
+          "base": "7a4110c4fdd69ba891474572d8132389eee955fa",
+          "branch": "agents/broker/attempt/5942f198c6b26993690bab5c8934a4a6",
+          "generation": 1,
+          "head": "6cbb3f06f82d8f1b849075afdb400297147afe7d",
+          "number": 323,
+          "task": "mixed-file-qf91uiyp-seed"
+        }
+      },
+      "checks": {
+        "preflight": {
+          "event": "pull_request",
+          "head_sha": "6cbb3f06f82d8f1b849075afdb400297147afe7d",
+          "run_id": 44458337936,
+          "run_attempt": 1,
+          "workflow_id": 421025082,
+          "workflow_path": ".github/workflows/agent-merge-gate.yml",
+          "check_run_id": 135338754513,
+          "check_suite_id": 120345045160,
+          "app_id": 15368,
+          "status": "completed",
+          "conclusion": "success",
+          "run_url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44458337936",
+          "job_id": 135338754513,
+          "job_url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44458337936/job/135338754513",
+          "completed_at": "2026-11-19T04:31:33Z",
+          "steps": {
+            "Check out the integration candidate": "success",
+            "Verify the candidate SHA": "success",
+            "Build and test batch rollback": "success",
+            "Run the agent workflow": "success"
+          },
+          "commit_status_contexts": []
+        },
+        "merge_group": {
+          "event": "merge_group",
+          "head_sha": "fa6530098a7c7238cd2f3512c819585718b01fe0",
+          "run_id": 44458960184,
+          "run_attempt": 1,
+          "workflow_id": 421025082,
+          "workflow_path": ".github/workflows/agent-merge-gate.yml",
+          "check_run_id": 135340801842,
+          "check_suite_id": 120346663747,
+          "app_id": 15368,
+          "status": "completed",
+          "conclusion": "success",
+          "run_url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44458960184",
+          "job_id": 135340801842,
+          "job_url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44458960184/job/135340801842",
+          "completed_at": "2026-11-19T04:37:19Z",
+          "steps": {
+            "Check out the integration candidate": "success",
+            "Verify the candidate SHA": "success",
+            "Build and test batch rollback": "success",
+            "Run the agent workflow": "success"
+          },
+          "commit_status_contexts": []
+        }
+      }
+    },
+    "mixed": {
+      "published_head": "70c6a749bbc42f0bad635a425b05f715f037d3d1",
+      "assigned_base": "fa6530098a7c7238cd2f3512c819585718b01fe0",
+      "pull_request": 324,
+      "url": "https://github.com/100latent/lit-merge-queue-sandbox/pull/324",
+      "git_head": {
+        "obsolete.txt": null,
+        "mode.sh": {
+          "path": "qualification/mixed-file-qf91uiyp/mode.sh",
+          "mode": "100755",
+          "blob": "87f56e1d3ebb0074c4153717fd9de8f765b885bc",
+          "sha256": "86a5c821e13ab0126e31bf1743e69ec2ee2a9052dd279f12e3b1c83f59f3465e"
+        },
+        "asset.bin": {
+          "path": "qualification/mixed-file-qf91uiyp/asset.bin",
+          "mode": "100644",
+          "blob": "fd2319dfd0a7c459405268f11286ef2aa24c05fd",
+          "sha256": "e2a4712dcd0a58834f37e095391647621599de535516835f36e84f888e6588b1"
+        }
+      },
+      "git_landed": {
+        "obsolete.txt": null,
+        "mode.sh": {
+          "path": "qualification/mixed-file-qf91uiyp/mode.sh",
+          "mode": "100755",
+          "blob": "87f56e1d3ebb0074c4153717fd9de8f765b885bc",
+          "sha256": "86a5c821e13ab0126e31bf1743e69ec2ee2a9052dd279f12e3b1c83f59f3465e"
+        },
+        "asset.bin": {
+          "path": "qualification/mixed-file-qf91uiyp/asset.bin",
+          "mode": "100644",
+          "blob": "fd2319dfd0a7c459405268f11286ef2aa24c05fd",
+          "sha256": "e2a4712dcd0a58834f37e095391647621599de535516835f36e84f888e6588b1"
+        }
+      },
+      "merge_parents": [
+        "fa6530098a7c7238cd2f3512c819585718b01fe0",
+        "70c6a749bbc42f0bad635a425b05f715f037d3d1"
+      ],
+      "integration": {
+        "actions": {
+          "app_id": 15368,
+          "check_run_id": 135345308314,
+          "check_suite_id": 120350310487,
+          "event": "merge_group",
+          "run_attempt": 1,
+          "run_id": 44460343903
+        },
+        "base_ref": "refs/heads/main",
+        "first_parent": "fa6530098a7c7238cd2f3512c819585718b01fe0",
+        "forge_summary_commit": "b2acf9bf1f68ee1b4a2a048b7203bbbac90cb702",
+        "forge_summary_matches": true,
+        "merge_commit": "b2acf9bf1f68ee1b4a2a048b7203bbbac90cb702",
+        "merge_event_id": "ME_lADOVxXMNs8AAAABgmMsVM8AAAAIhjH4bQ",
+        "merged_at": "2026-11-19T04:50:03Z",
+        "number": 324,
+        "observed_main": "b2acf9bf1f68ee1b4a2a048b7203bbbac90cb702",
+        "pull_request_id": "PR_kwDOVxXMNs8AAAABQTRMCQ",
+        "repository": "100latent/lit-merge-queue-sandbox",
+        "verified_at": 1795063812.685026,
+        "version": 1,
+        "proposal": {
+          "agent": "100latent-lit-pilot-host-a[bot]",
+          "author": "100latent-lit-task-broker[bot]",
+          "base": "fa6530098a7c7238cd2f3512c819585718b01fe0",
+          "branch": "agents/broker/attempt/05d0c701ca9f7e835885a313c3abab06",
+          "generation": 1,
+          "head": "70c6a749bbc42f0bad635a425b05f715f037d3d1",
+          "number": 324,
+          "task": "mixed-file-qf91uiyp-mixed"
+        }
+      },
+      "checks": {
+        "preflight": {
+          "event": "pull_request",
+          "head_sha": "70c6a749bbc42f0bad635a425b05f715f037d3d1",
+          "run_id": 44459693930,
+          "run_attempt": 1,
+          "workflow_id": 421025082,
+          "workflow_path": ".github/workflows/agent-merge-gate.yml",
+          "check_run_id": 135343171410,
+          "check_suite_id": 120348558322,
+          "app_id": 15368,
+          "status": "completed",
+          "conclusion": "success",
+          "run_url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44459693930",
+          "job_id": 135343171410,
+          "job_url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44459693930/job/135343171410",
+          "completed_at": "2026-11-19T04:43:41Z",
+          "steps": {
+            "Check out the integration candidate": "success",
+            "Verify the candidate SHA": "success",
+            "Build and test batch rollback": "success",
+            "Run the agent workflow": "success"
+          },
+          "commit_status_contexts": []
+        },
+        "merge_group": {
+          "event": "merge_group",
+          "head_sha": "b2acf9bf1f68ee1b4a2a048b7203bbbac90cb702",
+          "run_id": 44460343903,
+          "run_attempt": 1,
+          "workflow_id": 421025082,
+          "workflow_path": ".github/workflows/agent-merge-gate.yml",
+          "check_run_id": 135345308314,
+          "check_suite_id": 120350310487,
+          "app_id": 15368,
+          "status": "completed",
+          "conclusion": "success",
+          "run_url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44460343903",
+          "job_id": 135345308314,
+          "job_url": "https://github.com/100latent/lit-merge-queue-sandbox/actions/runs/44460343903/job/135345308314",
+          "completed_at": "2026-11-19T04:49:30Z",
+          "steps": {
+            "Check out the integration candidate": "success",
+            "Verify the candidate SHA": "success",
+            "Build and test batch rollback": "success",
+            "Run the agent workflow": "success"
+          },
+          "commit_status_contexts": []
+        }
+      }
+    }
+  },
+  "mixed_diff": [
+    "A\tqualification/mixed-file-qf91uiyp/asset.bin",
+    "M\tqualification/mixed-file-qf91uiyp/mode.sh",
+    "D\tqualification/mixed-file-qf91uiyp/obsolete.txt"
+  ],
+  "binary_size_bytes": 281,
+  "main_after": "b2acf9bf1f68ee1b4a2a048b7203bbbac90cb702",
+  "queue_empty": true,
+  "broker_health_after": {
+    "service": "lit-task-broker",
+    "last_cycle": 1795063818.9815092,
+    "last_error": null,
+    "api_version": 3
+  }
+}
