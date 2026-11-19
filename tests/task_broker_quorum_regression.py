@@ -1,6 +1,7 @@
 """Regression coverage for quorum ownership and GitHub-enforced fencing."""
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import closing
+import io
 import json
 from pathlib import Path
 import sqlite3
@@ -8,11 +9,14 @@ import sys
 import tempfile
 import threading
 import unittest
+from unittest.mock import patch
+from urllib.error import URLError
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'tools'))
 import broker_admission as admission
 import github_queue_coordinator as queue
 import task_broker_policy_observer as observer
+import task_broker_replica as replica
 from task_broker_quorum import QuorumAuthority, Record, Rejected, ReplicaUnavailable
 
 BINDING={'repo':'100latent/lit-merge-queue-sandbox','main_ruleset':10,'freeze_ruleset':11}
@@ -158,6 +162,34 @@ class QuorumTests(unittest.TestCase):
         config=BINDING | {'publication_ruleset':12,'worker_installations':{}}
         with self.assertRaisesRegex(RuntimeError,'bypass visibility'):
             observer.observation(config,lambda path:{'id':int(path.split('/')[-1])})
+
+
+class GatewayClientTests(unittest.TestCase):
+    def client(self):
+        config={'url':'https://primary','alternates':['https://alternate'],
+                'ca':'ca.crt','cert':'client.crt','key':'client.key'}
+        with patch.object(replica.ssl,'create_default_context'):
+            return replica.Client(config)
+
+    def test_ambiguous_provider_response_does_not_replay_at_another_gateway(self):
+        client=self.client()
+        with patch.object(client,'opener') as opener:
+            opener.open.side_effect=TimeoutError()
+            with self.assertRaises(ReplicaUnavailable):
+                client.call('/provider',{'operation':'installation'},epoch=2,revision=3)
+        request,=opener.open.call_args.args
+        self.assertEqual(request.full_url,'https://primary/provider')
+        self.assertEqual(opener.open.call_count,1)
+
+    def test_refused_provider_connection_uses_the_next_pinned_gateway(self):
+        client=self.client()
+        with patch.object(client,'opener') as opener:
+            opener.open.side_effect=[URLError(ConnectionRefusedError()),io.BytesIO(b'{"total_count":1}')]
+            self.assertEqual(client.call('/provider',{'operation':'installation'},epoch=2,revision=3),
+                             {'total_count':1})
+        requests=[call.args[0] for call in opener.open.call_args_list]
+        self.assertEqual([r.full_url for r in requests],['https://primary/provider','https://alternate/provider'])
+        self.assertEqual(requests[0].data,requests[1].data)
 
 
 if __name__=='__main__':
