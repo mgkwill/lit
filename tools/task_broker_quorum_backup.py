@@ -1,5 +1,6 @@
 """Copy broker authority to private storage and recover it into a new quorum."""
 import argparse
+from contextlib import closing
 import json
 import os
 from pathlib import Path
@@ -11,7 +12,7 @@ import zlib
 
 import github_queue_coordinator as queue
 from task_broker import private_file
-from task_broker_checkpoint import database_readonly, install_new, staging_file, verify_checkpoint
+from task_broker_checkpoint import install_new, staging_file, verify_database
 from task_broker_quorum import EtcdStore, MAX_COMPRESSED, checked_cluster_id, snapshot_bytes
 from task_broker_replica import Rejected, ReplicaUnavailable, digest
 
@@ -31,7 +32,7 @@ def decode_head(head, manifest):
     return head
 
 
-def validate_sqlite(directory, compressed, head):
+def validate_sqlite(compressed, head):
     if len(compressed)>MAX_COMPRESSED:
         raise Rejected('backup checkpoint is too large')
     snapshot = snapshot_bytes(compressed)
@@ -45,17 +46,19 @@ def validate_sqlite(directory, compressed, head):
         ('proposals','phase',sorted(queue.TERMINAL)),
     )
     blockers = []
-    with staging_file(directory) as checkpoint:
-        checkpoint.write_bytes(snapshot)
-        verify_checkpoint(checkpoint,head['binding'])
-        with database_readonly(checkpoint) as db:
-            for table, column, terminal in states:
-                placeholders = ','.join('?' for _ in terminal)
-                query = f'SELECT 1 FROM {table} WHERE {column} IS NULL OR {column} NOT IN ({placeholders}) LIMIT 1'
-                if db.execute(query,terminal).fetchone():
-                    blockers.append(table)
-            if db.execute("SELECT 1 FROM claims WHERE phase='draining' LIMIT 1").fetchone():
-                blockers.append('draining_claims')
+    with closing(sqlite3.connect(':memory:')) as db:
+        db.execute('PRAGMA temp_store=MEMORY')
+        db.execute('PRAGMA trusted_schema=OFF')
+        db.deserialize(snapshot)
+        db.execute('PRAGMA query_only=ON')
+        verify_database(db,head['binding'])
+        for table, column, terminal in states:
+            placeholders = ','.join('?' for _ in terminal)
+            query = f'SELECT 1 FROM {table} WHERE {column} IS NULL OR {column} NOT IN ({placeholders}) LIMIT 1'
+            if db.execute(query,terminal).fetchone():
+                blockers.append(table)
+        if db.execute("SELECT 1 FROM claims WHERE phase='draining' LIMIT 1").fetchone():
+            blockers.append('draining_claims')
     return blockers
 
 
@@ -65,27 +68,31 @@ def private_directory(path):
         raise Rejected('backup directory must be private')
 
 
-def backup(store, manifest, path):
-    private_directory(path.parent)
-    records, cluster = store.read_with_cluster(*KEYS)
+def capture(store, manifest):
+    records, cluster, writer_pending = store.read_backup_state()
     if not {'head','snapshot'}<=records.keys():
         raise Rejected('quorum has no recoverable broker authority')
     current = json.loads(records['head'].data)
     head = decode_head({field:current[field] for field in HEAD_FIELDS},manifest)
-    writer_pending = 'writer' in records
     header = {'version':1,'cluster_id':cluster,'head':head,'writer_pending':writer_pending}
     compressed = records['snapshot'].data
-    blockers = validate_sqlite(path.parent,compressed,head)
+    blockers = validate_sqlite(compressed,head)
     if writer_pending:
         blockers.append('writer')
     metadata = queue.encoded(header).encode()+b'\n'
     if len(metadata)>MAX_HEADER:
         raise Rejected('backup metadata is too large')
     raw = metadata+compressed
+    return header|{'archive_sha256':digest(raw),'recovery_blockers':blockers}, raw
+
+
+def backup(store, manifest, path):
+    private_directory(path.parent)
+    report, raw = capture(store,manifest)
     with staging_file(path.parent) as staged:
         staged.write_bytes(raw)
         install_new(staged,path)
-    return header|{'archive_sha256':digest(raw),'recovery_blockers':blockers}
+    return report
 
 
 def read_backup(path, manifest, expected_digest=None):
@@ -106,7 +113,7 @@ def read_backup(path, manifest, expected_digest=None):
         raise Rejected('unsupported backup header')
     checked_cluster_id(header['cluster_id'])
     head = decode_head(header['head'],manifest)
-    blockers = validate_sqlite(path.parent,compressed,head)
+    blockers = validate_sqlite(compressed,head)
     if header['writer_pending']:
         blockers.append('writer')
     return header|{'archive_sha256':checksum,'recovery_blockers':blockers}, compressed

@@ -9,7 +9,7 @@ import sys
 import tempfile
 import threading
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 from urllib.error import URLError
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'tools'))
@@ -17,6 +17,7 @@ import broker_admission as admission
 import github_queue_coordinator as queue
 import task_broker_policy_observer as observer
 import task_broker_quorum_backup as backup
+import task_broker_quorum_backup_job as backup_job
 import task_broker_replica as replica
 from task_broker_quorum import EtcdStore, QuorumAuthority, Record, Rejected, ReplicaUnavailable
 
@@ -39,6 +40,11 @@ class Store:
 
     def read_with_cluster(self,*names):
         return self.read(*names), self.cluster_id
+
+    def read_backup_state(self):
+        records=self.read('head','snapshot','writer')
+        pending=records.pop('writer',None) is not None
+        return records,self.cluster_id,pending
 
     def change(self,records,changes):
         with self.lock:
@@ -215,6 +221,52 @@ class QuorumTests(unittest.TestCase):
             backup.restore(target,BINDING,path,head,result['archive_sha256'],'standby')
         self.assertFalse(target.values)
 
+    def test_encrypted_job_publishes_only_complete_archive_and_receipt(self):
+        config=self.backup_config()
+        payloads=[]
+
+        def encrypt(_openssl,_recipient,archive,destination):
+            payloads.append(archive)
+            destination.write_bytes(b'fixture ciphertext')
+
+        manager=Mock()
+        manager.call.return_value=self.initial
+        with patch.object(backup_job,'seal',side_effect=encrypt):
+            outcome=backup_job.run_backup(config,self.store,manager)
+        artifact=Path(config['vault'])/outcome['artifact']
+        self.assertEqual({f.name for f in artifact.iterdir()},{'checkpoint.cms','receipt.json'})
+        receipt=json.loads((artifact/'receipt.json').read_text())
+        self.assertEqual(receipt['independent_head'],self.initial)
+        self.assertEqual(receipt['archive_sha256'],replica.digest(payloads[0]))
+        self.assertEqual(receipt['ciphertext_sha256'],replica.digest(b'fixture ciphertext'))
+
+    def test_encrypted_job_withholds_failed_or_moving_capture(self):
+        config=self.backup_config()
+        manager=Mock()
+        manager.call.side_effect=[self.initial,self.initial|{'epoch':8}]*3
+        with patch.object(backup_job.time,'sleep'), patch.object(backup_job,'seal') as encrypt:
+            with self.assertRaisesRegex(ReplicaUnavailable,'head changed'):
+                backup_job.run_backup(config,self.store,manager)
+            encrypt.assert_not_called()
+        manager.call.side_effect=None
+        manager.call.return_value=self.initial
+
+        def fail(_openssl,_recipient,_archive,destination):
+            destination.write_bytes(b'partial')
+            raise RuntimeError('fixture encryption failed')
+
+        with patch.object(backup_job,'seal',side_effect=fail):
+            with self.assertRaisesRegex(RuntimeError,'fixture encryption'):
+                backup_job.run_backup(config,self.store,manager)
+        self.assertEqual({f.name for f in Path(config['vault']).iterdir()},{'.quorum-backup.lock'})
+
+    def backup_config(self):
+        vault=self.root/'vault'
+        vault.mkdir(mode=0o700)
+        recipient=self.root/'recipient.crt'
+        recipient.touch(mode=0o600)
+        return {'manifest':BINDING,'vault':str(vault),'recipient':str(recipient),'openssl':'/fixture/openssl'}
+
 
 class GatewayClientTests(unittest.TestCase):
     def client(self):
@@ -255,6 +307,19 @@ class GatewayClientTests(unittest.TestCase):
         opener.open.assert_called_once()
         request,=opener.open.call_args.args
         self.assertEqual(json.loads(request.data),{'compare':[],'success':[]})
+
+    def test_backup_asks_the_quorum_for_writer_count_without_value(self):
+        config={'urls':['https://one','https://two','https://three'],
+                'ca':'ca.crt','cert':'client.crt','key':'client.key'}
+        with patch.object(replica.ssl,'create_default_context'):
+            store=EtcdStore(config,BINDING['repo'])
+        replies={'header':{'cluster_id':'20'},'responses':[{'response_range':{}},
+                 {'response_range':{}},{'response_range':{'count':'1'}}]}
+        with patch.object(store,'transaction',return_value=replies) as transaction:
+            self.assertEqual(store.read_backup_state(),({},'20',True))
+        compares,operations=transaction.call_args.args
+        self.assertEqual(compares,[])
+        self.assertEqual(operations[-1],{'request_range':{'key':store.key('writer'),'count_only':True}})
 
 
 if __name__=='__main__':

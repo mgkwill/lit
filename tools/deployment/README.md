@@ -453,6 +453,31 @@ archive contains claim authority. Keep it in private encrypted storage away from
 the voter failure domain. A capture records writer presence without exporting
 the GitHub token. The reported recovery blockers identify unsettled work.
 
+#### Scheduled encrypted capture
+
+Schedule `task_broker_quorum_backup_job.py --config /secure/backup-job.json`
+on a trusted host outside the voter failure domain. The private configuration
+contains `manifest`, `quorum`, `cluster_id`, `manager`, `vault`, `recipient`,
+and `openssl`. The quorum fields match the replica configuration. Pin the
+cluster ID and set `manager` to an authenticated replica client configuration.
+Set `recipient` to the private-path copy of the public recovery certificate,
+`openssl` to the absolute binary path, and `vault` to a private directory.
+
+The job verifies SQLite in memory and sends the archive to OpenSSL over stdin.
+It asks etcd for the writer key count and reads the independent manager head
+before and after capture. Each successful run publishes a directory with
+`checkpoint.cms` and `receipt.json` together. The receipt records both digests,
+the observed head and any recovery blockers. The recovery private key can stay
+offline. Failed runs emit `quorum_backup_failed` without publishing a partial
+artifact.
+
+Use your host supervisor to schedule the command. A macOS LaunchAgent can run
+hourly with `StartCalendarInterval` and a minute of the hour. Verify the
+supervisor's successful run and a recent receipt. At recovery time, compare
+the archive with the separately established latest acknowledged watermark.
+
+#### Manual capture and restore
+
 ```sh
 umask 077
 mkdir -m 700 /secure/lit-backups

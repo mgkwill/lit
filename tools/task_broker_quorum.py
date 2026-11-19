@@ -89,18 +89,40 @@ class EtcdStore:
                 raise ReplicaUnavailable('invalid quorum response') from None
         raise ReplicaUnavailable('quorum is unavailable')
 
-    def read_with_cluster(self, *names):
-        response = self.transaction([], [{'request_range':{'key':self.key(name)}} for name in names])
+    def read_ranges(self, *names, count_only=()):
+        operations = []
+        for name in names:
+            request = {'key':self.key(name)}
+            if name in count_only:
+                request['count_only'] = True
+            operations.append({'request_range':request})
+        response = self.transaction([],operations)
         ranges = response.get('responses',[])
         if len(ranges)!=len(names):
             raise ReplicaUnavailable('missing quorum range results')
+        return [result['response_range'] for result in ranges], checked_cluster_id(response['header']['cluster_id'])
+
+    def decode_records(self, names, ranges):
         records = {}
         for name, result in zip(names,ranges):
-            for row in result['response_range'].get('kvs',[]):
+            for row in result.get('kvs',[]):
                 if name in records or row['key']!=self.key(name):
                     raise ReplicaUnavailable('unexpected quorum range result')
                 records[name] = Record(int(row['mod_revision']),base64.b64decode(row['value'],validate=True))
-        return records, checked_cluster_id(response['header']['cluster_id'])
+        return records
+
+    def read_with_cluster(self, *names):
+        ranges, cluster = self.read_ranges(*names)
+        return self.decode_records(names,ranges), cluster
+
+    def read_backup_state(self):
+        names = ('head','snapshot')
+        ranges, cluster = self.read_ranges(*names,'writer',count_only=('writer',))
+        writer = ranges[-1]
+        count = int(writer.get('count',0))
+        if count not in (0,1) or writer.get('kvs'):
+            raise ReplicaUnavailable('unexpected writer presence result')
+        return self.decode_records(names,ranges[:-1]), cluster, bool(count)
 
     def read(self, *names):
         records, _ = self.read_with_cluster(*names)

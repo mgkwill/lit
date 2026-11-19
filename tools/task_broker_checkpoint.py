@@ -19,18 +19,22 @@ def database_readonly(path):
     return closing(sqlite3.connect(path.resolve().as_uri()+'?mode=ro',uri=True))
 
 
+def verify_database(db, manifest):
+    if db.execute('PRAGMA quick_check').fetchall()!=[('ok',)]:
+        raise ValueError('checkpoint integrity check failed')
+    tables={name for name, in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+    required={'metadata','claims','tasks','proposals','actions','events','publications',
+              'publication_jobs','registration_jobs','integrations'}
+    if not required<=tables:
+        raise ValueError('checkpoint is missing broker state')
+    binding=db.execute("SELECT value FROM metadata WHERE key='manifest'").fetchone()
+    if not binding or json.loads(binding[0])!=manifest:
+        raise ValueError('checkpoint repository or ruleset binding differs')
+
+
 def verify_checkpoint(path, manifest):
     with database_readonly(path) as db:
-        if db.execute('PRAGMA quick_check').fetchall()!=[('ok',)]:
-            raise ValueError('checkpoint integrity check failed')
-        tables={name for name, in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
-        required={'metadata','claims','tasks','proposals','actions','events','publications',
-                  'publication_jobs','registration_jobs','integrations'}
-        if not required<=tables:
-            raise ValueError('checkpoint is missing broker state')
-        binding=db.execute("SELECT value FROM metadata WHERE key='manifest'").fetchone()
-        if not binding or json.loads(binding[0])!=manifest:
-            raise ValueError('checkpoint repository or ruleset binding differs')
+        verify_database(db,manifest)
 
 
 def sha256(path):
