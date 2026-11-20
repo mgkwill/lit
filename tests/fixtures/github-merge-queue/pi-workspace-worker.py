@@ -218,6 +218,9 @@ def main():
     run, episode = operation["run"], operation["episode"]
     if not re.fullmatch(r"pinned-pi-[a-z0-9]+", run) or not re.fullmatch(r"[a-z0-9-]+", episode):
         raise ValueError("invalid pilot name or episode")
+    unit = operation.get("work_unit")
+    if unit is not None and not re.fullmatch(r"[a-z0-9-]+", unit):
+        raise ValueError("invalid pilot work unit")
     endpoint = IPv4Address(operation["inference_address"])
     if (operation["file"] not in ("routing.py", "capacity.py") or operation["port"] != 8002
             or operation["inference_host"] != "host-a" or not (endpoint.is_private or endpoint.is_loopback)):
@@ -236,6 +239,8 @@ def main():
     workspace = attempt / "workspace"
     run_lit(binary, source, "workspace", "create", str(workspace), "--base", pin["lit_base"])
     scope = workspace / "qualification" / run
+    if unit is not None:
+        scope /= unit
     scope.mkdir(parents=True, exist_ok=True)
     expected = scope / operation["file"]
     preserved = {child: child.read_bytes() for child in scope.iterdir() if child != expected}
