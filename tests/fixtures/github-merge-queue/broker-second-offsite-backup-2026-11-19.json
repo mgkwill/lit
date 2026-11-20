@@ -1,0 +1,137 @@
+{
+  "source_commit": "e25de42b3ff0b532ba94b8eb75ed21fb03634549",
+  "mit_baseline": "98c59bb2dbebcf7f575993a4ad89e1300a578c83",
+  "secondary": "host-e",
+  "scope": {
+    "all_gateways_denied_provider_reader_and_mutation_routes": true,
+    "backup_archive_and_head_available": true,
+    "dedicated_role_has_no_etcd_or_private_recovery_path": true
+  },
+  "backup_fallback": {
+    "backup_read_fell_back_after_unreachable_origin": true,
+    "fallback_head_and_cluster_verified": true
+  },
+  "first_cron_tick": {
+    "both_mac_jobs_disabled_through_backup": true,
+    "mac_host_mode": "backup and policy services stopped",
+    "linux_cron_natural_tick": true,
+    "independent_linux_policy_available": true,
+    "offsite_encrypted_artifact": "20261120T001402.088953Z-e10-r36",
+    "healthy_receipt_without_blockers": true,
+    "source_commit": "e25de42b3ff0b532ba94b8eb75ed21fb03634549",
+    "source_epoch": 10,
+    "source_revision": 36,
+    "standing_minute_pacific": 21,
+    "vault_filesystem": "local ext4 on host-e"
+  },
+  "standing_cron_tick": {
+    "standing_cron_natural_tick_mac_jobs_offline": true,
+    "pacific_minute": 21,
+    "archive_digest_identical_to_restored_sample": true,
+    "separate_encrypted_artifact": "20261120T002101.223422Z-e10-r36",
+    "ciphertext_sha256": "57d95db1233c3fbb29208960c63af5163a9711984cce5b55aaac20a92bb51e88",
+    "archive_sha256": "c24e554e3611c8cebc1430a6b0bc9decaf4adfb775ec8cb1076f4337d2c9a508"
+  },
+  "mac_primary_minute_pacific": 51,
+  "checkpoint_receipt": {
+    "archive_sha256": "c24e554e3611c8cebc1430a6b0bc9decaf4adfb775ec8cb1076f4337d2c9a508",
+    "ciphertext_sha256": "187b21547ea0fad7e9cbac44e2f306163dceb9f852135909379dd336c892e846",
+    "head": {
+      "binding": {
+        "freeze_ruleset": 27529010,
+        "main_ruleset": 27439049,
+        "repo": "100latent/lit-merge-queue-sandbox"
+      },
+      "epoch": 10,
+      "holder": "primary",
+      "revision": 36,
+      "sha256": "3716924157da0b02393c9a9d29868b35ae8a132e842e2ef5c419047d37edf411"
+    },
+    "recovery_blockers": []
+  },
+  "restoration": {
+    "production_ciphertext_restored_to_isolated_quorum": true,
+    "identical_sqlite_checkpoint_and_receipts": true,
+    "original_broker_epoch_fenced": true,
+    "fixture_recovery_provider_calls": 0,
+    "claims_preserved": 229,
+    "integration_receipts_preserved": 199,
+    "restored_epoch": 11,
+    "restored_revision": 36,
+    "all_three_replacement_nodes_agreed_after_new_checkpoint": true,
+    "validated_new_revision": 37,
+    "restored_checkpoint_sha256": "3716924157da0b02393c9a9d29868b35ae8a132e842e2ef5c419047d37edf411",
+    "isolated_linux_platform": "Linux aarch64",
+    "independent_live_head_matches_backup_receipt": true,
+    "isolated_resources_and_plaintext_removed": true
+  },
+  "actions_only": {
+    "original_actions_only_verified": true,
+    "exact_ruleset_projection_sha256": "bd0215538187da8836c568b4817922bb29732aa669ca3cd818fc384293a57d73",
+    "policy_queries_read_only": true
+  },
+  "native_regressions": {
+    "local": {
+      "architecture": "arm64",
+      "regressions": 139,
+      "stress_owners": 100,
+      "log_sha256": "65f05896a5f841c0d03649df6247256e7d75b5f7fe8ad931c712905bc4f7e641"
+    },
+    "host-a": {
+      "architecture": "x86_64",
+      "regressions": 139,
+      "stress_owners": 100,
+      "log_sha256": "6bf8caa446b0ed9f284ee27866db17aff240f0e93c5ccf056dcd57f1827de1fb"
+    },
+    "host-e": {
+      "architecture": "aarch64",
+      "regressions": 139,
+      "stress_owners": 100,
+      "log_sha256": "6d439ab2f1d07c0f6ad10ca9615c52e359d0f7e7b77c1d877e1eda9dc1c58af4"
+    },
+    "host-f": {
+      "architecture": "aarch64",
+      "regressions": 139,
+      "stress_owners": 100,
+      "log_sha256": "f0539fe579a56d949d73f5ee102845a50b74111b8ad691464ee469ab5e00eaa6"
+    }
+  },
+  "timeline": [
+    {
+      "event": "replica_gateway_ready_with_scoped_backup_role",
+      "utc": "2026-11-20T00:13:06.272877+00:00"
+    },
+    {
+      "event": "replica_gateway_ready_with_scoped_backup_role",
+      "utc": "2026-11-20T00:13:10.623458+00:00"
+    },
+    {
+      "event": "replica_gateway_ready_with_scoped_backup_role",
+      "utc": "2026-11-20T00:13:12.084159+00:00"
+    },
+    {
+      "event": "hoste_identity_verified_on_all_replica_gateways",
+      "utc": "2026-11-20T00:13:12.948959+00:00"
+    },
+    {
+      "event": "mac_backup_and_policy_jobs_offline",
+      "utc": "2026-11-20T00:13:13.653243+00:00"
+    },
+    {
+      "event": "independent_cron_backup_sealed_while_mac_jobs_offline",
+      "utc": "2026-11-20T00:14:07.401859+00:00"
+    },
+    {
+      "event": "standing_hourly_schedules_and_secondary_mac_policy_restored",
+      "utc": "2026-11-20T00:14:07.435976+00:00"
+    },
+    {
+      "event": "mac_jobs_offline_before_standing_hoste_hourly_schedule",
+      "utc": "2026-11-20T00:20:01.557163+00:00"
+    },
+    {
+      "event": "standing_hoste_hourly_tick_matched_restored_backup",
+      "utc": "2026-11-20T00:21:02.132570+00:00"
+    }
+  ]
+}
