@@ -859,6 +859,7 @@ dependencies = [
  "tiny_http",
  "toml",
  "ureq",
+ "url",
  "uuid",
  "walkdir",
  "windows",

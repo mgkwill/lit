@@ -34,8 +34,8 @@ pub fn execute(url: String, directory: Option<String>) -> Result<CloneResponse, 
     super::init::execute(false, Some(root.to_string_lossy().into_owned()))?;
     super::remote::set_origin(root, &url)?;
 
-    let (branches, transferred) = if super::git_remote::is_git(&url) {
-        super::git_remote::clone_into(root, &url)?
+    let (branches, transferred) = if let Some(endpoint) = super::git_remote::discover(&url)? {
+        super::git_remote::clone_into(root, &endpoint)?
     } else {
         clone_native(root, &url)?
     };

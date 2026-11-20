@@ -25,8 +25,8 @@ pub(super) fn fetch_from(
         super::remote::validate_ref(branch)?;
     }
     AirgapValidator::new()?.validate_transport(&remote_url)?;
-    if super::git_remote::is_git(&remote_url) {
-        return super::git_remote::fetch(repo_root, remote, &remote_url, branch)
+    if let Some(endpoint) = super::git_remote::discover(&remote_url)? {
+        return super::git_remote::fetch(repo_root, remote, &endpoint, branch)
             .map(|response| (response, true));
     }
 

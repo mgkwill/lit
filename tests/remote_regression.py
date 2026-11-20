@@ -1,6 +1,7 @@
 """Local remote integration regression. Run with the absolute path to a Lit binary."""
 
 import json
+import hmac
 import os
 import socket
 import time
@@ -13,13 +14,14 @@ from pathlib import Path
 from threading import Thread
 from urllib.parse import urlsplit
 
-LIT = Path(sys.argv[1]).resolve()
-REFERENCE = "--reference" in sys.argv[2:]
+LIT = None
+REFERENCE = False
 
 
 class Fixture:
-    def __init__(self, root):
+    def __init__(self, root, binary=None):
         self.root = root
+        self.binary = binary or LIT
         self.home = root / "home"
         self.home.mkdir()
         self.env = {
@@ -50,10 +52,10 @@ class Fixture:
         return self.run(cwd, "git", *args).stdout.strip()
 
     def lit(self, cwd, *args):
-        return json.loads(self.run(cwd, LIT, *args).stdout)
+        return json.loads(self.run(cwd, self.binary, *args).stdout)
 
     def assert_failure(self, cwd, *args):
-        return self.run(cwd, LIT, *args, success=False)
+        return self.run(cwd, self.binary, *args, success=False)
 
     def make(self, name):
         path = self.root / name
@@ -62,12 +64,21 @@ class Fixture:
 
 
 @contextmanager
-def smart_http(fixture):
+def smart_http(fixture, *, tls=None, authorization=None):
     requests = []
 
     class Handler(BaseHTTPRequestHandler):
+        protocol_version = "HTTP/1.1" if tls else "HTTP/1.0"
+
         def serve_git(self):
             url = urlsplit(self.path)
+            if authorization and not hmac.compare_digest(self.headers.get("Authorization", ""), authorization):
+                requests.append(("401", url.path, url.query))
+                self.send_response(401)
+                self.send_header("WWW-Authenticate", 'Basic realm="Lit fixture"')
+                self.send_header("Content-Length", "0")
+                self.end_headers()
+                return
             requests.append((self.command, url.path, url.query))
             environment = dict(
                 fixture.env, GIT_PROJECT_ROOT=str(fixture.root),
@@ -75,6 +86,8 @@ def smart_http(fixture):
                 REQUEST_METHOD=self.command, CONTENT_TYPE=self.headers.get("Content-Type", ""),
                 HTTP_GIT_PROTOCOL=self.headers.get("Git-Protocol", ""),
             )
+            if authorization:
+                environment["REMOTE_USER"] = "fixture"
             body = self.rfile.read(int(self.headers.get("Content-Length", "0")))
             environment["CONTENT_LENGTH"] = str(len(body))
             output = subprocess.run(
@@ -86,8 +99,9 @@ def smart_http(fixture):
             status = next((int(value.split()[0]) for key, value in headers if key == "Status"), 200)
             self.send_response(status)
             for key, value in headers:
-                if key != "Status":
+                if key.lower() not in ("status", "content-length"):
                     self.send_header(key, value)
+            self.send_header("Content-Length", str(len(payload)))
             self.end_headers()
             self.wfile.write(payload)
 
@@ -97,10 +111,13 @@ def smart_http(fixture):
             pass
 
     with ThreadingHTTPServer(("127.0.0.1", 0), Handler) as server:
+        if tls:
+            server.socket = tls.wrap_socket(server.socket, server_side=True)
         thread = Thread(target=server.serve_forever)
         thread.start()
         try:
-            yield f"http://127.0.0.1:{server.server_port}/origin.git", requests
+            scheme = "https" if tls else "http"
+            yield f"{scheme}://127.0.0.1:{server.server_port}/origin.git", requests
         finally:
             server.shutdown()
             thread.join()
@@ -203,7 +220,7 @@ def native(f):
         print("Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index")
 
 
-def git_flow(f, http):
+def seed_git(f):
     origin = f.make("origin.git")
     source = f.make("source")
     f.git(origin, "init", "--bare", "--object-format=sha1", "-b", "release/trunk")
@@ -220,6 +237,11 @@ def git_flow(f, http):
     f.git(source, "push", origin.as_uri(), "--all")
     f.git(source, "push", origin.as_uri(), "--tags")
     f.git(origin, "gc", "--prune=now")
+    return origin, source
+
+
+def git_flow(f, http):
+    origin, source = seed_git(f)
     if http:
         with smart_http(f) as (url, requests):
             if REFERENCE:
@@ -326,11 +348,19 @@ def exchange(f, origin, source, url):
     print(f"{url.split(':')[0]}: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal")
 
 
-with tempfile.TemporaryDirectory() as root:
-    native(Fixture(Path(root)))
-if not REFERENCE:
+def main():
+    global LIT, REFERENCE
+    LIT = Path(sys.argv[1]).resolve()
+    REFERENCE = "--reference" in sys.argv[2:]
     with tempfile.TemporaryDirectory() as root:
-        native_over_daemon(Fixture(Path(root)))
-for http in (False, True):
-    with tempfile.TemporaryDirectory() as root:
-        git_flow(Fixture(Path(root)), http)
+        native(Fixture(Path(root)))
+    if not REFERENCE:
+        with tempfile.TemporaryDirectory() as root:
+            native_over_daemon(Fixture(Path(root)))
+    for http in (False, True):
+        with tempfile.TemporaryDirectory() as root:
+            git_flow(Fixture(Path(root)), http)
+
+
+if __name__ == "__main__":
+    main()

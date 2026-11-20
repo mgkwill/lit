@@ -195,7 +195,7 @@ enum Commands {
 
     /// Clone a repository into a new directory
     Clone {
-        /// Repository URL
+        /// Repository URL (use git+https:// or git+ssh:// for authenticated Git)
         url: String,
 
         /// Directory name
@@ -506,7 +506,7 @@ enum RemoteCommands {
     Add {
         /// Remote name
         name: String,
-        /// Remote URL (must be LAN)
+        /// Remote URL (use git+https:// or git+ssh:// for authenticated Git)
         url: String,
     },
 

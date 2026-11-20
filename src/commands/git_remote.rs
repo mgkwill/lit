@@ -3,13 +3,75 @@ use crate::core::{delete_ref, get_current_branch, list_refs, read_head, read_ref
 use crate::errors::LitError;
 use crate::network::transport::update_remote_tracking_ref;
 use crate::response::{FetchResponse, PushResponse};
+use std::borrow::Cow;
 use std::fs;
 use std::io::Write;
 use std::path::Path;
 use std::process::Command;
 use std::time::Duration;
+use url::Url;
 
-pub(super) fn is_git(url: &str) -> bool {
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Transport {
+    File,
+    Http,
+    Https,
+    AuthenticatedHttps,
+    Ssh,
+}
+
+pub(super) struct GitRemote<'a> {
+    url: Cow<'a, str>,
+    transport: Transport,
+}
+
+pub(super) fn explicit(url: &str) -> Result<Option<GitRemote<'_>>, LitError> {
+    let Some(raw) = url.strip_prefix("git+") else {
+        return Ok(None);
+    };
+    let transport = if raw.starts_with("https://") {
+        Transport::AuthenticatedHttps
+    } else if raw.starts_with("ssh://") {
+        Transport::Ssh
+    } else {
+        return Err("Explicit Git remotes use git+https:// or git+ssh://".into());
+    };
+    let invalid = || {
+        LitError::network(
+        "Invalid Git remote URL. Use a host and repository path without credentials, query, or fragment (SSH accepts a username).",
+    )
+    };
+    // Parse before saving the URL or invoking any external client.
+    if raw
+        .chars()
+        .any(|ch| ch.is_control() || ch.is_whitespace() || ch == '\\')
+    {
+        return Err(invalid());
+    }
+    let parsed = Url::parse(raw).map_err(|_| invalid())?;
+    let host = parsed.host_str().ok_or_else(invalid)?;
+    if host.starts_with('-')
+        || host.contains('%')
+        || parsed.path().trim_matches('/').is_empty()
+        || parsed.password().is_some()
+        || parsed.query().is_some()
+        || parsed.fragment().is_some()
+        || (transport == Transport::AuthenticatedHttps && !parsed.username().is_empty())
+        || parsed.username().starts_with('-')
+        || parsed.username().contains('%')
+    {
+        return Err(invalid());
+    }
+    Ok(Some(GitRemote {
+        url: Cow::Owned(parsed.into()),
+        transport,
+    }))
+}
+
+pub(super) fn discover(url: &str) -> Result<Option<GitRemote<'_>>, LitError> {
+    if let Some(remote) = explicit(url)? {
+        return Ok(Some(remote));
+    }
     if let Some(path) = url.strip_prefix("file://") {
         let path = path.to_ascii_lowercase();
         if !path.starts_with('/')
@@ -19,16 +81,27 @@ pub(super) fn is_git(url: &str) -> bool {
             || path.starts_with("/\\")
             || crate::network::transport::resolve_path(url).is_ok()
         {
-            return false;
+            return Ok(None);
         }
-        return std::env::current_dir().ok().is_some_and(|cwd| {
-            transport_output(git_transport(&cwd, url).args(["ls-remote", "--", url]), "discover")
-                .is_ok()
-        });
+        let remote = GitRemote {
+            url: Cow::Borrowed(url),
+            transport: Transport::File,
+        };
+        let cwd = std::env::current_dir()?;
+        let found = transport_output(
+            git_transport(&cwd, &remote)?.args(["ls-remote", "--", url]),
+            "discover",
+        )
+        .is_ok();
+        return Ok(found.then_some(remote));
     }
-    if !(url.starts_with("http://") || url.starts_with("https://")) {
-        return false;
-    }
+    let transport = if url.starts_with("https://") {
+        Transport::Https
+    } else if url.starts_with("http://") {
+        Transport::Http
+    } else {
+        return Ok(None);
+    };
     let endpoint = format!(
         "{}/info/refs?service=git-upload-pack",
         url.trim_end_matches('/')
@@ -37,7 +110,7 @@ pub(super) fn is_git(url: &str) -> bool {
         .redirects(0)
         .timeout(Duration::from_secs(10))
         .build();
-    agent.get(&endpoint).call().ok().is_some_and(|response| {
+    let found = agent.get(&endpoint).call().ok().is_some_and(|response| {
         response
             .header("Content-Type")
             .and_then(|value| value.split(';').next())
@@ -46,22 +119,27 @@ pub(super) fn is_git(url: &str) -> bool {
                     .trim()
                     .eq_ignore_ascii_case("application/x-git-upload-pack-advertisement")
             })
-    })
+    });
+    Ok(found.then_some(GitRemote {
+        url: Cow::Borrowed(url),
+        transport,
+    }))
 }
 
-fn git_transport(root: &Path, url: &str) -> Command {
-    let protocol = if url.starts_with("file://") {
-        "file"
-    } else if url.starts_with("https://") {
-        "https"
-    } else {
-        "http"
+fn git_transport(root: &Path, remote: &GitRemote<'_>) -> Result<Command, LitError> {
+    let protocol = match remote.transport {
+        Transport::File => "file",
+        Transport::Http => "http",
+        Transport::Https | Transport::AuthenticatedHttps => "https",
+        Transport::Ssh => "ssh",
     };
     let mut command = git(root);
     command
         .args([
             "-c",
             "http.followRedirects=false",
+            "-c",
+            "http.sslVerify=true",
             "-c",
             "credential.helper=",
         ])
@@ -70,8 +148,62 @@ fn git_transport(root: &Path, url: &str) -> Command {
         .env("GIT_CONFIG_GLOBAL", "")
         .env_remove("GIT_CONFIG_COUNT")
         .env_remove("GIT_CONFIG_PARAMETERS")
-        .env_remove("GIT_ASKPASS");
-    command
+        .env_remove("GIT_ASKPASS")
+        .env_remove("SSH_ASKPASS")
+        .env_remove("GIT_SSL_NO_VERIFY")
+        .env_remove("GIT_TRACE_CURL")
+        .env_remove("GIT_CURL_VERBOSE");
+    match remote.transport {
+        Transport::AuthenticatedHttps => {
+            command.args(["-c", "credential.useHttpPath=true"]);
+            if let Some(path) = local_path("LIT_GIT_ASKPASS")? {
+                command.env("GIT_ASKPASS", path);
+            }
+        }
+        Transport::Ssh => {
+            command
+                .env("GIT_SSH_COMMAND", ssh_command()?)
+                .env("GIT_SSH_VARIANT", "ssh");
+        }
+        _ => {}
+    }
+    Ok(command)
+}
+
+fn local_path(variable: &str) -> Result<Option<String>, LitError> {
+    let Some(path) = std::env::var_os(variable) else {
+        return Ok(None);
+    };
+    let path = path
+        .into_string()
+        .map_err(|_| LitError::config(format!("{variable} must be a UTF-8 path")))?;
+    if !Path::new(&path).is_absolute() || path.chars().any(char::is_control) {
+        return Err(LitError::config(format!(
+            "{variable} must be an absolute path"
+        )));
+    }
+    Ok(Some(path))
+}
+
+fn shell_quote(argument: &str) -> String {
+    format!("'{}'", argument.replace('\'', "'\\''"))
+}
+
+fn ssh_command() -> Result<String, LitError> {
+    let mut command = String::from("ssh -F none -oBatchMode=yes -oStrictHostKeyChecking=yes -oUpdateHostKeys=no -oClearAllForwardings=yes");
+    if let Some(path) = local_path("LIT_GIT_SSH_KNOWN_HOSTS")? {
+        let path = path
+            .replace('\\', "\\\\")
+            .replace('"', "\\\"")
+            .replace('%', "%%");
+        command.push_str(" -oGlobalKnownHostsFile=none -o ");
+        command.push_str(&shell_quote(&format!("UserKnownHostsFile=\"{path}\"")));
+    }
+    if let Some(path) = local_path("LIT_GIT_SSH_IDENTITY")? {
+        command.push_str(" -oIdentitiesOnly=yes -i ");
+        command.push_str(&shell_quote(&path.replace('%', "%%")));
+    }
+    Ok(command)
 }
 
 fn transport_output(
@@ -91,18 +223,24 @@ fn transport_output(
     Ok(output)
 }
 
-pub(super) fn clone_into(root: &Path, url: &str) -> Result<(Vec<String>, usize), LitError> {
+pub(super) fn clone_into(
+    root: &Path,
+    endpoint: &GitRemote<'_>,
+) -> Result<(Vec<String>, usize), LitError> {
     let temp = tempfile::tempdir().map_err(|e| e.to_string())?;
     let mirror = temp.path().join("mirror.git");
     let source = mirror.to_str().ok_or("Temporary Git path is not UTF-8")?;
-    transport_output(git_transport(temp.path(), url).args([
+    transport_output(
+        git_transport(temp.path(), endpoint)?.args([
+            "clone",
+            "--mirror",
+            "--no-local",
+            "--",
+            endpoint.url.as_ref(),
+            source,
+        ]),
         "clone",
-        "--mirror",
-        "--no-local",
-        "--",
-        url,
-        source,
-    ]), "clone")?;
+    )?;
     let imported = super::import_git::execute_at(source.to_owned(), Some(root))?;
     let branches = list_refs(root, "heads")?;
     let default_branch = get_current_branch(root).ok();
@@ -124,7 +262,7 @@ pub(super) fn clone_into(root: &Path, url: &str) -> Result<(Vec<String>, usize),
 pub(super) fn fetch(
     root: &Path,
     remote: String,
-    url: &str,
+    endpoint: &GitRemote<'_>,
     branch: Option<String>,
 ) -> Result<FetchResponse, LitError> {
     let temp = tempfile::tempdir().map_err(|e| e.to_string())?;
@@ -136,7 +274,13 @@ pub(super) fn fetch(
         "+refs/heads/*:refs/heads/*".to_owned()
     };
     transport_output(
-        git_transport(stage, url).args(["fetch", "--no-tags", "--", url, &refspec]),
+        git_transport(stage, endpoint)?.args([
+            "fetch",
+            "--no-tags",
+            "--",
+            endpoint.url.as_ref(),
+            &refspec,
+        ]),
         "fetch",
     )?;
     let output = checked_output(git(stage).args([
@@ -180,7 +324,7 @@ pub(super) fn fetch(
 pub(super) fn push(
     root: &Path,
     remote: String,
-    url: &str,
+    endpoint: &GitRemote<'_>,
     branch: String,
     force: bool,
 ) -> Result<PushResponse, LitError> {
@@ -211,13 +355,16 @@ pub(super) fn push(
         "{}refs/heads/main:refs/heads/{branch}",
         if force { "+" } else { "" }
     );
-    let result = transport_output(git_transport(stage, url).args([
+    let result = transport_output(
+        git_transport(stage, endpoint)?.args([
+            "push",
+            "--porcelain",
+            "--",
+            endpoint.url.as_ref(),
+            &refspec,
+        ]),
         "push",
-        "--porcelain",
-        "--",
-        url,
-        &refspec,
-    ]), "push")?;
+    )?;
     let stdout = text(&result.stdout)?;
     let updated = stdout.lines().any(|line| line.starts_with([' ', '*', '+']));
     update_remote_tracking_ref(root, &remote, &branch, &local_hash)?;

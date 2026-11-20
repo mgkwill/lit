@@ -239,7 +239,29 @@ directory as a bare Git repository and runs `git fsck --full --strict` before
 publishing it. Git commits and annotated tags imported by this converter retain
 their original object IDs on re-export.
 
-Git remotes support local `file://` URLs and smart HTTP. Git clone imports
+Git remotes support local `file://` URLs, smart HTTP, and authenticated Git
+over HTTPS or SSH. Use `git+https://host/path/repo.git` or
+`git+ssh://git@host/path/repo.git` to select Git explicitly.
+
+```bash
+LIT_GIT_ASKPASS=/absolute/path/to/askpass lit clone git+https://host/path/repo.git
+LIT_GIT_SSH_KNOWN_HOSTS=/absolute/path/to/known_hosts \
+LIT_GIT_SSH_IDENTITY=/absolute/path/to/identity lit clone git+ssh://git@host/path/repo.git
+```
+
+For HTTPS, the optional askpass executable supplies the username and password
+or token to Git. The prompt includes the host and repository path so the
+helper can choose a credential for that endpoint. Use `GIT_SSL_CAINFO` with
+an absolute CA file path for a private CA. HTTPS requires TLS certificate and hostname verification and refuses
+redirects. Credentials belong in the helper and its credential store.
+
+SSH requires a trusted host key. It uses the OpenSSH agent or default keys
+unless you specify an identity file. Set `LIT_GIT_SSH_KNOWN_HOSTS` to select
+a specific trust file. Git SSH ignores local SSH configuration and uses the
+host and port in the URL. Supply the same credential and trust settings on
+subsequent fetch, pull, and push commands. Airgap mode blocks both protocols.
+
+Git clone imports
 branches and tags, fetch updates branch tracking refs, and Git pull advances
 the current branch only when it can fast-forward and refuses worktree
 collisions, including file-to-directory replacements. Git push sends the selected

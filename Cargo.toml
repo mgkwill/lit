@@ -50,6 +50,7 @@ tiny_http = "0.12" # Lightweight sync HTTP server
 ureq = { version = "2.12", features = [
     "json",
 ] } # Blocking HTTP client for transport layer
+url = "2.5"
 # FIPS 140-2 compliance
 zeroize = { version = "1.8", features = ["derive"] } # Secure memory clearing
 subtle = "2.6"                                       # Constant-time comparisons for cryptographic operations

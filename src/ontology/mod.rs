@@ -609,7 +609,7 @@ fn build_commands() -> Vec<CommandDef> {
             vec![ex("Merge feature", "lit merge feature-x", serde_json::json!({"branch": "feature-x"}))],
             vec!["resolve", "commit", "push"], vec!["checkout", "pull"], false, false),
         // Collaboration
-        cmd("push", "Push Changes", "collaboration", "Upload local commits to a remote repository (LAN only)",
+        cmd("push", "Push Changes", "collaboration", "Upload local commits to a native Lit or Git remote",
             vec![
                 param("remote", "string", "Remote name", true, None),
                 param("branch", "string", "Branch name", true, None),
@@ -698,7 +698,7 @@ fn build_commands() -> Vec<CommandDef> {
             vec![ex("List leases", "lit swarm lease-list", serde_json::json!({}))],
             vec![], vec![], true, true),
         // Remote & collaboration
-        cmd("remote", "Manage Remotes", "collaboration", "Add, remove, or list remote repository URLs (LAN only)",
+        cmd("remote", "Manage Remotes", "collaboration", "Add, remove, or list native Lit and Git remote URLs",
             vec![
                 param("command", "string", "Subcommand: add, remove, list", true, None),
                 param("name", "string", "Remote name (for add/remove)", false, None),
@@ -711,9 +711,9 @@ fn build_commands() -> Vec<CommandDef> {
                 ex("Add remote", "lit remote add origin smb://server/repo", serde_json::json!({"command": "add", "name": "origin", "url": "smb://server/repo"})),
             ],
             vec!["push", "pull", "fetch"], vec!["init", "clone"], true, true),
-        cmd("clone", "Clone Repository", "collaboration", "Clone a remote repository into a new local directory (LAN only)",
+        cmd("clone", "Clone Repository", "collaboration", "Clone a native Lit or Git repository into a new local directory",
             vec![
-                param("url", "string", "Repository URL (must be LAN)", true, None),
+                param("url", "string", "Repository URL (use git+https:// or git+ssh:// for authenticated Git)", true, None),
                 param("directory", "string", "Destination directory name", false, None),
             ],
             "CloneResponse", vec!["Creates new directory", "Downloads all objects and refs"], vec![],

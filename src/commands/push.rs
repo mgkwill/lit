@@ -18,8 +18,8 @@ pub fn execute(
     let validator = AirgapValidator::new()?;
     validator.validate_transport(&remote_url)?;
 
-    if super::git_remote::is_git(&remote_url) {
-        return super::git_remote::push(&repo_root, remote, &remote_url, branch, force);
+    if let Some(endpoint) = super::git_remote::discover(&remote_url)? {
+        return super::git_remote::push(&repo_root, remote, &endpoint, branch, force);
     }
     let remote_repo = RemoteRepo::open(&remote_url)?;
 

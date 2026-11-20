@@ -221,10 +221,11 @@ impl AirgapValidator {
     /// Detect the transport type from a path/URL
     fn detect_transport_type(&self, path: &str) -> Result<TransportType, String> {
         // Protocol-based detection
-        if path.starts_with("http://") || path.starts_with("https://") {
+        let protocol_path = path.strip_prefix("git+").unwrap_or(path);
+        if protocol_path.starts_with("https://") || protocol_path.starts_with("http://") {
             return Ok(TransportType::Http);
         }
-        if path.starts_with("ssh://") || path.starts_with("scp://") {
+        if protocol_path.starts_with("ssh://") || protocol_path.starts_with("scp://") {
             return Ok(TransportType::Ssh);
         }
         if path.starts_with("lit://") {

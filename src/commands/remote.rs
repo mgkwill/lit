@@ -75,7 +75,8 @@ pub fn execute(command: Option<crate::RemoteCommands>) -> Result<RemoteResponse,
     match command {
         Some(crate::RemoteCommands::Add { name, url }) => {
             // Check if airgap mode is enabled
-            if AirgapConfig::is_airgap_mode() {
+            let explicit_git = super::git_remote::explicit(&url)?.is_some();
+            if explicit_git || AirgapConfig::is_airgap_mode() {
                 let validator = AirgapValidator::new()?;
                 validator.validate_transport(&url)?;
             } else if url.starts_with("lit://") {
