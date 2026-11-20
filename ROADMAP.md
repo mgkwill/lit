@@ -5,14 +5,17 @@ We prioritize agent workflows over a checklist of every upstream feature.
 
 ## Release preparation
 
-- Use the OpenLit product and package name while keeping `lit` at the command line.
-- Rewrite active guides in plain language and check the examples against the binary.
-- Rebuild the renamed version on all five native targets and save exact evidence.
-- Review dependency notices and final source provenance. Archive reviewed
+- [x] Use the OpenLit product and package name while keeping `lit` at the command line.
+- [x] Rewrite active guides in plain language and check the examples against the binary.
+- [x] Rebuild the renamed version on all five native targets and save exact evidence.
+- [ ] Review dependency notices and final source provenance. Archive reviewed
   implementation records with the manifest required by AGENTS.md.
-- Choose publisher identities, implement signing and attestations, and test the
+- [ ] Choose publisher identities, implement signing and attestations, and test the
   final signed archives on clean machines.
-- Present the exact release to the owner and ask before tagging or publishing.
+- [ ] Present the exact release to the owner and ask before tagging or publishing.
+
+[Candidate evidence](tests/fixtures/release-qualification/2026-11-20-openlit.md)
+records the exact tested sources and remaining limits.
 
 The publication workflow is disabled while those requirements remain open.
 See [release requirements](docs/RELEASING.md).

@@ -1,0 +1,918 @@
+{
+  "date": "2026-11-20",
+  "product": "OpenLit",
+  "version": "0.1.0",
+  "cli": "lit",
+  "binary_source": "53a23ccc9caedbd86a38e5b059348d78c1f42b56",
+  "installer_source": "4d6a1dbb206d6d363c872ac1ba4dc845a9afb903",
+  "binary_inputs_unchanged_through_installer_source": [
+    "src",
+    "Cargo.toml",
+    "Cargo.lock",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.txt"
+  ],
+  "qualification_projection_excludes": [
+    ".github/workflows/agent-merge-gate.yml",
+    ".github/workflows/ci.yml",
+    ".github/workflows/nightly-security.yml"
+  ],
+  "actions_runs": [
+    {
+      "databaseId": 44814108615,
+      "headSha": "eb8eaec85328f8955998681d4cf72825afdbb2b0",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "name": "Build x86_64-unknown-linux-gnu",
+          "conclusion": "success",
+          "url": "https://github.com/mgkwill/lit-release-qualification/actions/runs/44814108615/job/136557865358"
+        },
+        {
+          "name": "Build aarch64-apple-darwin",
+          "conclusion": "success",
+          "url": "https://github.com/mgkwill/lit-release-qualification/actions/runs/44814108615/job/136557865740"
+        },
+        {
+          "name": "Build x86_64-apple-darwin",
+          "conclusion": "success",
+          "url": "https://github.com/mgkwill/lit-release-qualification/actions/runs/44814108615/job/136557865756"
+        },
+        {
+          "name": "Build x86_64-pc-windows-msvc",
+          "conclusion": "success",
+          "url": "https://github.com/mgkwill/lit-release-qualification/actions/runs/44814108615/job/136557865787"
+        },
+        {
+          "name": "Build aarch64-unknown-linux-gnu",
+          "conclusion": "success",
+          "url": "https://github.com/mgkwill/lit-release-qualification/actions/runs/44814108615/job/136557865797"
+        }
+      ]
+    },
+    {
+      "databaseId": 44816029154,
+      "headSha": "9e9cdfbf44a589f53901e9bb275ea724b6301683",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "name": "installer (macos-15)",
+          "conclusion": "success",
+          "url": "https://github.com/mgkwill/lit-release-qualification/actions/runs/44816029154/job/136564460193"
+        },
+        {
+          "name": "installer (ubuntu-22.04)",
+          "conclusion": "success",
+          "url": "https://github.com/mgkwill/lit-release-qualification/actions/runs/44816029154/job/136564460454"
+        },
+        {
+          "name": "installer (windows-2022)",
+          "conclusion": "success",
+          "url": "https://github.com/mgkwill/lit-release-qualification/actions/runs/44816029154/job/136564460663"
+        }
+      ]
+    }
+  ],
+  "archives": [
+    {
+      "archive": "openlit-lit-release-qualification-53a23cc-aarch64-apple-darwin.tar.gz",
+      "archive_sha256": "5c12c802c92f8ce4473386f25da0113e9bc3e85895c71d6589716aa27296a93f",
+      "batch_and_mcp": {
+        "arch": "arm64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "f2093c6f2d338969c1107c4895e8e05ea7007fc64fe6d32ffe8cd57352dee38e",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Darwin",
+        "version": "lit 0.1.0"
+      },
+      "binary_sha256": "f2093c6f2d338969c1107c4895e8e05ea7007fc64fe6d32ffe8cd57352dee38e",
+      "git": "git version 2.56.1",
+      "head": "eb8eaec85328f8955998681d4cf72825afdbb2b0",
+      "mldsa_features": [
+        "std"
+      ],
+      "package": "openlit",
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)",
+      "target": "aarch64-apple-darwin",
+      "version": "lit 0.1.0",
+      "preserved_archive": "openlit-candidate-53a23cc-aarch64-apple-darwin.tar.gz"
+    },
+    {
+      "archive": "openlit-lit-release-qualification-53a23cc-aarch64-unknown-linux-gnu.tar.gz",
+      "archive_sha256": "04182819bc77146aadbc1181c44e8fd46578c1997fd9798388e24b4ce43af04d",
+      "batch_and_mcp": {
+        "arch": "aarch64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "f822df0a736dd797452f597274a94bd740ed555c26b13196544367a4057e0ca0",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Linux",
+        "version": "lit 0.1.0"
+      },
+      "binary_sha256": "f822df0a736dd797452f597274a94bd740ed555c26b13196544367a4057e0ca0",
+      "git": "git version 2.56.1",
+      "glibc": {
+        "highest_required_symbol_version": "2.34",
+        "runtime": "glibc 2.35"
+      },
+      "head": "eb8eaec85328f8955998681d4cf72825afdbb2b0",
+      "mldsa_features": [
+        "std"
+      ],
+      "package": "openlit",
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)",
+      "target": "aarch64-unknown-linux-gnu",
+      "version": "lit 0.1.0",
+      "preserved_archive": "openlit-candidate-53a23cc-aarch64-unknown-linux-gnu.tar.gz"
+    },
+    {
+      "archive": "openlit-lit-release-qualification-53a23cc-x86_64-apple-darwin.tar.gz",
+      "archive_sha256": "9eea5d2225ae414d765dc06285bc434275b8adabb77598f44c9a42bf62e15eec",
+      "batch_and_mcp": {
+        "arch": "x86_64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "c41e0411128bf9da3d862d659c226d988e2c8fd0c879679f54ff1cc33b06427a",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Darwin",
+        "version": "lit 0.1.0"
+      },
+      "binary_sha256": "c41e0411128bf9da3d862d659c226d988e2c8fd0c879679f54ff1cc33b06427a",
+      "git": "git version 2.55.0",
+      "head": "eb8eaec85328f8955998681d4cf72825afdbb2b0",
+      "mldsa_features": [
+        "std"
+      ],
+      "package": "openlit",
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)",
+      "target": "x86_64-apple-darwin",
+      "version": "lit 0.1.0",
+      "preserved_archive": "openlit-candidate-53a23cc-x86_64-apple-darwin.tar.gz"
+    },
+    {
+      "archive": "openlit-lit-release-qualification-53a23cc-x86_64-pc-windows-msvc.zip",
+      "archive_sha256": "68ee6387cdebaf168dc77b5fab6ef4fcbc014e9d53fbfa888cede6817fabef51",
+      "batch_and_mcp": {
+        "arch": "AMD64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "fb4e85401f1a0e1c2276ef3b8d22598584be19415f6c5f4af0efd315676475b3",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Windows",
+        "version": "lit 0.1.0"
+      },
+      "binary_sha256": "fb4e85401f1a0e1c2276ef3b8d22598584be19415f6c5f4af0efd315676475b3",
+      "git": "git version 2.56.1.windows.1",
+      "head": "eb8eaec85328f8955998681d4cf72825afdbb2b0",
+      "mldsa_features": [
+        "std"
+      ],
+      "package": "openlit",
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)",
+      "sandbox": [
+        "Strict mode refused on a platform without a backend"
+      ],
+      "target": "x86_64-pc-windows-msvc",
+      "version": "lit 0.1.0",
+      "preserved_archive": "openlit-candidate-53a23cc-x86_64-pc-windows-msvc.zip"
+    },
+    {
+      "archive": "openlit-lit-release-qualification-53a23cc-x86_64-unknown-linux-gnu.tar.gz",
+      "archive_sha256": "c81c05e642894a1908e02a5843ed836962c0de90eb8f223dbdc83402401e154e",
+      "batch_and_mcp": {
+        "arch": "x86_64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "d5a2f0a4289e6af656f95bc83d7e143160bc2fd302a15068c7731d6465427483",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Linux",
+        "version": "lit 0.1.0"
+      },
+      "binary_sha256": "d5a2f0a4289e6af656f95bc83d7e143160bc2fd302a15068c7731d6465427483",
+      "git": "git version 2.56.1",
+      "glibc": {
+        "highest_required_symbol_version": "2.34",
+        "runtime": "glibc 2.35"
+      },
+      "head": "eb8eaec85328f8955998681d4cf72825afdbb2b0",
+      "mldsa_features": [
+        "std"
+      ],
+      "package": "openlit",
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)",
+      "target": "x86_64-unknown-linux-gnu",
+      "version": "lit 0.1.0",
+      "preserved_archive": "openlit-candidate-53a23cc-x86_64-unknown-linux-gnu.tar.gz"
+    }
+  ],
+  "lab": {
+    "host-a": {
+      "smoke": {
+        "arch": "x86_64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "c436bb959d59c9b5d0d4ca05b731fd7d2f8b65a6168c44ecbecefb896c4c2998",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Linux",
+        "version": "lit 0.1.0"
+      },
+      "auth-remotes": {
+        "arch": "x86_64",
+        "candidate_sha256": "c436bb959d59c9b5d0d4ca05b731fd7d2f8b65a6168c44ecbecefb896c4c2998",
+        "https": {
+          "airgap_zero_network_and_helper_calls": true,
+          "askpass_received_repository_path": true,
+          "git_posts": {
+            "git-receive-pack": 2,
+            "git-upload-pack": 13
+          },
+          "read_only_credential_qualified": true,
+          "rejected_tls_peer_and_name": true,
+          "wrong_credential_refused": true
+        },
+        "os": "Linux",
+        "ssh": {
+          "airgap_zero_ssh_connections": true,
+          "git_sessions": {
+            "writer:git-receive-pack": 4,
+            "writer:git-upload-pack": 7
+          },
+          "read_only_credential_qualified": true,
+          "untrusted_and_changed_host_key_refused": true,
+          "wrong_user_key_refused": true
+        }
+      },
+      "workspaces": {
+        "arch": "x86_64",
+        "candidate_sha256": "c436bb959d59c9b5d0d4ca05b731fd7d2f8b65a6168c44ecbecefb896c4c2998",
+        "concurrency": {
+          "independent_heads": 24,
+          "pinned_packed_history": true,
+          "source_unchanged": true,
+          "usable_without_source": true,
+          "workers": 24
+        },
+        "encryption": {
+          "credential_required": true,
+          "encrypted_object_and_index": true,
+          "independent_commit": true,
+          "independent_key": true
+        },
+        "git_handoff": {
+          "exact_git_parent_preserved": true,
+          "proposal_branches": 2,
+          "protected_main_push_refused": true,
+          "same_path_conflict_preserved": true
+        },
+        "git_identity_roundtrip": {
+          "previously_exported_base_fast_forwards": true,
+          "unreachable_git_identity_excluded": true
+        },
+        "os": "Linux",
+        "publication": {
+          "abbreviated_and_non_commit_bases_refused": true,
+          "empty_target_race_refused": true,
+          "escaping_symlink_refused": true,
+          "interruption_then_retry": true,
+          "same_destination_competing_creators": true
+        }
+      },
+      "hosted-smoke": {
+        "arch": "x86_64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "d5a2f0a4289e6af656f95bc83d7e143160bc2fd302a15068c7731d6465427483",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Linux",
+        "version": "lit 0.1.0"
+      },
+      "hosted-auth": {
+        "arch": "x86_64",
+        "candidate_sha256": "d5a2f0a4289e6af656f95bc83d7e143160bc2fd302a15068c7731d6465427483",
+        "https": {
+          "airgap_zero_network_and_helper_calls": true,
+          "askpass_received_repository_path": true,
+          "git_posts": {
+            "git-receive-pack": 2,
+            "git-upload-pack": 13
+          },
+          "read_only_credential_qualified": true,
+          "rejected_tls_peer_and_name": true,
+          "wrong_credential_refused": true
+        },
+        "os": "Linux",
+        "ssh": {
+          "airgap_zero_ssh_connections": true,
+          "git_sessions": {
+            "writer:git-receive-pack": 4,
+            "writer:git-upload-pack": 7
+          },
+          "read_only_credential_qualified": true,
+          "untrusted_and_changed_host_key_refused": true,
+          "wrong_user_key_refused": true
+        }
+      },
+      "rust_tests": {
+        "passed": 487,
+        "group_results": [
+          "test result: ok. 67 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.45s",
+          "test result: ok. 67 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.60s",
+          "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 14.03s",
+          "test result: ok. 27 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.06s",
+          "test result: ok. 239 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.61s",
+          "test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s",
+          "test result: ok. 38 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s",
+          "test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.38s",
+          "test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.22s",
+          "test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.47s",
+          "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+          "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s"
+        ],
+        "doc_test_retry": false
+      },
+      "sandbox": "filesystem_and_network_confinement_passed",
+      "raw_log_sha256": {
+        "auth-remotes.json": "90bf6290d3bcf80a4103ee5cfc2f4484b60a343848e24d789c5db71275190228",
+        "hosted-auth.json": "349cbbb6c22913ad90067dd72a454be2476cfbd016b9964ad7de28a8ff470573",
+        "hosted-auth.stderr": "c169fae726afbef178a8d2d20862fdb1f68db1a504c6efff9304b17bbb30bf0e",
+        "hosted-smoke.json": "08a00523fd2c8103467f8a2613ac35e73d8f83aecbf710e746689950dd9b959e",
+        "rust-tests.log": "2c9507161d307e326314faa91bfcbf19c82e79eebc0d553581d30dedccff0495",
+        "sandbox.log": "f6993192b1bffc5708d4396646240fc7cca59b0f9eb1f955c1810e281826ffca",
+        "smoke.json": "547eb32d16ecc6fd4bae5980402e3113178c2882552997c93434eb3f22e17e3d",
+        "workspaces.json": "29c7fcf1c804c71eb6cdd6445e242f763e4ab6d7afe592796e61d4646acc5a7b"
+      }
+    },
+    "host-e": {
+      "smoke": {
+        "arch": "aarch64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "e9217768900b6522b91f0a9fee6e261ae755ac2dc4ae32d44a02374a588de469",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Linux",
+        "version": "lit 0.1.0"
+      },
+      "auth-remotes": {
+        "arch": "aarch64",
+        "candidate_sha256": "e9217768900b6522b91f0a9fee6e261ae755ac2dc4ae32d44a02374a588de469",
+        "https": {
+          "airgap_zero_network_and_helper_calls": true,
+          "askpass_received_repository_path": true,
+          "git_posts": {
+            "git-receive-pack": 2,
+            "git-upload-pack": 13
+          },
+          "read_only_credential_qualified": true,
+          "rejected_tls_peer_and_name": true,
+          "wrong_credential_refused": true
+        },
+        "os": "Linux",
+        "ssh": {
+          "airgap_zero_ssh_connections": true,
+          "git_sessions": {
+            "writer:git-receive-pack": 4,
+            "writer:git-upload-pack": 7
+          },
+          "read_only_credential_qualified": true,
+          "untrusted_and_changed_host_key_refused": true,
+          "wrong_user_key_refused": true
+        }
+      },
+      "workspaces": {
+        "arch": "aarch64",
+        "candidate_sha256": "e9217768900b6522b91f0a9fee6e261ae755ac2dc4ae32d44a02374a588de469",
+        "concurrency": {
+          "independent_heads": 24,
+          "pinned_packed_history": true,
+          "source_unchanged": true,
+          "usable_without_source": true,
+          "workers": 24
+        },
+        "encryption": {
+          "credential_required": true,
+          "encrypted_object_and_index": true,
+          "independent_commit": true,
+          "independent_key": true
+        },
+        "git_handoff": {
+          "exact_git_parent_preserved": true,
+          "proposal_branches": 2,
+          "protected_main_push_refused": true,
+          "same_path_conflict_preserved": true
+        },
+        "git_identity_roundtrip": {
+          "previously_exported_base_fast_forwards": true,
+          "unreachable_git_identity_excluded": true
+        },
+        "os": "Linux",
+        "publication": {
+          "abbreviated_and_non_commit_bases_refused": true,
+          "empty_target_race_refused": true,
+          "escaping_symlink_refused": true,
+          "interruption_then_retry": true,
+          "same_destination_competing_creators": true
+        }
+      },
+      "hosted-smoke": {
+        "arch": "aarch64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "f822df0a736dd797452f597274a94bd740ed555c26b13196544367a4057e0ca0",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Linux",
+        "version": "lit 0.1.0"
+      },
+      "hosted-auth": {
+        "arch": "aarch64",
+        "candidate_sha256": "f822df0a736dd797452f597274a94bd740ed555c26b13196544367a4057e0ca0",
+        "https": {
+          "airgap_zero_network_and_helper_calls": true,
+          "askpass_received_repository_path": true,
+          "git_posts": {
+            "git-receive-pack": 2,
+            "git-upload-pack": 13
+          },
+          "read_only_credential_qualified": true,
+          "rejected_tls_peer_and_name": true,
+          "wrong_credential_refused": true
+        },
+        "os": "Linux",
+        "ssh": {
+          "airgap_zero_ssh_connections": true,
+          "git_sessions": {
+            "writer:git-receive-pack": 4,
+            "writer:git-upload-pack": 7
+          },
+          "read_only_credential_qualified": true,
+          "untrusted_and_changed_host_key_refused": true,
+          "wrong_user_key_refused": true
+        }
+      },
+      "rust_tests": {
+        "passed": 487,
+        "group_results": [
+          "test result: ok. 67 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.03s",
+          "test result: ok. 67 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.00s",
+          "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.93s",
+          "test result: ok. 27 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.85s",
+          "test result: ok. 239 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.45s",
+          "test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s",
+          "test result: ok. 38 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s",
+          "test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.37s",
+          "test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s",
+          "test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.34s",
+          "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+          "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s"
+        ],
+        "doc_test_retry": false
+      },
+      "sandbox": "strict_launch_unavailable_refused_before_payload; expect-unavailable passed",
+      "raw_log_sha256": {
+        "auth-remotes.json": "efe77bc989b9ca3efe42e22f10d0876520b1464fb72f35d970a7aa152745bf39",
+        "hosted-auth.json": "c264f1040e0962fe5b86ac262c21c1268bd9ea19281217b18b49eafc5e7b63ac",
+        "hosted-auth.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "hosted-smoke.json": "9d47d0a52a8c41af032eba15874c177a8dd6e2405b555761fe87b29d194ecaa4",
+        "rust-tests.log": "48f3fc20b6dc2542fdcff5e1be0d03515b7098d6f5c96f818c0967e049bf61c9",
+        "sandbox-unavailable.log": "ec8194125ab05f6b66f0cbbe25323c26a79a8d43aaf147b70f31b0b625eb7695",
+        "sandbox.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "smoke.json": "1ecf3a9d9cc20eefbc79b15a7d50c05b92eec418451481ebd17b3fc5edb1776f",
+        "workspaces.json": "d0fdb7c0c81d08673a384371b64ae9ac883a267032a88df382ecc8c50c07f5b6"
+      }
+    },
+    "host-f": {
+      "smoke": {
+        "arch": "aarch64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "a7455419f7c489091f7c92aba9fab21de6fccd04335febdc5b4bd0869f6cf7f4",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Linux",
+        "version": "lit 0.1.0"
+      },
+      "auth-remotes": {
+        "arch": "aarch64",
+        "candidate_sha256": "a7455419f7c489091f7c92aba9fab21de6fccd04335febdc5b4bd0869f6cf7f4",
+        "https": {
+          "airgap_zero_network_and_helper_calls": true,
+          "askpass_received_repository_path": true,
+          "git_posts": {
+            "git-receive-pack": 2,
+            "git-upload-pack": 13
+          },
+          "read_only_credential_qualified": true,
+          "rejected_tls_peer_and_name": true,
+          "wrong_credential_refused": true
+        },
+        "os": "Linux",
+        "ssh": {
+          "airgap_zero_ssh_connections": true,
+          "git_sessions": {
+            "writer:git-receive-pack": 4,
+            "writer:git-upload-pack": 7
+          },
+          "read_only_credential_qualified": true,
+          "untrusted_and_changed_host_key_refused": true,
+          "wrong_user_key_refused": true
+        }
+      },
+      "workspaces": {
+        "arch": "aarch64",
+        "candidate_sha256": "a7455419f7c489091f7c92aba9fab21de6fccd04335febdc5b4bd0869f6cf7f4",
+        "concurrency": {
+          "independent_heads": 24,
+          "pinned_packed_history": true,
+          "source_unchanged": true,
+          "usable_without_source": true,
+          "workers": 24
+        },
+        "encryption": {
+          "credential_required": true,
+          "encrypted_object_and_index": true,
+          "independent_commit": true,
+          "independent_key": true
+        },
+        "git_handoff": {
+          "exact_git_parent_preserved": true,
+          "proposal_branches": 2,
+          "protected_main_push_refused": true,
+          "same_path_conflict_preserved": true
+        },
+        "git_identity_roundtrip": {
+          "previously_exported_base_fast_forwards": true,
+          "unreachable_git_identity_excluded": true
+        },
+        "os": "Linux",
+        "publication": {
+          "abbreviated_and_non_commit_bases_refused": true,
+          "empty_target_race_refused": true,
+          "escaping_symlink_refused": true,
+          "interruption_then_retry": true,
+          "same_destination_competing_creators": true
+        }
+      },
+      "hosted-smoke": {
+        "arch": "aarch64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "f822df0a736dd797452f597274a94bd740ed555c26b13196544367a4057e0ca0",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Linux",
+        "version": "lit 0.1.0"
+      },
+      "hosted-auth": {
+        "arch": "aarch64",
+        "candidate_sha256": "f822df0a736dd797452f597274a94bd740ed555c26b13196544367a4057e0ca0",
+        "https": {
+          "airgap_zero_network_and_helper_calls": true,
+          "askpass_received_repository_path": true,
+          "git_posts": {
+            "git-receive-pack": 2,
+            "git-upload-pack": 13
+          },
+          "read_only_credential_qualified": true,
+          "rejected_tls_peer_and_name": true,
+          "wrong_credential_refused": true
+        },
+        "os": "Linux",
+        "ssh": {
+          "airgap_zero_ssh_connections": true,
+          "git_sessions": {
+            "writer:git-receive-pack": 4,
+            "writer:git-upload-pack": 7
+          },
+          "read_only_credential_qualified": true,
+          "untrusted_and_changed_host_key_refused": true,
+          "wrong_user_key_refused": true
+        }
+      },
+      "rust_tests": {
+        "passed": 487,
+        "group_results": [
+          "test result: ok. 67 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.01s",
+          "test result: ok. 67 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.00s",
+          "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.09s",
+          "test result: ok. 27 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.80s",
+          "test result: ok. 239 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.46s",
+          "test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s",
+          "test result: ok. 38 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s",
+          "test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.39s",
+          "test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s",
+          "test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.33s",
+          "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+          "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s"
+        ],
+        "doc_test_retry": true
+      },
+      "sandbox": "strict_launch_unavailable_refused_before_payload; expect-unavailable passed",
+      "raw_log_sha256": {
+        "auth-remotes.json": "8444b5d91a79edbb11323358e620b22187c7babea121f556b084c0120adb2e09",
+        "hosted-auth.json": "c264f1040e0962fe5b86ac262c21c1268bd9ea19281217b18b49eafc5e7b63ac",
+        "hosted-auth.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "hosted-smoke.json": "9d47d0a52a8c41af032eba15874c177a8dd6e2405b555761fe87b29d194ecaa4",
+        "rust-tests.log": "90be5e6b948b5c96fcb19b019fb433ff5e409c5ca9ad5b9434ed01a4467eb5d1",
+        "rustdoc-retry.log": "7d623e119c8f3d932133cfa58f04abafdda257fc7e06e930af997167d46420f4",
+        "sandbox-unavailable.log": "ec8194125ab05f6b66f0cbbe25323c26a79a8d43aaf147b70f31b0b625eb7695",
+        "sandbox.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "smoke.json": "db72c269343f8ede1a5fa6b0e47ac4e9e1b19876981420a38568a57c1b3e87a7",
+        "workspaces.json": "5d3ac39fed6b4cd57e9fca1d069e3d0949cc28ace4c2184a9b6af0e5b069378b"
+      }
+    }
+  },
+  "local": {
+    "rust_tests_passed": 487,
+    "format": "pass",
+    "clippy_warnings_denied": "pass",
+    "rustdoc": "pass",
+    "documented_examples": "pass",
+    "source_installer": "pass",
+    "installer_script_contract": "pass",
+    "authenticated_https_ssh": "pass",
+    "raw_evidence_sha256": {
+      "final-rust-tests.log": "0a162f75228c4a89587320cb98952b1a79c1ba4027e3b1c9d69b4cfd190aae1b",
+      "clippy-final.log": "7404e0999058bc0fffa2ac30868e83272e3485f83876680180c5c0997361c833",
+      "fmt-final.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rustdoc-final.log": "2bb4c3356871a733bbc12c85f0a08c969de9a8d702180205d5af41ba908f6139",
+      "final-docs.json": "f0f20972551109c6aacd25f40e714c0553e7289ad21eac635dc3b6b30b855308",
+      "final-smoke.json": "214aa7e04a7c3054b0fdd04f40effe49157398225ff8132bb3885f440491183b",
+      "hardened-auth-remotes.json": "8dc39a0ca0858ed45070e4952e07eabeaaf68bc96870025fc8fdb2a4a3988433",
+      "install-script-local.json": "9b91e9fd7340817e6d14240db94f5da7bdcb52a4d5d1dbe4d1c077c44b88ac1d",
+      "actual-install.log": "0fca4884f1f00bb4f257ae57224496f8fb21df09abb05da972be921d9df5d5b8",
+      "sandbox-demo.log": "3e8f62578d4b4907ca501801657c3c844478ee7028dc9a73172f1b7108497cef",
+      "installer-first-failure.log": "e6f1d9874a3770a5eac44ade8f8bc45a6ffc90e2ac62ecc5d9c8784f41fbf6cb",
+      "installer-second-failure.log": "269fa08d659c90ab67829b89a1ed6ebd1044117766a275ccd1f4e2826992bbff",
+      "final-actions.json": "5a8501390823620f36c9033662b425d122732d203dbba6472e66f444fabd2644",
+      "installer-final-actions.json": "fbd753fdcd79fa84d2711cbda6f6ba0259c59f537c8cdc82b54a9f6cc497ddd2",
+      "main-rule-before.json": "6117e57240629939e2b44c28596eca36fbc090351e8695f28e064fef6dbc0c69",
+      "main-rule-after.json": "6117e57240629939e2b44c28596eca36fbc090351e8695f28e064fef6dbc0c69",
+      "main-before": "adeb428b276ed4654b843c376a49604756723dceb76e38be17097482eb97d672",
+      "main-after": "adeb428b276ed4654b843c376a49604756723dceb76e38be17097482eb97d672"
+    }
+  },
+  "sandbox_rule": {
+    "id": 27439049,
+    "unchanged": true,
+    "bypass_actors": [],
+    "required_check": "Agent workflow candidate",
+    "integration_id": 15368,
+    "main_commit": "61a19a9b3a5edbf335443a19362447660d7fa697"
+  },
+  "publication": {
+    "published": false,
+    "platform_publisher_signed": false,
+    "attestations_verified": false,
+    "owner_approval_required": true
+  },
+  "limits": [
+    "ARM lab positive sandbox test unavailable due Bubblewrap RTM_NEWADDR permission denial; strict refusal verified.",
+    "host-f doctest initially could not launch rustdoc; matching task-private rustdoc retry passed.",
+    "Two Windows installer harness runs failed before path canonicalization and shell-created-directory fixes; final run passed.",
+    "One RustSec vulnerability remains reported, mitigated by disabling SIMD; five maintenance warnings remain.",
+    "Dependency notice review, final source provenance review and implementation transcript archival remain incomplete.",
+    "Native hosted package tests are smoke/regression tests, not the full Rust suite; full Rust suite ran locally and on all three lab hosts."
+  ]
+}

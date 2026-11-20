@@ -43,7 +43,7 @@ who built them. See [release signing](RELEASING.md).
 
 ## Platforms
 
-| Target | Runtime evidence before the 0.1.0 rename | Requirements |
+| Target | OpenLit 0.1.0 candidate evidence | Requirements |
 | --- | --- | --- |
 | Linux x86-64 | Ubuntu 22.04, glibc 2.35; host-a | glibc 2.35 or newer and libgcc_s |
 | Linux arm64 | Ubuntu 22.04 arm64, glibc 2.35; host-e and host-f | glibc 2.35 or newer and libgcc_s |
@@ -51,10 +51,10 @@ who built them. See [release signing](RELEASING.md).
 | macOS Apple Silicon | macOS 15 arm64 and local Mac | System libraries |
 | Windows x86-64 | Windows Server 2022 | Universal CRT and Visual C++ v14 runtime |
 
-The earlier Linux binaries required symbols through glibc 2.34, but the tested
+The candidate Linux binaries require symbols through glibc 2.34, but the tested
 runtime floor is 2.35. A macOS deployment-target field is not proof that an older
 macOS release works. Windows desktop versions and Windows arm64 are not covered
-by that matrix. [Exact earlier evidence](../tests/fixtures/release-qualification/2026-11-20-compatibility.md)
+by that matrix. [Exact candidate evidence](../tests/fixtures/release-qualification/2026-11-20-openlit.md)
 
 If Windows reports a missing `VCRUNTIME140.dll`, install the
 [Microsoft x64 Visual C++ Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist/).
