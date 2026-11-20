@@ -1,0 +1,631 @@
+{
+  "archives": {
+    "aarch64-apple-darwin": {
+      "archive_sha256": "fff9d88c5ebaff7b55e00a37cf7bef5284264881e9daeffab4903d1d1432bc04",
+      "binary_sha256": "dfaff98df39b324cf0b8276db4ebe3a7e79261112be091c10ada0bf7a5452fc2",
+      "build_log_sha256": "ff1c26d1d608f847bdb911d858c0ce08afd031a4c2fb326db1d7901282dc3628",
+      "filename": "lit-recovery-8099119-aarch64-apple-darwin.tar.gz",
+      "toolchain": "rustc 1.99.0 (b940084d7 2026-09-28) (Homebrew)"
+    },
+    "aarch64-unknown-linux-gnu": {
+      "archive_sha256": "5bfee7ef6dde8221cb2abf7dbce775e0cc0b21e3ffbe59fb9c05ec960960a2a6",
+      "binary_sha256": "2962a2e74876b0f7af0f68db4f3ee622d37a18977ffd8bfcd2d03db95f87b3b9",
+      "build_log_sha256": "3a57db135de9ecfdd56cd472811adae29f62ce34a994af808d807a8d03affa8b",
+      "filename": "lit-recovery-8099119-aarch64-unknown-linux-gnu.tar.gz",
+      "highest_required_glibc_symbol": "GLIBC_2.39",
+      "toolchain": "rustc 1.99.0 (b940084d7 2026-09-28)"
+    },
+    "x86_64-unknown-linux-gnu": {
+      "archive_sha256": "7c5068eeae06ebcca64643e66ca56b28e35a2112fd0ab795668cada1990b77b4",
+      "binary_sha256": "7140c3e08f6ec08b0c7fe5bfd8779c082bb8d6f8e817a04d762e262f9d2fdf35",
+      "build_log_sha256": "8403f50dceaf2e54ec8534b9d235c2fc024c14ac77240df35c75b243448ed349",
+      "filename": "lit-recovery-8099119-x86_64-unknown-linux-gnu.tar.gz",
+      "highest_required_glibc_symbol": "GLIBC_2.39",
+      "toolchain": "rustc 1.98.1 (48a229cea 2026-09-01)"
+    }
+  },
+  "build": "cargo build --offline --locked --release",
+  "cargo_lock_sha256": "8d44ae84e512b0ceb7182c66ccc3c86b55a538337100301669eaa6d67f25b0c9",
+  "hosts": {
+    "host-a": {
+      "authenticated_remotes": {
+        "arch": "x86_64",
+        "candidate_sha256": "7140c3e08f6ec08b0c7fe5bfd8779c082bb8d6f8e817a04d762e262f9d2fdf35",
+        "https": {
+          "airgap_zero_network_and_helper_calls": true,
+          "askpass_received_repository_path": true,
+          "git_posts": {
+            "git-receive-pack": 2,
+            "git-upload-pack": 13
+          },
+          "read_only_credential_qualified": true,
+          "rejected_tls_peer_and_name": true,
+          "wrong_credential_refused": true
+        },
+        "os": "Linux",
+        "ssh": {
+          "airgap_zero_ssh_connections": true,
+          "git_sessions": {
+            "writer:git-receive-pack": 4,
+            "writer:git-upload-pack": 7
+          },
+          "read_only_credential_qualified": true,
+          "untrusted_and_changed_host_key_refused": true,
+          "wrong_user_key_refused": true
+        }
+      },
+      "batch_mcp": {
+        "arch": "x86_64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "7140c3e08f6ec08b0c7fe5bfd8779c082bb8d6f8e817a04d762e262f9d2fdf35",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Linux",
+        "version": "lit 1.0.0"
+      },
+      "git_version": "git version 2.51.0",
+      "migration": {
+        "arch": "x86_64",
+        "bare": {
+          "recovery": 4,
+          "released": 4
+        },
+        "candidate_sha256": "7140c3e08f6ec08b0c7fe5bfd8779c082bb8d6f8e817a04d762e262f9d2fdf35",
+        "denials": {
+          "active_transaction": true,
+          "corrupt_object": true,
+          "future_format": true,
+          "metadata_symlink": true
+        },
+        "encrypted": {
+          "recovery_packed": {
+            "key_rotated_on_copy": false,
+            "old_key_preserved_at_source": true,
+            "packed": true
+          },
+          "released_loose": {
+            "key_rotated_on_copy": true,
+            "old_key_preserved_at_source": true,
+            "packed": false
+          },
+          "released_packed": {
+            "key_rotated_on_copy": true,
+            "old_key_preserved_at_source": true,
+            "packed": true
+          }
+        },
+        "interruption": {
+          "competing_migration": true,
+          "killed_before_publish": true,
+          "no_replace_race": true,
+          "resume": true
+        },
+        "platform": "Linux",
+        "reference_sha256": "392cc7ab1eb75eea0126e90c3d683dba32fe77d27a4fa781b28aeeaa1d230aef",
+        "reference_version": "lit 1.8.0",
+        "working": {
+          "recovery_packed": {
+            "objects": 11,
+            "refs": 3
+          },
+          "released_loose": {
+            "objects": 11,
+            "refs": 3
+          },
+          "released_packed": {
+            "objects": 11,
+            "refs": 3
+          }
+        }
+      },
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "rust_regressions": {
+        "agent_regressions": 27,
+        "git_interop_regressions": 8
+      },
+      "strict_sandbox": {
+        "disposition": "positive confinement",
+        "observations": [
+          "Strict isolation: inside I/O allowed; outside read/write, symlink, hardlink and loopback blocked",
+          "Default control: outside I/O and loopback allowed; environment scrubbed",
+          "Preexisting hardlink refused before launch",
+          "Symlinked sandbox root refused before launch",
+          "Unavailable backend returned SANDBOX_UNAVAILABLE and left no launch marker",
+          "Trusted launcher with namespaces disabled refused before launch",
+          "Strict launcher closed inherited external file and connected socket descriptors",
+          "Nested host bind mount refused before launch",
+          "UDP, IPv6 and Unix socket creation denied",
+          "Confined child retained its own output and exit status"
+        ]
+      },
+      "target": "x86_64-unknown-linux-gnu"
+    },
+    "host-e": {
+      "authenticated_remotes": {
+        "arch": "aarch64",
+        "candidate_sha256": "2962a2e74876b0f7af0f68db4f3ee622d37a18977ffd8bfcd2d03db95f87b3b9",
+        "https": {
+          "airgap_zero_network_and_helper_calls": true,
+          "askpass_received_repository_path": true,
+          "git_posts": {
+            "git-receive-pack": 2,
+            "git-upload-pack": 13
+          },
+          "read_only_credential_qualified": true,
+          "rejected_tls_peer_and_name": true,
+          "wrong_credential_refused": true
+        },
+        "os": "Linux",
+        "ssh": {
+          "airgap_zero_ssh_connections": true,
+          "git_sessions": {
+            "writer:git-receive-pack": 4,
+            "writer:git-upload-pack": 7
+          },
+          "read_only_credential_qualified": true,
+          "untrusted_and_changed_host_key_refused": true,
+          "wrong_user_key_refused": true
+        }
+      },
+      "batch_mcp": {
+        "arch": "aarch64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "2962a2e74876b0f7af0f68db4f3ee622d37a18977ffd8bfcd2d03db95f87b3b9",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Linux",
+        "version": "lit 1.0.0"
+      },
+      "git_version": "git version 2.43.0",
+      "migration": {
+        "arch": "aarch64",
+        "bare": {
+          "recovery": 4,
+          "released": 4
+        },
+        "candidate_sha256": "2962a2e74876b0f7af0f68db4f3ee622d37a18977ffd8bfcd2d03db95f87b3b9",
+        "denials": {
+          "active_transaction": true,
+          "corrupt_object": true,
+          "future_format": true,
+          "metadata_symlink": true
+        },
+        "encrypted": {
+          "recovery_packed": {
+            "key_rotated_on_copy": false,
+            "old_key_preserved_at_source": true,
+            "packed": true
+          },
+          "released_loose": {
+            "key_rotated_on_copy": true,
+            "old_key_preserved_at_source": true,
+            "packed": false
+          },
+          "released_packed": {
+            "key_rotated_on_copy": true,
+            "old_key_preserved_at_source": true,
+            "packed": true
+          }
+        },
+        "interruption": {
+          "competing_migration": true,
+          "killed_before_publish": true,
+          "no_replace_race": true,
+          "resume": true
+        },
+        "platform": "Linux",
+        "reference_sha256": "2af7c32c10f9150c02c452cefdbea494b26a2e2f01b94b38ba162b27340ff10f",
+        "reference_version": "lit 1.8.0",
+        "working": {
+          "recovery_packed": {
+            "objects": 11,
+            "refs": 3
+          },
+          "released_loose": {
+            "objects": 11,
+            "refs": 3
+          },
+          "released_packed": {
+            "objects": 11,
+            "refs": 3
+          }
+        }
+      },
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "strict_sandbox": {
+        "disposition": "fail-closed",
+        "observations": [
+          "Strict mode refused before running the payload (Linux Bubblewrap did not start the confined command (launcher exit: exit status: 1): bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted)",
+          "Default control: outside I/O and loopback allowed; environment scrubbed"
+        ]
+      },
+      "target": "aarch64-unknown-linux-gnu"
+    },
+    "host-f": {
+      "authenticated_remotes": {
+        "arch": "aarch64",
+        "candidate_sha256": "2962a2e74876b0f7af0f68db4f3ee622d37a18977ffd8bfcd2d03db95f87b3b9",
+        "https": {
+          "airgap_zero_network_and_helper_calls": true,
+          "askpass_received_repository_path": true,
+          "git_posts": {
+            "git-receive-pack": 2,
+            "git-upload-pack": 13
+          },
+          "read_only_credential_qualified": true,
+          "rejected_tls_peer_and_name": true,
+          "wrong_credential_refused": true
+        },
+        "os": "Linux",
+        "ssh": {
+          "airgap_zero_ssh_connections": true,
+          "git_sessions": {
+            "writer:git-receive-pack": 4,
+            "writer:git-upload-pack": 7
+          },
+          "read_only_credential_qualified": true,
+          "untrusted_and_changed_host_key_refused": true,
+          "wrong_user_key_refused": true
+        }
+      },
+      "batch_mcp": {
+        "arch": "aarch64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "2962a2e74876b0f7af0f68db4f3ee622d37a18977ffd8bfcd2d03db95f87b3b9",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Linux",
+        "version": "lit 1.0.0"
+      },
+      "git_version": "git version 2.43.0",
+      "migration": {
+        "arch": "aarch64",
+        "bare": {
+          "recovery": 4,
+          "released": 4
+        },
+        "candidate_sha256": "2962a2e74876b0f7af0f68db4f3ee622d37a18977ffd8bfcd2d03db95f87b3b9",
+        "denials": {
+          "active_transaction": true,
+          "corrupt_object": true,
+          "future_format": true,
+          "metadata_symlink": true
+        },
+        "encrypted": {
+          "recovery_packed": {
+            "key_rotated_on_copy": false,
+            "old_key_preserved_at_source": true,
+            "packed": true
+          },
+          "released_loose": {
+            "key_rotated_on_copy": true,
+            "old_key_preserved_at_source": true,
+            "packed": false
+          },
+          "released_packed": {
+            "key_rotated_on_copy": true,
+            "old_key_preserved_at_source": true,
+            "packed": true
+          }
+        },
+        "interruption": {
+          "competing_migration": true,
+          "killed_before_publish": true,
+          "no_replace_race": true,
+          "resume": true
+        },
+        "platform": "Linux",
+        "reference_sha256": "2af7c32c10f9150c02c452cefdbea494b26a2e2f01b94b38ba162b27340ff10f",
+        "reference_version": "lit 1.8.0",
+        "working": {
+          "recovery_packed": {
+            "objects": 11,
+            "refs": 3
+          },
+          "released_loose": {
+            "objects": 11,
+            "refs": 3
+          },
+          "released_packed": {
+            "objects": 11,
+            "refs": 3
+          }
+        }
+      },
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "rust_regressions": {
+        "agent_regressions": 27,
+        "git_interop_regressions": 8
+      },
+      "strict_sandbox": {
+        "disposition": "fail-closed",
+        "observations": [
+          "Strict mode refused before running the payload (Linux Bubblewrap did not start the confined command (launcher exit: exit status: 1): bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted)",
+          "Default control: outside I/O and loopback allowed; environment scrubbed"
+        ]
+      },
+      "target": "aarch64-unknown-linux-gnu"
+    },
+    "macos": {
+      "authenticated_remotes": {
+        "arch": "arm64",
+        "candidate_sha256": "dfaff98df39b324cf0b8276db4ebe3a7e79261112be091c10ada0bf7a5452fc2",
+        "https": {
+          "airgap_zero_network_and_helper_calls": true,
+          "askpass_received_repository_path": true,
+          "git_posts": {
+            "git-receive-pack": 2,
+            "git-upload-pack": 13
+          },
+          "read_only_credential_qualified": true,
+          "rejected_tls_peer_and_name": true,
+          "wrong_credential_refused": true
+        },
+        "os": "Darwin",
+        "ssh": {
+          "airgap_zero_ssh_connections": true,
+          "git_sessions": {
+            "writer:git-receive-pack": 4,
+            "writer:git-upload-pack": 7
+          },
+          "read_only_credential_qualified": true,
+          "untrusted_and_changed_host_key_refused": true,
+          "wrong_user_key_refused": true
+        }
+      },
+      "batch_mcp": {
+        "arch": "arm64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "dfaff98df39b324cf0b8276db4ebe3a7e79261112be091c10ada0bf7a5452fc2",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Darwin",
+        "version": "lit 1.0.0"
+      },
+      "git_version": "git version 2.56.0",
+      "migration": {
+        "arch": "arm64",
+        "bare": {
+          "recovery": 4,
+          "released": 4
+        },
+        "candidate_sha256": "dfaff98df39b324cf0b8276db4ebe3a7e79261112be091c10ada0bf7a5452fc2",
+        "denials": {
+          "active_transaction": true,
+          "corrupt_object": true,
+          "future_format": true,
+          "metadata_symlink": true
+        },
+        "encrypted": {
+          "recovery_packed": {
+            "key_rotated_on_copy": false,
+            "old_key_preserved_at_source": true,
+            "packed": true
+          },
+          "released_loose": {
+            "key_rotated_on_copy": true,
+            "old_key_preserved_at_source": true,
+            "packed": false
+          },
+          "released_packed": {
+            "key_rotated_on_copy": true,
+            "old_key_preserved_at_source": true,
+            "packed": true
+          }
+        },
+        "interruption": {
+          "competing_migration": true,
+          "killed_before_publish": true,
+          "no_replace_race": true,
+          "resume": true
+        },
+        "platform": "Darwin",
+        "reference_sha256": "e3911cf93c366a9d1c40792fb280d4cea5e5f073eccfdfcf16ae6f74026b7d16",
+        "reference_version": "lit 1.8.0",
+        "working": {
+          "recovery_packed": {
+            "objects": 11,
+            "refs": 3
+          },
+          "released_loose": {
+            "objects": 11,
+            "refs": 3
+          },
+          "released_packed": {
+            "objects": 11,
+            "refs": 3
+          }
+        }
+      },
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "rust_regressions": {
+        "agent_regressions": 27,
+        "git_interop_regressions": 8
+      },
+      "strict_sandbox": {
+        "disposition": "positive confinement",
+        "observations": [
+          "Strict isolation: inside I/O allowed; outside read/write, symlink, hardlink and loopback blocked",
+          "Default control: outside I/O and loopback allowed; environment scrubbed",
+          "Preexisting hardlink refused before launch",
+          "Symlinked sandbox root refused before launch",
+          "Unavailable backend returned SANDBOX_UNAVAILABLE and left no launch marker",
+          "Strict launcher closed inherited external file and connected socket descriptors",
+          "Confined child retained its own output and exit status"
+        ]
+      },
+      "target": "aarch64-apple-darwin"
+    }
+  },
+  "mit_baseline": "98c59bb2dbebcf7f575993a4ad89e1300a578c83",
+  "mit_license_sha256": "4448dab94f2c8366b38f763128ba73f0a99b631607187a8efd591e3c06c4ccca",
+  "packaging_commit": "97ffa0d35388b4eab76f925c1411e4e922117d4d",
+  "qualification_date": "2026-11-20",
+  "reference_macos": {
+    "batch": {
+      "advertised_op": {
+        "code": "GENERAL_ERROR",
+        "exit": 1,
+        "message": "Operation failed",
+        "suggestions": []
+      },
+      "advertised_op_dry_run": {
+        "code": "GENERAL_ERROR",
+        "exit": 1,
+        "message": "Operation failed",
+        "suggestions": []
+      },
+      "command_args": {
+        "code": null,
+        "exit": 0,
+        "message": null,
+        "suggestions": null
+      },
+      "command_args_dry_run": {
+        "code": null,
+        "exit": 0,
+        "message": null,
+        "suggestions": null
+      },
+      "status": {
+        "code": null,
+        "exit": 0,
+        "message": null,
+        "suggestions": null
+      },
+      "status_dry_run": {
+        "code": null,
+        "exit": 0,
+        "message": null,
+        "suggestions": null
+      }
+    },
+    "binary_sha256": "e3911cf93c366a9d1c40792fb280d4cea5e5f073eccfdfcf16ae6f74026b7d16",
+    "canonical_batch_assertions": [
+      {
+        "failed": 0,
+        "mode": "dry_run",
+        "staged": [],
+        "succeeded": 1
+      },
+      {
+        "failed": 0,
+        "mode": "execute",
+        "staged": [
+          "a"
+        ],
+        "succeeded": 1
+      }
+    ],
+    "remotes": [
+      "v1.8.0 bare clone exit: 1 {\"command\":\"REF_NOT_FOUND\",\"error\":{\"code\":\"REF_NOT_FOUND\",\"message\":\"Resource not found\",\"suggestions\":[]},\"status\":\"error\"}",
+      "v1.8.0 pull advanced HEAD and left stale working bytes",
+      "v1.8.0 Git file clone/fetch/pull/push exits: [1, 1, 1, 1]",
+      "v1.8.0 Git http clone/fetch/pull/push exits: [1, 1, 1, 1]"
+    ],
+    "version": "lit 1.8.0"
+  },
+  "runtime_commit": "8099119d4c92575d2aa22e15abee1d81eebe9767",
+  "runtime_tree": "2fd2a7216ea67bf9f72b922a7199c0d5ac7c6532",
+  "scope": "Local release archives and disposable repositories. Post-MIT upstream observed as binaries only."
+}
