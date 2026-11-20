@@ -3,6 +3,7 @@
 import ast
 from collections import Counter
 import ctypes
+import fcntl
 import hashlib
 from ipaddress import IPv4Address
 import json
@@ -174,11 +175,15 @@ net.connect({host:'127.0.0.1',port:443}).on('connect',()=>{ throw Error('unexpec
 """
     subprocess.run(node + ["-e", probe, str(root)], cwd=cwd, env=env, preexec_fn=confine,
                    check=True, timeout=20)
-    prompt = ("You are working on a small Python routing helper. Use your file tools to write "
-              f"{operation['file']} in the current directory. "
-              "If the file already exists, read it first and preserve its existing functions. "
-              "Use plain Python functions, with no imports, no external I/O, and no new files. "
-              "Finish after saving the file. " + REQUIREMENTS[operation["role"]][1])
+    if "contract_cases" in operation:
+        from pi_lit_contracts import prompt as contract_prompt
+        prompt = contract_prompt(operation["contract_cases"])
+    else:
+        prompt = ("You are working on a small Python routing helper. Use your file tools to write "
+                  f"{operation['file']} in the current directory. "
+                  "If the file already exists, read it first and preserve its existing functions. "
+                  "Use plain Python functions, with no imports, no external I/O, and no new files. "
+                  "Finish after saving the file. " + REQUIREMENTS[operation["role"]][1])
     if operation.get("feedback"):
         prompt += " An earlier attempt was rejected by the verifier. " + operation["feedback"]
     (attempt / "prompt.txt").write_text(prompt + "\n")
@@ -187,6 +192,10 @@ net.connect({host:'127.0.0.1',port:443}).on('connect',()=>{ throw Error('unexpec
                    "--no-context-files", "--no-extensions", "--no-mcp", "--no-skills",
                    "--no-prompt-templates", "--no-themes", "--tools", "read,edit,write",
                    "--provider", "pilot-local", "--model", operation["model"], "--thinking", "off", prompt]
+    release = operation.get("release_ms", 0)
+    if release:
+        time.sleep(max(0, (release - time.time_ns() // 1_000_000) / 1000))
+    launch_ms = time.time_ns() // 1_000_000
     start = time.monotonic()
     transcript = attempt / "pi.jsonl"
     with transcript.open("wb") as stdout, (attempt / "pi.stderr").open("wb") as stderr:
@@ -200,20 +209,90 @@ net.connect({host:'127.0.0.1',port:443}).on('connect',()=>{ throw Error('unexpec
                  and message.get("provider") == "pilot-local" and message.get("model") == operation["model"]]
     calls = Counter(event.get("toolName") for event in events
                     if event.get("type") == "tool_execution_end" and not event.get("isError"))
+    prompt_ms = min(message["timestamp"] for message in messages if message.get("role") == "user")
     if not assistant or not calls["write"] + calls["edit"]:
         raise RuntimeError("Pi transcript lacks a matching model response and a successful file edit")
     return {"model": operation["model"], "provider": "pilot-local", "inference_host": operation["inference_host"],
             "inference_address": operation["inference_address"],
+            "launch_ms": launch_ms, "prompt_ms": prompt_ms,
             "filesystem_child_process_and_other_tcp_ports_denied": True, "tool_calls": dict(calls),
             "assistant_turns": len(assistant), "duration_seconds": round(time.monotonic() - start, 2),
             "transcript_sha256": hashlib.sha256(transcript.read_bytes()).hexdigest()}
 
 
+def persist(path, document):
+    pending = path.with_suffix(".pending")
+    with pending.open("w") as stream:
+        stream.write(json.dumps(document, separators=(",", ":")) + "\n")
+        stream.flush()
+        os.fsync(stream.fileno())
+    pending.replace(path)
+    return document
+
+
+def execute(root, attempt, operation, action):
+    from task_broker_workspace import proposal_from_workspace, run_lit
+
+    binary = root / "lit"
+    source = root / "source" / operation["base"]
+    pin = json.loads((source / ".lit/broker-base.json").read_text())
+    if pin["git_base"] != operation["base"]:
+        raise ValueError("incorrect Git seed")
+    workspace = attempt / "workspace"
+    prepared = attempt / "prepared.json"
+    if not prepared.exists():
+        if workspace.exists():
+            raise ValueError("workspace preparation was interrupted")
+        run_lit(binary, source, "workspace", "create", str(workspace), "--base", pin["lit_base"])
+        persist(prepared, pin)
+    if json.loads(prepared.read_text()) != pin:
+        raise ValueError("prepared workspace has a different Git seed")
+    if action == "prepare":
+        return pin
+    result_path = attempt / "result.json"
+    if result_path.exists():
+        return json.loads(result_path.read_text())
+    if (attempt / "agent").exists():
+        raise ValueError("coding attempt has no validated result")
+    run, unit = operation["run"], operation.get("work_unit")
+    if "contract_cases" in operation:
+        from pi_lit_contracts import verify
+        scope = workspace / "tests" / "agent-contracts" / run / unit
+        scope.mkdir(parents=True, exist_ok=True)
+        targets = [scope / name for name in ("README.md", "cases.json")]
+        model = run_pi(root, scope, attempt, operation)
+        tested = verify(binary, scope, operation["contract_cases"])
+    else:
+        scope = workspace / "qualification" / run
+        if unit is not None:
+            scope /= unit
+        scope.mkdir(parents=True, exist_ok=True)
+        expected = scope / operation["file"]
+        preserved = {child: child.read_bytes() for child in scope.iterdir() if child != expected}
+        model = run_pi(root, scope, attempt, operation)
+        if set(scope.iterdir()) != {*preserved, expected} or any(
+                path.is_symlink() or path.read_bytes() != contents for path, contents in preserved.items()):
+            raise ValueError("unexpected file in the pilot scope")
+        tested = verify_edit(expected, operation["expected_roles"])
+        targets = [expected]
+    relative = [str(path.relative_to(workspace)) for path in targets]
+    run_lit(binary, workspace, "add", *relative)
+    run_lit(binary, workspace, "commit", "-m", f"Pi pilot {operation['role']}")
+    proposal = proposal_from_workspace(binary, workspace, operation["base"])
+    if {file["path"] for file in proposal.pop("files")} != set(relative):
+        raise ValueError("proposal must edit every assigned file")
+    record = {"episode": operation["episode"], "task": operation["task"], "host": operation["host"],
+              "generation": operation["generation"], "workspace": proposal, "local_cases": tested,
+              "file_sha256": hashlib.sha256(targets[0].read_bytes()).hexdigest(), "execution": model}
+    return persist(result_path, record)
+
+
 def main():
     root = Path(sys.argv[1]).resolve(strict=True)
     sys.path.insert(0, str(root))
-    from task_broker_workspace import proposal_from_workspace, run_lit
-
+    action = sys.argv[2] if len(sys.argv) > 2 else "code"
+    if action not in ("prepare", "code"):
+        raise ValueError("invalid worker action")
     operation = json.load(sys.stdin)
     run, episode = operation["run"], operation["episode"]
     if not re.fullmatch(r"pinned-pi-[a-z0-9]+", run) or not re.fullmatch(r"[a-z0-9-]+", episode):
@@ -222,45 +301,19 @@ def main():
     if unit is not None and not re.fullmatch(r"[a-z0-9-]+", unit):
         raise ValueError("invalid pilot work unit")
     endpoint = IPv4Address(operation["inference_address"])
-    if (operation["file"] not in ("routing.py", "capacity.py") or operation["port"] != 8002
+    if (operation["port"] != 8002
             or operation["inference_host"] != "host-a" or not (endpoint.is_private or endpoint.is_loopback)):
         raise ValueError("invalid pilot file or endpoint")
+    if "contract_cases" in operation:
+        if not unit or not operation["contract_cases"]:
+            raise ValueError("contract work requires a work unit and assigned cases")
+    elif operation["file"] not in ("routing.py", "capacity.py"):
+        raise ValueError("invalid pilot file")
     attempt = root / "attempts" / episode
-    attempt.mkdir(parents=True, mode=0o700)
-    result_path = attempt / "result.json"
-    if result_path.exists():
-        print(result_path.read_text(), end="")
-        return
-    binary = root / "lit"
-    source = root / "source" / operation["base"]
-    pin = json.loads((source / ".lit/broker-base.json").read_text())
-    if pin["git_base"] != operation["base"]:
-        raise ValueError("incorrect Git seed")
-    workspace = attempt / "workspace"
-    run_lit(binary, source, "workspace", "create", str(workspace), "--base", pin["lit_base"])
-    scope = workspace / "qualification" / run
-    if unit is not None:
-        scope /= unit
-    scope.mkdir(parents=True, exist_ok=True)
-    expected = scope / operation["file"]
-    preserved = {child: child.read_bytes() for child in scope.iterdir() if child != expected}
-    model = run_pi(root, scope, attempt, operation)
-    if set(scope.iterdir()) != {*preserved, expected} or any(
-            path.is_symlink() or path.read_bytes() != contents for path, contents in preserved.items()):
-        raise ValueError("unexpected file in the pilot scope")
-    tested = verify_edit(expected, operation["expected_roles"])
-    relative = str(expected.relative_to(workspace))
-    run_lit(binary, workspace, "add", relative)
-    run_lit(binary, workspace, "commit", "-m", f"Pi pilot {operation['role']}")
-    proposal = proposal_from_workspace(binary, workspace, operation["base"])
-    file, = proposal.pop("files")
-    if file["path"] != relative:
-        raise ValueError("proposal contains an unexpected file")
-    record = {"episode": episode, "task": operation["task"], "host": operation["host"],
-              "generation": operation["generation"], "workspace": proposal, "local_cases": tested,
-              "file_sha256": hashlib.sha256(expected.read_bytes()).hexdigest(), "execution": model}
-    result_path.write_text(json.dumps(record, separators=(",", ":")) + "\n")
-    print(result_path.read_text(), end="")
+    attempt.mkdir(parents=True, mode=0o700, exist_ok=True)
+    with (attempt / "worker.lock").open("a") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        print(json.dumps(execute(root, attempt, operation, action)))
 
 
 if __name__ == "__main__":
