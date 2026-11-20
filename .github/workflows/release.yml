@@ -58,17 +58,20 @@ jobs:
       - name: Build release binary
         run: cargo build --locked --release --target ${{ matrix.target }}
 
+      - name: Check signature verification vectors
+        run: cargo test --locked --release --target ${{ matrix.target }} --test signature_vectors
+
       - name: Package artifact (unix)
         if: runner.os != 'Windows'
         run: |
           mkdir release-package
-          cp target/${{ matrix.target }}/release/${{ matrix.artifact }} LICENSE release-package/
-          tar -czf "openlit-${RELEASE_TAG}-${{ matrix.target }}.tar.gz" -C release-package ${{ matrix.artifact }} LICENSE
+          cp target/${{ matrix.target }}/release/${{ matrix.artifact }} LICENSE THIRD_PARTY_NOTICES.txt release-package/
+          tar -czf "openlit-${RELEASE_TAG}-${{ matrix.target }}.tar.gz" -C release-package ${{ matrix.artifact }} LICENSE THIRD_PARTY_NOTICES.txt
 
       - name: Package artifact (windows)
         if: runner.os == 'Windows'
         run: |
-          Compress-Archive -LiteralPath 'target/${{ matrix.target }}/release/${{ matrix.artifact }}', 'LICENSE' -DestinationPath "openlit-$env:RELEASE_TAG-${{ matrix.target }}.zip"
+          Compress-Archive -LiteralPath 'target/${{ matrix.target }}/release/${{ matrix.artifact }}', 'LICENSE', 'THIRD_PARTY_NOTICES.txt' -DestinationPath "openlit-$env:RELEASE_TAG-${{ matrix.target }}.zip"
 
       - name: Set up Python for package tests
         uses: actions/setup-python@v5

@@ -1,0 +1,132 @@
+{
+  "after": [
+    {
+      "id": "RUSTSEC-2026-0586",
+      "package": "pqcrypto-mldsa",
+      "title": "ML-DSA verification accepts non-conforming signatures with the `avx2` feature",
+      "version": "0.1.2"
+    }
+  ],
+  "hosta_probe": {
+    "avx2_mismatches": 50,
+    "cases": 241,
+    "corpus": "C2SP Wycheproof ML-DSA-87 at 65ca494727a52944c204441c860b039e6786b99b",
+    "initial_probe_limit": "The first six-case selection did not reproduce the issue. The full corpus first lacked context handling; this was corrected before the reported 241-case comparison. Both raw runs are retained.",
+    "logs": {
+      "signature-hosta-after.log": "b74145eebd6483b4ac34060f85533a4f0d0fb64bd83a2da22c64c6c17c452eac",
+      "signature-hosta-all-after.log": "31a26373a059cccc9f4a5c6c501b7f46c6fe5e91ed61d6413942213891def110",
+      "signature-hosta-all-before.log": "30e5a1ba87a60d7f72f4209ab0309513399b047881e7d6146ba5848c8c330b1a",
+      "signature-hosta-before.log": "3f10ade2e7acfd0446b43c5bb5554f1bac831ad1cc2340647535ee383d866492",
+      "signature-hosta-context-after.log": "1b28781bf702e1dc72b04428fafd68ea4cecc24e78bdd1f9809c0553642c84e5",
+      "signature-hosta-context-before.log": "2c639013a52ba5e90f53c862d7b6e6153cb744b6e1b1bbd6eaecf3d40ec76b61"
+    },
+    "portable_mismatches": 0
+  },
+  "before": [
+    {
+      "id": "RUSTSEC-2026-0204",
+      "package": "crossbeam-epoch",
+      "title": "Invalid pointer dereference in `fmt::Pointer` impl for `Atomic` and `Shared` when the underlying pointer is invalid",
+      "version": "0.9.18"
+    },
+    {
+      "id": "RUSTSEC-2026-0586",
+      "package": "pqcrypto-mldsa",
+      "title": "ML-DSA verification accepts non-conforming signatures with the `avx2` feature",
+      "version": "0.1.2"
+    },
+    {
+      "id": "RUSTSEC-2026-0346",
+      "package": "rustls",
+      "title": "`Debug` impls for client session values expose TLS secrets",
+      "version": "0.23.37"
+    },
+    {
+      "id": "RUSTSEC-2026-0285",
+      "package": "rustls",
+      "title": "TLS 1.3 handshake messages incorrectly accepted across encryption level boundaries",
+      "version": "0.23.37"
+    },
+    {
+      "id": "RUSTSEC-2026-0348",
+      "package": "rustls",
+      "title": "Brotli certificate decompression can allocate up to 1 GiB before authentication",
+      "version": "0.23.37"
+    },
+    {
+      "id": "RUSTSEC-2026-0349",
+      "package": "rustls",
+      "title": "Unauthenticated ServerHello can downgrade later connections to classical key exchange",
+      "version": "0.23.37"
+    },
+    {
+      "id": "RUSTSEC-2026-0104",
+      "package": "rustls-webpki",
+      "title": "Reachable panic in certificate revocation list parsing",
+      "version": "0.103.10"
+    },
+    {
+      "id": "RUSTSEC-2026-0098",
+      "package": "rustls-webpki",
+      "title": "Name constraints for URI names were incorrectly accepted",
+      "version": "0.103.10"
+    },
+    {
+      "id": "RUSTSEC-2026-0099",
+      "package": "rustls-webpki",
+      "title": "Name constraints were accepted for certificates asserting a wildcard name",
+      "version": "0.103.10"
+    },
+    {
+      "id": "RUSTSEC-2026-0382",
+      "package": "rustls-webpki",
+      "title": "Certificate verification may accept distrusted intermediates",
+      "version": "0.103.10"
+    },
+    {
+      "id": "RUSTSEC-2026-0381",
+      "package": "webpki-roots",
+      "title": "Bundled root certificates allow trust in distrusted emSign intermediates",
+      "version": "1.0.6"
+    }
+  ],
+  "database": {
+    "advisory-count": 1555,
+    "last-commit": "f291af9b1cc0d21dfcea1709d6b037963cef262b",
+    "last-updated": "2026-11-20T13:47:55+01:00"
+  },
+  "portable_features": [
+    "std"
+  ],
+  "scope": "Separately licensed dependencies only; no post-MIT upstream Lit source was used.",
+  "suppression": false,
+  "warnings_after": {
+    "unmaintained": [
+      {
+        "id": "RUSTSEC-2026-0543",
+        "package": "chrono",
+        "version": "0.4.44"
+      },
+      {
+        "id": "RUSTSEC-2024-0436",
+        "package": "paste",
+        "version": "1.0.15"
+      },
+      {
+        "id": "RUSTSEC-2026-0163",
+        "package": "pqcrypto-internals",
+        "version": "0.2.11"
+      },
+      {
+        "id": "RUSTSEC-2026-0166",
+        "package": "pqcrypto-mldsa",
+        "version": "0.1.2"
+      },
+      {
+        "id": "RUSTSEC-2026-0162",
+        "package": "pqcrypto-traits",
+        "version": "0.3.5"
+      }
+    ]
+  }
+}

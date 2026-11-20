@@ -63,7 +63,9 @@ Still required before publication: select and verify the publisher identities;
 wire signing and attestation into a reviewed workflow; qualify the signed final
 archives; complete the source-provenance and dependency-notice review; archive
 reviewed implementation records as required by AGENTS.md; obtain approval.
-No signing credentials were requested, created, or used by this preparation.
+No signing credentials have been created or used by this preparation. Publisher
+identity selection is pending. See [dependency review](DEPENDENCIES.md) for the
+remaining maintenance and notice work.
 
 ## Candidate testing
 

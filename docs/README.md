@@ -17,6 +17,7 @@ The executable is `lit`; the product and package are OpenLit.
 | Components and decisions | [Architecture](../ARCHITECTURE.md), [design](../DESIGN.md) |
 | Command schemas | [Discovery](../ONTOLOGY.md) |
 | Verification and evidence | [Testing](../TESTING.md), [security evidence](../SECURITY_AUDIT.md) |
+| Dependencies and notices | [Dependency review](DEPENDENCIES.md) |
 | First release and signing | [Release requirements](RELEASING.md), [release notes](../CHANGELOG.md) |
 | Priorities | [Roadmap](../ROADMAP.md), [project summary](../PROJECT_SUMMARY.md) |
 | Compliance limits | [FIPS 140-2](../FIPS_140-2.md), [FIPS 140-3](../FIPS_140-3_COMPLIANCE.md) |

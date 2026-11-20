@@ -37,7 +37,7 @@ def digest(path):
 
 
 def unpack(archive, directory, name):
-    expected = sorted(["LICENSE", name])
+    expected = sorted(["LICENSE", "THIRD_PARTY_NOTICES.txt", name])
     if name.endswith(".exe"):
         with zipfile.ZipFile(archive) as package:
             assert sorted(package.namelist()) == expected
@@ -49,6 +49,7 @@ def unpack(archive, directory, name):
             assert all(member.isfile() for member in members)
             package.extractall(directory, filter="data")
     assert (directory / "LICENSE").read_bytes() == (TESTS.parent / "LICENSE").read_bytes()
+    assert (directory / "THIRD_PARTY_NOTICES.txt").read_bytes() == (TESTS.parent / "THIRD_PARTY_NOTICES.txt").read_bytes()
     return directory / name
 
 
@@ -78,6 +79,11 @@ def main():
         "rustc": run("rustc", "--version"),
         "target": args.target,
     }
+    metadata = json.loads(run("cargo", "metadata", "--locked", "--format-version", "1"))
+    dependency = next(p["id"] for p in metadata["packages"] if p["name"] == "pqcrypto-mldsa")
+    features = next(n["features"] for n in metadata["resolve"]["nodes"] if n["id"] == dependency)
+    assert features == ["std"], features
+    receipt["mldsa_features"] = features
     with tempfile.TemporaryDirectory(prefix="lit-qualify-") as folder:
         binary = unpack(args.archive, Path(folder), "lit.exe" if native_windows else "lit")
         receipt["binary_sha256"] = digest(binary)

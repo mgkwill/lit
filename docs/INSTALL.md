@@ -27,7 +27,7 @@ runs before replacing it. On Unix use `command -v lit`; in PowerShell use
 ## Candidate archives
 
 Archives use `openlit-VERSION-TARGET.tar.gz` on Unix and `.zip` on Windows.
-Inside is `lit` or `lit.exe`, plus the original `LICENSE`. Qualification builds
+Inside is `lit` or `lit.exe`, plus the original `LICENSE` and `THIRD_PARTY_NOTICES.txt`. Qualification builds
 include their branch name in place of VERSION so they cannot be mistaken for a
 published release. Keep the license with the installed binary.
 
