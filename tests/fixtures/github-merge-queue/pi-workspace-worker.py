@@ -142,7 +142,7 @@ def confine_pi(runtime, packages, config, cwd, port):
         os.close(ruleset)
 
 
-def run_pi(root, cwd, attempt, operation):
+def run_pi(root, cwd, attempt, operation, assignment_prompt=None):
     runtime = root / "node"
     packages = root / "npm"
     config = attempt / "agent"
@@ -175,7 +175,9 @@ net.connect({host:'127.0.0.1',port:443}).on('connect',()=>{ throw Error('unexpec
 """
     subprocess.run(node + ["-e", probe, str(root)], cwd=cwd, env=env, preexec_fn=confine,
                    check=True, timeout=20)
-    if operation.get("workload") == "source":
+    if assignment_prompt is not None:
+        prompt = assignment_prompt
+    elif operation.get("workload") == "source":
         from pi_source_cases import prompt as source_prompt
         prompt = source_prompt(operation["contract_cases"])
     elif "contract_cases" in operation:
@@ -258,7 +260,23 @@ def execute(root, attempt, operation, action):
     if (attempt / "agent").exists():
         raise ValueError("coding attempt has no validated result")
     run, unit = operation["run"], operation.get("work_unit")
-    if operation.get("workload") == "source":
+    if operation.get("workload") == "rust-regression":
+        from pi_rust_workload import MODULES, prompt, verify
+        target = operation["rust"]
+        if target["file"] not in MODULES:
+            raise ValueError("Rust workload path is outside the approved module set")
+        path = workspace / target["file"]
+        if not path.is_file() or path.is_symlink():
+            raise ValueError("Rust workload requires an existing regular module")
+        before = path.read_bytes()
+        selected = operation["contract_cases"]
+        model = run_pi(root, path.parent, attempt, operation, prompt(before, target, selected))
+        if not path.is_file() or path.is_symlink() or path.stat().st_size > len(before) + 8192:
+            raise ValueError("Rust workload created an unexpected file type or size")
+        path.write_bytes(verify(before, path.read_bytes(), target, selected))
+        tested = len(selected)
+        targets = [path]
+    elif operation.get("workload") == "source":
         from pi_source_cases import function_map, verify
         scope = workspace / "qualification" / run / unit
         scope.mkdir(parents=True, exist_ok=True)

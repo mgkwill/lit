@@ -304,6 +304,8 @@ class Cohort:
 
     def run(self):
         state = self.journal.read(self.steps)
+        if "cleanup" not in state and hasattr(self.lab, "authorize_controller"):
+            self.lab.authorize_controller()
         if "terminal" not in state:
             if "publication_window" in self.plan:
                 final = self.step("terminal", self.run_windows)
@@ -320,6 +322,7 @@ class Cohort:
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--state", required=True, type=Path, help="private directory containing plan.json and lab.json")
+    parser.add_argument("--controller", help="select a configured controller profile")
     parser.add_argument("--interrupt-after", action="append", default=[], choices=("reassignment", "worker-removal"),
                         help="terminate once after this remote change and before its receipt is recorded")
     args = parser.parse_args()
@@ -338,8 +341,10 @@ def main():
             raise PilotError("cannot change the adapter type of a saved run")
         if configured:
             from pi_pilot_lab import open_lab
-            lab = open_lab(state, plan, journal)
+            lab = open_lab(state, plan, journal, args.controller)
         else:
+            if args.controller:
+                parser.error("--controller requires lab.json")
             journal.record("input", "adapter-sha256", sha256(adapter_path.read_bytes()).hexdigest())
             spec = importlib.util.spec_from_file_location("private_pi_adapter", adapter_path)
             module = importlib.util.module_from_spec(spec)

@@ -14,9 +14,21 @@ from pi_pilot import Cohort
 from pi_pilot_lab import open_lab
 from pi_pilot_runner import Journal, PilotError
 from pi_source_cases import verify
+from pi_rust_workload import projected, verify as verify_rust
 
 
 class SourceTests(unittest.TestCase):
+    def test_rust_edit_can_only_insert_the_reviewed_test(self):
+        before = b"pub struct LitConfig {}\n"
+        target = {"file": "src/config.rs", "anchor": before.decode(), "indent": ""}
+        cases = ["pi_lit_01234567_001"]
+        expected = projected(before, target, cases)
+        self.assertEqual(verify_rust(before, expected, target, cases), expected)
+        with self.assertRaises(ValueError):
+            verify_rust(before, expected.replace(b"unwrap()", b"unwrap_unchecked()"), target, cases)
+        with self.assertRaises(ValueError):
+            verify_rust(before, expected.replace(b"pub struct", b"struct"), target, cases)
+
     def test_source_functions_pass_the_bounded_behavior_verifier(self):
         with tempfile.TemporaryDirectory() as root:
             path = Path(root) / "policy.py"
@@ -36,6 +48,31 @@ class SourceTests(unittest.TestCase):
 
 
 class LabTests(unittest.TestCase):
+    def test_profiles_share_a_plan_digest_and_only_change_local_bindings(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            run = "pinned-pi-test"
+            plan = {"run": run, "base": "e" * 40, "active_host": "worker", "build_capacity": 10,
+                    "endpoint": "https://broker.example.test", "repo": "owner/repo",
+                    "agents": [{"id": "w", "run": run, "task": run + "-w", "base": "e" * 40,
+                                "host": "worker", "work_unit": "source"}]}
+            config = {"hosts": {"worker": {"destination": "old"}}, "broker_hosts": ["worker"],
+                      "rules": {"main": 1, "freeze": 2, "namespace": 3}, "worker_root": "/tmp/lit-live-" + run,
+                      "workflow": ".github/workflows/check.yml", "required_check": "test",
+                      "controllers": {"primary": {"scheduler_key": "/one/key"},
+                                      "secondary": {"scheduler_key": "/two/key",
+                                                    "hosts": {"worker": {"destination": "new"}}},
+                                      "invalid": {"rules": {"freeze": 4}}}}
+            (root / "lab.json").write_text(json.dumps(config))
+            journal = Journal(root / "journal")
+            primary = open_lab(root, plan, journal, "primary")
+            secondary = open_lab(root, plan, journal, "secondary")
+            self.assertEqual(primary.forge.rules, secondary.forge.rules)
+            self.assertNotEqual(primary.config["scheduler_key"], secondary.config["scheduler_key"])
+            self.assertEqual(secondary.config["hosts"]["worker"]["destination"], "new")
+            with self.assertRaisesRegex(PilotError, "only change"):
+                open_lab(root, plan, journal, "invalid")
+
     def test_window_keeps_both_sides_of_an_exercise_together(self):
         class Adapter:
             pass

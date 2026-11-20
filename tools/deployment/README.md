@@ -163,6 +163,20 @@ their syntax trees to check that a conflict repair preserves prior functions.
 
 The command pins the plan, lab profile, and adapter sources in its journal.
 Resume an in-flight run from the same source revision and adapter type.
+For a controller handoff, define named `controllers` in the lab profile and
+select one with `--controller NAME`. A profile can override its local SSH
+transport, scheduler certificate and key, server CA, and local Lit binary.
+Use distinct scheduler identities. Stop the outgoing controller, copy the
+private state over authenticated transport, and revoke its identity in the
+broker before authorizing the successor. The successor checks its scheduler
+authority on startup and uses the same plan and source digests. The local
+journal lock covers concurrent controllers sharing one filesystem.
+
+Set `workload` to `rust-regression` for insertions into existing Lit Rust
+modules. The trusted checker accepts only the assigned test at its pinned
+anchor. The final-tree audit reconstructs each module from the trusted Git
+pin and the approved insertions before comparing it with the merged tree.
+
 For older runs, it can still load the journal's original private `adapter.py`.
 It adopts a
 matching broker generation after an interrupted reassignment, and confirms

@@ -11,6 +11,7 @@ import os
 from pathlib import Path
 import re
 import shlex
+import socket
 import ssl
 import subprocess
 import sys
@@ -146,6 +147,13 @@ class Lab:
         self.private = Journal(state / "private")
         self.main = self.forge.main
         self.capacity = plan["build_capacity"]
+        self.controller = None
+
+    def authorize_controller(self):
+        if self.controller is not None:
+            self.admin("status", seconds=0)
+            self.journal.record("controllers", self.controller, {"host": socket.gethostname(),
+                "certificate": digest(ssl.PEM_cert_to_DER_cert(Path(self.config["scheduler_certificate"]).read_text()))})
 
     def load(self, name):
         return json.loads((self.state / f"{name}.json").read_bytes())
@@ -162,11 +170,15 @@ class Lab:
         profile = self.config["hosts"][host]
         options = ["-oBatchMode=yes", "-oStrictHostKeyChecking=yes", "-oConnectTimeout=8"]
         for key, option in (("hostname", "HostName"), ("host_key_alias", "HostKeyAlias"),
-                            ("known_hosts", "UserKnownHostsFile")):
+                            ("known_hosts", "UserKnownHostsFile"), ("identity_file", "IdentityFile")):
             if key in profile:
                 options.extend(["-o", f"{option}={profile[key]}"])
+        if "identity_file" in profile:
+            options.append("-oIdentitiesOnly=yes")
         if worker and profile.get("worker_user"):
             args = ["sudo", "-n", "-u", profile["worker_user"], *args]
+        if profile.get("local"):
+            return command(args, data, timeout)
         return command(["ssh", *options, "--", profile["destination"], shlex.join(args)], data, timeout)
 
     def admin(self, route, body=None, seconds=300):
@@ -283,9 +295,16 @@ class Lab:
         self.save("publication-" + row["episode"], row)
         print(f"{row['episode']} opened or recovered PR #{row['receipt']['number']}", flush=True)
 
+    def broker_projection(self, config):
+        controllers = self.config.get("controller_principals", {})
+        for fingerprint in set(controllers) & config["principals"].keys():
+            require(config["principals"][fingerprint] == controllers[fingerprint], "controller principal changed")
+            del config["principals"][fingerprint]
+        return digest(json.dumps(config, sort_keys=True).encode())
+
     def broker_config_digest(self, host):
         response = self.ssh(host, ["sudo", "-n", "cat", "--", self.config["broker_config"]])
-        return digest(json.dumps(json.loads(response), sort_keys=True).encode())
+        return self.broker_projection(json.loads(response))
 
     def update_principals(self, host, *, add=None, remove=None):
         self.ssh(host, ["sudo", "-n", "python3", "-B", "-c", UPDATE_PRINCIPALS, self.config["broker_config"]],
@@ -304,7 +323,7 @@ class Lab:
                 current = self.ssh(host, ["sudo", "-n", "cat", "--", self.config["broker_config"]])
                 config = json.loads(current)
                 require(not (set(config["principals"]) & set(principals)), "pilot certificate was already enrolled")
-                self.private.record(marker, "original-sha256", digest(json.dumps(config, sort_keys=True).encode()))
+                self.private.record(marker, "original-sha256", self.broker_projection(config))
             self.update_principals(host, add=principals)
         return self.reload_broker()
 
@@ -326,7 +345,7 @@ class Lab:
 
     def stage_workers(self):
         files = {"pi-worker.py": FIXTURES / "pi-workspace-worker.py"}
-        files.update({name: FIXTURES / name for name in ("pi_lit_contracts.py", "pi_source_cases.py")})
+        files.update({name: FIXTURES / name for name in ("pi_lit_contracts.py", "pi_source_cases.py", "pi_rust_workload.py")})
         archive = payload_archive(files)
         for host in self.hosts:
             self.ssh(host, ["tar", "-xf", "-", "-C", self.folder], archive, worker=True)
@@ -408,6 +427,8 @@ class Lab:
 
     def item_paths(self, operation):
         unit = operation["work_unit"]
+        if operation.get("workload") == "rust-regression":
+            return [operation["rust"]["file"]]
         if operation.get("workload") == "source":
             return [f"qualification/{self.run}/{unit}/policy.py"]
         return [f"tests/agent-contracts/{self.run}/{unit}/{name}" for name in ("README.md", "cases.json")]
@@ -427,6 +448,7 @@ class Lab:
         sys.path.insert(0, str(FIXTURES))
         from pi_lit_contracts import verify as verify_contract
         from pi_source_cases import function_map, verify as verify_source
+        from pi_rust_workload import projected
 
         operations, cases = {}, defaultdict(list)
         for op in self.plan["agents"]:
@@ -438,8 +460,25 @@ class Lab:
         actual = command(git + ["diff", "--name-only", base, main]).decode().splitlines()
         require(set(actual) == expected, "final Git tree has unexpected changed paths")
         proof, prior_preserved = [], {}
+        rust = {}
         for unit, selected in sorted(cases.items()):
             op = operations[unit]
+            if op.get("workload") == "rust-regression":
+                target = op["rust"]
+                path = target["file"]
+                original = rust.get(path)
+                if original is None:
+                    original = command(git + ["show", f"{base}:{path}"])
+                if unit in overlaps:
+                    fresh = command(git + ["show", f"{overlaps[unit]['fresh_base']}:{path}"])
+                    present = [case for case in selected if case.encode() in fresh]
+                    absent = [case for case in selected if case.encode() not in fresh]
+                    require(len(present) == len(absent) == 1, "Rust repair pin did not contain exactly its peer's test")
+                    selected = present + absent
+                    prior_preserved[unit] = True
+                rust[path] = projected(original, target, selected)
+                proof.append({"unit": unit, "cases": selected, "assertions": len(selected), "path": path})
+                continue
             scope = self.state / "final-tree" / unit
             scope.mkdir(parents=True, exist_ok=True)
             files = {}
@@ -468,6 +507,12 @@ class Lab:
                             "conflict repair did not preserve the peer's contract case")
                     prior_preserved[unit] = True
             proof.append({"unit": unit, "cases": selected, "assertions": count, "files": files})
+        for path, expected in rust.items():
+            actual = command(git + ["show", f"{main}:{path}"])
+            require(actual == expected, f"final Rust module {path} differs from its reviewed insertions")
+        for item in proof:
+            if "path" in item:
+                item["files"] = {item["path"]: digest(rust[item["path"]])}
         return proof, prior_preserved
 
     def audit(self, final, steps):
@@ -559,14 +604,27 @@ class Lab:
                          "native_queue_empty": True, "receipt_records_unchanged": True, "main_matches_the_audit": True})
 
 
-def open_lab(state, plan, journal):
+def open_lab(state, plan, journal, controller=None):
     require(__debug__, "run without Python optimization to keep all verification checks enabled")
     config = (state / "lab.json").read_bytes()
     tools = Path(__file__).parent
     files = [tools / name for name in ("pi_pilot_lab.py", "pi_pilot_forge.py", "pi_pilot.py", "pi_pilot_runner.py",
                                       "github_queue_coordinator.py", "task_broker_client.py", "task_broker_workspace.py",
                                       "task_ownership.py")]
-    files += [FIXTURES / name for name in ("pi-workspace-worker.py", "pi_lit_contracts.py", "pi_source_cases.py")]
+    files += [FIXTURES / name for name in ("pi-workspace-worker.py", "pi_lit_contracts.py", "pi_source_cases.py",
+                                          "pi_rust_workload.py")]
     journal.record("input", "lab-config-sha256", digest(config))
     journal.record("input", "lab-source-sha256", {path.name: digest(path.read_bytes()) for path in files})
-    return Lab(state, plan, json.loads(config))
+    data = json.loads(config)
+    profiles = data.get("controllers")
+    if profiles is not None:
+        require(controller in profiles, "select a configured controller profile")
+        profile = profiles[controller]
+        require(set(profile) <= {"hosts", "scheduler_certificate", "scheduler_key", "server_ca", "lit_binary"},
+                "controller profile may only change local transport and credentials")
+        data |= profile
+    elif controller is not None:
+        raise PilotError("--controller requires named profiles")
+    lab = Lab(state, plan, data)
+    lab.controller = controller
+    return lab
