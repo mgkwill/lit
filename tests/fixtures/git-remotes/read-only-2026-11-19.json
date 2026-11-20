@@ -1,0 +1,94 @@
+{
+  "assertions": [
+    "The reader credential clones, fetches and fast-forwards through pull.",
+    "The service receives and rejects the reader push.",
+    "The remote branch tip and local tracking ref remain unchanged.",
+    "The local commit remains the tip of the reader's working repository."
+  ],
+  "command": "python3 tests/authenticated_git_remote_regression.py <candidate>",
+  "optimized_binary_runs": {
+    "host-e": {
+      "arch": "aarch64",
+      "candidate_sha256": "987a743c75e3f6a397060f6b1cdbbd3665a2dd71497436f6aa114083e5e52302",
+      "https": {
+        "airgap_zero_network_and_helper_calls": true,
+        "askpass_received_repository_path": true,
+        "git_posts": {
+          "git-receive-pack": 2,
+          "git-upload-pack": 13
+        },
+        "read_only_credential_qualified": true,
+        "rejected_tls_peer_and_name": true,
+        "wrong_credential_refused": true
+      },
+      "os": "Linux",
+      "ssh": {
+        "airgap_zero_ssh_connections": true,
+        "git_sessions": {
+          "writer:git-receive-pack": 4,
+          "writer:git-upload-pack": 7
+        },
+        "read_only_credential_qualified": true,
+        "untrusted_and_changed_host_key_refused": true,
+        "wrong_user_key_refused": true
+      }
+    },
+    "host-f": {
+      "arch": "aarch64",
+      "candidate_sha256": "987a743c75e3f6a397060f6b1cdbbd3665a2dd71497436f6aa114083e5e52302",
+      "https": {
+        "airgap_zero_network_and_helper_calls": true,
+        "askpass_received_repository_path": true,
+        "git_posts": {
+          "git-receive-pack": 2,
+          "git-upload-pack": 13
+        },
+        "read_only_credential_qualified": true,
+        "rejected_tls_peer_and_name": true,
+        "wrong_credential_refused": true
+      },
+      "os": "Linux",
+      "ssh": {
+        "airgap_zero_ssh_connections": true,
+        "git_sessions": {
+          "writer:git-receive-pack": 4,
+          "writer:git-upload-pack": 7
+        },
+        "read_only_credential_qualified": true,
+        "untrusted_and_changed_host_key_refused": true,
+        "wrong_user_key_refused": true
+      }
+    },
+    "macos": {
+      "arch": "arm64",
+      "candidate_sha256": "ba88bfeff137f6cf68fa976701d7e7ac0684e75a8d8b8b80f5969e49133bd028",
+      "https": {
+        "airgap_zero_network_and_helper_calls": true,
+        "askpass_received_repository_path": true,
+        "git_posts": {
+          "git-receive-pack": 2,
+          "git-upload-pack": 13
+        },
+        "read_only_credential_qualified": true,
+        "rejected_tls_peer_and_name": true,
+        "wrong_credential_refused": true
+      },
+      "os": "Darwin",
+      "ssh": {
+        "airgap_zero_ssh_connections": true,
+        "git_sessions": {
+          "writer:git-receive-pack": 4,
+          "writer:git-upload-pack": 7
+        },
+        "read_only_credential_qualified": true,
+        "untrusted_and_changed_host_key_refused": true,
+        "wrong_user_key_refused": true
+      }
+    }
+  },
+  "rights_enforced_by": {
+    "https": "Server challenges with separate test reader and writer credentials and returns 403 for reader receive-pack.",
+    "ssh": "Different public keys select restricted repository commands. The reader command refuses receive-pack."
+  },
+  "tested_runtime_commit": "b705e961e40f6a2613113d554a659f0565902a4d"
+}

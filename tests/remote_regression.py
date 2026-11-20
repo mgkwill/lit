@@ -64,7 +64,7 @@ class Fixture:
 
 
 @contextmanager
-def smart_http(fixture, *, tls=None, authorization=None):
+def smart_http(fixture, *, tls=None, authorization=None, read_authorization=None):
     requests = []
 
     class Handler(BaseHTTPRequestHandler):
@@ -72,10 +72,18 @@ def smart_http(fixture, *, tls=None, authorization=None):
 
         def serve_git(self):
             url = urlsplit(self.path)
-            if authorization and not hmac.compare_digest(self.headers.get("Authorization", ""), authorization):
+            supplied = self.headers.get("Authorization", "")
+            reader = read_authorization and hmac.compare_digest(supplied, read_authorization)
+            if authorization and not reader and not hmac.compare_digest(supplied, authorization):
                 requests.append(("401", url.path, url.query))
                 self.send_response(401)
                 self.send_header("WWW-Authenticate", 'Basic realm="Lit fixture"')
+                self.send_header("Content-Length", "0")
+                self.end_headers()
+                return
+            if reader and (url.path.endswith("/git-receive-pack") or url.query == "service=git-receive-pack"):
+                requests.append(("403", url.path, url.query))
+                self.send_response(403)
                 self.send_header("Content-Length", "0")
                 self.end_headers()
                 return

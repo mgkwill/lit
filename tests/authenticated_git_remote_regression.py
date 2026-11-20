@@ -39,6 +39,37 @@ def airgap(fixture, url, local):
     assert not (fixture.root / "airgap-clone").exists()
 
 
+def exercise_read_only(fixture, origin, source, url):
+    reader = fixture.root / "reader"
+    branch = "release/trunk"
+    fixture.lit(fixture.root, "clone", url, str(reader))
+    base = fixture.lit(reader, "status")["head"]
+
+    # Advance the fixture through the server-side Git repository.
+    fixture.git(source, "fetch", origin.as_uri(), branch)
+    fixture.git(source, "reset", "--hard", "FETCH_HEAD")
+    (source / "reader-visible").write_text("server-side update\n")
+    fixture.git(source, "add", "reader-visible")
+    fixture.git(source, "commit", "-m", "advance read-only fixture")
+    fixture.git(source, "push", origin.as_uri(), branch)
+    assert fixture.lit(reader, "fetch", "origin", branch)["branches_updated"]
+    assert fixture.lit(reader, "status")["head"] == base
+    assert fixture.lit(reader, "pull", "origin", branch)["fast_forward"]
+    assert (reader / "reader-visible").read_text() == "server-side update\n"
+
+    (reader / "reader-visible").write_text("unpublished reader edit\n")
+    fixture.lit(reader, "add", "reader-visible")
+    local_tip = fixture.lit(reader, "commit", "-m", "reader has no push permission")["hash"]
+    tracking = reader / ".lit/refs/remotes/origin/release/trunk"
+    tracking_before = tracking.read_bytes()
+    remote_tip = fixture.git(origin, "rev-parse", "HEAD")
+    declined(fixture, reader, "push", "origin", branch, message="Git push failed")
+    assert tracking.read_bytes() == tracking_before
+    assert fixture.git(origin, "rev-parse", "HEAD") == remote_tip
+    assert fixture.lit(reader, "status")["head"] == local_tip
+    return True
+
+
 def https(fixture):
     origin, source = seed_git(fixture)
     cert = fixture.root / "tls-cert"
@@ -68,7 +99,9 @@ def https(fixture):
         LIT_FIXTURE_PASSWORD=secret, GIT_SSL_NO_VERIFY="1",
     )
     authorization = "Basic " + base64.b64encode(f"fixture:{secret}".encode()).decode()
-    with smart_http(fixture, tls=tls, authorization=authorization) as (remote, requests):
+    reader_secret = "fixture-read-only-credential"
+    read_authorization = "Basic " + base64.b64encode(f"fixture:{reader_secret}".encode()).decode()
+    with smart_http(fixture, tls=tls, authorization=authorization, read_authorization=read_authorization) as (remote, requests):
         url = "git+" + remote
         declined(fixture, fixture.root, "clone", url, "untrusted-cert", message="Git clone failed")
         assert not calls.exists() and not requests
@@ -118,7 +151,10 @@ def https(fixture):
         counts = {endpoint: sum(method == "POST" and path.endswith(endpoint) for method, path, _ in requests)
                   for endpoint in ("git-upload-pack", "git-receive-pack")}
         assert all(counts.values()), counts
-        return {"rejected_tls_peer_and_name": True, "wrong_credential_refused": True, "askpass_received_repository_path": True,
+        fixture.env["LIT_FIXTURE_PASSWORD"] = reader_secret
+        read_only = exercise_read_only(fixture, origin, source, url)
+        assert ("403", "/origin.git/info/refs", "service=git-receive-pack") in requests
+        return {"read_only_credential_qualified": read_only, "rejected_tls_peer_and_name": True, "wrong_credential_refused": True, "askpass_received_repository_path": True,
                 "airgap_zero_network_and_helper_calls": True, "git_posts": counts}
 
 
@@ -128,11 +164,12 @@ def git_ssh_server(fixture, origin):
     ssh_git = shutil.which("git")
     username = pwd.getpwuid(os.getuid()).pw_name
     ssh_dir = fixture.make("ssh-material")
-    host_key, identity, wrong = (ssh_dir / name for name in ("host", "client's identity", "wrong"))
-    for key in (host_key, identity, wrong):
+    host_key, identity, wrong, reader = (
+        ssh_dir / name for name in ("host", "client's identity", "wrong", "reader")
+    )
+    for key in (host_key, identity, wrong, reader):
         fixture.run(fixture.root, "ssh-keygen", "-q", "-t", "ed25519", "-N", "", "-f", key)
     authorized_keys = ssh_dir / "authorized_keys"
-    authorized_keys.write_text(identity.with_name(identity.name + ".pub").read_text())
     known_hosts = ssh_dir / "known host's keys"
     key_parts = host_key.with_suffix(".pub").read_text().split()[:2]
     command_log = ssh_dir / "git-commands"
@@ -140,12 +177,14 @@ def git_ssh_server(fixture, origin):
     handler = ssh_dir / "git-handler.py"
     handler.write_text(
         "import os, shlex, sys\n"
-        "git, repository, log = sys.argv[1:4]\n"
+        "git, repository, log, role = sys.argv[1:5]\n"
         "args = shlex.split(os.environ.get('SSH_ORIGINAL_COMMAND', ''))\n"
         "if len(args) != 2 or args[1] != repository or args[0] not in ('git-upload-pack', 'git-receive-pack'):\n"
         "    sys.exit(1)\n"
         "with open(log, 'a') as file:\n"
-        "    file.write(args[0] + '\\n')\n"
+        "    file.write(role + ':' + args[0] + '\\n')\n"
+        "if role == 'reader' and args[0] == 'git-receive-pack':\n"
+        "    sys.exit(1)\n"
         "os.environ.update(GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL=os.devnull)\n"
         "os.execv(git, [git, args[0].removeprefix('git-'), repository])\n"
     )
@@ -155,11 +194,17 @@ def git_ssh_server(fixture, origin):
     address = f"[127.0.0.1]:{port}"
     known_hosts.write_text(" ".join([address, *key_parts]) + "\n")
     config = ssh_dir / "sshd_config"
-    force = shlex.join([sys.executable, str(handler), ssh_git, str(origin), str(command_log)])
+    entries = []
+    for role, key in (("writer", identity), ("reader", reader)):
+        force = shlex.join([sys.executable, str(handler), ssh_git, str(origin), str(command_log), role])
+        public_key = key.with_name(key.name + ".pub").read_text().strip()
+        escaped_command = force.replace("\\", "\\\\").replace('"', '\\"')
+        entries.append(f'restrict,command="{escaped_command}" {public_key}\n')
+    authorized_keys.write_text("".join(entries))
     config.write_text(
         f'ListenAddress 127.0.0.1\nPort {port}\nHostKey "{host_key}"\n'
         f'PidFile "{ssh_dir / "pid"}"\nAuthorizedKeysFile "{authorized_keys}"\n'
-        f"AllowUsers {username}\nForceCommand {force}\n"
+        f"AllowUsers {username}\n"
         "StrictModes no\nPubkeyAuthentication yes\nPasswordAuthentication no\n"
         "KbdInteractiveAuthentication no\nAuthenticationMethods publickey\n"
         "PermitRootLogin yes\nUsePAM yes\nDisableForwarding yes\nPermitTTY no\nLogLevel VERBOSE\n"
@@ -184,7 +229,7 @@ def git_ssh_server(fixture, origin):
                 log.seek(0)
                 raise AssertionError(log.read().decode())
             url = f"ssh://{username}@127.0.0.1:{port}{origin}"
-            yield url, known_hosts, identity, wrong, command_log, events
+            yield url, known_hosts, identity, wrong, reader, command_log, events
         except BaseException:
             log.seek(0)
             print(log.read().decode(), file=sys.stderr)
@@ -196,7 +241,7 @@ def git_ssh_server(fixture, origin):
 
 def ssh(fixture):
     origin, source = seed_git(fixture)
-    with git_ssh_server(fixture, origin) as (remote, known_hosts, identity, wrong, commands, events):
+    with git_ssh_server(fixture, origin) as (remote, known_hosts, identity, wrong, reader, commands, events):
         url = "git+" + remote
         original_keys = known_hosts.read_text()
         fixture.env.update(
@@ -211,7 +256,7 @@ def ssh(fixture):
         ])
         refs = fixture.git(fixture.root, "ls-remote", remote, "HEAD")
         assert refs.split()[0] == fixture.git(origin, "rev-parse", "HEAD")
-        assert commands.read_text() == "git-upload-pack\n"
+        assert commands.read_text() == "writer:git-upload-pack\n"
         before = commands.read_bytes()
 
         # A permissive inherited command must never bypass pinned host keys.
@@ -237,8 +282,11 @@ def ssh(fixture):
         assert commands.read_bytes() == after and known_hosts.read_text() == original_keys
         assert events.read_text().count("Connection from ") == connections
         served = after.decode().splitlines()
-        assert "git-receive-pack" in served
-        return {"untrusted_and_changed_host_key_refused": True, "wrong_user_key_refused": True,
+        assert "writer:git-receive-pack" in served
+        fixture.env["LIT_GIT_SSH_IDENTITY"] = str(reader)
+        read_only = exercise_read_only(fixture, origin, source, url)
+        assert "reader:git-receive-pack" in commands.read_text().splitlines()
+        return {"read_only_credential_qualified": read_only, "untrusted_and_changed_host_key_refused": True, "wrong_user_key_refused": True,
                 "airgap_zero_ssh_connections": True, "git_sessions": {verb: served.count(verb) for verb in set(served)}}
 
 
