@@ -162,6 +162,7 @@ bounded subset of Python and verifies the assigned functions. It compares
 their syntax trees to check that a conflict repair preserves prior functions.
 
 The command pins the plan, lab profile, and adapter sources in its journal.
+Resume an in-flight run from the same source revision and adapter type.
 For older runs, it can still load the journal's original private `adapter.py`.
 It adopts a
 matching broker generation after an interrupted reassignment, and confirms

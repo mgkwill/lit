@@ -77,6 +77,12 @@ class LabTests(unittest.TestCase):
             changed = subprocess.run(command, cwd="/", capture_output=True, text=True)
             self.assertNotEqual(changed.returncode, 0)
             self.assertIn("journal entry changed", changed.stderr)
+            (state / "lab.json").unlink()
+            (state / "adapter.py").write_text("raise RuntimeError('adapter should never be imported')\n")
+            switched = subprocess.run(command, cwd="/", capture_output=True, text=True)
+            self.assertNotEqual(switched.returncode, 0)
+            self.assertIn("cannot change the adapter type", switched.stderr)
+            self.assertNotIn("adapter should never be imported", switched.stderr)
 
 
 if __name__ == "__main__":

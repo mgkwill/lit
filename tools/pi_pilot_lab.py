@@ -562,9 +562,11 @@ class Lab:
 def open_lab(state, plan, journal):
     require(__debug__, "run without Python optimization to keep all verification checks enabled")
     config = (state / "lab.json").read_bytes()
-    files = [Path(__file__), Path(__file__).with_name("pi_pilot_forge.py"),
-             Path(__file__).with_name("pi_pilot.py"), Path(__file__).with_name("pi_pilot_runner.py"),
-             *(FIXTURES / name for name in ("pi-workspace-worker.py", "pi_lit_contracts.py", "pi_source_cases.py"))]
+    tools = Path(__file__).parent
+    files = [tools / name for name in ("pi_pilot_lab.py", "pi_pilot_forge.py", "pi_pilot.py", "pi_pilot_runner.py",
+                                      "github_queue_coordinator.py", "task_broker_client.py", "task_broker_workspace.py",
+                                      "task_ownership.py")]
+    files += [FIXTURES / name for name in ("pi-workspace-worker.py", "pi_lit_contracts.py", "pi_source_cases.py")]
     journal.record("input", "lab-config-sha256", digest(config))
     journal.record("input", "lab-source-sha256", {path.name: digest(path.read_bytes()) for path in files})
     return Lab(state, plan, json.loads(config))

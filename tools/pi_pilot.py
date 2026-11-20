@@ -331,7 +331,12 @@ def main():
         plan_path, adapter_path = state / "plan.json", state / "adapter.py"
         plan = json.loads(plan_path.read_bytes())
         journal.record("input", "plan", plan)
-        if (state / "lab.json").is_file():
+        configured = (state / "lab.json").is_file()
+        input_record = journal.read("input")
+        if (configured and "adapter-sha256" in input_record
+                or not configured and "lab-config-sha256" in input_record):
+            raise PilotError("cannot change the adapter type of a saved run")
+        if configured:
             from pi_pilot_lab import open_lab
             lab = open_lab(state, plan, journal)
         else:
