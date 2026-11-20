@@ -10,6 +10,7 @@ import subprocess
 import sys
 import tarfile
 import tempfile
+import tomllib
 import zipfile
 
 
@@ -80,6 +81,12 @@ def main():
     with tempfile.TemporaryDirectory(prefix="lit-qualify-") as folder:
         binary = unpack(args.archive, Path(folder), "lit.exe" if native_windows else "lit")
         receipt["binary_sha256"] = digest(binary)
+        manifest = tomllib.loads((TESTS.parent / "Cargo.toml").read_text())
+        receipt["package"] = manifest["package"]["name"]
+        receipt["version"] = run(binary, "--version")
+        assert receipt["package"] == "openlit"
+        assert receipt["version"] == "lit " + manifest["package"]["version"]
+        assert "OpenLit" in run(binary, "--help")
         if platform.system() == "Linux":
             receipt["glibc"] = glibc_versions(binary)
         receipt["batch_and_mcp"] = json.loads(run(sys.executable, "-B", TESTS / "release_smoke.py", binary))

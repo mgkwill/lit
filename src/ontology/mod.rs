@@ -190,9 +190,9 @@ pub fn get_ontology() -> LitOntology {
             mcp: "https://modelcontextprotocol.io/schema/v1#",
         },
         type_name: "VersionControlSystem",
-        name: "Lit",
+        name: "OpenLit",
         version: env!("CARGO_PKG_VERSION"),
-        description: "Agentic-first distributed version control system. A complete Git replacement designed for AI agents first and humans second. Features post-quantum cryptography (ML-DSA-87, ML-KEM), FIPS 140-2 compliance, structured JSON I/O, batch mode, transactions, and MCP integration.",
+        description: "OpenLit provides version control for people and coding agents, with JSON output, batch rollback, Git interoperability, and MCP tools. The executable remains lit. OpenLit is not a FIPS-validated cryptographic module.",
         capabilities: build_capabilities(),
         types: build_types(),
         commands: build_commands(),
@@ -205,20 +205,20 @@ pub fn get_ontology() -> LitOntology {
 fn build_capabilities() -> Vec<Capability> {
     vec![
         cap("version-control", "Distributed Version Control", "Full DAG-based version control with branches, merges, commits, and tags"),
-        cap("post-quantum-crypto", "Post-Quantum Cryptography", "ML-DSA-87 (Dilithium5) signatures and ML-KEM (Kyber) key encapsulation for quantum-resistant security"),
-        cap("fips-compliance", "FIPS 140-2 Compliance", "SHA3-512, AES-256-GCM, HMAC-SHA256, PBKDF2 key derivation with secure zeroization"),
+        cap("post-quantum-crypto", "Repository Signatures", "ML-DSA-87 signatures; this does not establish product certification"),
+        cap("fips-compliance", "Cryptographic Algorithms (Not FIPS Validated)", "Legacy capability ID retained for compatibility. Algorithm use and internal self-tests do not establish FIPS validation"),
         cap("structured-io", "Structured I/O", "All commands produce structured JSON output by default, with human-readable alternative"),
         cap("batch-mode", "Batch Operations", "Execute multiple operations from JSONL stdin with atomic and dry-run modes"),
         cap("transactions", "Transaction Support", "Begin/commit/rollback with write-ahead log for crash recovery"),
         cap("agent-metadata", "Agent Metadata", "First-class metadata field on commits for agent_id, task_id, confidence, intent, tool_versions"),
         cap("search", "Full-Text Search", "Search file contents, commit messages, and agent metadata"),
-        cap("snapshot", "Atomic Snapshots", "Single-command add-all + commit for agent workflows"),
+        cap("snapshot", "Snapshots", "Single-command add-all + commit for agent workflows"),
         cap("integrity-verification", "Repository Verification", "Full integrity check of objects, refs, DAG connectivity, and index"),
         cap("mcp-server", "MCP Tool Server", "Model Context Protocol server for LLM agent integration (stdio and HTTP transports)"),
         cap("rest-api", "REST API Server", "HTTP API for remote repository operations with bearer token authentication"),
         cap("swarm-coordination", "Multi-Agent Swarm", "Agent registration, branch namespacing, and file lease system for concurrent agent collaboration"),
-        cap("airgap-mode", "Air-Gap Mode", "Blocks all network protocols, allows only physical/local transports for secure environments"),
-        cap("encryption-at-rest", "Encryption at Rest", "AES-256-GCM encryption for all repository objects and refs"),
+        cap("airgap-mode", "Transport Restrictions", "Restricts OpenLit transport selection; does not isolate the host network"),
+        cap("encryption-at-rest", "Encryption at Rest", "AES-256-GCM for configured stored payloads; working files and some metadata remain visible"),
     ]
 }
 
@@ -1551,8 +1551,8 @@ pub fn generate_schemas() -> serde_json::Value {
     serde_json::json!({
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "$id": "https://lit-vcs.dev/schema/v1",
-        "title": "Lit VCS Schema",
-        "description": "JSON Schema for the Lit version control system — types and command interfaces for agent discovery",
+        "title": "OpenLit VCS Schema",
+        "description": "JSON Schema for the OpenLit version control system — types and command interfaces for agent discovery",
         "version": ont.version,
         "$defs": defs,
         "commands": commands

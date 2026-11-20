@@ -1,20 +1,31 @@
 [package]
-name = "lit"
-version = "1.0.0"
+name = "openlit"
+version = "0.1.0"
 edition = "2021"
-authors = ["Nervosys"]
-description = "Lit - The agentic-first distributed version control system. A complete Git replacement designed for AI agents first and humans second."
+authors = ["Nervosys", "OpenLit contributors"]
+description = "Version control for people and coding agents, with JSON output and Git interoperability."
 license = "MIT"
-repository = "https://github.com/nervosys/lit"
-homepage = "https://github.com/nervosys/lit"
+repository = "https://github.com/mgkwill/Lit"
+homepage = "https://github.com/mgkwill/Lit"
+readme = "README.md"
+publish = false
 keywords = [
     "vcs",
     "git",
-    "quantum-resistant",
-    "post-quantum",
+    "agents",
+    "json",
     "version-control",
 ]
 categories = ["command-line-utilities", "development-tools"]
+
+# Keep the executable and Rust import name compatible with existing clients.
+[[bin]]
+name = "lit"
+path = "src/main.rs"
+
+[lib]
+name = "lit"
+path = "src/lib.rs"
 
 [dependencies]
 clap = { version = "4.5", features = ["derive", "env"] }

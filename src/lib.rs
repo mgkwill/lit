@@ -1,16 +1,12 @@
-//! # Lit — The Agentic-First Distributed Version Control System
+//! # OpenLit
 //!
-//! Lit is a complete Git replacement written in Rust, designed for AI agents first and humans
-//! second. Every command emits structured JSON by default with typed error codes, merge conflicts
-//! as structured objects, and native MCP/REST API integration.
+//! Version control for people and coding agents. The command is `lit`; the
+//! Rust library also keeps the `lit` import name for compatibility.
 //!
-//! ## Key Features
-//!
-//! - **Structured output**: All commands return typed JSON responses via [`response`] types
-//! - **Post-quantum cryptography**: SHA3-512 + BLAKE3 hashing, ML-DSA signatures, AES-256-GCM encryption
-//! - **MCP server**: JSON-RPC 2.0 tool server with 30 tools via [`commands::mcp_serve`]
-//! - **Machine-readable ontology**: Full command/type discovery via [`ontology`]
-//! - **Typed errors**: [`errors::LitError`] with error codes, user messages, and remediation hints
+//! OpenLit provides JSON command responses, JSONL batches with rollback,
+//! Git import and export, and an MCP server. The first OpenLit release is
+//! 0.1.0. It is based on the MIT-licensed Lit snapshot, with independent
+//! recovery work. See the repository guides for tested limits.
 //!
 //! ## Usage
 //!

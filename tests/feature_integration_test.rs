@@ -453,7 +453,7 @@ mod schema_tests {
             "https://json-schema.org/draft/2020-12/schema"
         );
         assert_eq!(schema["$id"], "https://lit-vcs.dev/schema/v1");
-        assert_eq!(schema["title"], "Lit VCS Schema");
+        assert_eq!(schema["title"], "OpenLit VCS Schema");
         assert!(schema["$defs"].is_object(), "$defs must be an object");
         assert!(schema["commands"].is_object(), "commands must be an object");
     }

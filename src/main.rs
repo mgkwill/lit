@@ -16,7 +16,7 @@ use std::process;
 
 #[derive(Parser)]
 #[command(name = "lit", version)]
-#[command(about = "Lit - The agentic-first distributed version control system", long_about = None)]
+#[command(about = "OpenLit - Version control for people and coding agents", long_about = None)]
 struct Cli {
     /// Enable airgap mode (blocks all network protocols, allows only physical transports)
     #[arg(long, global = true)]
@@ -48,7 +48,7 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    /// Initialize a new Lit repository
+    /// Initialize a new OpenLit repository
     Init {
         /// Create a bare repository
         #[arg(long)]
@@ -266,7 +266,7 @@ enum Commands {
     /// Rotate encryption passphrase
     RotateKey,
 
-    /// Inspect, copy, or roll back a native Lit repository migration
+    /// Inspect, copy, or roll back a native OpenLit repository migration
     #[cfg(any(target_os = "linux", target_os = "macos"))]
     MigrateRepo {
         #[command(subcommand)]
@@ -432,7 +432,7 @@ enum Commands {
     Verify,
 
     // --- Phase 3: API Server & MCP ---
-    /// Start the Lit REST API server
+    /// Start the OpenLit REST API server
     Serve {
         /// Port to listen on
         #[arg(short, long, default_value = "3000")]
@@ -469,13 +469,13 @@ enum Commands {
     },
 
     // --- Phase 4: Git Interop ---
-    /// Import a Git repository into Lit format
+    /// Import a Git repository into OpenLit format
     ImportGit {
         /// Path to Git repository (directory containing .git)
         source: String,
     },
 
-    /// Export a Lit repository to Git format
+    /// Export a OpenLit repository to Git format
     ExportGit {
         /// Destination path for Git repository
         destination: String,
@@ -490,7 +490,7 @@ enum Commands {
         #[command(subcommand)]
         command: LfsCommands,
     },
-    /// Output the Lit ontology for agent discovery
+    /// Output the OpenLit ontology for agent discovery
     Ontology,
     /// Generate JSON Schema from the ontology for agent SDK discovery
     Schema {
@@ -510,10 +510,10 @@ enum Commands {
 #[derive(Subcommand)]
 #[cfg(any(target_os = "linux", target_os = "macos"))]
 enum WorkspaceCommands {
-    /// Create a private checkout at an exact Lit commit
+    /// Create a private checkout at an exact OpenLit commit
     Create {
         destination: std::path::PathBuf,
-        /// Full Lit commit ID
+        /// Full OpenLit commit ID
         #[arg(long)]
         base: String,
         /// Initial branch in the workspace

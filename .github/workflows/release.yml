@@ -1,9 +1,8 @@
-name: Release
+name: Release qualification
 
 on:
+  # Qualification only. Publishing requires a separately approved workflow.
   push:
-    tags:
-      - 'v*'
     branches:
       - 'lit-release-qualification-*'
 
@@ -64,12 +63,12 @@ jobs:
         run: |
           mkdir release-package
           cp target/${{ matrix.target }}/release/${{ matrix.artifact }} LICENSE release-package/
-          tar -czf "lit-${RELEASE_TAG}-${{ matrix.target }}.tar.gz" -C release-package ${{ matrix.artifact }} LICENSE
+          tar -czf "openlit-${RELEASE_TAG}-${{ matrix.target }}.tar.gz" -C release-package ${{ matrix.artifact }} LICENSE
 
       - name: Package artifact (windows)
         if: runner.os == 'Windows'
         run: |
-          Compress-Archive -LiteralPath 'target/${{ matrix.target }}/release/${{ matrix.artifact }}', 'LICENSE' -DestinationPath "lit-$env:RELEASE_TAG-${{ matrix.target }}.zip"
+          Compress-Archive -LiteralPath 'target/${{ matrix.target }}/release/${{ matrix.artifact }}', 'LICENSE' -DestinationPath "openlit-$env:RELEASE_TAG-${{ matrix.target }}.zip"
 
       - name: Set up Python for package tests
         uses: actions/setup-python@v5
@@ -80,42 +79,19 @@ jobs:
         shell: bash
         run: |
           python -B tests/qualify_release_archive.py \
-            "lit-${RELEASE_TAG}-${{ matrix.target }}.${{ runner.os == 'Windows' && 'zip' || 'tar.gz' }}" \
+            "openlit-${RELEASE_TAG}-${{ matrix.target }}.${{ runner.os == 'Windows' && 'zip' || 'tar.gz' }}" \
             "${{ matrix.target }}" > "qualification-${{ matrix.target }}.json"
           cat "qualification-${{ matrix.target }}.json"
+
+      - name: Check the documented quick start
+        if: runner.os != 'Windows'
+        run: python -B tests/docs_smoke.py target/${{ matrix.target }}/release/lit
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: lit-${{ matrix.target }}
+          name: openlit-${{ matrix.target }}
           path: |
-            lit-${{ github.ref_name }}-${{ matrix.target }}.*
+            openlit-${{ github.ref_name }}-${{ matrix.target }}.*
             qualification-${{ matrix.target }}.json
           if-no-files-found: error
-
-  release:
-    name: Create GitHub Release
-    if: github.ref_type == 'tag'
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-          merge-multiple: true
-
-      - name: Generate asset checksums
-        working-directory: artifacts
-        run: sha256sum -- *.tar.gz *.zip > SHA256SUMS
-
-      - name: Create release
-        uses: softprops/action-gh-release@v2
-        with:
-          generate_release_notes: true
-          files: |
-            artifacts/*.tar.gz
-            artifacts/*.zip
-            artifacts/SHA256SUMS
