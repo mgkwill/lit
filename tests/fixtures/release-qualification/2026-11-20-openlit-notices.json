@@ -1,0 +1,1117 @@
+{
+  "date": "2026-11-20",
+  "product": "OpenLit",
+  "version": "0.1.0",
+  "source_commit": "83b2fe963e8bc6d2d1fa68e6354e9e6a15bedad4",
+  "qualification_projection": "a75052eb13aded4b1a10db4bfe3a0553f7333670",
+  "actions_run": 44817526987,
+  "actions_url": "https://github.com/mgkwill/lit-release-qualification/actions/runs/44817526987",
+  "jobs": [
+    {
+      "id": 136569596260,
+      "name": "Build aarch64-apple-darwin",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44817526987,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Checkout repository",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Install Rust toolchain",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Cache cargo registry",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Build release binary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Check signature verification vectors",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Package artifact (unix)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Package artifact (windows)",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 8
+        },
+        {
+          "name": "Set up Python for package tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Verify dependency notice inventory",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Qualify the unpacked release binary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Check the documented quick start",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Upload artifact",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "Post Set up Python for package tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 24
+        },
+        {
+          "name": "Post Cache cargo registry",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25
+        },
+        {
+          "name": "Post Checkout repository",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 26
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27
+        }
+      ]
+    },
+    {
+      "id": 136569596488,
+      "name": "Build aarch64-unknown-linux-gnu",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44817526987,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Checkout repository",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Install Rust toolchain",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Cache cargo registry",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Build release binary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Check signature verification vectors",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Package artifact (unix)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Package artifact (windows)",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 8
+        },
+        {
+          "name": "Set up Python for package tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Verify dependency notice inventory",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Qualify the unpacked release binary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Check the documented quick start",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Upload artifact",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "Post Set up Python for package tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 24
+        },
+        {
+          "name": "Post Cache cargo registry",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25
+        },
+        {
+          "name": "Post Checkout repository",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 26
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27
+        }
+      ]
+    },
+    {
+      "id": 136569596541,
+      "name": "Build x86_64-pc-windows-msvc",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44817526987,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Checkout repository",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Install Rust toolchain",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Cache cargo registry",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Build release binary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Check signature verification vectors",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Package artifact (unix)",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 7
+        },
+        {
+          "name": "Package artifact (windows)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "Set up Python for package tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Verify dependency notice inventory",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Qualify the unpacked release binary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Check the documented quick start",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 12
+        },
+        {
+          "name": "Upload artifact",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "Post Set up Python for package tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 24
+        },
+        {
+          "name": "Post Cache cargo registry",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25
+        },
+        {
+          "name": "Post Checkout repository",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 26
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27
+        }
+      ]
+    },
+    {
+      "id": 136569596590,
+      "name": "Build x86_64-apple-darwin",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44817526987,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Checkout repository",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Install Rust toolchain",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Cache cargo registry",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Build release binary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Check signature verification vectors",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Package artifact (unix)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Package artifact (windows)",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 8
+        },
+        {
+          "name": "Set up Python for package tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Verify dependency notice inventory",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Qualify the unpacked release binary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Check the documented quick start",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Upload artifact",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "Post Set up Python for package tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 24
+        },
+        {
+          "name": "Post Cache cargo registry",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25
+        },
+        {
+          "name": "Post Checkout repository",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 26
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27
+        }
+      ]
+    },
+    {
+      "id": 136569596606,
+      "name": "Build x86_64-unknown-linux-gnu",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44817526987,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Checkout repository",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Install Rust toolchain",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Cache cargo registry",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Build release binary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Check signature verification vectors",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Package artifact (unix)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Package artifact (windows)",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 8
+        },
+        {
+          "name": "Set up Python for package tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Verify dependency notice inventory",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Qualify the unpacked release binary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Check the documented quick start",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Upload artifact",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "Post Set up Python for package tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 24
+        },
+        {
+          "name": "Post Cache cargo registry",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25
+        },
+        {
+          "name": "Post Checkout repository",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 26
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27
+        }
+      ]
+    }
+  ],
+  "archives": [
+    {
+      "archive": "openlit-lit-release-qualification-83b2fe9-aarch64-apple-darwin.tar.gz",
+      "archive_sha256": "ff40debca43a0cba4523d29d14f3f39dc589b1fccbdfc019f98ac5647ce7dbc3",
+      "batch_and_mcp": {
+        "arch": "arm64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "f2093c6f2d338969c1107c4895e8e05ea7007fc64fe6d32ffe8cd57352dee38e",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Darwin",
+        "version": "lit 0.1.0"
+      },
+      "binary_sha256": "f2093c6f2d338969c1107c4895e8e05ea7007fc64fe6d32ffe8cd57352dee38e",
+      "git": "git version 2.56.1",
+      "head": "a75052eb13aded4b1a10db4bfe3a0553f7333670",
+      "mldsa_features": [
+        "std"
+      ],
+      "package": "openlit",
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)",
+      "target": "aarch64-apple-darwin",
+      "version": "lit 0.1.0",
+      "preserved_archive": "openlit-candidate-83b2fe9-aarch64-apple-darwin.tar.gz"
+    },
+    {
+      "archive": "openlit-lit-release-qualification-83b2fe9-aarch64-unknown-linux-gnu.tar.gz",
+      "archive_sha256": "7ed5acc8e58320595569ea5575700ef9504028c1aad0a8b9f16bdc45d5846de7",
+      "batch_and_mcp": {
+        "arch": "aarch64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "f822df0a736dd797452f597274a94bd740ed555c26b13196544367a4057e0ca0",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Linux",
+        "version": "lit 0.1.0"
+      },
+      "binary_sha256": "f822df0a736dd797452f597274a94bd740ed555c26b13196544367a4057e0ca0",
+      "git": "git version 2.56.1",
+      "glibc": {
+        "highest_required_symbol_version": "2.34",
+        "runtime": "glibc 2.35"
+      },
+      "head": "a75052eb13aded4b1a10db4bfe3a0553f7333670",
+      "mldsa_features": [
+        "std"
+      ],
+      "package": "openlit",
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)",
+      "target": "aarch64-unknown-linux-gnu",
+      "version": "lit 0.1.0",
+      "preserved_archive": "openlit-candidate-83b2fe9-aarch64-unknown-linux-gnu.tar.gz"
+    },
+    {
+      "archive": "openlit-lit-release-qualification-83b2fe9-x86_64-apple-darwin.tar.gz",
+      "archive_sha256": "c5a7c96b19a9c86e64c7413b393732cb6410806468e512ef2944892b7220a07b",
+      "batch_and_mcp": {
+        "arch": "x86_64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "c41e0411128bf9da3d862d659c226d988e2c8fd0c879679f54ff1cc33b06427a",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Darwin",
+        "version": "lit 0.1.0"
+      },
+      "binary_sha256": "c41e0411128bf9da3d862d659c226d988e2c8fd0c879679f54ff1cc33b06427a",
+      "git": "git version 2.55.0",
+      "head": "a75052eb13aded4b1a10db4bfe3a0553f7333670",
+      "mldsa_features": [
+        "std"
+      ],
+      "package": "openlit",
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)",
+      "target": "x86_64-apple-darwin",
+      "version": "lit 0.1.0",
+      "preserved_archive": "openlit-candidate-83b2fe9-x86_64-apple-darwin.tar.gz"
+    },
+    {
+      "archive": "openlit-lit-release-qualification-83b2fe9-x86_64-pc-windows-msvc.zip",
+      "archive_sha256": "698860e22cf03c4fd22a508acb09bb2b7ec612fe1cd74259b6ce03f20e19bf86",
+      "batch_and_mcp": {
+        "arch": "AMD64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "04c26eea0c3566e2152f8a405b8f8af7c93eb0afbd808bf45e8dfbf414094445",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Windows",
+        "version": "lit 0.1.0"
+      },
+      "binary_sha256": "04c26eea0c3566e2152f8a405b8f8af7c93eb0afbd808bf45e8dfbf414094445",
+      "git": "git version 2.56.1.windows.1",
+      "head": "a75052eb13aded4b1a10db4bfe3a0553f7333670",
+      "mldsa_features": [
+        "std"
+      ],
+      "package": "openlit",
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)",
+      "sandbox": [
+        "Strict mode refused on a platform without a backend"
+      ],
+      "target": "x86_64-pc-windows-msvc",
+      "version": "lit 0.1.0",
+      "preserved_archive": "openlit-candidate-83b2fe9-x86_64-pc-windows-msvc.zip"
+    },
+    {
+      "archive": "openlit-lit-release-qualification-83b2fe9-x86_64-unknown-linux-gnu.tar.gz",
+      "archive_sha256": "f8809d394c28ede442074e59e4ff988d22fd037bc2da33c7291ec1ec08c5f15a",
+      "batch_and_mcp": {
+        "arch": "x86_64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "d5a2f0a4289e6af656f95bc83d7e143160bc2fd302a15068c7731d6465427483",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Linux",
+        "version": "lit 0.1.0"
+      },
+      "binary_sha256": "d5a2f0a4289e6af656f95bc83d7e143160bc2fd302a15068c7731d6465427483",
+      "git": "git version 2.56.1",
+      "glibc": {
+        "highest_required_symbol_version": "2.34",
+        "runtime": "glibc 2.35"
+      },
+      "head": "a75052eb13aded4b1a10db4bfe3a0553f7333670",
+      "mldsa_features": [
+        "std"
+      ],
+      "package": "openlit",
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)",
+      "target": "x86_64-unknown-linux-gnu",
+      "version": "lit 0.1.0",
+      "preserved_archive": "openlit-candidate-83b2fe9-x86_64-unknown-linux-gnu.tar.gz"
+    }
+  ],
+  "local_archive": {
+    "archive": "openlit-lit-release-qualification-83b2fe9-aarch64-apple-darwin.tar.gz",
+    "archive_sha256": "ff40debca43a0cba4523d29d14f3f39dc589b1fccbdfc019f98ac5647ce7dbc3",
+    "batch_and_mcp": {
+      "arch": "arm64",
+      "batch": {
+        "dry_run_reports_invalid_line": true,
+        "retry_committed": true,
+        "rollback_restores_head_and_index": true,
+        "working_bytes_preserved": true
+      },
+      "candidate_sha256": "f2093c6f2d338969c1107c4895e8e05ea7007fc64fe6d32ffe8cd57352dee38e",
+      "mcp": {
+        "http": {
+          "invalid_tool_and_ping": true,
+          "legacy_arguments_preserved": true,
+          "notification_silent": true,
+          "ref_diff_and_branch_creation": true,
+          "tool_discovery_and_staged_write": true
+        },
+        "stdio": {
+          "invalid_tool_and_ping": true,
+          "legacy_arguments_preserved": true,
+          "notification_silent": true,
+          "ref_diff_and_branch_creation": true,
+          "tool_discovery_and_staged_write": true
+        }
+      },
+      "platform": "Darwin",
+      "version": "lit 0.1.0"
+    },
+    "binary_sha256": "f2093c6f2d338969c1107c4895e8e05ea7007fc64fe6d32ffe8cd57352dee38e",
+    "git": "git version 2.56.0",
+    "head": "83b2fe963e8bc6d2d1fa68e6354e9e6a15bedad4",
+    "mldsa_features": [
+      "std"
+    ],
+    "package": "openlit",
+    "remotes": [
+      "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+      "lit://: native first push and bare clone",
+      "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+      "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+      "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+    ],
+    "rustc": "rustc 1.99.0 (b940084d7 2026-09-28) (Homebrew)",
+    "target": "aarch64-apple-darwin",
+    "version": "lit 0.1.0"
+  },
+  "lab": {
+    "host-a": {
+      "smoke": {
+        "arch": "x86_64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "d5a2f0a4289e6af656f95bc83d7e143160bc2fd302a15068c7731d6465427483",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Linux",
+        "version": "lit 0.1.0"
+      },
+      "authenticated_remotes": {
+        "arch": "x86_64",
+        "candidate_sha256": "d5a2f0a4289e6af656f95bc83d7e143160bc2fd302a15068c7731d6465427483",
+        "https": {
+          "airgap_zero_network_and_helper_calls": true,
+          "askpass_received_repository_path": true,
+          "git_posts": {
+            "git-receive-pack": 2,
+            "git-upload-pack": 13
+          },
+          "read_only_credential_qualified": true,
+          "rejected_tls_peer_and_name": true,
+          "wrong_credential_refused": true
+        },
+        "os": "Linux",
+        "ssh": {
+          "airgap_zero_ssh_connections": true,
+          "git_sessions": {
+            "writer:git-receive-pack": 4,
+            "writer:git-upload-pack": 7
+          },
+          "read_only_credential_qualified": true,
+          "untrusted_and_changed_host_key_refused": true,
+          "wrong_user_key_refused": true
+        }
+      },
+      "raw_sha256": {
+        "notice-hosted-auth.json": "349cbbb6c22913ad90067dd72a454be2476cfbd016b9964ad7de28a8ff470573",
+        "notice-hosted-auth.stderr": "64755060767f90ae085bc5033bd6f8369bd1315668f0873018807a42fc5a1302",
+        "notice-hosted-smoke.json": "08a00523fd2c8103467f8a2613ac35e73d8f83aecbf710e746689950dd9b959e"
+      }
+    },
+    "host-e": {
+      "smoke": {
+        "arch": "aarch64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "f822df0a736dd797452f597274a94bd740ed555c26b13196544367a4057e0ca0",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Linux",
+        "version": "lit 0.1.0"
+      },
+      "authenticated_remotes": {
+        "arch": "aarch64",
+        "candidate_sha256": "f822df0a736dd797452f597274a94bd740ed555c26b13196544367a4057e0ca0",
+        "https": {
+          "airgap_zero_network_and_helper_calls": true,
+          "askpass_received_repository_path": true,
+          "git_posts": {
+            "git-receive-pack": 2,
+            "git-upload-pack": 13
+          },
+          "read_only_credential_qualified": true,
+          "rejected_tls_peer_and_name": true,
+          "wrong_credential_refused": true
+        },
+        "os": "Linux",
+        "ssh": {
+          "airgap_zero_ssh_connections": true,
+          "git_sessions": {
+            "writer:git-receive-pack": 4,
+            "writer:git-upload-pack": 7
+          },
+          "read_only_credential_qualified": true,
+          "untrusted_and_changed_host_key_refused": true,
+          "wrong_user_key_refused": true
+        }
+      },
+      "raw_sha256": {
+        "notice-hosted-auth.json": "c264f1040e0962fe5b86ac262c21c1268bd9ea19281217b18b49eafc5e7b63ac",
+        "notice-hosted-auth.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "notice-hosted-smoke.json": "9d47d0a52a8c41af032eba15874c177a8dd6e2405b555761fe87b29d194ecaa4"
+      }
+    },
+    "host-f": {
+      "smoke": {
+        "arch": "aarch64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "f822df0a736dd797452f597274a94bd740ed555c26b13196544367a4057e0ca0",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Linux",
+        "version": "lit 0.1.0"
+      },
+      "authenticated_remotes": {
+        "arch": "aarch64",
+        "candidate_sha256": "f822df0a736dd797452f597274a94bd740ed555c26b13196544367a4057e0ca0",
+        "https": {
+          "airgap_zero_network_and_helper_calls": true,
+          "askpass_received_repository_path": true,
+          "git_posts": {
+            "git-receive-pack": 2,
+            "git-upload-pack": 13
+          },
+          "read_only_credential_qualified": true,
+          "rejected_tls_peer_and_name": true,
+          "wrong_credential_refused": true
+        },
+        "os": "Linux",
+        "ssh": {
+          "airgap_zero_ssh_connections": true,
+          "git_sessions": {
+            "writer:git-receive-pack": 4,
+            "writer:git-upload-pack": 7
+          },
+          "read_only_credential_qualified": true,
+          "untrusted_and_changed_host_key_refused": true,
+          "wrong_user_key_refused": true
+        }
+      },
+      "raw_sha256": {
+        "notice-hosted-auth.json": "c264f1040e0962fe5b86ac262c21c1268bd9ea19281217b18b49eafc5e7b63ac",
+        "notice-hosted-auth.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "notice-hosted-smoke.json": "9d47d0a52a8c41af032eba15874c177a8dd6e2405b555761fe87b29d194ecaa4"
+      }
+    }
+  },
+  "dependency_notice_checks": {
+    "integrity_tests": 5,
+    "passed_on_all_five_native_runners": true,
+    "pinned_supplements_verified_against_source_urls": true,
+    "remaining_missing_notices": [
+      "pqcrypto-internals@0.2.11",
+      "pqcrypto-traits@0.3.5"
+    ]
+  },
+  "binary_inputs_unchanged_from": "53a23ccc9caedbd86a38e5b059348d78c1f42b56",
+  "compared_paths": [
+    "src",
+    "Cargo.toml",
+    "Cargo.lock",
+    "LICENSE"
+  ],
+  "binary_hash_unchanged_by_target": {
+    "aarch64-apple-darwin": true,
+    "aarch64-unknown-linux-gnu": true,
+    "x86_64-apple-darwin": true,
+    "x86_64-pc-windows-msvc": false,
+    "x86_64-unknown-linux-gnu": true
+  },
+  "earlier_full_suite_evidence": "2026-11-20-openlit.json",
+  "notes": [
+    "The earlier full Rust suite is applicable to unchanged Rust/Cargo inputs; it was not repeated for notice-only changes.",
+    "Current downloaded Linux archives were retested on host-a, host-e and host-f; current macOS ARM archive was retested locally.",
+    "Run 44817477859 was canceled after a local committed-byte check found normalized notice line endings; commit 83b2fe9 preserves the original bytes.",
+    "CLI API exhaustion interrupted monitoring only; the connected GitHub client supplied job receipts and archive ZIPs, whose SHA-256 values matched GitHub metadata.",
+    "ARM lab strict launch remained unavailable in the earlier positive sandbox test; refusal was verified. This notice-only round makes no new positive ARM confinement claim.",
+    "One mitigated RustSec advisory and five maintenance warnings remain; the scan is not clean.",
+    "Publisher signing, attestations, final provenance and transcript review, the two notice gaps, and publication approval remain open."
+  ],
+  "published": false,
+  "publisher_signing_complete": false,
+  "actions_run_result": {
+    "conclusion": "success",
+    "headSha": "a75052eb13aded4b1a10db4bfe3a0553f7333670",
+    "status": "completed",
+    "url": "https://github.com/mgkwill/lit-release-qualification/actions/runs/44817526987"
+  },
+  "actions_only_final_check": {
+    "ruleset_id": 27439049,
+    "unchanged": true,
+    "bypass_actors": [],
+    "main_unchanged": true,
+    "main_commit": "61a19a9b3a5edbf335443a19362447660d7fa697",
+    "ruleset_sha256": "6117e57240629939e2b44c28596eca36fbc090351e8695f28e064fef6dbc0c69"
+  }
+}

@@ -8,6 +8,7 @@ as black-box executables. See [AGENTS.md](AGENTS.md).
 
 ```sh
 cargo fmt -- --check
+cargo clippy --locked -- -D warnings
 cargo test --locked -- --test-threads=1
 cargo build --locked --release
 cargo doc --locked --no-deps
@@ -74,6 +75,14 @@ x86-64 because arm64 passed. Record the exact candidate hash on every host.
 Save source commit, binary hashes, commands, platforms, exit codes, failures,
 and limits. Keep historical results under `tests/fixtures/` unchanged. Distinguish
 local success, hosted Actions, lab execution, live authorization, and release
-signing. [Earlier five-platform proof](tests/fixtures/release-qualification/2026-11-20-compatibility.md)
+signing. [Current candidate evidence](tests/fixtures/release-qualification/2026-11-20-openlit-notices.md)
 
 Active docs and examples can be checked with `python3 -B tests/docs_smoke.py target/release/lit` once the binary has been built.
+
+Check installer contracts and pinned dependency notices with:
+
+```sh
+python3 -B tests/install_script_regression.py
+python3 -B tests/dependency_notice_regression.py
+python3 tools/release_dependency_notices.py --check
+```

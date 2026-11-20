@@ -54,7 +54,7 @@ who built them. See [release signing](RELEASING.md).
 The candidate Linux binaries require symbols through glibc 2.34, but the tested
 runtime floor is 2.35. A macOS deployment-target field is not proof that an older
 macOS release works. Windows desktop versions and Windows arm64 are not covered
-by that matrix. [Exact candidate evidence](../tests/fixtures/release-qualification/2026-11-20-openlit.md)
+by that matrix. [Exact candidate evidence](../tests/fixtures/release-qualification/2026-11-20-openlit-notices.md)
 
 If Windows reports a missing `VCRUNTIME140.dll`, install the
 [Microsoft x64 Visual C++ Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist/).

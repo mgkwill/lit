@@ -78,6 +78,9 @@ and prove all other tracked files match.
 The protected merge sandbox keeps its Actions-only rule. Candidate preparation
 must not weaken branch rules, add a bypass actor, or post a manual passing status.
 
+[Current unsigned candidate evidence](../tests/fixtures/release-qualification/2026-11-20-openlit-notices.md)
+records the exact native archives, follow-up lab tests, and open gates.
+
 ## Release notes
 
 Use [the 0.1.0 draft](../CHANGELOG.md). Link exact evidence for the final candidate.

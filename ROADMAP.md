@@ -14,7 +14,7 @@ We prioritize agent workflows over a checklist of every upstream feature.
   final signed archives on clean machines.
 - [ ] Present the exact release to the owner and ask before tagging or publishing.
 
-[Candidate evidence](tests/fixtures/release-qualification/2026-11-20-openlit.md)
+[Candidate evidence](tests/fixtures/release-qualification/2026-11-20-openlit-notices.md)
 records the exact tested sources and remaining limits.
 
 The publication workflow is disabled while those requirements remain open.
