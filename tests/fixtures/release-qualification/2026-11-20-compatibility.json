@@ -1,0 +1,462 @@
+{
+  "actions_run": "https://github.com/mgkwill/lit-release-qualification/actions/runs/44786290284",
+  "date": "2026-11-20",
+  "initial_run": {
+    "conclusion": "failure",
+    "failure": "Native file:///C:/ remote push failed with Windows error 123.",
+    "failure_log_sha256": "4c5a5fd5d7fc895e412963013eb85fdbe0b582f72e24514e0abb53aa952e334d",
+    "source_commit": "d8d0d0759865a438b074dd7b773e8ca2bb032d5d",
+    "url": "https://github.com/mgkwill/lit-release-qualification/actions/runs/44784953384",
+    "windows_build_and_batch_mcp_passed": true,
+    "windows_job": "https://github.com/mgkwill/lit-release-qualification/actions/runs/44784953384/job/136457212725"
+  },
+  "linux_lab_checks": {
+    "host-a": {
+      "authenticated_remotes": {
+        "arch": "x86_64",
+        "candidate_sha256": "e4b77010f34003b5361d1094957cac32dbdca1a4e358dea3447e0eb271a19be3",
+        "https": {
+          "airgap_zero_network_and_helper_calls": true,
+          "askpass_received_repository_path": true,
+          "git_posts": {
+            "git-receive-pack": 2,
+            "git-upload-pack": 13
+          },
+          "read_only_credential_qualified": true,
+          "rejected_tls_peer_and_name": true,
+          "wrong_credential_refused": true
+        },
+        "os": "Linux",
+        "ssh": {
+          "airgap_zero_ssh_connections": true,
+          "git_sessions": {
+            "writer:git-receive-pack": 4,
+            "writer:git-upload-pack": 7
+          },
+          "read_only_credential_qualified": true,
+          "untrusted_and_changed_host_key_refused": true,
+          "wrong_user_key_refused": true
+        }
+      },
+      "batch_and_mcp": {
+        "arch": "x86_64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "e4b77010f34003b5361d1094957cac32dbdca1a4e358dea3447e0eb271a19be3",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Linux",
+        "version": "lit 1.0.0"
+      },
+      "target": "x86_64-unknown-linux-gnu"
+    },
+    "host-e": {
+      "authenticated_remotes": {
+        "arch": "aarch64",
+        "candidate_sha256": "c11f93a186597781cfb84df6eaf12676804418c482644522ff73fbf056741dc6",
+        "https": {
+          "airgap_zero_network_and_helper_calls": true,
+          "askpass_received_repository_path": true,
+          "git_posts": {
+            "git-receive-pack": 2,
+            "git-upload-pack": 13
+          },
+          "read_only_credential_qualified": true,
+          "rejected_tls_peer_and_name": true,
+          "wrong_credential_refused": true
+        },
+        "os": "Linux",
+        "ssh": {
+          "airgap_zero_ssh_connections": true,
+          "git_sessions": {
+            "writer:git-receive-pack": 4,
+            "writer:git-upload-pack": 7
+          },
+          "read_only_credential_qualified": true,
+          "untrusted_and_changed_host_key_refused": true,
+          "wrong_user_key_refused": true
+        }
+      },
+      "batch_and_mcp": {
+        "arch": "aarch64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "c11f93a186597781cfb84df6eaf12676804418c482644522ff73fbf056741dc6",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Linux",
+        "version": "lit 1.0.0"
+      },
+      "target": "aarch64-unknown-linux-gnu"
+    },
+    "host-f": {
+      "authenticated_remotes": {
+        "arch": "aarch64",
+        "candidate_sha256": "c11f93a186597781cfb84df6eaf12676804418c482644522ff73fbf056741dc6",
+        "https": {
+          "airgap_zero_network_and_helper_calls": true,
+          "askpass_received_repository_path": true,
+          "git_posts": {
+            "git-receive-pack": 2,
+            "git-upload-pack": 13
+          },
+          "read_only_credential_qualified": true,
+          "rejected_tls_peer_and_name": true,
+          "wrong_credential_refused": true
+        },
+        "os": "Linux",
+        "ssh": {
+          "airgap_zero_ssh_connections": true,
+          "git_sessions": {
+            "writer:git-receive-pack": 4,
+            "writer:git-upload-pack": 7
+          },
+          "read_only_credential_qualified": true,
+          "untrusted_and_changed_host_key_refused": true,
+          "wrong_user_key_refused": true
+        }
+      },
+      "batch_and_mcp": {
+        "arch": "aarch64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "c11f93a186597781cfb84df6eaf12676804418c482644522ff73fbf056741dc6",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Linux",
+        "version": "lit 1.0.0"
+      },
+      "target": "aarch64-unknown-linux-gnu"
+    }
+  },
+  "publish_job": "skipped",
+  "qualification_checkout": "8bcd7f68fa22f2b12979f494134b4a7662676021",
+  "qualification_repo": "mgkwill/lit-release-qualification",
+  "sandbox": {
+    "before_and_after_match": true,
+    "bypass_actors": [],
+    "main": "61a19a9b3a5edbf335443a19362447660d7fa697",
+    "merge_queue": true,
+    "repository": "100latent/lit-merge-queue-sandbox",
+    "required_check": {
+      "context": "Agent workflow candidate",
+      "integration_id": 15368
+    },
+    "ruleset_enforcement": "active",
+    "ruleset_id": 27439049
+  },
+  "source_commit": "fabaf3fa1350bd8b45e4fb069e5bb65ece074f31",
+  "source_scope": "MIT recovery. The qualification checkout omits only the unrelated workflow files.",
+  "targets": {
+    "aarch64-apple-darwin": {
+      "archive": "lit-lit-release-qualification-fabaf3f-aarch64-apple-darwin.tar.gz",
+      "archive_sha256": "93e35a3e0e2be0f34a29e8da30681790c214e0ff7fd5b548d6422f04814becf7",
+      "batch_and_mcp": {
+        "arch": "arm64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "46d94f104b727cd6afa2240a1950340291deaf813dd0a84bf2af58aca4f8a67a",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Darwin",
+        "version": "lit 1.0.0"
+      },
+      "binary_architecture_verified": true,
+      "binary_sha256": "46d94f104b727cd6afa2240a1950340291deaf813dd0a84bf2af58aca4f8a67a",
+      "git": "git version 2.56.1",
+      "head": "8bcd7f68fa22f2b12979f494134b4a7662676021",
+      "job": "https://github.com/mgkwill/lit-release-qualification/actions/runs/44786290284/job/136461914312",
+      "license_sha256": "4448dab94f2c8366b38f763128ba73f0a99b631607187a8efd591e3c06c4ccca",
+      "release_filename": "lit-recovery-fabaf3f-aarch64-apple-darwin.tar.gz",
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "runner": "macos-15",
+      "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)",
+      "target": "aarch64-apple-darwin"
+    },
+    "aarch64-unknown-linux-gnu": {
+      "archive": "lit-lit-release-qualification-fabaf3f-aarch64-unknown-linux-gnu.tar.gz",
+      "archive_sha256": "4e23b8fe2439514898dc23aeab8ef4a847370560c509e2e26cc6e4007664a088",
+      "batch_and_mcp": {
+        "arch": "aarch64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "c11f93a186597781cfb84df6eaf12676804418c482644522ff73fbf056741dc6",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Linux",
+        "version": "lit 1.0.0"
+      },
+      "binary_architecture_verified": true,
+      "binary_sha256": "c11f93a186597781cfb84df6eaf12676804418c482644522ff73fbf056741dc6",
+      "git": "git version 2.56.1",
+      "glibc": {
+        "highest_required_symbol_version": "2.34",
+        "runtime": "glibc 2.35"
+      },
+      "head": "8bcd7f68fa22f2b12979f494134b4a7662676021",
+      "job": "https://github.com/mgkwill/lit-release-qualification/actions/runs/44786290284/job/136461914407",
+      "license_sha256": "4448dab94f2c8366b38f763128ba73f0a99b631607187a8efd591e3c06c4ccca",
+      "release_filename": "lit-recovery-fabaf3f-aarch64-unknown-linux-gnu.tar.gz",
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "runner": "ubuntu-22.04-arm",
+      "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)",
+      "target": "aarch64-unknown-linux-gnu"
+    },
+    "x86_64-apple-darwin": {
+      "archive": "lit-lit-release-qualification-fabaf3f-x86_64-apple-darwin.tar.gz",
+      "archive_sha256": "ba1af927ab4e47adad805057681e6db836c7f3cf270ec9355200c2fa395548b2",
+      "batch_and_mcp": {
+        "arch": "x86_64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "5174676e11625660f69c94df50e1e1f45863c402d173b6114bc024e2770b5e6a",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Darwin",
+        "version": "lit 1.0.0"
+      },
+      "binary_architecture_verified": true,
+      "binary_sha256": "5174676e11625660f69c94df50e1e1f45863c402d173b6114bc024e2770b5e6a",
+      "git": "git version 2.55.0",
+      "head": "8bcd7f68fa22f2b12979f494134b4a7662676021",
+      "job": "https://github.com/mgkwill/lit-release-qualification/actions/runs/44786290284/job/136461913800",
+      "license_sha256": "4448dab94f2c8366b38f763128ba73f0a99b631607187a8efd591e3c06c4ccca",
+      "release_filename": "lit-recovery-fabaf3f-x86_64-apple-darwin.tar.gz",
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "runner": "macos-15-intel",
+      "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)",
+      "target": "x86_64-apple-darwin"
+    },
+    "x86_64-pc-windows-msvc": {
+      "archive": "lit-lit-release-qualification-fabaf3f-x86_64-pc-windows-msvc.zip",
+      "archive_sha256": "2be9367bcd43cad977ff5161c18f51b66cdc26ae15d5835222034119d4d87679",
+      "batch_and_mcp": {
+        "arch": "AMD64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "07cd402d8cfc015624a4fff6e2d8fa7483eb38297ee825a2c4ab3130312611e2",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Windows",
+        "version": "lit 1.0.0"
+      },
+      "binary_architecture_verified": true,
+      "binary_sha256": "07cd402d8cfc015624a4fff6e2d8fa7483eb38297ee825a2c4ab3130312611e2",
+      "git": "git version 2.56.1.windows.1",
+      "head": "8bcd7f68fa22f2b12979f494134b4a7662676021",
+      "job": "https://github.com/mgkwill/lit-release-qualification/actions/runs/44786290284/job/136461914471",
+      "license_sha256": "2763e860baf4262cf622e9b787710e14d2d456e1f4430168916a7555618eafdc",
+      "release_filename": "lit-recovery-fabaf3f-x86_64-pc-windows-msvc.zip",
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "runner": "windows-2022",
+      "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)",
+      "sandbox": [
+        "Strict mode refused on a platform without a backend"
+      ],
+      "target": "x86_64-pc-windows-msvc"
+    },
+    "x86_64-unknown-linux-gnu": {
+      "archive": "lit-lit-release-qualification-fabaf3f-x86_64-unknown-linux-gnu.tar.gz",
+      "archive_sha256": "ce57b3a7106fb805494652000716ff07a5ba0e08a1ae8505baeff1a64c2d6a28",
+      "batch_and_mcp": {
+        "arch": "x86_64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "e4b77010f34003b5361d1094957cac32dbdca1a4e358dea3447e0eb271a19be3",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Linux",
+        "version": "lit 1.0.0"
+      },
+      "binary_architecture_verified": true,
+      "binary_sha256": "e4b77010f34003b5361d1094957cac32dbdca1a4e358dea3447e0eb271a19be3",
+      "git": "git version 2.56.1",
+      "glibc": {
+        "highest_required_symbol_version": "2.34",
+        "runtime": "glibc 2.35"
+      },
+      "head": "8bcd7f68fa22f2b12979f494134b4a7662676021",
+      "job": "https://github.com/mgkwill/lit-release-qualification/actions/runs/44786290284/job/136461914295",
+      "license_sha256": "4448dab94f2c8366b38f763128ba73f0a99b631607187a8efd591e3c06c4ccca",
+      "release_filename": "lit-recovery-fabaf3f-x86_64-unknown-linux-gnu.tar.gz",
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "runner": "ubuntu-22.04",
+      "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)",
+      "target": "x86_64-unknown-linux-gnu"
+    }
+  }
+}
