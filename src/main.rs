@@ -273,6 +273,13 @@ enum Commands {
         command: commands::migrate_repo::Action,
     },
 
+    /// Create and inspect independent agent workspaces
+    #[cfg(any(target_os = "linux", target_os = "macos"))]
+    Workspace {
+        #[command(subcommand)]
+        command: WorkspaceCommands,
+    },
+
     // --- Phase 1.5-1.8 ---
     /// Stash changes temporarily
     Stash {
@@ -498,6 +505,23 @@ enum Commands {
         #[command(subcommand)]
         command: SandboxCommands,
     },
+}
+
+#[derive(Subcommand)]
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+enum WorkspaceCommands {
+    /// Create a private checkout at an exact Lit commit
+    Create {
+        destination: std::path::PathBuf,
+        /// Full Lit commit ID
+        #[arg(long)]
+        base: String,
+        /// Initial branch in the workspace
+        #[arg(long, default_value = "main")]
+        branch: String,
+    },
+    /// Show this workspace's pinned base and current HEAD
+    Info,
 }
 
 #[derive(Subcommand)]
@@ -924,6 +948,13 @@ fn run() {
         Commands::Verify => run!(commands::verify::execute()),
         #[cfg(any(target_os = "linux", target_os = "macos"))]
         Commands::MigrateRepo { command } => run!(commands::migrate_repo::execute(command)),
+        #[cfg(any(target_os = "linux", target_os = "macos"))]
+        Commands::Workspace { command } => match command {
+            WorkspaceCommands::Create { destination, base, branch } => {
+                run!(commands::workspace::create(&destination, &base, &branch))
+            }
+            WorkspaceCommands::Info => run!(commands::workspace::info()),
+        },
 
         // Phase 3
         Commands::Serve {

@@ -247,7 +247,10 @@ fn verify_ref_target(
     graph: &HashMap<ObjectHash, ObjectLinks>,
 ) -> Result<ObjectHash, String> {
     let hash = ObjectHash::from_hex(value.trim().to_owned());
-    let expected = (name.starts_with("heads/") || name.starts_with("remotes/")).then_some("commit");
+    let expected = (name.starts_with("heads/")
+        || name.starts_with("remotes/")
+        || name == super::worktree::WORKSPACE_BASE_REF)
+        .then_some("commit");
     check_target(graph, &hash, expected)
         .map_err(|error| format!("Dangling or invalid reference: {error}"))?;
     Ok(hash)

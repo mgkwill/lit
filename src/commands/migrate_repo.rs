@@ -1,3 +1,4 @@
+use super::worktree::publish_new_directory as promote;
 use super::verify;
 use crate::core::repository_format::{self, Receipt};
 use crate::crypto::encryption::{EncryptionConfig, EncryptionManager};
@@ -8,7 +9,6 @@ use serde::de::{Error as _, MapAccess, Visitor};
 use serde::{Deserializer, Serialize};
 use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
-use std::ffi::CString;
 use std::fs::{self, DirBuilder, File, OpenOptions, Permissions};
 use std::io::{self, ErrorKind, Read, Write};
 use std::os::unix::ffi::OsStrExt;
@@ -587,33 +587,4 @@ fn snapshot(root: &Path, destination: Option<&Path>) -> Result<String, LitError>
         directory.sync_all()?;
     }
     Ok(hex::encode(hasher.finalize()))
-}
-
-fn promote(source: &Path, target: &Path) -> Result<(), LitError> {
-    let path_arg = |path: &Path| {
-        CString::new(path.as_os_str().as_bytes()).map_err(|error| LitError::io(error.to_string()))
-    };
-    let from = path_arg(source)?;
-    let to = path_arg(target)?;
-    // The kernel performs the no-replace check together with the rename.
-    #[cfg(target_os = "linux")]
-    let result = unsafe {
-        libc::renameat2(
-            libc::AT_FDCWD,
-            from.as_ptr(),
-            libc::AT_FDCWD,
-            to.as_ptr(),
-            libc::RENAME_NOREPLACE,
-        )
-    };
-    #[cfg(target_os = "macos")]
-    let result = unsafe { libc::renamex_np(from.as_ptr(), to.as_ptr(), libc::RENAME_EXCL) };
-    if result != 0 {
-        return Err(LitError::io(format!(
-            "Cannot publish {}: {}",
-            target.display(),
-            io::Error::last_os_error()
-        )));
-    }
-    Ok(())
 }

@@ -44,4 +44,6 @@ pub mod tag;
 pub mod transaction;
 pub mod verify;
 pub mod watch;
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+pub mod workspace;
 mod worktree;

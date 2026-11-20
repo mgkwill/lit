@@ -268,6 +268,28 @@ collisions, including file-to-directory replacements. Git push sends the selecte
 branch and delegates the fast-forward check to Git. The Git push result uses
 zero for the object count because Git's porcelain output does not report it.
 
+### Agent workspaces
+
+On macOS and Linux, create a private checkout for each attempt using its
+full Lit base commit ID. Run these commands from the source repository.
+
+```bash
+lit workspace create ../agent-42 --base "$base_commit" --branch agent/42
+(cd ../agent-42 && lit workspace info)
+```
+
+Each workspace starts with the files and history reachable from the base, its
+own object store and index, and the requested branch. The workspace keeps its
+base after either repository advances. Source staging, working edits, and
+remotes stay with the source. Normal Lit commands operate on the workspace.
+
+Use a new destination outside existing Lit repositories. Lit verifies the
+checkout before publishing the directory. Symbolic links must use relative
+targets without parent traversal or metadata paths. Workspaces created from
+encrypted repositories get a separate key derived from the supplied source
+passphrase. Use strict sandbox execution for process-level filesystem and
+network restrictions.
+
 ### Sandboxed execution
 
 `lit sandbox run <name> --strict -- <command>` confines filesystem access

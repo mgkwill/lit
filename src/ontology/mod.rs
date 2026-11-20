@@ -698,6 +698,20 @@ fn build_commands() -> Vec<CommandDef> {
             vec![ex("List leases", "lit swarm lease-list", serde_json::json!({}))],
             vec![], vec![], true, true),
         // Remote & collaboration
+        #[cfg(any(target_os = "linux", target_os = "macos"))]
+        cmd("workspace create", "Create Agent Workspace", "collaboration", "Create an independent local repository from a pinned Lit commit",
+            vec![
+                param("destination", "string", "New directory outside existing Lit repositories", true, None),
+                param("base", "string", "Full Lit commit ID", true, None),
+                param("branch", "string", "Initial branch in the workspace", false, Some("main")),
+            ],
+            "WorkspaceResponse", vec!["Creates a private repository"], vec!["The source contains the base commit"],
+            vec![], vec!["workspace info", "status", "commit"], vec![], false, false),
+        #[cfg(any(target_os = "linux", target_os = "macos"))]
+        cmd("workspace info", "Inspect Agent Workspace", "collaboration", "Show the pinned base and current HEAD of this workspace",
+            vec![], "WorkspaceResponse", vec![], vec!["Run inside an agent workspace"],
+            vec![ex("Inspect workspace", "lit workspace info", serde_json::json!({}))],
+            vec!["status", "verify"], vec!["workspace create"], true, true),
         cmd("remote", "Manage Remotes", "collaboration", "Add, remove, or list native Lit and Git remote URLs",
             vec![
                 param("command", "string", "Subcommand: add, remove, list", true, None),

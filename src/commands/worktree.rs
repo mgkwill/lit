@@ -6,6 +6,8 @@ use std::fs;
 use std::io::{ErrorKind, Write};
 use std::path::{Component, Path, PathBuf};
 
+pub(super) const WORKSPACE_BASE_REF: &str = "workspace/base";
+
 /// Install a commit in a fresh clone or fast-forward a clean checkout.
 /// Keep original files until the index and ref have been published.
 pub(super) fn install(
@@ -241,4 +243,38 @@ pub(super) fn replace(path: &Path, bytes: &[u8]) -> Result<(), LitError> {
 
 fn io_error(error: std::io::Error) -> LitError {
     LitError::io(format!("Apply worktree update: {error}"))
+}
+
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+pub(super) fn publish_new_directory(source: &Path, target: &Path) -> Result<(), LitError> {
+    use std::ffi::CString;
+    use std::io;
+    use std::os::unix::ffi::OsStrExt;
+
+    let path_arg = |path: &Path| {
+        CString::new(path.as_os_str().as_bytes()).map_err(|error| LitError::io(error.to_string()))
+    };
+    let from = path_arg(source)?;
+    let to = path_arg(target)?;
+    // The kernel performs the no-replace check together with the rename.
+    #[cfg(target_os = "linux")]
+    let result = unsafe {
+        libc::renameat2(
+            libc::AT_FDCWD,
+            from.as_ptr(),
+            libc::AT_FDCWD,
+            to.as_ptr(),
+            libc::RENAME_NOREPLACE,
+        )
+    };
+    #[cfg(target_os = "macos")]
+    let result = unsafe { libc::renamex_np(from.as_ptr(), to.as_ptr(), libc::RENAME_EXCL) };
+    if result != 0 {
+        return Err(LitError::io(format!(
+            "Cannot publish {}: {}",
+            target.display(),
+            io::Error::last_os_error()
+        )));
+    }
+    Ok(())
 }
