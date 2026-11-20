@@ -4,7 +4,7 @@ Each input operation names a distinct preinstalled mTLS profile. Run this on the
 named host; scheduler credentials and the CA signing key stay off worker hosts.
 """
 import argparse
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
 from pathlib import Path
 import socket
@@ -203,13 +203,24 @@ def main():
     operations = json.load(sys.stdin)
     assert 0 < len(operations) <= 40
     assert 1 <= args.concurrency <= 40
+    failed = False
     with ThreadPoolExecutor(max_workers=args.concurrency) as pool:
         lit = args.lit.resolve(strict=True) if args.lit else None
-        futures = [pool.submit(run, op, args.profiles, args.url, args.action, lit) for op in operations]
-        for future in futures:
-            # Emit each completed receipt even if a later operation fails.
-            print(json.dumps(future.result()), flush=True)
+        futures = {
+            pool.submit(run, op, args.profiles, args.url, args.action, lit): op['id']
+            for op in operations
+        }
+        for future in as_completed(futures):
+            try:
+                receipt = future.result()
+            except Exception as error:
+                failed = True
+                failure = {'worker': futures[future], 'error': type(error).__name__}
+                print(json.dumps(failure), file=sys.stderr, flush=True)
+            else:
+                print(json.dumps(receipt), flush=True)
+    return int(failed)
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

@@ -1,9 +1,14 @@
 """Exercise the assignment-to-workspace-to-broker payload contract."""
 import argparse
 import base64
+from contextlib import redirect_stderr, redirect_stdout
+from importlib.util import module_from_spec, spec_from_file_location
+import io
+import json
 from pathlib import Path
 import sys
 import tempfile
+from unittest.mock import patch
 
 from workspace_regression import create_git, git
 
@@ -61,13 +66,36 @@ def exercise(binary, root):
     assert committed_changes(seed, base, git(seed, "rev-parse", "HEAD")) == [{"path": "remove", "delete": True}]
 
 
+def exercise_partial_burst():
+    fixture = Path(__file__).parent / "fixtures/github-merge-queue/broker-burst-worker.py"
+    spec = spec_from_file_location("broker_burst_worker", fixture)
+    worker = module_from_spec(spec)
+    spec.loader.exec_module(worker)
+
+    def publish(operation, *_):
+        if operation["id"] == "rejected":
+            raise RuntimeError("private error details")
+        return {"id": operation["id"], "receipt": {"number": 1}}
+
+    argv = ["broker-burst-worker", "--host", "host-a", "--profiles", ".", "publish"]
+    operations = io.StringIO(json.dumps([{"id": "rejected"}, {"id": "published"}]))
+    with (patch.object(worker.socket, "gethostname", return_value="host-a"),
+          patch.object(worker.sys, "argv", argv), patch.object(worker.sys, "stdin", operations),
+          patch.object(worker, "run", side_effect=publish),
+          redirect_stdout(io.StringIO()) as receipts, redirect_stderr(io.StringIO()) as failures):
+        assert worker.main() == 1
+    assert json.loads(receipts.getvalue()) == {"id": "published", "receipt": {"number": 1}}
+    assert json.loads(failures.getvalue()) == {"worker": "rejected", "error": "RuntimeError"}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("candidate", type=Path)
     args = parser.parse_args()
     with tempfile.TemporaryDirectory(prefix="lit-broker-workspace-") as folder:
         exercise(args.candidate.resolve(strict=True), Path(folder).resolve())
-    print("Pinned base, committed-only changes, binary/mode/delete, and invalid parents verified")
+    exercise_partial_burst()
+    print("Pinned base, committed-only changes, file operations, and partial burst receipts verified")
 
 
 if __name__ == "__main__":
