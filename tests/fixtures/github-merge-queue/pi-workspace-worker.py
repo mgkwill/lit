@@ -4,6 +4,7 @@ import ast
 from collections import Counter
 import ctypes
 import hashlib
+from ipaddress import IPv4Address
 import json
 import os
 from pathlib import Path
@@ -35,10 +36,10 @@ CASES = {
 }
 PURE_BUILTINS = {"str": str, "int": int, "bool": bool, "len": len, "min": min, "max": max,
                  "filter": filter, "map": map}
-STRING_METHODS = {"strip", "lstrip", "rstrip", "lower", "casefold", "split", "join", "replace"}
+METHODS = {"strip", "lstrip", "rstrip", "lower", "casefold", "split", "join", "replace", "append"}
 SAFE_NODES = (
     ast.Module, ast.FunctionDef, ast.arguments, ast.arg, ast.Assign, ast.AnnAssign, ast.Return,
-    ast.Expr, ast.Constant, ast.Name, ast.Load, ast.Store, ast.Call, ast.Attribute, ast.If,
+    ast.Expr, ast.Constant, ast.Name, ast.Load, ast.Store, ast.Call, ast.Attribute, ast.If, ast.For,
     ast.IfExp, ast.Compare, ast.BoolOp, ast.BinOp, ast.UnaryOp, ast.ListComp, ast.GeneratorExp,
     ast.comprehension, ast.List, ast.Tuple, ast.Slice, ast.Subscript, ast.Add, ast.Sub, ast.Mult,
     ast.Pow, ast.FloorDiv, ast.LShift, ast.USub, ast.Not, ast.And, ast.Or, ast.Eq, ast.NotEq,
@@ -65,8 +66,11 @@ def verify_edit(path, roles):
             raise ValueError("unexpected function decorator")
         if isinstance(node, ast.Name) and node.id.startswith("_"):
             raise ValueError("unexpected private Python name")
-        if isinstance(node, ast.Attribute) and node.attr not in STRING_METHODS:
+        if isinstance(node, ast.Attribute) and node.attr not in METHODS:
             raise ValueError("unexpected Python method")
+        if isinstance(node, ast.For) and not (isinstance(node.iter, ast.Call)
+                and isinstance(node.iter.func, ast.Attribute) and node.iter.func.attr == "split"):
+            raise ValueError("fixture loops must iterate over split input")
         if isinstance(node, ast.Call) and not (isinstance(node.func, ast.Attribute)
                 or isinstance(node.func, ast.Name) and node.func.id in PURE_BUILTINS):
             raise ValueError("unexpected Python call")
@@ -143,7 +147,8 @@ def run_pi(root, cwd, attempt, operation):
     config = attempt / "agent"
     config.mkdir(mode=0o700)
     (config / "models.json").write_text(json.dumps({"providers": {"pilot-local": {
-        "baseUrl": f"http://127.0.0.1:{operation['port']}/v1", "api": "openai-completions",
+        "baseUrl": f"http://{operation['inference_address']}:{operation['port']}/v1",
+        "api": "openai-completions",
         "apiKey": "local-only", "compat": {"supportsDeveloperRole": False,
             "supportsReasoningEffort": False, "maxTokensField": "max_tokens"},
         "models": [{"id": operation["model"], "contextWindow": 32768, "maxTokens": 4096}],
@@ -197,7 +202,8 @@ net.connect({host:'127.0.0.1',port:443}).on('connect',()=>{ throw Error('unexpec
                     if event.get("type") == "tool_execution_end" and not event.get("isError"))
     if not assistant or not calls["write"] + calls["edit"]:
         raise RuntimeError("Pi transcript lacks a matching model response and a successful file edit")
-    return {"model": operation["model"], "provider": "pilot-local", "loopback_only_provider": True,
+    return {"model": operation["model"], "provider": "pilot-local", "inference_host": operation["inference_host"],
+            "inference_address": operation["inference_address"],
             "filesystem_child_process_and_other_tcp_ports_denied": True, "tool_calls": dict(calls),
             "assistant_turns": len(assistant), "duration_seconds": round(time.monotonic() - start, 2),
             "transcript_sha256": hashlib.sha256(transcript.read_bytes()).hexdigest()}
@@ -212,7 +218,9 @@ def main():
     run, episode = operation["run"], operation["episode"]
     if not re.fullmatch(r"pinned-pi-[a-z0-9]+", run) or not re.fullmatch(r"[a-z0-9-]+", episode):
         raise ValueError("invalid pilot name or episode")
-    if operation["file"] not in ("routing.py", "capacity.py") or operation["port"] not in (8000, 8002):
+    endpoint = IPv4Address(operation["inference_address"])
+    if (operation["file"] not in ("routing.py", "capacity.py") or operation["port"] != 8002
+            or operation["inference_host"] != "host-a" or not (endpoint.is_private or endpoint.is_loopback)):
         raise ValueError("invalid pilot file or endpoint")
     attempt = root / "attempts" / episode
     attempt.mkdir(parents=True, mode=0o700)
