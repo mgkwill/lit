@@ -9,7 +9,7 @@ from pathlib import Path
 import sys
 import tarfile
 import tempfile
-from threading import Lock
+from threading import Barrier, Lock
 import time
 import unittest
 from unittest.mock import patch
@@ -187,8 +187,8 @@ class TransitionTests(unittest.TestCase):
 
 
 class LimitsTests(unittest.TestCase):
-    def test_ssh_cap_is_per_host(self):
-        config = {"hosts": {"a": {"destination": "a"}, "b": {"destination": "b"}},
+    def test_command_cap_is_per_host_for_local_and_ssh_transport(self):
+        config = {"hosts": {"a": {"destination": "a"}, "b": {"destination": "b", "local": True}},
                   "worker_root": "/tmp/lit-live-pinned-pi-example", "broker_hosts": ["a"],
                   "rules": {"main": 1, "freeze": 2, "namespace": 3}, "workflow": "x", "required_check": "x",
                   "limits": {"ssh_per_host": 2, "inference": 3}}
@@ -200,7 +200,7 @@ class LimitsTests(unittest.TestCase):
         lock = Lock()
 
         def fake_command(args, data, timeout):
-            host = args[-2]
+            host = args[-2] if args[0] == "ssh" else args[-1]
             with lock:
                 running[host] += 1
                 peak[host] = max(peak[host], running[host])
@@ -212,49 +212,80 @@ class LimitsTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder, patch("pi_pilot_lab.command", fake_command):
             lab = Lab(Path(folder), plan, config)
             with ThreadPoolExecutor(max_workers=12) as pool:
-                self.assertEqual(list(pool.map(lambda host: lab.ssh(host, ["true"]), "ab" * 6)), [b"ok"] * 12)
+                self.assertEqual(list(pool.map(lambda host: lab.ssh(host, ["true", host]), "ab" * 6)), [b"ok"] * 12)
             self.assertEqual(lab.inference_limit, 3)
             self.assertEqual(peak, {"a": 2, "b": 2})
             peak.clear()
             default_lab = Lab(Path(folder), plan, {key: val for key, val in config.items() if key != "limits"})
             self.assertEqual(default_lab.inference_limit, 8)
             with ThreadPoolExecutor(max_workers=12) as pool:
-                list(pool.map(lambda host: default_lab.ssh(host, ["true"]), "ab" * 6))
+                list(pool.map(lambda host: default_lab.ssh(host, ["true", host]), "ab" * 6))
         self.assertEqual(peak, {"a": 4, "b": 4})
 
-    def test_inference_admits_in_waves_without_changing_prepared_pins(self):
+    def test_one_hundred_attempts_resume_from_checkpoint_with_two_coding_slots(self):
+        ops = [{"episode": f"w{index}", "task": f"w{index}", "base": "b" * 40,
+                "owner": f"w{index}", "generation": 1} for index in range(100)]
+        last = ops[-1]["episode"]
+
         class Adapter:
-            inference_limit = 3
+            inference_limit = 2
 
             def __init__(self):
-                self.prepared = set()
+                self.prepared = Counter()
+                self.generated = Counter()
+                self.releases = set()
                 self.in_flight = self.peak = 0
                 self.lock = Lock()
+                self.first_wave = Barrier(self.inference_limit, timeout=10)
 
             def prepare(self, op):
-                self.prepared.add(op["episode"])
+                with self.lock:
+                    self.prepared[op["episode"]] += 1
                 return {"git_base": op["base"]}
 
             def generate(self, op, release):
+                episode = op["episode"]
                 with self.lock:
-                    if len(self.prepared) != 10:
+                    if len(self.prepared) != len(ops):
                         raise AssertionError("started before all pins were prepared")
+                    self.generated[episode] += 1
+                    self.releases.add(release)
                     self.in_flight += 1
-                    self.peak = max(self.in_flight, self.peak)
-                time.sleep(0.025)
-                with self.lock:
-                    self.in_flight -= 1
-                return {"episode": op["episode"], "task": op["task"], "workspace": {"git_base": op["base"]}}
+                    self.peak = max(self.peak, self.in_flight)
+                try:
+                    if episode in ("w0", "w1"):
+                        self.first_wave.wait()
+                    if episode == last and self.generated[last] == 1:
+                        raise PilotError("simulated worker lost its result")
+                    return {"episode": episode, "task": op["task"], "workspace": {"git_base": op["base"]}}
+                finally:
+                    with self.lock:
+                        self.in_flight -= 1
 
-        with tempfile.TemporaryDirectory() as root:
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            outgoing, incoming, store = (root / name for name in ("outgoing", "incoming", "store"))
+            outgoing.mkdir(mode=0o700)
+            for name in ("plan", "lab", "principals", "policy-before"):
+                (outgoing / f"{name}.json").write_text("{}")
             adapter = Adapter()
-            runner = Runner(root, adapter)
-            ops = [{"episode": f"w{index}", "task": f"w{index}", "base": "b" * 40,
-                    "owner": f"w{index}", "generation": 1} for index in range(10)]
+            runner = Runner(outgoing / "journal", adapter)
+            runner.journal.record("input", "plan", {"agents": ops})
             for op in ops:
                 runner.bind(op, op | {"claim": "a" * 32})
-            self.assertEqual(len(runner.code("initial", ops, lead_seconds=0)), 10)
-            self.assertEqual(adapter.peak, 3)
+            with self.assertRaisesRegex(PilotError, "lost its result"):
+                runner.code("initial", ops, lead_seconds=0)
+            data = archive(outgoing)
+            receive(store, checksum(data), data)
+            restore(store, incoming)
+            resumed = Runner(incoming / "journal", adapter)
+            self.assertNotIn("coding", resumed.journal.read(last))
+            receipts = resumed.code("initial", ops)
+            self.assertEqual([receipt["episode"] for receipt in receipts], [op["episode"] for op in ops])
+            self.assertEqual(len(adapter.releases), 1)
+            self.assertEqual(adapter.peak, 2)
+            self.assertEqual(adapter.prepared, Counter(op["episode"] for op in ops))
+            self.assertEqual(adapter.generated, adapter.prepared + Counter({last: 1}))
 
 
 if __name__ == "__main__":

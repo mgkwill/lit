@@ -201,11 +201,10 @@ class Lab:
             options.append("-oIdentitiesOnly=yes")
         if worker and profile.get("worker_user"):
             args = ["sudo", "-n", "-u", profile["worker_user"], *args]
-        if profile.get("local"):
-            return command(args, data, timeout)
-        ssh = ["ssh", *options, "--", profile["destination"], shlex.join(args)]
+        if not profile.get("local"):
+            args = ["ssh", *options, "--", profile["destination"], shlex.join(args)]
         with self.ssh_slots[host]:
-            return command(ssh, data, timeout)
+            return command(args, data, timeout)
 
     def admin(self, route, body=None, seconds=300):
         context = ssl.create_default_context(cafile=self.config["server_ca"])

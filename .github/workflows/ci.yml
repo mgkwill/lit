@@ -24,6 +24,12 @@ jobs:
           python3 tests/task_broker_failover_regression.py
           python3 tests/task_broker_replica_regression.py
           python3 tests/task_broker_quorum_regression.py
+      - name: Test Pi controller without inference
+        run: |
+          python3 tests/pi_pilot_runner_regression.py
+          python3 tests/pi_pilot_recovery_regression.py
+          python3 tests/pi_pilot_lab_regression.py
+          python3 tests/pi_pilot_control_regression.py
 
   test:
     name: Test on ${{ matrix.os }}

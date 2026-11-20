@@ -156,11 +156,20 @@ prepares all coding workspaces in one cohort. Each window publishes, integrates,
 releases its terminal branch freezes before the next window publishes. Keep
 both workers in each handoff or overlap pair in the same window.
 
-The lab adapter defaults to four concurrent SSH commands per configured
+The lab adapter defaults to four concurrent commands per configured
 host and eight admitted coding sessions. Override them with the lab's
-`limits` object, using `ssh_per_host` and `inference`.
-The inference limit queues later sessions until a coding slot is free.
-Within an admitted session, the model service schedules individual requests.
+`limits` object, using `ssh_per_host` and `inference`. The same per-host
+cap applies when the controller runs commands locally. Set
+`"limits": {"ssh_per_host": 4, "inference": 2}` to admit two coding
+sessions while the rest of the cohort waits. Within an admitted session,
+the model service schedules individual requests.
+
+Run `python3 -B tests/pi_pilot_control_regression.py` to exercise a
+100-attempt cohort with simulated workers and two coding slots. The
+checkpoint test retries one unfinished attempt and reuses the 99 saved
+results with their original Git pins and release time. The
+[live six-agent canary](../../tests/fixtures/github-merge-queue/PI-CONTROL-CANARY-2026-11-20.md)
+covers actual Pi inference, broker reassignment, and the Actions-only gate.
 
 Set an operation's `workload` to `source` to exercise Python source functions
 under `qualification/<run>/<work_unit>/policy.py`. The checker interprets a
