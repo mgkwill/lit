@@ -1,0 +1,192 @@
+{
+  "local_checks": {
+    "branch_tags_and_history_preserved": true,
+    "encrypted_v1_pack_and_refs_table_converted": true,
+    "reflog_lfs_staging_and_agent_metadata_preserved": true,
+    "rollback_kept_post_migration_work_in_archive": true,
+    "source_bytes_and_modes_unchanged": true,
+    "wrong_passphrase_conflicting_refs_and_tampered_table_refused": true
+  },
+  "mit_baseline": "98c59bb2dbebcf7f575993a4ad89e1300a578c83",
+  "reference_inputs": "CLI behavior and repository fixtures emitted by v1.8.0. The reflog record was seeded from the MIT-derived record schema and read back through both CLIs.",
+  "release_asset_runs": {
+    "linux_arm64_host_e": {
+      "arch": "aarch64",
+      "archive_sha256": "d677de9b94314c1fd1fca6db7cad1cd074d77d010f6fe722a27c2b67f66fcf94",
+      "bare": {
+        "recovery": 4,
+        "released": 4
+      },
+      "candidate_sha256": "3e54de54355719e694a81f4223891d1b41c805cc5438c9570cabaab7eecea325",
+      "denials": {
+        "active_transaction": true,
+        "corrupt_object": true,
+        "future_format": true,
+        "metadata_symlink": true
+      },
+      "encrypted": {
+        "recovery_packed": {
+          "key_rotated_on_copy": false,
+          "old_key_preserved_at_source": true,
+          "packed": true
+        },
+        "released_loose": {
+          "key_rotated_on_copy": true,
+          "old_key_preserved_at_source": true,
+          "packed": false
+        },
+        "released_packed": {
+          "key_rotated_on_copy": true,
+          "old_key_preserved_at_source": true,
+          "packed": true
+        }
+      },
+      "interruption": {
+        "competing_migration": true,
+        "killed_before_publish": true,
+        "no_replace_race": true,
+        "resume": true
+      },
+      "platform": "Linux",
+      "reference_sha256": "2af7c32c10f9150c02c452cefdbea494b26a2e2f01b94b38ba162b27340ff10f",
+      "reference_version": "lit 1.8.0",
+      "working": {
+        "recovery_packed": {
+          "objects": 11,
+          "refs": 3
+        },
+        "released_loose": {
+          "objects": 11,
+          "refs": 3
+        },
+        "released_packed": {
+          "objects": 11,
+          "refs": 3
+        }
+      }
+    },
+    "linux_arm64_host_f": {
+      "arch": "aarch64",
+      "archive_sha256": "d677de9b94314c1fd1fca6db7cad1cd074d77d010f6fe722a27c2b67f66fcf94",
+      "bare": {
+        "recovery": 4,
+        "released": 4
+      },
+      "candidate_sha256": "3e54de54355719e694a81f4223891d1b41c805cc5438c9570cabaab7eecea325",
+      "denials": {
+        "active_transaction": true,
+        "corrupt_object": true,
+        "future_format": true,
+        "metadata_symlink": true
+      },
+      "encrypted": {
+        "recovery_packed": {
+          "key_rotated_on_copy": false,
+          "old_key_preserved_at_source": true,
+          "packed": true
+        },
+        "released_loose": {
+          "key_rotated_on_copy": true,
+          "old_key_preserved_at_source": true,
+          "packed": false
+        },
+        "released_packed": {
+          "key_rotated_on_copy": true,
+          "old_key_preserved_at_source": true,
+          "packed": true
+        }
+      },
+      "interruption": {
+        "competing_migration": true,
+        "killed_before_publish": true,
+        "no_replace_race": true,
+        "resume": true
+      },
+      "platform": "Linux",
+      "reference_sha256": "2af7c32c10f9150c02c452cefdbea494b26a2e2f01b94b38ba162b27340ff10f",
+      "reference_version": "lit 1.8.0",
+      "working": {
+        "recovery_packed": {
+          "objects": 11,
+          "refs": 3
+        },
+        "released_loose": {
+          "objects": 11,
+          "refs": 3
+        },
+        "released_packed": {
+          "objects": 11,
+          "refs": 3
+        }
+      }
+    },
+    "macos_arm64": {
+      "arch": "arm64",
+      "archive_sha256": "126124d052e768af1ddc0225e42b76503194008c54e0113944a2421578572c19",
+      "bare": {
+        "recovery": 4,
+        "released": 4
+      },
+      "candidate_sha256": "8b931af71d579b744efc8f7a091de41ebabcef5eba69ad6baad21bf41e35f48e",
+      "denials": {
+        "active_transaction": true,
+        "corrupt_object": true,
+        "future_format": true,
+        "metadata_symlink": true
+      },
+      "encrypted": {
+        "recovery_packed": {
+          "key_rotated_on_copy": false,
+          "old_key_preserved_at_source": true,
+          "packed": true
+        },
+        "released_loose": {
+          "key_rotated_on_copy": true,
+          "old_key_preserved_at_source": true,
+          "packed": false
+        },
+        "released_packed": {
+          "key_rotated_on_copy": true,
+          "old_key_preserved_at_source": true,
+          "packed": true
+        }
+      },
+      "interruption": {
+        "competing_migration": true,
+        "killed_before_publish": true,
+        "no_replace_race": true,
+        "resume": true
+      },
+      "platform": "Darwin",
+      "reference_sha256": "e3911cf93c366a9d1c40792fb280d4cea5e5f073eccfdfcf16ae6f74026b7d16",
+      "reference_version": "lit 1.8.0",
+      "working": {
+        "recovery_packed": {
+          "objects": 11,
+          "refs": 3
+        },
+        "released_loose": {
+          "objects": 11,
+          "refs": 3
+        },
+        "released_packed": {
+          "objects": 11,
+          "refs": 3
+        }
+      }
+    }
+  },
+  "sandbox_policy_read_only": {
+    "bypass_actors": [],
+    "check": [
+      {
+        "context": "Agent workflow candidate",
+        "integration_id": 15368
+      }
+    ],
+    "enforcement": "active",
+    "id": 27439049
+  },
+  "test": "python3 tests/repository_migration_regression.py <unpacked recovery executable> <v1.8.0 executable>",
+  "tested_source_commit": "d18f856f7baf5fa61d7f33f9ec6831649ed2e0f8"
+}
