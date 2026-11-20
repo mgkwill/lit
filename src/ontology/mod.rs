@@ -75,7 +75,7 @@ pub struct CommandDef {
     pub safe: bool,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Clone, Debug, Serialize)]
 pub struct ParamDef {
     pub name: String,
     #[serde(rename = "type")]
@@ -1419,6 +1419,11 @@ fn ontology_type_to_schema(type_name: &str) -> serde_json::Value {
             serde_json::json!({ "type": "integer" })
         }
         "number" | "f64" | "f32" => serde_json::json!({ "type": "number" }),
+        "object" => serde_json::json!({ "type": "object" }),
+        t if t.ends_with("[]") => serde_json::json!({
+            "type": "array",
+            "items": ontology_type_to_schema(&t[..t.len() - 2])
+        }),
         t if t.starts_with("array<") && t.ends_with('>') => {
             let inner = &t[6..t.len() - 1];
             serde_json::json!({
@@ -1479,20 +1484,7 @@ fn command_input_schema(cmd: &CommandDef) -> serde_json::Value {
     let mut required = Vec::new();
 
     for param in &cmd.parameters {
-        let mut param_schema = ontology_type_to_schema(&param.type_name);
-        if let Some(obj) = param_schema.as_object_mut() {
-            obj.insert(
-                "description".to_string(),
-                serde_json::Value::String(param.description.clone()),
-            );
-            if let Some(ref default) = param.default {
-                obj.insert(
-                    "default".to_string(),
-                    serde_json::Value::String(default.clone()),
-                );
-            }
-        }
-        properties.insert(param.name.clone(), param_schema);
+        properties.insert(param.name.clone(), parameter_schema(param));
         if param.required {
             required.push(serde_json::Value::String(param.name.clone()));
         }
@@ -1505,6 +1497,23 @@ fn command_input_schema(cmd: &CommandDef) -> serde_json::Value {
         "required": required,
         "additionalProperties": false
     })
+}
+
+/// Generate the schema for one parameter shared by command and MCP discovery.
+pub(crate) fn parameter_schema(param: &ParamDef) -> serde_json::Value {
+    use serde_json::{json, Value};
+
+    let mut schema = ontology_type_to_schema(&param.type_name);
+    schema["description"] = json!(param.description);
+    if let Some(default) = &param.default {
+        schema["default"] = match schema["type"].as_str() {
+            Some("boolean" | "integer" | "number") => {
+                serde_json::from_str(default).unwrap_or_else(|_| Value::String(default.clone()))
+            }
+            _ => Value::String(default.clone()),
+        };
+    }
+    schema
 }
 
 /// Generate the full JSON Schema document for the Lit ontology.

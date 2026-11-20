@@ -461,55 +461,47 @@ fn get_mcp_tools() -> Vec<McpTool> {
     tool_commands
         .iter()
         .map(|(tool_name, cmd_id, description)| {
-            // Use ontology-generated schema if available, fall back to empty object
-            let input_schema = ont
-                .commands
-                .iter()
-                .find(|c| c.id == *cmd_id)
-                .map(|cmd| {
-                    let mut properties = serde_json::Map::new();
-                    let mut required = Vec::new();
-                    for param in &cmd.parameters {
-                        let mut prop = match param.type_name.as_str() {
-                            "string" | "String" => serde_json::json!({ "type": "string" }),
-                            "boolean" | "bool" => serde_json::json!({ "type": "boolean" }),
-                            "integer" | "usize" => serde_json::json!({ "type": "integer" }),
-                            t if t.starts_with("array<") => serde_json::json!({
-                                "type": "array",
-                                "items": { "type": "string" }
-                            }),
-                            _ => serde_json::json!({ "type": "string" }),
-                        };
-                        if let Some(obj) = prop.as_object_mut() {
-                            obj.insert(
-                                "description".to_string(),
-                                serde_json::Value::String(param.description.clone()),
-                            );
-                            if let Some(ref default) = param.default {
-                                obj.insert(
-                                    "default".to_string(),
-                                    serde_json::Value::String(default.clone()),
-                                );
-                            }
+            let mut properties = serde_json::Map::new();
+            let mut required = Vec::new();
+            if let Some(cmd) = ont.commands.iter().find(|cmd| cmd.id == *cmd_id) {
+                for param in &cmd.parameters {
+                    let mut field = param.clone();
+                    match (*cmd_id, param.name.as_str()) {
+                        ("log", "oneline") | ("branch", "all") => continue,
+                        ("checkout", "b") => field.name = "create".into(),
+                        ("stash" | "config", "command") => {
+                            field.name = "action".into();
+                            field.required = false;
+                            field.default =
+                                Some(if *cmd_id == "stash" { "push" } else { "show" }.into());
                         }
-                        properties.insert(param.name.clone(), prop);
-                        if param.required {
-                            required.push(serde_json::Value::String(param.name.clone()));
-                        }
+                        ("snapshot", "metadata") => field.type_name = "object".into(),
+                        _ => {}
                     }
+                    let mut schema = ontology::parameter_schema(&field);
+                    if *cmd_id == "add" && field.name == "files" {
+                        schema["minItems"] = serde_json::json!(1);
+                    }
+                    if field.required {
+                        required.push(field.name.clone());
+                    }
+                    properties.insert(field.name, schema);
+                }
+            }
+            if *cmd_id == "schema" {
+                properties.insert(
+                    "command".into(),
                     serde_json::json!({
-                        "type": "object",
-                        "properties": properties,
-                        "required": required
-                    })
-                })
-                .unwrap_or_else(|| {
-                    serde_json::json!({
-                        "type": "object",
-                        "properties": {},
-                        "required": []
-                    })
-                });
+                        "type": "string",
+                        "description": "Command ID to describe. Omit to list all schemas."
+                    }),
+                );
+            }
+            let input_schema = serde_json::json!({
+                "type": "object",
+                "properties": properties,
+                "required": required
+            });
 
             McpTool {
                 name: tool_name.to_string(),
@@ -535,7 +527,12 @@ fn call_tool(
                 .and_then(|v| v.as_bool())
                 .unwrap_or(false);
             let stat = args.get("stat").and_then(|v| v.as_bool()).unwrap_or(false);
-            let resp = commands::diff::execute(staged, stat, false, None, None)?;
+            let ref1 = args.get("ref1").and_then(|v| v.as_str()).map(str::to_owned);
+            let ref2 = args.get("ref2").and_then(|v| v.as_str()).map(str::to_owned);
+            if ref2.is_some() && ref1.is_none() {
+                return Err("'ref2' requires 'ref1'".into());
+            }
+            let resp = commands::diff::execute(staged, stat, false, ref1, ref2)?;
             serde_json::to_value(&resp).map_err(|e| e.to_string().into())
         }
         "lit_log" => {
@@ -588,6 +585,7 @@ fn call_tool(
                 .to_string();
             let create = args
                 .get("create")
+                .or_else(|| args.get("b"))
                 .and_then(|v| v.as_bool())
                 .unwrap_or(false);
             let resp = commands::checkout::execute(target, create)?;
@@ -758,6 +756,7 @@ fn call_tool(
                 .map(|s| s.to_string());
             let action = args
                 .get("action")
+                .or_else(|| args.get("command"))
                 .and_then(|v| v.as_str())
                 .unwrap_or("push");
             let stash_cmd = match action {
@@ -777,7 +776,8 @@ fn call_tool(
                         .map(|i| i as usize);
                     Some(crate::StashCommands::Drop { index })
                 }
-                _ => Some(crate::StashCommands::Push { message }),
+                "push" => Some(crate::StashCommands::Push { message }),
+                _ => return Err("Unknown stash action".into()),
             };
             let resp = commands::stash::execute(stash_cmd)?;
             serde_json::to_value(&resp).map_err(|e| e.to_string().into())
@@ -883,6 +883,7 @@ fn call_tool(
         "lit_config" => {
             let action = args
                 .get("action")
+                .or_else(|| args.get("command"))
                 .and_then(|v| v.as_str())
                 .unwrap_or("show");
             let config_cmd = match action {
@@ -907,7 +908,8 @@ fn call_tool(
                         .to_string();
                     Some(crate::ConfigCommands::Set { key, value })
                 }
-                _ => Some(crate::ConfigCommands::Show),
+                "show" => Some(crate::ConfigCommands::Show),
+                _ => return Err("Unknown config action".into()),
             };
             let resp = commands::config::execute(config_cmd)?;
             serde_json::to_value(&resp).map_err(|e| e.to_string().into())
