@@ -61,7 +61,10 @@ def main():
                         assert Path(actual).resolve() == Path(intended).resolve(), (actual, intended)
                     else:
                         assert actual == intended, (observed, wanted)
-                assert {p.name: p.read_bytes() for p in home.iterdir()} == original
+                # PowerShell itself creates AppData caches in a fresh profile.
+                # Check user settings, not the shell's runtime cache layout.
+                assert {name: (home / name).read_bytes() for name in original} == original
+                assert not (home / '.config/lit').exists()
         print(json.dumps({'script': script, 'checkout_with_spaces': True,
                           'locked_local_package': True, 'failure_propagation': True,
                           'home_settings_preserved': True}, sort_keys=True))
