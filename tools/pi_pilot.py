@@ -125,16 +125,22 @@ class Cohort:
         return row
 
     def stage(self, group, operations):
-        self.runner.code(group, operations, lead_seconds=15)
+        label = group if self.steps == "cohort" else f"{self.steps}-{group}"
+        if group != "initial" or self.steps == "cohort":
+            self.runner.code(label, operations, lead_seconds=15)
         rows = self.parallel(self.publish, operations)
-        self.step(group + "-frozen", lambda: self.lab.freeze(rows, group))
+        self.step(group + "-frozen", lambda: self.lab.freeze(rows, label))
         return rows
 
-    def initial(self):
+    def prepare_cohort(self):
         self.step("enrolled", self.lab.enroll)
         self.step("workers-staged", self.lab.stage_workers)
         for op in self.agents.values():
             self.attach(op, self.assign(op))
+        return True
+
+    def initial(self):
+        self.prepare_cohort()
         return dict(zip(self.agents, self.stage("initial", list(self.agents.values())), strict=True))
 
     def native_handoffs(self, initial):
@@ -210,10 +216,12 @@ class Cohort:
                     for (unit, (found, op)), row in zip(conflicts.items(), resolutions, strict=True)}
         self.step("overlaps", lambda: overlaps)
         retirements = len(replacements) + len(fixes)
+        tasks = {op["task"] for op in self.agents.values()}
 
         def settled():
-            rows = self.lab.proposals(self.lab.status())
-            expected = {"merged": len(initial), "ownership_retired": retirements}
+            rows = {number: row for number, row in self.lab.proposals(self.lab.status()).items()
+                    if row["task"] in tasks}
+            expected = Counter(merged=len(initial), ownership_retired=retirements)
             if Counter(row["phase"] for row in rows.values()) == expected and all(
                     row.get("integration", {}).get("state") == "verified"
                     for row in rows.values() if row["phase"] == "merged"):
@@ -228,6 +236,51 @@ class Cohort:
                 record = row["integration"]
                 spec = record["receipt"]["proposal"]
                 self.runner.integration(by_claim[spec["task"], spec["generation"]], record)
+        return final
+
+    def windows(self):
+        full = self.plan
+        size = full["publication_window"]
+        if type(size) is not int or size < 2:
+            raise PilotError("publication_window must be an integer of at least two")
+        windows = [full["agents"][offset:offset+size]
+                   for offset in range(0, len(full["agents"]), size)]
+        positions = {op["id"]: index for index, ops in enumerate(windows) for op in ops}
+        for pair in [*full["handoffs"].items(), *full["overlaps"]]:
+            left, right = pair
+            if left not in positions or right not in positions or positions[left] != positions[right]:
+                raise PilotError("handoffs and overlaps must stay in one publication window")
+        return windows
+
+    def run_windows(self):
+        windows = self.windows()
+        plan, agents, steps = self.plan, self.agents, self.steps
+        self.step("assignments-prepared", self.prepare_cohort)
+        self.runner.code("all-initial", list(agents.values()), lead_seconds=20)
+        final, handoffs, overlaps = {}, {}, {}
+        try:
+            for index, ops in enumerate(windows, 1):
+                self.steps = f"window-{index}"
+                self.agents = {op["id"]: op for op in ops}
+                self.plan = plan | {"agents": ops,
+                    "handoffs": {key: target for key, target in plan["handoffs"].items() if key in self.agents},
+                    "overlaps": [pair for pair in plan["overlaps"] if pair[0] in self.agents]}
+
+                def publish_window():
+                    return dict(zip(self.agents, self.stage("initial", ops), strict=True))
+
+                initial = self.step("initial", publish_window)
+                settled = self.step("terminal", lambda: self.integrate(initial))
+                self.step("freezes-released", lambda: self.lab.release_freezes([
+                    {"receipt": {"number": row["number"], "branch": row["branch"]}} for row in settled.values()]))
+                state = self.journal.read(self.steps)
+                final.update(settled)
+                handoffs.update(state["handoffs"])
+                overlaps.update(state["overlaps"])
+        finally:
+            self.plan, self.agents, self.steps = plan, agents, steps
+        self.step("handoffs", lambda: handoffs)
+        self.step("overlaps", lambda: overlaps)
         return final
 
     def cleanup(self, final, proof):
@@ -252,8 +305,11 @@ class Cohort:
     def run(self):
         state = self.journal.read(self.steps)
         if "terminal" not in state:
-            initial = self.step("initial", self.initial)
-            final = self.step("terminal", lambda: self.integrate(initial))
+            if "publication_window" in self.plan:
+                final = self.step("terminal", self.run_windows)
+            else:
+                initial = self.step("initial", self.initial)
+                final = self.step("terminal", lambda: self.integrate(initial))
         else:
             final = state["terminal"]
         self.step("capacity-restored", self.lab.restore_capacity)
@@ -263,7 +319,7 @@ class Cohort:
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--state", required=True, type=Path, help="private directory containing plan.json and adapter.py")
+    parser.add_argument("--state", required=True, type=Path, help="private directory containing plan.json and lab.json")
     parser.add_argument("--interrupt-after", action="append", default=[], choices=("reassignment", "worker-removal"),
                         help="terminate once after this remote change and before its receipt is recorded")
     args = parser.parse_args()
@@ -275,10 +331,15 @@ def main():
         plan_path, adapter_path = state / "plan.json", state / "adapter.py"
         plan = json.loads(plan_path.read_bytes())
         journal.record("input", "plan", plan)
-        journal.record("input", "adapter-sha256", sha256(adapter_path.read_bytes()).hexdigest())
-        spec = importlib.util.spec_from_file_location("pi_pilot_lab", adapter_path)
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
+        if (state / "lab.json").is_file():
+            from pi_pilot_lab import open_lab
+            lab = open_lab(state, plan, journal)
+        else:
+            journal.record("input", "adapter-sha256", sha256(adapter_path.read_bytes()).hexdigest())
+            spec = importlib.util.spec_from_file_location("private_pi_adapter", adapter_path)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            lab = module.open_lab(state, plan)
 
         def interrupt(key, detail):
             if key in args.interrupt_after and key not in journal.read("interruptions"):
@@ -286,7 +347,7 @@ def main():
                 print(f"Injected controller exit after {key}, before recording completion", flush=True)
                 os._exit(74)
 
-        result = Cohort(journal, plan, module.open_lab(state, plan), interrupt=interrupt).run()
+        result = Cohort(journal, plan, lab, interrupt=interrupt).run()
         print(json.dumps(result, sort_keys=True))
 
 

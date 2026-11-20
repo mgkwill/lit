@@ -175,7 +175,10 @@ net.connect({host:'127.0.0.1',port:443}).on('connect',()=>{ throw Error('unexpec
 """
     subprocess.run(node + ["-e", probe, str(root)], cwd=cwd, env=env, preexec_fn=confine,
                    check=True, timeout=20)
-    if "contract_cases" in operation:
+    if operation.get("workload") == "source":
+        from pi_source_cases import prompt as source_prompt
+        prompt = source_prompt(operation["contract_cases"])
+    elif "contract_cases" in operation:
         from pi_lit_contracts import prompt as contract_prompt
         prompt = contract_prompt(operation["contract_cases"])
     else:
@@ -255,7 +258,21 @@ def execute(root, attempt, operation, action):
     if (attempt / "agent").exists():
         raise ValueError("coding attempt has no validated result")
     run, unit = operation["run"], operation.get("work_unit")
-    if "contract_cases" in operation:
+    if operation.get("workload") == "source":
+        from pi_source_cases import function_map, verify
+        scope = workspace / "qualification" / run / unit
+        scope.mkdir(parents=True, exist_ok=True)
+        source = scope / "policy.py"
+        before = function_map(source.read_bytes()) if source.exists() else {}
+        model = run_pi(root, scope, attempt, operation)
+        if list(scope.iterdir()) != [source]:
+            raise ValueError("source workload must edit only policy.py")
+        tested = verify(source, operation["contract_cases"])
+        after = function_map(source.read_bytes())
+        if any(ast.dump(before[name]) != ast.dump(after[name]) for name in before):
+            raise ValueError("source workload changed a preexisting function")
+        targets = [source]
+    elif "contract_cases" in operation:
         from pi_lit_contracts import verify
         scope = workspace / "tests" / "agent-contracts" / run / unit
         scope.mkdir(parents=True, exist_ok=True)
