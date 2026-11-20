@@ -1,0 +1,1085 @@
+{
+  "date_pacific": "2026-11-19",
+  "mit_baseline": "98c59bb2dbebcf7f575993a4ad89e1300a578c83",
+  "source_boundary": "MIT baseline and independently authored recovery code. Post-MIT upstream remained a black box.",
+  "workspace_client_source": "511711a904c6ac315659be7dec4d88b79508f85d",
+  "lit_binary_source": "6daf65302f0b93212834d3365f53b02fae04267d",
+  "worker_receipt_followup": "3a782b5",
+  "tested_source_sha256": {
+    "tests/fixtures/github-merge-queue/broker-burst-worker.py": "1f7124cb84c5e711881b70ea44af2bbef45fcaa48a544d339bba5dd8cf21787d",
+    "tools/task_broker_workspace.py": "9af36ecd16167f0dc611641437accbb02a5612bca483e1fa6321ce624c65ccd5",
+    "tools/task_broker_client.py": "10895a19626558f7092e44f0b73d824ab739911204278381f255340f91faad9a"
+  },
+  "repository": "100latent/lit-merge-queue-sandbox",
+  "actions_gate": {
+    "ruleset": 27439049,
+    "required_checks": [
+      {
+        "context": "Agent workflow candidate",
+        "integration_id": 15368
+      }
+    ],
+    "bypass_actors": [],
+    "worker_github_permissions": {
+      "contents": "read",
+      "pull_requests": "read"
+    },
+    "build_capacity": {
+      "original": 1,
+      "temporary": 30
+    }
+  },
+  "cohort": {
+    "type": "scripted mTLS Python workers running real Lit and Git",
+    "model_sessions": 0,
+    "unique_worker_principals": 100,
+    "hosts": {
+      "host-a": 34,
+      "host-e": 33,
+      "host-f": 33
+    },
+    "configured_concurrency_per_host": 16
+  },
+  "local_and_native_tests": {
+    "macos": {
+      "architecture": "arm64",
+      "broker_queue_failover_and_quorum_tests": 136,
+      "workspace_adapter_and_partial_burst": true
+    },
+    "host-a": {
+      "architecture": "x86_64",
+      "broker_queue_failover_and_quorum_tests": 136,
+      "workspace_adapter_and_partial_burst": true
+    },
+    "host-e": {
+      "architecture": "aarch64",
+      "broker_queue_failover_and_quorum_tests": 136,
+      "workspace_adapter_and_partial_burst": true
+    },
+    "host-f": {
+      "architecture": "aarch64",
+      "broker_queue_failover_and_quorum_tests": 136,
+      "workspace_adapter_and_partial_burst": true
+    }
+  },
+  "publication": {
+    "base": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+    "initial_real_prs": 100,
+    "matched_trees_and_parents": 100,
+    "identical_publication_replays": 100,
+    "status_polls_after_resume": 1258,
+    "transport_retries_after_resume": 486,
+    "verified": [
+      {
+        "pr": 329,
+        "worker": "w-009",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "d7b2e342ea880f759bbdda533d1ceea7ead80b73",
+        "remote_git_head": "a5cea29c14c095b1aea354ce2ac51a406dd1b614",
+        "local_git_head": "cddbbcac32f62b1d155deab98348d9f1052ba749"
+      },
+      {
+        "pr": 330,
+        "worker": "w-001",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "f363e6b5b04e82f3193daf4b4ffbebd4e6567856",
+        "remote_git_head": "5c2ca555cb28217f33ff15dbd6d7599e77a841ce",
+        "local_git_head": "dd15776201be34d2f1bf51701e0db9d9ea4bd944"
+      },
+      {
+        "pr": 331,
+        "worker": "w-002",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "631fa9d174fabc7534039ff3483b5cc19563e228",
+        "remote_git_head": "b378f17c73e868f26bb94083078657dc3c845c00",
+        "local_git_head": "3f5462e4666eed71b87c26620c876513d4bb4ce8"
+      },
+      {
+        "pr": 332,
+        "worker": "w-003",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "d669203db6f46bbc66565ffa36e7e442aec83f75",
+        "remote_git_head": "c9a4b143ee434a3aec526fc6e0ace2caeeb387de",
+        "local_git_head": "6cf3c23d3a54713aca474726b8cbb7c8efd42fcc"
+      },
+      {
+        "pr": 333,
+        "worker": "w-004",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "7f7948aa4eb0b4e833228826860cf60040a3c4d0",
+        "remote_git_head": "7c7dcc79382dd8682b5bf0c84d4cd15a21491651",
+        "local_git_head": "fb9b86b5cc25d929d884ae8490ea798fd6223486"
+      },
+      {
+        "pr": 334,
+        "worker": "w-012",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "910310019cf7d6ad88e978fbb5dc1f3eda38bf4a",
+        "remote_git_head": "2772c7741daab4e57115a36485378e305e20864d",
+        "local_git_head": "5b2554014bddd62d8d0a32d923759575eb278f83"
+      },
+      {
+        "pr": 335,
+        "worker": "w-013",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "48f07110bd9921c9cbe8a7b19ee9baea78d16b7d",
+        "remote_git_head": "9edeead69db2fa34c5c801208f4266637bec6645",
+        "local_git_head": "b2c915083f49679a94deb47d1a8049f948e8842e"
+      },
+      {
+        "pr": 336,
+        "worker": "w-014",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "e5a0b558e1d6e9a05fcc552c8ef6610c4a39e198",
+        "remote_git_head": "3288ee4ee56b0169ae8159a5fe7d3c5280ca9201",
+        "local_git_head": "ad8195303dba5e627c475b4650cf087bd2bcfe0d"
+      },
+      {
+        "pr": 337,
+        "worker": "w-015",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "27b623b1640d9955386c147d6e58115191480eaa",
+        "remote_git_head": "9a4d709d61591f3951a54fa340d0bdfe501e4a8a",
+        "local_git_head": "ec2ae59b7b3a1b0f8818a39340447ecce2eef351"
+      },
+      {
+        "pr": 338,
+        "worker": "w-016",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "35a6b28d3de7a5f2e3fa40950e1c887da258d7d4",
+        "remote_git_head": "85fdb928e13fe421cb180daa7774e2f36b58de17",
+        "local_git_head": "4d6bc29af9b25d2fc05290bc7c748f126735b274"
+      },
+      {
+        "pr": 339,
+        "worker": "w-017",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "9b8dd8c4fa7ea36b2bab11c620a15da81fb9a58e",
+        "remote_git_head": "0d5f010b41addbf35cc64565d136fa13e04eeb08",
+        "local_git_head": "df5bf20d524b4068d467ce0a685cc20af3334b91"
+      },
+      {
+        "pr": 340,
+        "worker": "w-018",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "c36e237208db6dfca26af958f2fea5d89321b4dc",
+        "remote_git_head": "84501496bae0b5a14893ea5ffc0309aad5898b5c",
+        "local_git_head": "523a33921c717a138f285843c9f5582cef2ad9d1"
+      },
+      {
+        "pr": 341,
+        "worker": "w-035",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "8e5e841339b73600eddfcd95b00eca0432c42a82",
+        "remote_git_head": "55f4feee7563c377a943ceab9e09380e6ac359b8",
+        "local_git_head": "da781b278bb13eda14c7684afde21bfdbf536d16"
+      },
+      {
+        "pr": 342,
+        "worker": "w-036",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "097ebdcf82b5a577eead32a01a3495748984d0d8",
+        "remote_git_head": "1abc8e77f09d234f634e4e76de669f1fff54a094",
+        "local_git_head": "7942dad39c859a4b9a0fa1e188083fd5071884f6"
+      },
+      {
+        "pr": 343,
+        "worker": "w-037",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "eaaf14b54f70cb716f8e68285fa863303bcc48ff",
+        "remote_git_head": "c7719f48f967ce8b9f8851308950a6d52f1b763b",
+        "local_git_head": "dee668614b861ad7cc64ec56ec4d3dd4ecddadcf"
+      },
+      {
+        "pr": 344,
+        "worker": "w-038",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "2da6e9997bda006da4e5863e0e17e1802c53095f",
+        "remote_git_head": "453cdf34cac8d46bcfe064a46f2dbd1fb701a64b",
+        "local_git_head": "5b02b7467dd0b0cef34ee3bb9b9c715870a1f737"
+      },
+      {
+        "pr": 345,
+        "worker": "w-039",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "d134450fb49a5b9f8dd5d25dd50ff97bc93a470f",
+        "remote_git_head": "03190ec8863666dbad1101d075a67bfb3c32bb92",
+        "local_git_head": "57b93806b80c40c43bb6696db463f71e7c2767fe"
+      },
+      {
+        "pr": 346,
+        "worker": "w-040",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "6ae6f18ee8ef2717a5183380731205a579d8b5e8",
+        "remote_git_head": "a20f73603a39abe8404b9a6b1fddb170363ccaf7",
+        "local_git_head": "59e4544ac1c322129a0c4926cb7c44ea53760c42"
+      },
+      {
+        "pr": 347,
+        "worker": "w-041",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "af52b95a39012777197f3918fd73dcefab3e7591",
+        "remote_git_head": "19ac162c7c8f92f876445cd0f5370f820fd627e2",
+        "local_git_head": "e97e7dcb73354537944efdbefe96cb1d18b1b69e"
+      },
+      {
+        "pr": 348,
+        "worker": "w-042",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "d521991a7093ea7ca1ec549f24b9af552956ed15",
+        "remote_git_head": "36872c7452ad91d014b8a6c886424aa3b747bfe4",
+        "local_git_head": "66f1a55429f2a115892522f24a7e0946f9a40824"
+      },
+      {
+        "pr": 349,
+        "worker": "w-043",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "b801688967c48e50acd69b8827eb60d4f0882ba4",
+        "remote_git_head": "7cd07314ad7cfbd5a9244102267bae0a8caebfc0",
+        "local_git_head": "69090a87f0528aeb4aec0b12976e6467bead7fe7"
+      },
+      {
+        "pr": 350,
+        "worker": "w-044",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "05ddc0d138cb33763155e86cfa4e78c2d695b402",
+        "remote_git_head": "1917b2fd88541e06f6b000c6144fa7a83872c411",
+        "local_git_head": "e1207d6e44ee8be96e74302152fe704a68978d98"
+      },
+      {
+        "pr": 351,
+        "worker": "w-045",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "a6ae448981bd9675ffe83abf0df5aba7e587dfad",
+        "remote_git_head": "2bfceed326c97b353fd799f70cb65dd07333e3c8",
+        "local_git_head": "d969ce6d8d0d09da635b715ec9acb19023f8d87a"
+      },
+      {
+        "pr": 352,
+        "worker": "w-046",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "545597f4fc81f9d65c4cda99fd3dad8cdc90c39f",
+        "remote_git_head": "a65bd7ff58ffa2dfe0e5cb9ad69f20a19e4c2d16",
+        "local_git_head": "5092aa2a95067d13d70bcf0110674089866e4b23"
+      },
+      {
+        "pr": 353,
+        "worker": "w-047",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "92f93601012ee7995e55e9c26da8ee3f8fffcd63",
+        "remote_git_head": "b7c278dfd398bfce810b304a484bf2e8e4fd2d49",
+        "local_git_head": "2e19bd03182d14f405ec8ee610769732edf0c449"
+      },
+      {
+        "pr": 354,
+        "worker": "w-048",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "52beba4a6e310d2fd89c0868df52ac01f0b4c92c",
+        "remote_git_head": "f54fbd3a1a5845131bedf7cfc032de076509773a",
+        "local_git_head": "eb24dbba8c1643206077ac5918bd5297ffa5869d"
+      },
+      {
+        "pr": 355,
+        "worker": "w-049",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "ce2b50272afdf387e8fafbaee6a4eff094fc5103",
+        "remote_git_head": "158edb6f1d31ea7b768772708a1858d04aecea67",
+        "local_git_head": "0a6971faf7f9a73190e3afb0a3dda3a404d8d35e"
+      },
+      {
+        "pr": 356,
+        "worker": "w-050",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "4bd7ddb9b7ae84ab1d34efa25b0fde77d70b8c7b",
+        "remote_git_head": "e80c5c197f8a8bddf74683ed0f369f9e2ca8a681",
+        "local_git_head": "fd61a341de429b08582ec53c42fc4f603b851631"
+      },
+      {
+        "pr": 357,
+        "worker": "w-068",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "efae64488f4c16051bb2efa7004b7d653af38e47",
+        "remote_git_head": "53a45a17a0ca69b14c359c9175e6ff4386b6e6a3",
+        "local_git_head": "02b99ee32facf075a2a06c65fc59a8674ed06c88"
+      },
+      {
+        "pr": 358,
+        "worker": "w-069",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "6dd00077983126221e15dc4de307ff291cc98e2f",
+        "remote_git_head": "bab50eb4ebfd0f100b87f17898c7f8e59084f96f",
+        "local_git_head": "bfed0673682e5327a9ff43ea6e9027f240d4e6d6"
+      },
+      {
+        "pr": 359,
+        "worker": "w-070",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "d81f9f06ee475be38802c1e23757c274240e29bc",
+        "remote_git_head": "1fe77339b499e1c95c1b05928f44df10f69d6287",
+        "local_git_head": "63fba821c0428ff4ffd43edf99650a430e111d82"
+      },
+      {
+        "pr": 360,
+        "worker": "w-071",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "8a790fe2e3a31ff07c6481e333260cd74611d09f",
+        "remote_git_head": "899e04e0e208ff126ce63032fabef780e133e740",
+        "local_git_head": "473b319695e3c901b84ce1a4a7cd8e68d91e6af1"
+      },
+      {
+        "pr": 361,
+        "worker": "w-073",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "ef9696e28aedc48a70bee032e9785270e114e8fe",
+        "remote_git_head": "a2ed9ae9f658d9aa4fc7da5b4890e7755367ce87",
+        "local_git_head": "fea8cfbe7f8cf871754f65bd619ef2d5b7eb61a4"
+      },
+      {
+        "pr": 362,
+        "worker": "w-074",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "786acf160379767f9f472d9e371bbd0473917031",
+        "remote_git_head": "fddee164d60dbea97a6e8f68c4bf22d08b4c97b8",
+        "local_git_head": "d2f279215296078ca9bcf49bb9ce670382e33cc0"
+      },
+      {
+        "pr": 363,
+        "worker": "w-075",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "56b600e005fece1afb24c0e42b5d8042e01f3971",
+        "remote_git_head": "87df67c887b2809785235b2e02ca5b206ce3615f",
+        "local_git_head": "07f07327476dc49d0dee29c2767dd2b3037a012e"
+      },
+      {
+        "pr": 364,
+        "worker": "w-076",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "1f19b6d6371aa24872f76c1730f0cf6c8390e5d5",
+        "remote_git_head": "70ba84bf4e3ac8550f1fe84361117367525c03f4",
+        "local_git_head": "9d471e08973875fc57feae7d5937fd1993dbc8a4"
+      },
+      {
+        "pr": 365,
+        "worker": "w-077",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "7d7508b9c7bc490fdb5eff48382389cebb175ba5",
+        "remote_git_head": "7b545156c141094d0f319f93a7d8bac96f62fb77",
+        "local_git_head": "f3db1fbb4b45366d81973755a7ed4b4559749930"
+      },
+      {
+        "pr": 366,
+        "worker": "w-078",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "1ce143ec0cd9b197fc2cfc0bc552345101518e0b",
+        "remote_git_head": "4d1893d3c32b512537e4e3ee70b2d79c1b72c642",
+        "local_git_head": "6ae3fbc7e07f61038aff3a81fe25f7ad743ed0be"
+      },
+      {
+        "pr": 367,
+        "worker": "w-079",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "aeda47a4c1818b2750c441a0e30b14ef8d9aaf70",
+        "remote_git_head": "7bbf843db1b3a32f7df0525937708a5c990cecf7",
+        "local_git_head": "391d44f7121b3e20707c339f42fd5965e186fd54"
+      },
+      {
+        "pr": 368,
+        "worker": "w-080",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "88b91239db75a07d6953805efb55b1b389dd3da6",
+        "remote_git_head": "7282fadf36da68abe8c9f34917d7e28446357411",
+        "local_git_head": "c0a4d2e4060e138d5744ced19effc126f3dd3e2e"
+      },
+      {
+        "pr": 369,
+        "worker": "w-081",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "e502db61b2ff4775ecae16d1960a9a2a293152b5",
+        "remote_git_head": "f2c8a869eea0e7bc3eebe57d782a1155acf255a3",
+        "local_git_head": "1e16e9efe44ef71695abf0e3198861c6d4ac3483"
+      },
+      {
+        "pr": 370,
+        "worker": "w-082",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "faa4315d65500cf46b7318eb1a233bd888d7c86f",
+        "remote_git_head": "0069885fa22f2e71fc8a4a4245c3773f38b682cc",
+        "local_git_head": "3d3b1194437519d18c7d8ccbeb8e87dc48469497"
+      },
+      {
+        "pr": 371,
+        "worker": "w-083",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "44eafc0dbaf87188fd153be08ddd64a4266552ad",
+        "remote_git_head": "c9654af41a85fa71c203ce2eb5953c43f39358cd",
+        "local_git_head": "3ea6548098a03067763b39d99ef21bdb86200aa1"
+      },
+      {
+        "pr": 372,
+        "worker": "w-005",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "c674d125722459468ec2cb2c91ac409b15f4b41f",
+        "remote_git_head": "6edc3d819e02f614ad3e40e1fd767aee67319ccd",
+        "local_git_head": "2c3c1a002239982e5b8c0844c47b1716d8691700"
+      },
+      {
+        "pr": 373,
+        "worker": "w-006",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "cbbe2b43952b5b175bcc530ec43895134fdbb569",
+        "remote_git_head": "45900a19feaaf05e7d9845c82271533a99dde9bd",
+        "local_git_head": "d8f07b49b59de4c7676e9d17a43f5ce6fb35bc76"
+      },
+      {
+        "pr": 374,
+        "worker": "w-007",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "fa1a2df342362dadfb94e58ff6067257de0d09db",
+        "remote_git_head": "f649cbb2fb5e3e8a58c86e01d156c1d576b3cca5",
+        "local_git_head": "5c1c3541996c2e1aafc24b4c2adbeaa01006bef8"
+      },
+      {
+        "pr": 375,
+        "worker": "w-008",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "a3d8d459774edf2708ec216354f76f665ad405b1",
+        "remote_git_head": "ff7c296b726987f426181df014c76b6da1818805",
+        "local_git_head": "0820d6ce6c70be9899ab909453b20b31471a5a48"
+      },
+      {
+        "pr": 376,
+        "worker": "w-010",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "607e8781d0929cc9d1470138b6a6b8b0a81ae813",
+        "remote_git_head": "16f911ccf2aae69bb4999478d3d8a370437f0973",
+        "local_git_head": "839ab00dc80a74186b93ecfa0965a15a6d81b259"
+      },
+      {
+        "pr": 377,
+        "worker": "w-011",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "53dd9e5b3bfa4a77b581208f588fed5dbe57591d",
+        "remote_git_head": "a11933645402cc5c361a7d7871f51e92aa8aa5f1",
+        "local_git_head": "45e094f9e78ba96ad04fea9f2c4d003da8c72071"
+      },
+      {
+        "pr": 378,
+        "worker": "w-072",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "fcdde1a74054761fbd8f144de6da9c48213845d5",
+        "remote_git_head": "39c5f61c3fe8e25af9a7940eafdb6284d5290c9b",
+        "local_git_head": "745579bc7e9033d1050292f33c199f5e6c00d513"
+      },
+      {
+        "pr": 379,
+        "worker": "w-019",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "571ba0acab483c1c4552630fb6f14cd654f190c8",
+        "remote_git_head": "1a24d657ecca996fdacc848f3f97bd169920c1f3",
+        "local_git_head": "8f6055df93e32aebe3370ad2970c4ab608b2a4db"
+      },
+      {
+        "pr": 380,
+        "worker": "w-020",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "e3a34d8d6c8e886df75a99c81ba7f6862a009c56",
+        "remote_git_head": "7581a93f4c1ae75a3c9297739d64d73e52e9a5ab",
+        "local_git_head": "920f3ebc939b07fa1785f5ebfcc9140e84ed269f"
+      },
+      {
+        "pr": 381,
+        "worker": "w-021",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "eb8efb3f5d155b0b3227db70e05b246f58106df5",
+        "remote_git_head": "c43fd0f0d74440fca17b462ddf6c6252b1ab9d8c",
+        "local_git_head": "8aa5f3988f6f4f2c5d0f8e08359ef3474fbfbbc5"
+      },
+      {
+        "pr": 382,
+        "worker": "w-022",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "ac88fbafdf54eb38d85cb7506657b35c2531e681",
+        "remote_git_head": "2e52759a7497e32281620ecb51850a748c2ed01e",
+        "local_git_head": "741c707f89cb7e70ec7dcc4eb6f85fed0eccb8a7"
+      },
+      {
+        "pr": 383,
+        "worker": "w-023",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "b0f00d39895c6d96021b1661e2d71ea00de4f842",
+        "remote_git_head": "126cfd2cab872e50eb44a3a7d91f3a16cc0af060",
+        "local_git_head": "3ef11449639847bc86a3f81a199dee06d175770d"
+      },
+      {
+        "pr": 384,
+        "worker": "w-024",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "0b6ffee254fd2bec8d34247245c23a39e30af98c",
+        "remote_git_head": "4300659019fe9373c0ed602f0735d73d111264c4",
+        "local_git_head": "1785b132f182380ea5784209ca9784a7d51752bf"
+      },
+      {
+        "pr": 385,
+        "worker": "w-025",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "90711146a85b5913f249f14c1615954eabd03990",
+        "remote_git_head": "dc115e80d0fa0eeb3e2ad4e942ff26d7d7270c34",
+        "local_git_head": "6f3d6a2a83e97375c1cafb9e49cce48e75f2edb2"
+      },
+      {
+        "pr": 386,
+        "worker": "w-026",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "64afa6f5a57f1d1c66b524abfe09f4ca58caa105",
+        "remote_git_head": "8cea8349deccc8416427538e8e6bbf0ab9f632c0",
+        "local_git_head": "54bacef87516d391d83df343578af1f717235540"
+      },
+      {
+        "pr": 387,
+        "worker": "w-027",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "db3847caa306c376398f193a57b8d285e8f928c3",
+        "remote_git_head": "5dfdb677243224302ac2524397a03d70e1bfb39d",
+        "local_git_head": "0ca082076fab8aab7f75b7a8843bee22920d2796"
+      },
+      {
+        "pr": 388,
+        "worker": "w-028",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "9f6f294e2b61b948579961a45715f6d15e1c3e88",
+        "remote_git_head": "58bc786042467223860c71389e3ced2dd6a1a343",
+        "local_git_head": "714c4b345d5f107934c6b945e07267d06e746e9b"
+      },
+      {
+        "pr": 389,
+        "worker": "w-029",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "e36d8a8d0ac35acdf1210c5b706841dcc98172ee",
+        "remote_git_head": "3effde828ea6c9722da352e39a7511985907ec75",
+        "local_git_head": "dc6f20a270684ea8175a2f96cce46c07ee8cc603"
+      },
+      {
+        "pr": 390,
+        "worker": "w-030",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "04135e43c77536266c5932fdc06baba0b043245f",
+        "remote_git_head": "71f101f694f417a63276c28a3c9d666972a3223b",
+        "local_git_head": "800aefe514dcdb27de0ac66578fdd9560d4f7feb"
+      },
+      {
+        "pr": 391,
+        "worker": "w-031",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "4aad18a2b79fbcf0fbf9722d2b7cd0d43802ea6d",
+        "remote_git_head": "9901a9d988dd29b8e074b93ab44fcb2cbb28108f",
+        "local_git_head": "2f941f1d63359261263e30fbc08dc1224aa6a232"
+      },
+      {
+        "pr": 392,
+        "worker": "w-032",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "bd90b8cf4f9d6d62b2aa8818b8bb6de7677b5237",
+        "remote_git_head": "12624bface678772f007859237ad1410cdf77ab2",
+        "local_git_head": "88e6604eff444f6332ff4f0921cafe34535bc99b"
+      },
+      {
+        "pr": 393,
+        "worker": "w-033",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "6a61892cb9fedaaa4dda38a1da0b2fa6a965e9d0",
+        "remote_git_head": "dd859f06af04688a55f345fd48b68f2e3a1d4135",
+        "local_git_head": "8e5e58450ffd342d967d05870815b94c9a516132"
+      },
+      {
+        "pr": 394,
+        "worker": "w-034",
+        "host": "host-a",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "5c7f0386d260462b9ad6dd4b44b8c126983a1160",
+        "remote_git_head": "1bd9f4b55e1e32b5fd2fb98b3fa81ff467b81977",
+        "local_git_head": "fd8e89502093edfda6a89cbab242c10e3f10a8fb"
+      },
+      {
+        "pr": 395,
+        "worker": "w-051",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "d8aaac4ef143a9b8a684445835918b2da9c16686",
+        "remote_git_head": "5da33c1c168aea5a9411cb0db4b3efe7b022efab",
+        "local_git_head": "dcb0f6a9843d82071883fcea957f4db59859941b"
+      },
+      {
+        "pr": 396,
+        "worker": "w-052",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "90ff215a1b72662197a456433fba5f88563f9137",
+        "remote_git_head": "adefe769088cede11124cdd989338a28a1e3c065",
+        "local_git_head": "a95bd5120e5bd34e086159ae31c83cb10684d06a"
+      },
+      {
+        "pr": 397,
+        "worker": "w-053",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "cba521be573e682f62c73994966173a08cf18905",
+        "remote_git_head": "62fc89aa5dfa632e595071eaad8bf5d1f1e74667",
+        "local_git_head": "cd3c8182e8dbb30da1a155f786c7a7e4a51cb0c1"
+      },
+      {
+        "pr": 398,
+        "worker": "w-054",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "14f60a347e3489845607808f6a3f4e3c2ebd371a",
+        "remote_git_head": "6125100a49f49c6c110c5feb1655561a0065df9f",
+        "local_git_head": "873ea59e4007c470b6b2496792eb29d98fb5ae57"
+      },
+      {
+        "pr": 399,
+        "worker": "w-055",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "047414ed4e8f6d031f0601e5b8c86b98a52c7cdc",
+        "remote_git_head": "a3c763c8c8b01eea856d1e46f3a62421ab9097d8",
+        "local_git_head": "652895569ddcba441ea29ac0f770bc9d8feee8ba"
+      },
+      {
+        "pr": 400,
+        "worker": "w-056",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "2647d7eb44b5518512c4003b7e0fb0d64a50ccdd",
+        "remote_git_head": "92608008e333778937f95498ea8b00b209a3b52f",
+        "local_git_head": "155db3cbde89f211e77a1f168eb1b9dde843cca0"
+      },
+      {
+        "pr": 401,
+        "worker": "w-057",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "12dd03d9ffcbbe52a5560b6f771f918af1c7e381",
+        "remote_git_head": "6c5da2065141a9954ac5b2f24afdcb85cc05fe3b",
+        "local_git_head": "3c0efa45ce395959100ad3919f0ea19ac1bf7280"
+      },
+      {
+        "pr": 402,
+        "worker": "w-058",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "f32bd16f3924d522a377effd1321140b4e43a36f",
+        "remote_git_head": "ea0145e0fcbf0c87b8181b3dbd8cb7eae420120d",
+        "local_git_head": "166c7e33f119f0b44ccb7d307f95c86f2065fae8"
+      },
+      {
+        "pr": 403,
+        "worker": "w-059",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "c7d919a55ceb2a7a482bdae8c3f96a9dc895c1dc",
+        "remote_git_head": "2b4f5d2764b73adec93daad062f0c288327adcde",
+        "local_git_head": "a479519f4e97ea2e2f9d0ab871dbe71a7404c81d"
+      },
+      {
+        "pr": 404,
+        "worker": "w-060",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "126727fd4152bb7ad79a201e4b4718aaf7fe0bb5",
+        "remote_git_head": "19ebf2b851458e1a569b7d3c258dc565f83da9c2",
+        "local_git_head": "8d6f1f68ac64fa63244545744f4c3b83df506c94"
+      },
+      {
+        "pr": 405,
+        "worker": "w-061",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "802f892f3f74f7b5737dceb92dc8ce082699ea0a",
+        "remote_git_head": "aaf705f8404e28f1065d02ffb14121de4a42fef3",
+        "local_git_head": "bebc9eaf21e66958f8e051f2691158eee38b1458"
+      },
+      {
+        "pr": 406,
+        "worker": "w-062",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "c70501eacbb1d91cbd053ec6209db79c01e85c0a",
+        "remote_git_head": "2862c51e4d791d75f47c891f73764ed6d640dd8b",
+        "local_git_head": "3474066394bca3d239445b5f1096b3e525ff71a4"
+      },
+      {
+        "pr": 407,
+        "worker": "w-063",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "9346ee77102ccf9b3e410c6206026658acc66c71",
+        "remote_git_head": "0011d7e2b7ed8c1698da7ba71dd540badb0fa3bc",
+        "local_git_head": "ca101be06b08f4e5f4f2ec2a1e060cc1bd23bcf9"
+      },
+      {
+        "pr": 408,
+        "worker": "w-064",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "ac8baf9ac2992d08da89df2fc2d093be6eeb3d78",
+        "remote_git_head": "3fbe25b4b4714b93af3e5873772ca7db1c9fdd56",
+        "local_git_head": "837d4746744270db7d996eaeb6cee7faf70d1f9c"
+      },
+      {
+        "pr": 409,
+        "worker": "w-065",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "ede7b3606211ee95842720c1499679c2e4021d78",
+        "remote_git_head": "3b099ed6f109aa45cf9e8f3217813ccaadbc98fd",
+        "local_git_head": "cf53a63332a8ce02a58237ac1938832196cb6760"
+      },
+      {
+        "pr": 410,
+        "worker": "w-066",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "fa6f27985c73faca71244feb8fc53f7a53015022",
+        "remote_git_head": "076aac61faa27c171edd4f4a2ded28edc2e2913f",
+        "local_git_head": "0f3f88c7ce02762e69f2d403cfa0d0d30da6142e"
+      },
+      {
+        "pr": 411,
+        "worker": "w-067",
+        "host": "host-e",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "b6f3f8d7abddc9d97bf9374bcd30edebce389e80",
+        "remote_git_head": "5c9920d53909de7880fb6dc228be04122653458b",
+        "local_git_head": "49f3872cf0e23fc9c4638df4b45771369dfc8eda"
+      },
+      {
+        "pr": 412,
+        "worker": "w-084",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "ca8236146d487c9a412991ae9d78c5e2b0557480",
+        "remote_git_head": "faf720df219f35e64baa9f764dd810f3e513f8e4",
+        "local_git_head": "622250b9ad49dfbb4c342351968eba338a3e84bc"
+      },
+      {
+        "pr": 413,
+        "worker": "w-085",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "8613ebcaf82c755342df8fee7902ac2c06abdf66",
+        "remote_git_head": "ac592466c7c627bafeca3e768e225be09e81cc3b",
+        "local_git_head": "1a836e1053f87ad5518f1a56795a89990e35808e"
+      },
+      {
+        "pr": 414,
+        "worker": "w-086",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "d977777ff30cd15cb248a66fd9016311fa6b528d",
+        "remote_git_head": "ac7610a16bee02735982eb82271d89d20dc9f48c",
+        "local_git_head": "28aba6f60a6b17bb4c05699de3230729d2a5f783"
+      },
+      {
+        "pr": 415,
+        "worker": "w-087",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "9fa1183f6d6ffd1f1d5a83235c5b55cafe43eb5c",
+        "remote_git_head": "f78f46158384d57aeaa9fd8970c000fd87249a5c",
+        "local_git_head": "3b1d079165a192d7ad9501dfbe97a88b6ee16a83"
+      },
+      {
+        "pr": 416,
+        "worker": "w-088",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "9683a371e425796addbf2c7af27f649c2d0ac3d2",
+        "remote_git_head": "60571924cf62100b3ce2018fbc469460343d0f70",
+        "local_git_head": "68e68f75aab58f4bdd4ebe9ce750790dfc8c86f6"
+      },
+      {
+        "pr": 417,
+        "worker": "w-089",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "2929b9aa0863f9f933789ffa282f848f3ac10f6e",
+        "remote_git_head": "0ff0b4214d7499a861ad8b211c137480fd083365",
+        "local_git_head": "48f7e6ab187d91f447138f36ea27f8316b8ac2e8"
+      },
+      {
+        "pr": 418,
+        "worker": "w-090",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "48e57a7abc218354f9fe041b132bb54e4129a74f",
+        "remote_git_head": "38a24125b600e70cdf8365e61125eb88b7771961",
+        "local_git_head": "1f3953e212651830978ef3e05fb2512a838f2c01"
+      },
+      {
+        "pr": 419,
+        "worker": "w-091",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "cc6d9153a013dceb51688427daa5c0cb0983ecea",
+        "remote_git_head": "d09336c812e78fc6e660304a5c729f655f352a70",
+        "local_git_head": "50e8e67eea142936d7b7a2c6c12ede71db3c2858"
+      },
+      {
+        "pr": 420,
+        "worker": "w-092",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "217b307a80404eb3f684bfc9484673929c9c5d71",
+        "remote_git_head": "52ae769b901e052a676357c5670825fe1cac1508",
+        "local_git_head": "057e90ee5873d0759a7404557f2993ad32be12a0"
+      },
+      {
+        "pr": 421,
+        "worker": "w-093",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "ba3a43190d42b2cf791ffa805cbfa15c2f3949e4",
+        "remote_git_head": "cd4de080e336ee79b0da7d952cd275937c281ab0",
+        "local_git_head": "11ef9b8a2a5290ef2955cefdae52496eb093dfb5"
+      },
+      {
+        "pr": 422,
+        "worker": "w-094",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "aa5fca19f2798b2b3ab1a634ffff63311c826abc",
+        "remote_git_head": "6f619106ad79ac31029ad36bd1c5c17ff7e287de",
+        "local_git_head": "5a62038ecbf1f35b58c55b6596d418c9dd4acae2"
+      },
+      {
+        "pr": 423,
+        "worker": "w-095",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "f6ca8c1f5c3fa9620646bddf92bcd07decd23efe",
+        "remote_git_head": "b1e9bfa91231a2ab6da86a4699a20a36858a6f61",
+        "local_git_head": "9cbdaabaff5e6f7618152b1ebb33b1162aa35153"
+      },
+      {
+        "pr": 424,
+        "worker": "w-096",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "381b6d3825e18cff61676e25fb523c0948efb49c",
+        "remote_git_head": "0c48af9370d76c8bc4bc621a4744c6c2b8391dc8",
+        "local_git_head": "4cb9539f29a09688fc856a4b2f5d40c245cb843b"
+      },
+      {
+        "pr": 425,
+        "worker": "w-097",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "055825b62fa9090352e14ef839a8ebeb881442ee",
+        "remote_git_head": "a4b7dcd9b9d7a7664dbc717fd78f26af2a7a98ff",
+        "local_git_head": "abadb418961adf4ac29a473946e8da0a7b049f7d"
+      },
+      {
+        "pr": 426,
+        "worker": "w-098",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "2c47ffd3b6d6d2c91eb032f443632a7c78c8dbaa",
+        "remote_git_head": "df2b813e697320138cd184ac76b04a0c2e7a5b44",
+        "local_git_head": "71ba68d4e24c521b95bef8a01e83a728e1c0aeb1"
+      },
+      {
+        "pr": 427,
+        "worker": "w-099",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "37c3c44f6b4269f1f3589a117db221052149c13f",
+        "remote_git_head": "cc7beea995a9d09d2ee0e2e25463c7b7a56bdf04",
+        "local_git_head": "9c3a05cb5b45c83a2745acc3279908806b671287"
+      },
+      {
+        "pr": 428,
+        "worker": "w-100",
+        "host": "host-f",
+        "git_parent": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+        "git_tree": "0af96966005342e6ae7d2fad907aa5a661dbb017",
+        "remote_git_head": "60becd175a863330f33f177549f5e68bf37ec06a",
+        "local_git_head": "20ab6282378c005c1c0c482543acc32155018497"
+      }
+    ]
+  },
+  "failover": {
+    "old_endpoint_fenced": true,
+    "holder": "standby",
+    "epoch": 11,
+    "observed_revision": 342,
+    "old_worker_runs_stopped": {
+      "host-a": 1,
+      "host-e": 1,
+      "host-f": 1
+    }
+  },
+  "standby_cli_claim_reads": {
+    "host-a": {
+      "task": "pinned-nbg56q-task-001",
+      "generation": 1,
+      "base": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+      "authenticated_failover_read": true
+    },
+    "host-e": {
+      "task": "pinned-nbg56q-task-035",
+      "generation": 1,
+      "base": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+      "authenticated_failover_read": true
+    },
+    "host-f": {
+      "task": "pinned-nbg56q-task-068",
+      "generation": 1,
+      "base": "14d7325cb4cb69c11dd68d52f683be16eb7c3a55",
+      "authenticated_failover_read": true
+    }
+  },
+  "live_workspace_cli": {
+    "host-a": {
+      "pr": 372,
+      "head": "6edc3d819e02f614ad3e40e1fd767aee67319ccd",
+      "native_workspace_cli_receipt_equal": true,
+      "wrong_base_rejected": true
+    },
+    "host-e": {
+      "pr": 346,
+      "head": "a20f73603a39abe8404b9a6b1fddb170363ccaf7",
+      "native_workspace_cli_receipt_equal": true,
+      "wrong_base_rejected": true
+    },
+    "host-f": {
+      "pr": 363,
+      "head": "87df67c887b2809785235b2e02ca5b206ce3615f",
+      "native_workspace_cli_receipt_equal": true,
+      "wrong_base_rejected": true
+    }
+  },
+  "role_denials": {
+    "host-a": true,
+    "host-e": true,
+    "host-f": true
+  },
+  "handoff": {
+    "previous_queued_pr": 357,
+    "native_queue_entry": "MQE_lQDOVxXMNs8AAAABQkU_S84ABY2lzgQpt_s",
+    "new_pr": 429,
+    "source_host": "host-f",
+    "successor_host": "host-a",
+    "prior_generation": 1,
+    "successor_generation": 2,
+    "stale_publish_and_register_denied": true
+  },
+  "raw_evidence_path": "<private-path>",
+  "independent_git_conflict": {
+    "main": "064b6ba95f9ccc444de9c83511b42e9eeb5dfe1e",
+    "winning_pr": 330,
+    "held_pr": 341,
+    "held_head": "55f4feee7563c377a943ceab9e09380e6ac359b8",
+    "path": "qualification/pinned-nbg56q/shared.txt",
+    "git_merge_tree_exit": 1,
+    "result_sha256": "3ebc8965f3923029643bb0039433f531f221ef4744e05c33b64118a24139e42e"
+  },
+  "first_action_proof": {
+    "number": 330,
+    "head": "5c2ca555cb28217f33ff15dbd6d7599e77a841ce",
+    "merge_commit": "064b6ba95f9ccc444de9c83511b42e9eeb5dfe1e",
+    "merge_event_id": "ME_lADOVxXMNs8AAAABg6TOj88AAAAIjR4aeA",
+    "actions": {
+      "app_id": 15368,
+      "check_run_id": 136052601032,
+      "check_suite_id": 120901085447,
+      "event": "merge_group",
+      "run_attempt": 1,
+      "run_id": 44665174834
+    }
+  },
+  "evidence_sha256": {
+    "initial-verified-trees.json": "54d331f6a0da3d240411734ad70b5f20a856b5342182562dca59f9d6deea8a34",
+    "failover-resume.json": "5c3f24795d4ee6ec3e8f756f99b77da6935dba2e31656a6de99ace6a4a804e23",
+    "policy-before.json": "ddef6d0fa790b48f4c37df340cb54c6a158d5321ac58e783d4d4767bb22f7edc",
+    "cli-standby-read.json": "ac21bab93d15206a1efc76f3956044462bd8c9047071733fda61a91f41b974db",
+    "cli-workspace-replay.json": "5fa337a2c442414f7133398cf4cd12d82ed711abd3d2818d7415fbfc2df6be13",
+    "handoff-queued-before.json": "a15a110a2347e42739f21aa2ee59ab4b88a4cfb96665c5c8906d193f41a01276",
+    "handoff-verified-trees.json": "04e9220932156649c537ebc2f8bbe084f790d597ce11b52bbc0ae2e32f4e1c7b",
+    "macos-partial-burst-regression.log": "89f8217c92bac5c855b066532eb2918e03991b10b8e0c2bd56362e82c5828be7",
+    "host-a-partial-burst-regression.log": "89f8217c92bac5c855b066532eb2918e03991b10b8e0c2bd56362e82c5828be7",
+    "host-a-broker-suites.log": "e60d8fe9f2d018efede3f1339fa340ec4f2f9cbc212aa4ec23e21845f079e2b9",
+    "host-e-partial-burst-regression.log": "89f8217c92bac5c855b066532eb2918e03991b10b8e0c2bd56362e82c5828be7",
+    "host-e-broker-suites.log": "34136c8c19f085a23217e71a7a796d9d4e0425be19f1ab84b3d17b7cb0c959c3",
+    "host-f-partial-burst-regression.log": "89f8217c92bac5c855b066532eb2918e03991b10b8e0c2bd56362e82c5828be7",
+    "host-f-broker-suites.log": "b2fe4f0e08b7f28111e5d4e60501001842bdcf661016a1770155ec4925b9149c",
+    "independent-git-conflict.json": "8b963beebafe059b98e98e5c776acf3eb53fe6f796e90414575d9271ad929175",
+    "first-action-proof.json": "1e8a58fdaceb5f43cca700cc0503d9851cb6bb29b1c5a001773e9778bf962eb2",
+    "macos-broker-suites.log": "7f0ee3f00aab223ff779a648d9665722f93c0edb681671998b22ba7c3db86db3",
+    "queue-build-capacity.json": "36243f99bab0d63de6572d7bb022e70667f689de69db6076b564b7c1c6c67f77"
+  }
+}
