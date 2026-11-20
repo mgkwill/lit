@@ -153,9 +153,8 @@ class Lab:
         require(isinstance(limits, dict) and set(limits) <= {"ssh_per_host", "inference"}
                 and all(type(count) is int and 1 <= count <= 128 for count in limits.values()),
                 "pilot limits must be positive integers of at most 128")
-        self.inference_limit = limits.get("inference")
-        self.ssh_slots = {host: BoundedSemaphore(limits["ssh_per_host"]) for host in config["hosts"]
-                          if "ssh_per_host" in limits}
+        self.inference_limit = limits.get("inference", 8)
+        self.ssh_slots = {host: BoundedSemaphore(limits.get("ssh_per_host", 4)) for host in config["hosts"]}
         self.forge.authorize_change = self.require_live_controller
 
     def require_live_controller(self):
@@ -205,10 +204,7 @@ class Lab:
         if profile.get("local"):
             return command(args, data, timeout)
         ssh = ["ssh", *options, "--", profile["destination"], shlex.join(args)]
-        slots = self.ssh_slots.get(host)
-        if slots is None:
-            return command(ssh, data, timeout)
-        with slots:
+        with self.ssh_slots[host]:
             return command(ssh, data, timeout)
 
     def admin(self, route, body=None, seconds=300):

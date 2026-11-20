@@ -125,6 +125,12 @@ class TransitionTests(unittest.TestCase):
 
         broker = Broker()
         with patch("pi_pilot_control.selected_certificate"):
+            ambiguous = Broker()
+            ambiguous.state["leader"]["principals"][new] = role
+            before = deepcopy(ambiguous.state)
+            with self.assertRaisesRegex(PilotError, "exactly one"):
+                activate(ambiguous, handoff)
+            self.assertEqual(ambiguous.state, before)
             with self.assertRaises(ConnectionError):
                 activate(broker, handoff)
             self.assertEqual(broker.restart, 0)
@@ -208,7 +214,13 @@ class LimitsTests(unittest.TestCase):
             with ThreadPoolExecutor(max_workers=12) as pool:
                 self.assertEqual(list(pool.map(lambda host: lab.ssh(host, ["true"]), "ab" * 6)), [b"ok"] * 12)
             self.assertEqual(lab.inference_limit, 3)
-        self.assertEqual(peak, {"a": 2, "b": 2})
+            self.assertEqual(peak, {"a": 2, "b": 2})
+            peak.clear()
+            default_lab = Lab(Path(folder), plan, {key: val for key, val in config.items() if key != "limits"})
+            self.assertEqual(default_lab.inference_limit, 8)
+            with ThreadPoolExecutor(max_workers=12) as pool:
+                list(pool.map(lambda host: default_lab.ssh(host, ["true"]), "ab" * 6))
+        self.assertEqual(peak, {"a": 4, "b": 4})
 
     def test_inference_admits_in_waves_without_changing_prepared_pins(self):
         class Adapter:

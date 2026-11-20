@@ -201,13 +201,16 @@ def activate(lab, handoff):
     new = handoff["identities"][handoff["to"]]
     selected_certificate(lab, new)
     principals = lab.config["controller_principals"]
+    path = lab.config["broker_config"]
+    snapshots = {}
     for host in lab.config["broker_hosts"]:
-        path = lab.config["broker_config"]
         snapshot = json.loads(lab.ssh(host, ["sudo", "-n", "cat", "--", path]))
         listed = snapshot["principals"]
-        require(old in listed or new in listed, f"neither handoff principal is enrolled on {host}")
+        require((old in listed) != (new in listed), f"expected exactly one handoff principal on {host}")
         require(all(listed[key] == principals[key] for key in (old, new) if key in listed),
                 "a controller principal has a different role or owner")
+        snapshots[host] = snapshot
+    for host, snapshot in snapshots.items():
         lab.update_principals(host, add={new: principals[new]}, remove={old: principals[old]})
         observed = json.loads(lab.ssh(host, ["sudo", "-n", "cat", "--", path]))
         expected = snapshot["principals"]

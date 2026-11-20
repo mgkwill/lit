@@ -156,8 +156,9 @@ prepares all coding workspaces in one cohort. Each window publishes, integrates,
 releases its terminal branch freezes before the next window publishes. Keep
 both workers in each handoff or overlap pair in the same window.
 
-Set the lab's optional `limits` to `{"ssh_per_host": 4, "inference": 8}` to
-cap concurrent SSH commands separately from admitted coding sessions.
+The lab adapter defaults to four concurrent SSH commands per configured
+host and eight admitted coding sessions. Override them with the lab's
+`limits` object, using `ssh_per_host` and `inference`.
 The inference limit queues later sessions until a coding slot is free.
 Within an admitted session, the model service schedules individual requests.
 
@@ -186,6 +187,7 @@ python3 tools/pi_pilot_control.py checkpoint --state /private/pilot --controller
 On the standby host, confirm the outgoing controller process has stopped.
 Takeover verifies the checkpoint, restores it to a new directory, replaces
 only the two configured scheduler principals, and confirms standby access.
+Each broker must list exactly one of the two scheduler principals.
 It restarts the sandbox broker to load the new principals. Keep the transfer
 directory private because it contains scoped worker capabilities. Keep
 both controller private keys in their respective credential stores.
