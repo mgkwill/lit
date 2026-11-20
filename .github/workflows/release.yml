@@ -4,49 +4,49 @@ on:
   push:
     tags:
       - 'v*'
+    branches:
+      - 'lit-release-qualification-*'
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build:
     name: Build ${{ matrix.target }}
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
     env:
       RELEASE_TAG: ${{ github.ref_name }}
     strategy:
+      fail-fast: false
       matrix:
         include:
-          - os: ubuntu-latest
+          - os: ubuntu-22.04
             target: x86_64-unknown-linux-gnu
             artifact: lit
-          - os: ubuntu-latest
+          - os: ubuntu-22.04-arm
             target: aarch64-unknown-linux-gnu
             artifact: lit
-          - os: windows-latest
+          - os: windows-2022
             target: x86_64-pc-windows-msvc
             artifact: lit.exe
-          - os: macos-latest
+          - os: macos-15-intel
             target: x86_64-apple-darwin
             artifact: lit
-          - os: macos-latest
+          - os: macos-15
             target: aarch64-apple-darwin
             artifact: lit
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.target }}
-
-      - name: Install cross-compilation tools (aarch64-linux)
-        if: matrix.target == 'aarch64-unknown-linux-gnu'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gcc-aarch64-linux-gnu
 
       - name: Cache cargo registry
         uses: actions/cache@v4
@@ -54,13 +54,10 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-            target
-          key: ${{ runner.os }}-${{ matrix.target }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ matrix.os }}-${{ matrix.target }}-cargo-${{ hashFiles('Cargo.lock') }}
 
       - name: Build release binary
         run: cargo build --locked --release --target ${{ matrix.target }}
-        env:
-          CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: aarch64-linux-gnu-gcc
 
       - name: Package artifact (unix)
         if: runner.os != 'Windows'
@@ -74,20 +71,36 @@ jobs:
         run: |
           Compress-Archive -LiteralPath 'target/${{ matrix.target }}/release/${{ matrix.artifact }}', 'LICENSE' -DestinationPath "lit-$env:RELEASE_TAG-${{ matrix.target }}.zip"
 
+      - name: Set up Python for package tests
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Qualify the unpacked release binary
+        shell: bash
+        run: |
+          python -B tests/qualify_release_archive.py \
+            "lit-${RELEASE_TAG}-${{ matrix.target }}.${{ runner.os == 'Windows' && 'zip' || 'tar.gz' }}" \
+            "${{ matrix.target }}" > "qualification-${{ matrix.target }}.json"
+          cat "qualification-${{ matrix.target }}.json"
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: lit-${{ matrix.target }}
-          path: lit-${{ github.ref_name }}-${{ matrix.target }}.*
+          path: |
+            lit-${{ github.ref_name }}-${{ matrix.target }}.*
+            qualification-${{ matrix.target }}.json
+          if-no-files-found: error
 
   release:
     name: Create GitHub Release
+    if: github.ref_type == 'tag'
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
@@ -102,4 +115,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
-          files: artifacts/*
+          files: |
+            artifacts/*.tar.gz
+            artifacts/*.zip
+            artifacts/SHA256SUMS
