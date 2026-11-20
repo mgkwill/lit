@@ -77,6 +77,7 @@ pub(crate) fn lock_writes(repo_root: &Path) -> Result<File, LitError> {
 }
 
 pub(super) fn lock_repository(repo_root: &Path) -> Result<File, LitError> {
+    crate::core::repository_format::read(repo_root).map_err(LitError::repository)?;
     let file = OpenOptions::new()
         .read(true)
         .write(true)

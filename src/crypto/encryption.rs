@@ -696,6 +696,10 @@ pub struct EncryptionManager {
 }
 
 impl EncryptionManager {
+    pub(crate) fn has_legacy_key(&self) -> bool {
+        self.engine.as_ref().is_some_and(|engine| engine.budget.is_none())
+    }
+
     /// Create new encryption manager
     pub fn new(config: EncryptionConfig) -> Self {
         EncryptionManager {

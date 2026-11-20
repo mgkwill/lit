@@ -2,31 +2,34 @@ use crate::core::{find_repo_root, Object, ObjectHash, TreeEntry};
 use crate::response::{VerifyResponse, VerifyResult};
 use crate::storage::ObjectStore;
 
-use std::collections::{HashMap, HashSet};
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::path::Path;
 use std::{fs, io};
 
 pub fn execute() -> Result<VerifyResponse, crate::errors::LitError> {
-    let repo_root = find_repo_root()?;
-    let store = ObjectStore::new(&repo_root);
+    Ok(at(&find_repo_root()?, None))
+}
+
+pub(super) fn at(repo_root: &Path, legacy_refs: Option<&BTreeMap<String, String>>) -> VerifyResponse {
+    let store = ObjectStore::new(repo_root);
 
     let mut checks = Vec::new();
-    let (objects_checked, graph) = verify_objects(&store, &mut checks);
-    let (refs_checked, roots) = verify_refs(&repo_root, &graph, &mut checks);
+    let (objects_checked, graph) = verify_objects(&store, legacy_refs.is_some(), &mut checks);
+    let (refs_checked, roots) = verify_refs(repo_root, &graph, legacy_refs, &mut checks);
     verify_dag(&graph, &roots, &mut checks);
 
     let index =
-        verify_index(&repo_root, &graph).map_err(|error| error.internal_message().to_owned());
+        verify_index(repo_root, &graph).map_err(|error| error.internal_message().to_owned());
     checks.push(check("index", index));
 
     for (name, result) in [
         (
             "merge_state",
-            super::resolve::verify_state(&repo_root, &store),
+            super::resolve::verify_state(repo_root, &store),
         ),
         (
             "transaction_journal",
-            super::transaction::verify_state(&repo_root, &store),
+            super::transaction::verify_state(repo_root, &store),
         ),
     ] {
         checks.push(check(
@@ -44,13 +47,13 @@ pub fn execute() -> Result<VerifyResponse, crate::errors::LitError> {
         "Repository has errors".to_string()
     };
 
-    Ok(VerifyResponse {
+    VerifyResponse {
         valid: all_valid,
         checks,
         objects_checked,
         refs_checked,
         message,
-    })
+    }
 }
 
 enum ObjectLinks {
@@ -79,12 +82,13 @@ impl ObjectLinks {
 
 fn verify_objects(
     store: &ObjectStore,
+    migration: bool,
     checks: &mut Vec<VerifyResult>,
 ) -> (usize, HashMap<ObjectHash, ObjectLinks>) {
     let mut graph = HashMap::new();
     let mut seen = HashSet::new();
     let before = checks.len();
-    let scan = store.visit_verified(|hash, object| {
+    let scan = store.visit_verified(migration, |hash, object| {
         seen.insert(hash.clone());
         let links = match object {
             Ok(Object::Blob(_)) => ObjectLinks::Blob,
@@ -125,6 +129,7 @@ fn verify_objects(
 fn verify_refs(
     repo_root: &Path,
     graph: &HashMap<ObjectHash, ObjectLinks>,
+    legacy_refs: Option<&BTreeMap<String, String>>,
     checks: &mut Vec<VerifyResult>,
 ) -> (usize, Vec<ObjectHash>) {
     let before = checks.len();
@@ -132,6 +137,22 @@ fn verify_refs(
     let refs_dir = metadata.join("refs");
     let mut roots = Vec::new();
     let mut count = 0;
+    if let Some(refs) = legacy_refs {
+        for (name, value) in refs {
+            count += 1;
+            match verify_ref_target(value, name, graph) {
+                Ok(hash) => roots.push(hash),
+                Err(error) => checks.push(check(format!("ref:{name}"), Err(error))),
+            }
+        }
+    } else {
+        let path = repo_root.join(crate::core::repository_format::LEGACY_REFS_FILE);
+        match path.symlink_metadata() {
+            Ok(_) => checks.push(check("refs", Err("Packed encrypted refs require 'lit migrate-repo'".into()))),
+            Err(error) if error.kind() == io::ErrorKind::NotFound => {}
+            Err(error) => checks.push(check("refs", Err(error.to_string()))),
+        }
+    }
     match refs_dir.symlink_metadata() {
         Ok(meta) if meta.is_dir() => {
             for entry in walkdir::WalkDir::new(&refs_dir)
@@ -156,6 +177,14 @@ fn verify_refs(
                     .to_string_lossy();
                 #[cfg(windows)]
                 let name = name.replace('\\', "/");
+                if let Some(packed) = legacy_refs.and_then(|refs| refs.get::<str>(&name)) {
+                    match read_regular_ref(repo_root, entry.path()) {
+                        Ok(loose) if loose.trim() == packed => {}
+                        Ok(_) => checks.push(check(format!("ref:{name}"), Err("Conflicting loose and encrypted packed refs".into()))),
+                        Err(error) => checks.push(check(format!("ref:{name}"), Err(error.to_string()))),
+                    }
+                    continue;
+                }
                 count += 1;
                 let result = read_ref_root(repo_root, entry.path(), &name, graph);
                 match result {
@@ -209,6 +238,14 @@ fn read_ref_root(
     graph: &HashMap<ObjectHash, ObjectLinks>,
 ) -> Result<ObjectHash, String> {
     let value = read_regular_ref(repo, path).map_err(|error| format!("Cannot read ref: {error}"))?;
+    verify_ref_target(&value, name, graph)
+}
+
+fn verify_ref_target(
+    value: &str,
+    name: &str,
+    graph: &HashMap<ObjectHash, ObjectLinks>,
+) -> Result<ObjectHash, String> {
     let hash = ObjectHash::from_hex(value.trim().to_owned());
     let expected = (name.starts_with("heads/") || name.starts_with("remotes/")).then_some("commit");
     check_target(graph, &hash, expected)

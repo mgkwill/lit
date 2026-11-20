@@ -233,6 +233,7 @@ impl ObjectStore {
     /// Visit each physical copy so a duplicate cannot hide a damaged pack.
     pub(crate) fn visit_verified(
         &self,
+        migration: bool,
         mut visit: impl FnMut(&ObjectHash, Result<Object, String>),
     ) -> Result<Vec<String>, String> {
         let loose = self.list_loose()?;
@@ -248,7 +249,12 @@ impl ObjectStore {
         packed.sort_unstable_by(|(left, _), (right, _)| left.as_str().cmp(right.as_str()));
         for (hash, locations) in packed {
             for location in locations {
-                visit(hash, self.read_pack_copy(hash, location));
+                let result = if migration {
+                    self.with_cipher(false, |cipher| location.read_for_migration(hash, cipher))
+                } else {
+                    self.read_pack_copy(hash, location)
+                };
+                visit(hash, result);
             }
         }
         Ok(catalog.errors.clone())

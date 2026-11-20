@@ -21,6 +21,8 @@ pub mod log;
 pub mod mcp_serve;
 pub mod merge;
 mod merge_worktree;
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+pub mod migrate_repo;
 pub mod pull;
 pub mod push;
 pub mod rebase;

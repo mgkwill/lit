@@ -172,6 +172,9 @@ lit lfs track <pattern>            # Track large files via LFS
 lit lfs migrate                    # Migrate existing large files to LFS
 lit import-git <source>            # Import from Git repository
 lit export-git <destination>       # Export to Git format
+lit migrate-repo inspect <source>  # Verify that a native repository can be copied
+lit migrate-repo copy <source> <destination>
+lit migrate-repo rollback <original> <migrated> <archive>
 lit rotate-key                     # Rotate encryption passphrase
 lit config [get|set|list]          # Manage configuration settings
 ```
@@ -199,6 +202,34 @@ use and discards unused reservations when a process exits. Keep this state
 with the installation and rotate before writing with a legacy key or one
 whose usage ledger is unavailable. A new key gets a new budget. Use separate
 keys across hosts that cannot share one accounting authority.
+
+On macOS and Linux, `migrate-repo` verifies working and bare native Lit
+repositories, including v1.8.0 fixtures, using a private staging copy.
+Stop writers to the source before inspection or migration. Use a trusted
+destination parent and a new destination outside the source. Migration
+checks the source and copy against a SHA-256 snapshot of paths, entry types,
+ordinary POSIX modes, file contents, and symlink targets. It retains history,
+refs, the index, working files, and local metadata, including LFS data already
+present. Ownership, timestamps, ACLs, extended attributes, and hardlink
+relationships are outside that snapshot. Symlinks inside `.lit`, special
+files, and active operations are rejected.
+
+The copy is verified before publication with an atomic no-replace rename.
+It carries a version 1 receipt in `.lit/repository-format.json`. Recovery
+commands accept unmarked repositories and reject unknown receipt versions.
+After interruption, repeat the same `copy` command against the same source
+snapshot to rebuild the private stage. Keep the original at its existing path
+for rollback. `rollback` checks that the original still matches the receipt
+and atomically moves the migrated repository, including subsequent work, to
+a new sibling archive path. Resume work at the original path after rollback.
+
+For encrypted sources, supply the current `--passphrase-file` and use a
+repository-local key under `.lit`. Inspection reports whether rotation is
+needed. For a legacy key or v1 encrypted pack, set `LIT_NEW_PASSPHRASE_FILE`
+when running `copy`. The copy gets a managed key and v2 encrypted packs.
+Migration verifies v1.8.0 encrypted ref tables and writes their entries as
+individual encrypted refs on the copy. Conflicting packed and loose refs
+block migration. The original keeps its packs, refs, key, and passphrase.
 
 Local Git import and export require `git` on PATH and use SHA-1 repositories.
 Import reads loose and packed objects and refs, preserving branches, tags and

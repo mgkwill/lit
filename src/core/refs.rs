@@ -28,6 +28,7 @@ pub fn find_repo_root() -> Result<PathBuf, String> {
 
     loop {
         if is_lit_repo(&current) {
+            super::repository_format::require_supported(&current)?;
             return Ok(current);
         }
 

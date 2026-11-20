@@ -266,6 +266,13 @@ enum Commands {
     /// Rotate encryption passphrase
     RotateKey,
 
+    /// Inspect, copy, or roll back a native Lit repository migration
+    #[cfg(any(target_os = "linux", target_os = "macos"))]
+    MigrateRepo {
+        #[command(subcommand)]
+        command: commands::migrate_repo::Action,
+    },
+
     // --- Phase 1.5-1.8 ---
     /// Stash changes temporarily
     Stash {
@@ -915,6 +922,8 @@ fn run() {
         }
         Commands::Watch { debounce, filter } => run!(commands::watch::execute(debounce, filter)),
         Commands::Verify => run!(commands::verify::execute()),
+        #[cfg(any(target_os = "linux", target_os = "macos"))]
+        Commands::MigrateRepo { command } => run!(commands::migrate_repo::execute(command)),
 
         // Phase 3
         Commands::Serve {

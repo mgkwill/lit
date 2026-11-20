@@ -59,6 +59,14 @@ impl Location {
         self.read_raw(hash, cipher).map(|(object, _)| object)
     }
 
+    pub(crate) fn read_for_migration(
+        &self,
+        hash: &ObjectHash,
+        cipher: &EncryptionManager,
+    ) -> Result<Object, String> {
+        self.read_raw(hash, Some(cipher)).map(|(object, _)| object)
+    }
+
     fn read_raw(
         &self,
         hash: &ObjectHash,
@@ -275,13 +283,19 @@ fn read_entry(
     if expected_crc.is_some_and(|crc| crc32fast::hash(&compressed) != crc) {
         return Err(invalid("Pack entry CRC32 mismatch"));
     }
-    let compressed = match format {
-        Format::Plain => compressed,
-        Format::Encrypted => cipher
+    // The v1.8.0 executable can emit encrypted entries in a v1 pack.
+    // Migration inspection and rotation authenticate these entries explicitly.
+    let legacy_encrypted = format == Format::Plain
+        && cipher.is_some_and(EncryptionManager::is_enabled)
+        && compressed.first() == Some(&crate::crypto::encryption::ENCRYPTION_VERSION);
+    let compressed = if format == Format::Encrypted || legacy_encrypted {
+        cipher
             .filter(|cipher| cipher.is_enabled())
             .ok_or_else(|| invalid("Encrypted native pack requires an initialized repository key"))?
             .decrypt(&compressed)
-            .map_err(invalid)?,
+            .map_err(invalid)?
+    } else {
+        compressed
     };
     let mut decoder = ZlibDecoder::new(compressed.as_slice());
     let mut raw = Vec::new();
@@ -402,6 +416,24 @@ pub(crate) fn rotate(
         location.read(&hash, Some(new))?;
     }
     Ok(count)
+}
+
+pub(crate) fn has_plaintext_pack(repo: &Path) -> io::Result<bool> {
+    let indexes = match fs::read_dir(repo.join(".lit/packs")) {
+        Ok(entries) => entries,
+        Err(error) if error.kind() == io::ErrorKind::NotFound => return Ok(false),
+        Err(error) => return Err(error),
+    };
+    for index in indexes {
+        let path = index?.path();
+        if path.extension().is_some_and(|extension| extension == "idx") {
+            let (format, _) = read_header(&mut open_regular(&path)?, INDEX_MAGIC)?;
+            if format == Format::Plain {
+                return Ok(true);
+            }
+        }
+    }
+    Ok(false)
 }
 
 fn write_entries(

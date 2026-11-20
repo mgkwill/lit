@@ -1,6 +1,7 @@
 pub mod diff;
 pub mod merge;
 pub mod objects;
+pub(crate) mod repository_format;
 pub mod refs;
 
 pub use objects::{Blob, Commit, Object, ObjectHash, Tag, Tree, TreeEntry};

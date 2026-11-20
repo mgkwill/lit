@@ -306,6 +306,7 @@ impl RemoteRepo {
         match detect_transport(url) {
             TransportKind::Local => {
                 let path = resolve_path(url)?;
+                crate::core::repository_format::require_supported(&path)?;
                 Ok(RemoteRepo::File { path })
             }
             TransportKind::Https => {

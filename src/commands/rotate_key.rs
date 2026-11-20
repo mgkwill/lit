@@ -9,6 +9,7 @@ use crate::response::RotateKeyResponse;
 use crate::storage::{pack, ObjectStore};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
+use std::collections::BTreeMap;
 use std::fs::{self, File};
 use std::io::{self, Write};
 use std::path::{Component, Path, PathBuf};
@@ -28,28 +29,36 @@ struct Replacement {
 
 pub fn rotate_key() -> Result<RotateKeyResponse, LitError> {
     let repo = refs::find_repo_root()?;
-    let _guard = super::transaction::lock_repository(&repo)?;
+
+    at(&repo, None)
+}
+
+pub(super) fn at(
+    repo: &Path,
+    packed_refs: Option<&BTreeMap<String, String>>,
+) -> Result<RotateKeyResponse, LitError> {
+    let _guard = super::transaction::lock_repository(repo)?;
     let journal = repo.join(ROTATION_DIR);
     match journal.symlink_metadata() {
         Ok(metadata) if metadata.is_dir() => {
-            let _key_guard = lock_key_writes(&repo, true)?;
+            let _key_guard = lock_key_writes(repo, true)?;
             let passphrase = prompt_for_new_passphrase()?;
-            return finish(&repo, &journal, &passphrase, |_| Ok(()));
+            return finish(repo, &journal, &passphrase, |_| Ok(()));
         }
         Ok(_) => return Err("Expected key rotation journal to be a directory".into()),
         Err(error) if error.kind() == io::ErrorKind::NotFound => {}
         Err(error) => return Err(error.into()),
     }
-    super::merge::require_inactive(&repo)?;
+    super::merge::require_inactive(repo)?;
     if repo.join(".lit/transaction.json").try_exists()? {
         return Err("Finish the active transaction before rotating the key.".into());
     }
 
-    let config = EncryptionConfig::load(&repo)?;
+    let config = EncryptionConfig::load(repo)?;
     if !config.enabled {
         return Err("Encryption is not enabled for this repository".into());
     }
-    let _key_guard = lock_key_writes(&repo, true)?;
+    let _key_guard = lock_key_writes(repo, true)?;
     let old_passphrase = prompt_for_passphrase(
         repo.to_str().ok_or("Repository path is not UTF-8")?,
         &config,
@@ -62,8 +71,8 @@ pub fn rotate_key() -> Result<RotateKeyResponse, LitError> {
     }
 
     let key = EncryptionKey::from_passphrase(&new_passphrase, &EncryptionKey::generate_salt())?;
-    prepare(&repo, config, &old, &key, &new_passphrase)?;
-    finish(&repo, &journal, &new_passphrase, |_| Ok(()))
+    prepare(repo, config, &old, &key, &new_passphrase, packed_refs)?;
+    finish(repo, &journal, &new_passphrase, |_| Ok(()))
 }
 
 fn prepare(
@@ -72,6 +81,7 @@ fn prepare(
     old: &EncryptionManager,
     key: &EncryptionKey,
     passphrase: &str,
+    packed_refs: Option<&BTreeMap<String, String>>,
 ) -> Result<(), LitError> {
     let metadata = repo.join(".lit");
     let workspace = tempfile::tempdir_in(&metadata)?;
@@ -143,6 +153,12 @@ fn prepare(
         for entry in walkdir::WalkDir::new(&refs).sort_by_file_name() {
             let entry = entry.map_err(|e| e.to_string())?;
             if !entry.file_type().is_dir() {
+                if packed_refs.is_some_and(|packed| {
+                    entry.path().strip_prefix(&refs).ok().and_then(Path::to_str)
+                        .is_some_and(|name| packed.contains_key(name))
+                }) {
+                    continue;
+                }
                 references.push(
                     entry
                         .path()
@@ -170,6 +186,19 @@ fn prepare(
             // Native text refs retain their existing on-disk representation.
             std::str::from_utf8(&bytes)
                 .map_err(|e| format!("Invalid reference {}: {e}", path.display()))?;
+        }
+    }
+    if let Some(packed) = packed_refs {
+        for (name, target) in packed {
+            super::remote::validate_ref(name)?;
+            let path = Path::new("refs").join(name);
+            let staged = files.join(&path);
+            if staged.try_exists()? {
+                return Err(format!("Reference path collision while migrating {name}").into());
+            }
+            stage_bytes(&staged, &new.encrypt(format!("{target}\n").as_bytes())?)?;
+            paths.push(path);
+            refs_rotated += 1;
         }
     }
 
@@ -364,7 +393,7 @@ mod tests {
         drop(exclusive);
         let new_key =
             EncryptionKey::from_passphrase(new_pass, &EncryptionKey::generate_salt()).unwrap();
-        prepare(repo, config, &old, &new_key, new_pass).unwrap();
+        prepare(repo, config, &old, &new_key, new_pass, None).unwrap();
         let journal = repo.join(ROTATION_DIR);
         let before = fs::read(repo.join(".lit/encryption.toml")).unwrap();
         let error = finish(repo, &journal, new_pass, |path| {
