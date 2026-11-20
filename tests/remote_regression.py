@@ -180,7 +180,7 @@ def native_over_daemon(f):
 
 
 def native(f):
-    bare = f.make("native-bare")
+    bare = f.make("native-bare" if REFERENCE else "native bare")
     source = f.make("native-source")
     f.lit(bare, "init", "--bare", ".")
     f.lit(source, "init", ".")

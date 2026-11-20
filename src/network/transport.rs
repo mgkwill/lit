@@ -59,7 +59,19 @@ pub fn resolve_url(url: &str) -> Result<PathBuf, String> {
 /// Resolve a remote URL to a local path
 pub fn resolve_path(url: &str) -> Result<PathBuf, String> {
     let path = if let Some(stripped) = url.strip_prefix("file://") {
-        PathBuf::from(stripped)
+        // Decode local file URLs using the platform's path representation.
+        // Keep accepting the older literal form when it lacks URL path syntax.
+        url::Url::parse(url)
+            .ok()
+            .filter(|parsed| {
+                stripped.starts_with('/')
+                    && !stripped.starts_with("//")
+                    && parsed.host_str().is_none()
+                    && parsed.query().is_none()
+                    && parsed.fragment().is_none()
+            })
+            .and_then(|parsed| parsed.to_file_path().ok())
+            .unwrap_or_else(|| PathBuf::from(stripped))
     } else {
         PathBuf::from(url)
     };
