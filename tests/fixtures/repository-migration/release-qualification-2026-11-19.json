@@ -1,0 +1,90 @@
+{
+  "github_sandbox_policy": "Read-only policy confirmation in the migration evidence. Agent workflow smoke runs in isolated local Git repositories.",
+  "lab_strict_sandbox": {
+    "disposition": "Fail-closed verified with no filesystem or loopback side effects. Positive isolation was verified in the arm64 VM.",
+    "kernel_error": "bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted"
+  },
+  "linux_arm64_vm_strict_sandbox": [
+    "Strict isolation: inside I/O allowed; outside read/write, symlink, hardlink and loopback blocked",
+    "Default control: outside I/O and loopback allowed; environment scrubbed",
+    "Preexisting hardlink refused before launch",
+    "Symlinked sandbox root refused before launch",
+    "Unavailable backend returned SANDBOX_UNAVAILABLE and left no launch marker",
+    "Trusted launcher with namespaces disabled refused before launch",
+    "Strict launcher closed inherited external file and connected socket descriptors",
+    "Nested host bind mount refused before launch",
+    "UDP, IPv6 and Unix socket creation denied",
+    "Confined child retained its own output and exit status"
+  ],
+  "migration_and_archive_checksums": "2026-11-19.json",
+  "rust_regression_suites": {
+    "command": "cargo test --release --locked -- --test-threads=1",
+    "linux_arm64_colima": {
+      "ignored": 0,
+      "passed": 486
+    },
+    "macos_arm64": {
+      "ignored": 0,
+      "passed": 486
+    }
+  },
+  "tested_runtime_commit": "d18f856",
+  "unpacked_release_binary_smoke": {
+    "host-e": {
+      "local_agent_workflow": [
+        "100 isolated workers submitted pinned proposals",
+        "100 workers: 99 proposals landed at checked commit a2a9d76b5946a4586a8c29eef44106a91f111e1a; conflict, missing verdict, stale attempt, stale base, and duplicate publication refused"
+      ],
+      "local_git_transport": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "sandbox": [
+        "Strict mode refused before running the payload (Linux Bubblewrap did not start the confined command (launcher exit: exit status: 1): bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted)",
+        "Default control: outside I/O and loopback allowed; environment scrubbed"
+      ]
+    },
+    "host-f": {
+      "local_agent_workflow": [
+        "100 isolated workers submitted pinned proposals",
+        "100 workers: 99 proposals landed at checked commit d8d33f34b9b0d1de031fde18617e8fbfbb234ef0; conflict, missing verdict, stale attempt, stale base, and duplicate publication refused"
+      ],
+      "local_git_transport": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "sandbox": [
+        "Strict mode refused before running the payload (Linux Bubblewrap did not start the confined command (launcher exit: exit status: 1): bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted)",
+        "Default control: outside I/O and loopback allowed; environment scrubbed"
+      ]
+    },
+    "macos": {
+      "local_agent_workflow": [
+        "100 isolated workers submitted pinned proposals",
+        "100 workers: 99 proposals landed at checked commit e7cf318319ac7d1ee2b06ebfc8b3bd8ccd8cb41f; conflict, missing verdict, stale attempt, stale base, and duplicate publication refused"
+      ],
+      "local_git_transport": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "sandbox": [
+        "Strict isolation: inside I/O allowed; outside read/write, symlink, hardlink and loopback blocked",
+        "Default control: outside I/O and loopback allowed; environment scrubbed",
+        "Preexisting hardlink refused before launch",
+        "Symlinked sandbox root refused before launch",
+        "Unavailable backend returned SANDBOX_UNAVAILABLE and left no launch marker",
+        "Strict launcher closed inherited external file and connected socket descriptors",
+        "Confined child retained its own output and exit status"
+      ]
+    }
+  }
+}

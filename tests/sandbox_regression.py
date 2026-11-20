@@ -1,5 +1,6 @@
 """macOS and Linux confinement checks. Run with the absolute path to a Lit binary."""
 
+import argparse
 import json
 import os
 import socket
@@ -8,8 +9,15 @@ import sys
 import tempfile
 from pathlib import Path
 
-LIT = Path(sys.argv[1]).resolve()
-REFERENCE = "--reference" in sys.argv[2:]
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("lit", type=lambda path: Path(path).resolve())
+modes = parser.add_mutually_exclusive_group()
+modes.add_argument("--reference", action="store_true", help="exercise the v1.8.0 binary")
+modes.add_argument("--expect-unavailable", action="store_true", help="require fail-closed on this host")
+args = parser.parse_args()
+LIT = args.lit
+REFERENCE = args.reference
+EXPECT_UNAVAILABLE = args.expect_unavailable
 MACOS = sys.platform == "darwin"
 LINUX = sys.platform.startswith("linux")
 PROBE = r'''
@@ -74,10 +82,16 @@ def check(binary, fixture):
         port = str(listener.getsockname()[1])
         probe = ("/bin/bash", "-c", PROBE, "probe", str(outside), link.name, port)
         strict = run("sandbox", "run", "probe", "--strict", "--", *probe)
-        if REFERENCE:
+        if REFERENCE or EXPECT_UNAVAILABLE:
             assert strict.returncode != 0 and not (workspace / "inside-output").exists()
             assert outside.read_text() == "outside canary\n"
-            print("v1.8.0 strict refused before running the payload")
+            assert not (workspace / "escape-link").exists()
+            if EXPECT_UNAVAILABLE:
+                error = json.loads(strict.stderr)["error"]
+                assert error["code"] == "SANDBOX_UNAVAILABLE", error
+                print(f"Strict mode refused before running the payload ({error['message']})")
+            else:
+                print("v1.8.0 strict refused before running the payload")
         else:
             assert strict.returncode == 0, (strict.stdout, strict.stderr)
             response = json.loads(strict.stdout)
@@ -94,15 +108,16 @@ def check(binary, fixture):
             ):
                 assert evidence in response["output"], (evidence, response)
             assert "__lit_sandbox_ready__" not in response["output"]
-            listener.settimeout(0.2)
-            try:
-                conn, _ = listener.accept()
-            except TimeoutError:
-                pass
-            else:
-                conn.close()
-                raise AssertionError("A strict payload reached the loopback listener")
             print("Strict isolation: inside I/O allowed; outside read/write, symlink, hardlink and loopback blocked")
+
+        listener.settimeout(0.2)
+        try:
+            conn, _ = listener.accept()
+        except TimeoutError:
+            pass
+        else:
+            conn.close()
+            raise AssertionError("A strict payload reached the loopback listener")
 
         control = success("sandbox", "run", "probe", "--", *probe)
         for evidence in ("OUTSIDE_READ_ALLOWED", "OUTSIDE_WRITE_ALLOWED",
@@ -117,7 +132,7 @@ def check(binary, fixture):
             assert "filesystem-isolation" in unenforced
         print("Default control: outside I/O and loopback allowed; environment scrubbed")
 
-    if REFERENCE:
+    if REFERENCE or EXPECT_UNAVAILABLE:
         return
 
     launch = ("sandbox", "run", "probe", "--strict", "--",
