@@ -377,8 +377,7 @@ def propose(server,principal,body,db=None):
             raise ValueError('attempt or request already used')
         github=PolicyGitHub(server,server.api_url,server.token_source())
         github.authenticate_writer(server.config['manifest']['repo'],force=True)
-        specs=[json.loads(r[0]) for r in db.execute('SELECT spec FROM proposals')]
-        queue.policies(github,server.config['manifest'],specs)
+        queue.policies(github,server.config['manifest'],queue.required_frozen_specs(db))
         namespace=github.api(f"repos/{server.config['manifest']['repo']}/rulesets/{server.config['publication_ruleset']}")
         if (namespace['target']!='branch' or namespace['enforcement']!='active'
                 or namespace['conditions']['ref_name']!={'include':['refs/heads/agents/broker/**/*'],'exclude':[]}
@@ -510,8 +509,7 @@ def recover_removed(server,number,event_id):
             manifest=json.loads(db.execute("SELECT value FROM metadata WHERE key='manifest'").fetchone()[0])
             github=PolicyGitHub(server,server.api_url,server.token_source())
             github.authenticate_writer(manifest['repo'],force=True)
-            specs=[json.loads(r[0]) for r in db.execute('SELECT spec FROM proposals')]
-            queue.policies(github,manifest,specs)
+            queue.policies(github,manifest,queue.required_frozen_specs(db))
             pr=github.snapshot(manifest['repo'],number)['pullRequest']
             events=pr.get('queueEvents',{}).get('nodes',[])
             if (not queue.identity(manifest['repo'],spec,pr) or pr['closed'] or pr['merged']

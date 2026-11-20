@@ -2,6 +2,7 @@
 import json
 import os
 from pathlib import Path
+import sqlite3
 import subprocess
 import sys
 import tempfile
@@ -35,6 +36,7 @@ class Forge:
         self.main = "c" * 40
         self.mutations = []
         self.freeze = True
+        self.freeze_proposal_ref = True
         self.extra_frozen_refs = []
         self.snapshot_numbers = []
         self.track_latest_publication = True
@@ -184,9 +186,10 @@ class Forge:
                     forge.freeze_reads += 1
                     if forge.remove_freeze_on_recheck and forge.freeze_reads == 2:
                         forge.freeze = False
+                    refs = ["refs/heads/" + forge.proposal["branch"]] if forge.freeze_proposal_ref else []
                     self.respond({"target": "branch", "enforcement": "active" if forge.freeze else "disabled",
                                   "bypass_actors": [], "conditions": {"ref_name": {
-                                      "include": ["refs/heads/" + forge.proposal["branch"]] + forge.extra_frozen_refs, "exclude": []}},
+                                      "include": refs + forge.extra_frozen_refs, "exclude": []}},
                                   "rules": [{"type": "update"}, {"type": "deletion"}]})
                 elif "/check-runs?" in self.path:
                     self.respond({"total_count": 1, "check_runs": [{"name": "Agent workflow candidate",
@@ -444,6 +447,39 @@ class CoordinatorTests(unittest.TestCase):
         self.merged_fixture()
         self.remote.merge_event = None
         self.assert_integration_pending('merge_event_unconfirmed')
+
+    def test_verified_merge_releases_the_proposal_freeze_requirement(self):
+        self.merged_fixture()
+        self.tick()
+        original = self.cli('status')[0]['proposals'][0]['integration']
+        self.assertEqual(original['state'], 'verified')
+        self.remote.freeze_proposal_ref = False
+        self.tick()
+        self.assertEqual(self.cli('status')[0]['proposals'][0]['integration'], original)
+        self.assertEqual(self.remote.mutations, [])
+
+    def test_pending_integration_still_requires_the_proposal_freeze(self):
+        self.merged_fixture()
+        self.remote.merge_event = None
+        self.assert_integration_pending('merge_event_unconfirmed')
+        self.remote.freeze_proposal_ref = False
+        self.tick(expected=1)
+        self.assertEqual(self.remote.mutations, [])
+
+    def test_observed_unmerged_retirement_releases_the_proposal_freeze(self):
+        self.forge()
+        db = sqlite3.connect(self.state / 'queue.sqlite')
+        try:
+            with db:
+                db.execute("UPDATE proposals SET phase='ownership_retired' WHERE number=7")
+                db.execute("INSERT INTO events(number,kind,data,created) VALUES (7,?,?,?)",
+                           ('ownership_retired', json.dumps({'merged': False}), time.time()))
+        finally:
+            db.close()
+        self.remote.freeze_proposal_ref = False
+        self.tick()
+        self.assertEqual(self.cli('status')[0]['proposals'][0]['phase'], 'ownership_retired')
+        self.assertEqual(self.remote.mutations, [])
 
     def native_queue_closure_fixture(self):
         merge = self.merged_fixture()

@@ -193,6 +193,20 @@ def policies(github, manifest, specs):
         raise RuntimeError("proposal branches must be frozen by exact refs without bypasses")
 
 
+def required_frozen_specs(db):
+    """Keep a freeze until integration or unmerged retirement is proven."""
+    rows = db.execute("""SELECT spec FROM proposals p
+        WHERE p.phase NOT IN ('merged', 'ownership_retired')
+           OR NOT (
+                EXISTS (SELECT 1 FROM integrations i WHERE i.number=p.number AND i.receipt IS NOT NULL)
+                OR (p.phase='ownership_retired' AND EXISTS (
+                    SELECT 1 FROM events e WHERE e.number=p.number AND e.kind='ownership_retired'
+                    AND json_extract(e.data,'$.merged')=0)))
+           OR EXISTS (SELECT 1 FROM actions a WHERE a.number=p.number
+                      AND a.status IN ('pending', 'acknowledged'))""")
+    return [json.loads(row['spec']) for row in rows]
+
+
 def record(db, number, phase, **details):
     previous = db.execute("SELECT phase FROM proposals WHERE number=?", (number,)).fetchone()[0]
     with db:
@@ -395,7 +409,7 @@ def reconcile_integration(db, github, manifest, args):
 
 def tick(db, github, manifest, args):
     rows = list(db.execute("SELECT * FROM proposals ORDER BY number"))
-    specs = [json.loads(row["spec"]) for row in rows]
+    specs = required_frozen_specs(db)
     github.authenticate_writer(manifest["repo"])
     policies(github, manifest, specs)
     ordered=sorted(rows, key=lambda r: (json.loads(r["spec"]).get("kind") == "shared", r["number"]))
@@ -437,7 +451,6 @@ def drain(db, github, manifest, specs, spec, claim):
     if claim['phase'] == 'retired':
         record(db, spec['number'], 'ownership_retired')
         return
-    policies(github, manifest, specs)
     pr = github.snapshot(manifest['repo'], spec['number'])['pullRequest']
     if not identity(manifest['repo'], spec, pr):
         raise RuntimeError('revoked proposal identity changed; task remains fenced')
@@ -449,6 +462,7 @@ def drain(db, github, manifest, specs, spec, claim):
         record(db, number, 'ownership_retired', merged=pr['merged'])
         ownership.retired(db, claim['claim'])
         return
+    policies(github, manifest, [*specs, spec])
     kind = 'dequeue' if pr['mergeQueueEntry'] else 'close'
     pending = db.execute("SELECT 1 FROM actions WHERE number=? AND kind=? AND status IN ('pending','acknowledged')", (number, kind)).fetchone()
     record(db, number, 'ownership_draining', generation=claim['generation'])
