@@ -44,6 +44,8 @@ def main():
     parser.add_argument('--wait-seconds',type=float,default=600)
     parser.add_argument('--no-wait',action='store_true')
     parser.add_argument('--claim')
+    parser.add_argument('--workspace',type=Path)
+    parser.add_argument('--lit',type=Path)
     parser.add_argument('route',choices=('claims','health','status','assign','dependencies','path-hints','register','recover-removed','reconcile-publication','propose','publication','registration','repository-token'))
     args=parser.parse_args()
     try:
@@ -55,11 +57,22 @@ def main():
             raise ValueError('invalid wait deadline')
         context=ssl.create_default_context(cafile=str(args.ca))
         context.load_cert_chain(str(args.cert),str(args.key))
+        if (args.workspace is None)!=(args.lit is None) or (args.workspace is not None and args.route!='propose'):
+            raise ValueError('workspace options require a Lit binary and the propose route')
         payload=None
         if args.route in ('assign','dependencies','path-hints','register','recover-removed','reconcile-publication','propose'):
             raw=sys.stdin.buffer.read(65537)
             if not 0<len(raw)<=65536:raise ValueError('invalid request length')
-            payload=json.dumps(json.loads(raw)).encode()
+            body=json.loads(raw)
+            if args.workspace is not None:
+                from task_broker_workspace import proposal_from_workspace
+                binding={'task','generation','claim','base','capability','request'}
+                if not isinstance(body,dict) or set(body)!=binding:
+                    raise ValueError('workspace proposal requires only the assignment binding and request ID')
+                proof=proposal_from_workspace(args.lit.resolve(strict=True),args.workspace,body['base'])
+                body['files']=proof['files']
+            payload=json.dumps(body).encode()
+            if len(payload)>65536:raise ValueError('publication exceeds broker request limit')
         route=args.route
         if route in ('publication','registration'):
             if not args.claim or not re.fullmatch(r'[0-9a-f]{32}',args.claim):raise ValueError('claim required')

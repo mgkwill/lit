@@ -10,6 +10,7 @@ from pathlib import Path
 import socket
 import ssl
 import sys
+import tempfile
 import time
 from urllib.error import HTTPError, URLError
 from http.client import HTTPException
@@ -21,7 +22,35 @@ class NoRedirect(HTTPRedirectHandler):
         return None
 
 
-def run(operation, root, url, action):
+def pinned_proposal(operation, claim, root, lit):
+    from task_broker_workspace import proposal_from_workspace, run_lit
+
+    source = root / 'source' / claim['base']
+    pin = json.loads((source / '.lit/broker-base.json').read_text())
+    if pin['git_base'] != claim['base']:
+        raise ValueError('worker source does not match its assignment')
+    with tempfile.TemporaryDirectory(prefix='attempt-', dir=root) as stage:
+        workspace = Path(stage) / 'work'
+        run_lit(lit, source, 'workspace', 'create', str(workspace), '--base', pin['lit_base'])
+        paths = []
+        for edit in operation['files']:
+            path = Path(edit['path'])
+            if path.parts[0] != 'qualification' or path.is_absolute() or '..' in path.parts:
+                raise ValueError('unsafe qualification path')
+            target = workspace / path
+            if any(candidate.is_symlink() for candidate in (target, *target.parents)
+                   if candidate.is_relative_to(workspace)):
+                raise ValueError('symlink in qualification path')
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(edit['content'], encoding='utf-8')
+            paths.append(str(path))
+        run_lit(lit, workspace, 'add', *paths)
+        run_lit(lit, workspace, 'commit', '-m', 'Pinned task '+claim['task'])
+        proposal = proposal_from_workspace(lit, workspace, claim['base'])
+        return proposal.pop('files'), proposal
+
+
+def run(operation, root, url, action, lit=None):
     profile = root / operation['id']
     context = ssl.create_default_context(cafile=str(root / 'ca.crt'))
     context.load_cert_chain(str(profile / 'client.crt'), str(profile / 'client.key'))
@@ -90,7 +119,10 @@ def run(operation, root, url, action):
     if action == 'publish':
         assert claim['phase'] == 'active' and 'capability' in claim
         body = {k: claim[k] for k in ('task', 'generation', 'claim', 'base', 'capability')}
-        body.update(request=operation['request'], files=operation['files'])
+        files = operation['files']
+        if lit is not None:
+            files, record['workspace'] = pinned_proposal(operation, claim, root, lit)
+        body.update(request=operation['request'], files=files)
         code, receipt = call('propose', body)
         assert code == 200, 'publication rejected or unresolved'
         assert receipt['agent'] == operation['owner']
@@ -108,8 +140,10 @@ def run(operation, root, url, action):
         assert claim['phase'] in ('revoked', 'retired') and 'capability' not in claim
         # The controller supplies the old capability only over stdin, never argv.
         body = {k: claim[k] for k in ('task', 'generation', 'claim', 'base')}
-        body.update(capability=operation['old_capability'], request=operation['request'],
-                    files=operation['files'])
+        files = operation['files']
+        if lit is not None:
+            files, record['workspace'] = pinned_proposal(operation, claim, root, lit)
+        body.update(capability=operation['old_capability'], request=operation['request'], files=files)
         code, denied = call('propose', body)
         assert code == 409, 'revoked attempt could still publish'
         assert denied.get('retryable') is False
@@ -162,6 +196,7 @@ def main():
     parser.add_argument('--profiles', type=Path, required=True)
     parser.add_argument('--url', default='https://192.0.2.10:19443')
     parser.add_argument('--concurrency',type=int,default=10)
+    parser.add_argument('--lit', type=Path, help='Build publications from committed pinned workspaces')
     parser.add_argument('action', choices=('publish', 'register', 'stale', 'permissions'))
     args = parser.parse_args()
     assert socket.gethostname().split('.')[0] == args.host
@@ -169,7 +204,8 @@ def main():
     assert 0 < len(operations) <= 40
     assert 1 <= args.concurrency <= 40
     with ThreadPoolExecutor(max_workers=args.concurrency) as pool:
-        futures = [pool.submit(run, op, args.profiles, args.url, args.action) for op in operations]
+        lit = args.lit.resolve(strict=True) if args.lit else None
+        futures = [pool.submit(run, op, args.profiles, args.url, args.action, lit) for op in operations]
         for future in futures:
             # Emit each completed receipt even if a later operation fails.
             print(json.dumps(future.result()), flush=True)

@@ -292,6 +292,22 @@ encrypted repositories get a separate key derived from the supplied source
 passphrase. Use strict sandbox execution for process-level filesystem and
 network restrictions.
 
+For broker work, prepare the Lit source from a Git repository whose HEAD
+matches the assigned Git base. The seed command prints the corresponding
+Lit base ID for `lit workspace create`.
+
+```bash
+python3 tools/task_broker_workspace.py --lit "$lit_binary" seed \
+  "$git_seed" "$lit_source" --base "$assigned_git_base"
+```
+
+After committing one proposal directly above the pin, run the broker
+client's `propose` route with `--workspace "$attempt" --lit "$lit_binary"`.
+Send the assignment binding and request ID on stdin. The client verifies
+the exact Git parent and builds the publication from committed file changes.
+The broker checks the worker identity, generation, and capability before it
+publishes or registers the proposal.
+
 ### Sandboxed execution
 
 `lit sandbox run <name> --strict -- <command>` confines filesystem access
