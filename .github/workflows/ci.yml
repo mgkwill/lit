@@ -70,7 +70,17 @@ jobs:
         run: cargo test -- --test-threads=1 --verbose
 
       - name: Build release
-        run: cargo build --release
+        run: cargo build --locked --release
+
+      - name: Set up Python for release smoke tests
+        if: runner.os != 'Windows'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Smoke-test the release binary
+        if: runner.os != 'Windows'
+        run: python3 -B tests/release_smoke.py target/release/lit
 
       - name: Generate docs
         run: cargo doc --no-deps
