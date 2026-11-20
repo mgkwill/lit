@@ -75,6 +75,11 @@ class Cohort:
         if claim is None:
             if recorded:
                 raise PilotError(f"the broker lost a recorded assignment for {op['task']}")
+            if previous is not None and hasattr(self.lab, "checkpoint_before_reassignment"):
+                if "standby-checkpoint" not in self.journal.read(episode):
+                    checkpoint = self.lab.checkpoint_before_reassignment()
+                    if checkpoint is not None:
+                        self.journal.record(episode, "standby-checkpoint", checkpoint)
             claim = self.lab.assign(op, op["generation"] - 1)
             if previous is not None:
                 self.interrupt("reassignment", binding(claim))

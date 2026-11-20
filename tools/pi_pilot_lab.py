@@ -17,6 +17,7 @@ import subprocess
 import sys
 import tarfile
 import tempfile
+from threading import BoundedSemaphore
 import time
 from urllib.error import HTTPError, URLError
 from urllib.request import HTTPSHandler, Request, build_opener
@@ -148,12 +149,36 @@ class Lab:
         self.main = self.forge.main
         self.capacity = plan["build_capacity"]
         self.controller = None
+        limits = config.get("limits", {})
+        require(isinstance(limits, dict) and set(limits) <= {"ssh_per_host", "inference"}
+                and all(type(count) is int and 1 <= count <= 128 for count in limits.values()),
+                "pilot limits must be positive integers of at most 128")
+        self.inference_limit = limits.get("inference")
+        self.ssh_slots = {host: BoundedSemaphore(limits["ssh_per_host"]) for host in config["hosts"]
+                          if "ssh_per_host" in limits}
+        self.forge.authorize_change = self.require_live_controller
+
+    def require_live_controller(self):
+        if self.config.get("handoff") is not None:
+            self.admin("health", seconds=0)
+
+    def checkpoint_before_reassignment(self):
+        handoff = self.config.get("handoff")
+        if handoff is not None and self.controller == handoff.get("from"):
+            from pi_pilot_control import replicate
+            return replicate(self)
+        return None
 
     def authorize_controller(self):
         if self.controller is not None:
+            fingerprint = digest(ssl.PEM_cert_to_DER_cert(Path(self.config["scheduler_certificate"]).read_text()))
+            handoff = self.config.get("handoff")
+            if handoff is not None:
+                require(handoff.get("identities", {}).get(self.controller) == fingerprint,
+                        "selected controller certificate differs from the configured handoff identity")
             self.admin("status", seconds=0)
             self.journal.record("controllers", self.controller, {"host": socket.gethostname(),
-                "certificate": digest(ssl.PEM_cert_to_DER_cert(Path(self.config["scheduler_certificate"]).read_text()))})
+                                                                 "certificate": fingerprint})
 
     def load(self, name):
         return json.loads((self.state / f"{name}.json").read_bytes())
@@ -179,7 +204,12 @@ class Lab:
             args = ["sudo", "-n", "-u", profile["worker_user"], *args]
         if profile.get("local"):
             return command(args, data, timeout)
-        return command(["ssh", *options, "--", profile["destination"], shlex.join(args)], data, timeout)
+        ssh = ["ssh", *options, "--", profile["destination"], shlex.join(args)]
+        slots = self.ssh_slots.get(host)
+        if slots is None:
+            return command(ssh, data, timeout)
+        with slots:
+            return command(ssh, data, timeout)
 
     def admin(self, route, body=None, seconds=300):
         context = ssl.create_default_context(cafile=self.config["server_ca"])
@@ -240,6 +270,7 @@ class Lab:
     def broker(self, op, route, *, claim=None, receipt=None, physical=None):
         if route not in ("propose", "register"):
             return self.agent(op, route, claim=claim)
+        self.require_live_controller()
         capability = self.private.read(op["episode"])["capability"]
         if route == "register":
             return self.agent(op, route, body={"proposal": receipt, "capability": capability})
@@ -311,6 +342,7 @@ class Lab:
                  data_json({"add": add or {}, "remove": remove or {}}))
 
     def enroll(self):
+        self.require_live_controller()
         self.forge.original_restored(self.forge.current(self.capacity))
         require(self.forge.empty(), "native queue must be empty before enrollment")
         principals = self.load("principals")
@@ -340,10 +372,12 @@ class Lab:
         raise PilotError("broker health did not recover")
 
     def reload_broker(self):
+        self.require_live_controller()
         self.ssh(self.plan["active_host"], ["sudo", "-n", "systemctl", "restart", self.config["broker_unit"]])
         return self.healthy()
 
     def stage_workers(self):
+        self.require_live_controller()
         files = {"pi-worker.py": FIXTURES / "pi-workspace-worker.py"}
         files.update({name: FIXTURES / name for name in ("pi_lit_contracts.py", "pi_source_cases.py", "pi_rust_workload.py")})
         archive = payload_archive(files)
@@ -365,6 +399,7 @@ class Lab:
         return git
 
     def stage_seed(self, host, base):
+        self.require_live_controller()
         bundle = command(self.seed_git(base) + ["bundle", "create", "-", "refs/heads/main"])
         profile = json.loads(self.ssh(host, ["python3", "-B", "-c", INSTALL_SEED, self.folder, base],
                                       bundle, worker=True, timeout=300))
@@ -572,6 +607,7 @@ class Lab:
         return True
 
     def restore_principals(self):
+        self.require_live_controller()
         principals = self.load("principals")
         for host in self.config["broker_hosts"]:
             self.update_principals(host, remove=principals)
@@ -591,6 +627,7 @@ class Lab:
         return result == b"True"
 
     def remove_worker(self, host):
+        self.require_live_controller()
         self.ssh(host, ["python3", "-B", "-c", REMOVE_WORKER, self.folder, self.run], worker=True)
 
     def verify_cleanup(self, final, proof, denied, hosts):
@@ -609,6 +646,7 @@ def open_lab(state, plan, journal, controller=None):
     config = (state / "lab.json").read_bytes()
     tools = Path(__file__).parent
     files = [tools / name for name in ("pi_pilot_lab.py", "pi_pilot_forge.py", "pi_pilot.py", "pi_pilot_runner.py",
+                                      "pi_pilot_control.py",
                                       "github_queue_coordinator.py", "task_broker_client.py", "task_broker_workspace.py",
                                       "task_ownership.py")]
     files += [FIXTURES / name for name in ("pi-workspace-worker.py", "pi_lit_contracts.py", "pi_source_cases.py",

@@ -151,10 +151,15 @@ pin in the configured run root. The private state directory also holds
 `principals.json` for the enrolled worker identities and `policy-before.json`
 for the original `main`, `freeze`, and `namespace` rulesets.
 
-An optional `publication_window` limits concurrent frozen refs. All coding
-agents still start in one cohort. Each window publishes, integrates, and
+An optional `publication_window` limits concurrent frozen refs. The controller
+prepares all coding workspaces in one cohort. Each window publishes, integrates, and
 releases its terminal branch freezes before the next window publishes. Keep
 both workers in each handoff or overlap pair in the same window.
+
+Set the lab's optional `limits` to `{"ssh_per_host": 4, "inference": 8}` to
+cap concurrent SSH commands separately from admitted coding sessions.
+The inference limit queues later sessions until a coding slot is free.
+Within an admitted session, the model service schedules individual requests.
 
 Set an operation's `workload` to `source` to exercise Python source functions
 under `qualification/<run>/<work_unit>/policy.py`. The checker interprets a
@@ -166,11 +171,36 @@ Resume an in-flight run from the same source revision and adapter type.
 For a controller handoff, define named `controllers` in the lab profile and
 select one with `--controller NAME`. A profile can override its local SSH
 transport, scheduler certificate and key, server CA, and local Lit binary.
-Use distinct scheduler identities. Stop the outgoing controller, copy the
-private state over authenticated transport, and revoke its identity in the
-broker before authorizing the successor. The successor checks its scheduler
-authority on startup and uses the same plan and source digests. The local
-journal lock covers concurrent controllers sharing one filesystem.
+Use distinct scheduler identities and add a `handoff` object with `from` and
+`to` profile names, `identities` mapping both names to the registered
+scheduler certificate fingerprints, and the configured SSH `host` of the
+standby. Set `checkout` to the same revision on that host and `store` to an
+absolute private checkpoint directory on its own filesystem. The outgoing
+controller sends a verified checkpoint before submitting a reassignment.
+For an idle controller, use the explicit checkpoint command.
+
+```sh
+python3 tools/pi_pilot_control.py checkpoint --state /private/pilot --controller primary
+```
+
+On the standby host, confirm the outgoing controller process has stopped.
+Takeover verifies the checkpoint, restores it to a new directory, replaces
+only the two configured scheduler principals, and confirms standby access.
+It restarts the sandbox broker to load the new principals. Keep the transfer
+directory private because it contains scoped worker capabilities. Keep
+both controller private keys in their respective credential stores.
+
+```sh
+python3 tools/pi_pilot_control.py takeover --store /private/pilot-checkpoints --state /private/resumed-pilot
+python3 tools/pi_pilot.py --state /private/resumed-pilot --controller standby
+```
+
+The takeover command pins the selected archive and destination for retries.
+Use one designated standby for each run. The local journal lock coordinates
+controllers that share one filesystem. Reconcile any in-flight external
+operations before handing off an active controller. Stopping the outgoing
+controller is required because the broker credential change and GitHub
+ruleset updates use separate services.
 
 Set `workload` to `rust-regression` for insertions into existing Lit Rust
 modules. The trusted checker accepts only the assigned test at its pinned

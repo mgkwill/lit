@@ -131,7 +131,8 @@ class Runner:
         release = group_state.get("release_ms")
         if release is None:
             release = self.journal.record(group_key, "release_ms", int((time.time() + lead_seconds) * 1000))
-        with ThreadPoolExecutor(max_workers=len(operations)) as pool:
+        limit = getattr(self.adapter, "inference_limit", None) or len(operations)
+        with ThreadPoolExecutor(max_workers=min(limit, len(operations))) as pool:
             return list(pool.map(generate, operations))
 
     def _settle(self, op, kind, submit, validate):

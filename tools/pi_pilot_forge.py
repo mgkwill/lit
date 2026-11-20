@@ -35,6 +35,7 @@ class Forge:
         self.workflow = config["workflow"]
         self.required_check = config["required_check"]
         self.origin = f"https://github.com/{repo}.git"
+        self.authorize_change = lambda: None
 
     def gh(self, path, *args, value=None):
         data = json.dumps(value).encode() if value is not None else None
@@ -52,6 +53,7 @@ class Forge:
                 for rule in [self.gh(f"repos/{self.repo}/rulesets/{number}")]}
 
     def replace_rule(self, key, target):
+        self.authorize_change()
         return self.gh(f"repos/{self.repo}/rulesets/{self.rules[key]}", "-X", "PUT", "--input", "-", value=target)
 
     @staticmethod
