@@ -20,6 +20,12 @@ package. It does not download the upstream Lit package.
 The build path above assumes Cargo's default target directory. If you set
 `CARGO_TARGET_DIR` or a Cargo `target-dir`, use that directory instead of `target`.
 
+For a source install, `./install.sh --root /your/install/directory` on Unix or
+`./install.ps1 -InstallRoot C:\your\install\directory` in PowerShell wraps the
+locked Cargo install. Both scripts use their own checkout even when called from
+another directory. They leave shell profiles, telemetry, and existing OpenLit
+configuration alone. They do not force-replace another package's `lit` binary.
+
 If another `lit` executable is already on your PATH, check which one your shell
 runs before replacing it. On Unix use `command -v lit`; in PowerShell use
 `Get-Command lit`. Keep your old binary if you need to compare versions.

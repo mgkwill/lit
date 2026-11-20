@@ -1,0 +1,29 @@
+name: Installer checks
+on:
+  push:
+    branches:
+      - 'openlit-install-qualification-*'
+  pull_request:
+    paths:
+      - 'install.sh'
+      - 'install.ps1'
+      - 'tests/install_script_regression.py'
+      - '.github/workflows/install.yml'
+permissions:
+  contents: read
+jobs:
+  installer:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, macos-15, windows-2022]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -B tests/install_script_regression.py

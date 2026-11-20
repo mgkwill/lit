@@ -1,47 +1,18 @@
-# Lit Configuration File
-# Place this file at ~/.litconfig
+# OpenLit native network settings. Copy to ~/.litconfig only when needed.
+# These top-level fields match NetworkConfig. This file is separate from
+# .lit/config.toml and does not configure authenticated Git credentials.
 
-[network]
-# Whitelist of allowed intranet IP ranges (CIDR notation)
-# Default private network ranges
-allowed_networks = [
-    "10.0.0.0/8",        # Class A private network
-    "172.16.0.0/12",     # Class B private network
-    "192.168.0.0/16",    # Class C private network
-]
+# Private IPv4 ranges allowed for native LAN transport.
+allowed_networks = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
 
-# Specific allowed hosts/domains for your intranet
-# Add your organization's internal Git servers here
-allowed_hosts = [
-    # Examples:
-    # "git.internal.company.com",
-    # "repo.intranet.local",
-    # "192.168.1.100",
-]
+# Add only the native servers you intend to use.
+allowed_hosts = []
 
-[security]
-# Enable audit logging of all network operations
 audit_log = true
-
-# Path to audit log file
-# Use ~ for home directory
 audit_log_path = "~/.lit/audit.log"
 
-# =============================================================================
-# Environment Variables (set via install.ps1 / install.sh, not this file)
-# =============================================================================
-#
-# Lit-specific:
-#   LIT_OUTPUT              Output format: json | human | msgpack (default: json)
-#   LIT_PASSPHRASE          Encryption passphrase (sensitive)
-#   LIT_PASSPHRASE_FILE     Path to file containing passphrase
-#   LIT_API_TOKEN           Bearer token for lit serve (sensitive)
-#
-# OpenTelemetry (configured during installation, stored user-scoped):
-#   OTEL_EXPORTER_OTLP_ENDPOINT    OTLP collector endpoint
-#   OTEL_EXPORTER_OTLP_PROTOCOL    Export protocol (http/protobuf)
-#   OTEL_EXPORTER_OTLP_HEADERS     Auth header (sensitive — Bearer token)
-#   OTEL_SERVICE_NAME               Service identifier
-#
-# Windows:  Set at User scope via [Environment]::SetEnvironmentVariable()
-# Linux/macOS: Stored in ~/.config/lit/env (mode 600), sourced by shell profile
+# Optional environment settings are managed by you, not the installer:
+# LIT_OUTPUT: json, human, or msgpack
+# LIT_PASSPHRASE_FILE: path to a private passphrase file
+# LIT_API_TOKEN: bearer token for the local REST service
+# Do not save passphrases or tokens in this example or commit them to a repo.

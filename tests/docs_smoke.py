@@ -51,6 +51,8 @@ def run(binary):
                                     capture_output=True, text=True, timeout=30, check=True)
             return result.stdout.strip()
 
+        (home / '.litconfig').write_bytes((ROOT / '.litconfig.example').read_bytes())
+        json.loads(lit('config', 'show'))
         version = lit('--version')
         assert version == 'lit ' + package['version'], version
         assert 'OpenLit' in lit('--help')
