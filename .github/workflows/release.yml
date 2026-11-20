@@ -12,6 +12,8 @@ jobs:
   build:
     name: Build ${{ matrix.target }}
     runs-on: ${{ matrix.os }}
+    env:
+      RELEASE_TAG: ${{ github.ref_name }}
     strategy:
       matrix:
         include:
@@ -56,21 +58,21 @@ jobs:
           key: ${{ runner.os }}-${{ matrix.target }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Build release binary
-        run: cargo build --release --target ${{ matrix.target }}
+        run: cargo build --locked --release --target ${{ matrix.target }}
         env:
           CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: aarch64-linux-gnu-gcc
 
       - name: Package artifact (unix)
         if: runner.os != 'Windows'
         run: |
-          cd target/${{ matrix.target }}/release
-          tar czf ../../../lit-${{ github.ref_name }}-${{ matrix.target }}.tar.gz ${{ matrix.artifact }}
+          mkdir release-package
+          cp target/${{ matrix.target }}/release/${{ matrix.artifact }} LICENSE release-package/
+          tar -czf "lit-${RELEASE_TAG}-${{ matrix.target }}.tar.gz" -C release-package ${{ matrix.artifact }} LICENSE
 
       - name: Package artifact (windows)
         if: runner.os == 'Windows'
         run: |
-          cd target/${{ matrix.target }}/release
-          Compress-Archive -Path ${{ matrix.artifact }} -DestinationPath ../../../lit-${{ github.ref_name }}-${{ matrix.target }}.zip
+          Compress-Archive -LiteralPath 'target/${{ matrix.target }}/release/${{ matrix.artifact }}', 'LICENSE' -DestinationPath "lit-$env:RELEASE_TAG-${{ matrix.target }}.zip"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -91,6 +93,10 @@ jobs:
         with:
           path: artifacts
           merge-multiple: true
+
+      - name: Generate asset checksums
+        working-directory: artifacts
+        run: sha256sum -- *.tar.gz *.zip > SHA256SUMS
 
       - name: Create release
         uses: softprops/action-gh-release@v2
