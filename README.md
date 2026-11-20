@@ -301,6 +301,9 @@ python3 tools/task_broker_workspace.py --lit "$lit_binary" seed \
   "$git_seed" "$lit_source" --base "$assigned_git_base"
 ```
 
+For a deletion, remove the tracked file and stage its path with
+`lit add <path>` before committing.
+
 After committing one proposal directly above the pin, run the broker
 client's `propose` route with `--workspace "$attempt" --lit "$lit_binary"`.
 Send the assignment binding and request ID on stdin. The client verifies

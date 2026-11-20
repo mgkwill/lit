@@ -6,6 +6,7 @@ from importlib.util import module_from_spec, spec_from_file_location
 import io
 import json
 from pathlib import Path
+import subprocess
 import sys
 import tempfile
 from unittest.mock import patch
@@ -13,7 +14,7 @@ from unittest.mock import patch
 from workspace_regression import create_git, git
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
-from task_broker_workspace import committed_changes, install_source, proposal_from_workspace, run_lit
+from task_broker_workspace import install_source, proposal_from_workspace, run_lit
 
 
 def exercise(binary, root):
@@ -36,7 +37,13 @@ def exercise(binary, root):
     (workspace / "nested").mkdir()
     (workspace / "nested/binary").write_bytes(b"\0\xff")
     (workspace / "mode").chmod(0o755)
-    run_lit(binary, workspace, "add", "mode", "nested/binary")
+    (workspace / "remove").unlink()
+    unknown = subprocess.run(
+        (binary, "--json", "add", "remove", "never-tracked"), cwd=workspace,
+        stdin=subprocess.DEVNULL, capture_output=True, timeout=180,
+    )
+    assert unknown.returncode == 1 and json.loads(unknown.stderr)["error"]["code"] == "REF_NOT_FOUND"
+    run_lit(binary, workspace, "add", "mode", "nested/binary", "remove")
     commit = run_lit(binary, workspace, "commit", "-m", "proposal")
     (workspace / "not-committed").write_text("ignored")
     result = proposal_from_workspace(binary, workspace, base)
@@ -45,6 +52,7 @@ def exercise(binary, root):
         {"path": "mode", "mode": "100755"},
         {"path": "nested/binary", "mode": "100644", "encoding": "base64",
          "content": base64.b64encode(b"\0\xff").decode()},
+        {"path": "remove", "delete": True},
     ]
     for wrong, msg in (("a" * 40, "does not match"), ("HEAD", "full Git SHA-1")):
         try:
@@ -60,10 +68,6 @@ def exercise(binary, root):
         assert "one proposal commit" in str(error)
     else:
         raise AssertionError("Multiple commits accepted")
-
-    git(seed, "rm", "remove")
-    git(seed, "commit", "-m", "delete")
-    assert committed_changes(seed, base, git(seed, "rev-parse", "HEAD")) == [{"path": "remove", "delete": True}]
 
 
 def exercise_partial_burst():

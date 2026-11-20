@@ -2,7 +2,8 @@ use crate::core::{find_repo_root, Blob, Object};
 use crate::response::AddResponse;
 use crate::storage::{Index, ObjectStore};
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::io::ErrorKind;
+use std::path::{Component, Path, PathBuf};
 use walkdir::WalkDir;
 
 pub fn execute(files: Vec<String>) -> Result<AddResponse, crate::errors::LitError> {
@@ -34,10 +35,11 @@ pub(super) fn execute_locked(
             };
 
             if !full_path.exists() {
-                return Err(format!("File not found: {}", file_pattern).into());
-            }
-
-            if full_path.is_dir() {
+                if !stage_deleted_file(repo_root, &full_path, &mut index) {
+                    return Err(format!("File not found: {}", file_pattern).into());
+                }
+                total_added += 1;
+            } else if full_path.is_dir() {
                 total_added += add_directory(repo_root, &full_path, &store, &mut index)?;
             } else {
                 add_file(repo_root, &full_path, &store, &mut index)?;
@@ -50,6 +52,28 @@ pub(super) fn execute_locked(
 
     Ok(AddResponse {
         files_added: total_added,
+    })
+}
+
+fn stage_deleted_file(repo_root: &Path, file_path: &Path, index: &mut Index) -> bool {
+    if !matches!(fs::symlink_metadata(file_path), Err(error) if error.kind() == ErrorKind::NotFound)
+    {
+        return false;
+    }
+    let Ok(relative) = file_path.strip_prefix(repo_root) else {
+        return false;
+    };
+    if !relative
+        .components()
+        .all(|part| matches!(part, Component::Normal(_)))
+    {
+        return false;
+    }
+    let normalized: PathBuf = relative.components().collect();
+    normalized.to_str().is_some_and(|path| {
+        index
+            .remove(&path.replace(std::path::MAIN_SEPARATOR, "/"))
+            .is_some()
     })
 }
 
