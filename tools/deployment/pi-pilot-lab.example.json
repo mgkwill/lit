@@ -1,0 +1,25 @@
+{
+  "hosts": {
+    "worker": {
+      "destination": "worker",
+      "hostname": "worker.example.test",
+      "host_key_alias": "worker",
+      "known_hosts": "/private/path/known_hosts",
+      "worker_user": "lit-task-worker"
+    },
+    "broker": {
+      "destination": "broker"
+    }
+  },
+  "broker_hosts": ["broker"],
+  "rules": {"main": 101, "freeze": 102, "namespace": 103},
+  "worker_root": "/tmp/lit-live-pinned-pi-example",
+  "broker_config": "/etc/lit-task-broker/config.json",
+  "broker_unit": "lit-task-broker.service",
+  "scheduler_certificate": "/private/path/scheduler.crt",
+  "scheduler_key": "/private/path/scheduler.key",
+  "server_ca": "/private/path/server-ca.crt",
+  "lit_binary": "/private/path/lit",
+  "workflow": ".github/workflows/agent-merge-gate.yml",
+  "required_check": "Agent workflow candidate"
+}

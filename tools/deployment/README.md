@@ -131,21 +131,39 @@ trust in their existing `ca.crt` files.
 ### Resumable Pi cohorts
 
 On the trusted controller, provision the worker runtimes and broker identities,
-then create a private state directory with `plan.json` and the lab's
-`adapter.py`. Run the same command after a controller interruption.
+then create a private state directory with `plan.json` and `lab.json`. Use
+the [example lab profile](pi-pilot-lab.example.json) to configure SSH aliases,
+the broker placement, and the sandbox ruleset IDs. Run the same command after
+a controller interruption. The checked-in adapter resolves its worker scripts
+from its own checkout, so the command can run from any working directory.
 
 ```sh
 python3 tools/pi_pilot.py --state /path/to/private-pilot-state
 ```
 
-The plan contains the Git pin and initial `agents`, a `handoffs` map from
-old worker ID to replacement worker ID, `overlaps` as pairs of initial
-worker IDs, and the temporary queue `build_capacity`. The adapter's
-`open_lab(state, plan)` supplies worker transport, scoped claim queries,
-GitHub policy operations, the integration audit, and cleanup verification.
-Keep TLS keys and assignment capabilities in the lab's credential stores.
+The plan contains the sandbox repository and broker endpoint, the Git pin
+and initial `agents`, a `handoffs` map from old worker ID to replacement
+worker ID, `overlaps` as pairs of initial worker IDs, and the temporary
+queue `build_capacity`. Keep the operator TLS files in their credential
+store. On each worker, provision the scoped certificates, Pi and Node,
+the MIT-derived Lit binary, the trusted broker client, and the original Git
+pin in the configured run root. The private state directory also holds
+`principals.json` for the enrolled worker identities and `policy-before.json`
+for the original `main`, `freeze`, and `namespace` rulesets.
 
-The command pins the plan and adapter digest in its journal. It adopts a
+An optional `publication_window` limits concurrent frozen refs. All coding
+agents still start in one cohort. Each window publishes, integrates, and
+releases its terminal branch freezes before the next window publishes. Keep
+both workers in each handoff or overlap pair in the same window.
+
+Set an operation's `workload` to `source` to exercise Python source functions
+under `qualification/<run>/<work_unit>/policy.py`. The checker interprets a
+bounded subset of Python and verifies the assigned functions. It compares
+their syntax trees to check that a conflict repair preserves prior functions.
+
+The command pins the plan, lab profile, and adapter sources in its journal.
+For older runs, it can still load the journal's original private `adapter.py`.
+It adopts a
 matching broker generation after an interrupted reassignment, and confirms
 that the prior PR retired before attaching the successor. Cleanup restores
 policy and enrollment, saves denial checks before removing worker directories,
