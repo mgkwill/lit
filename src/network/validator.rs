@@ -54,7 +54,11 @@ impl NetworkConfig {
 
     /// Get the config file path
     fn config_path() -> Result<PathBuf, String> {
-        let home = dirs::home_dir().ok_or("Could not find home directory")?;
+        let home = std::env::var_os("HOME")
+            .map(PathBuf::from)
+            .filter(|path| path.is_absolute())
+            .or_else(dirs::home_dir)
+            .ok_or("Could not find home directory")?;
         Ok(home.join(".litconfig"))
     }
 
