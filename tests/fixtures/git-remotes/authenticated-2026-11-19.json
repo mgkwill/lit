@@ -1,0 +1,143 @@
+{
+  "authenticated_integration": {
+    "command": "python3 tests/authenticated_git_remote_regression.py <candidate>",
+    "hosted_github_actions_policy_readback": {
+      "bypass_actors": [],
+      "check": [
+        {
+          "context": "Agent workflow candidate",
+          "integration_id": 15368
+        }
+      ],
+      "enforcement": "active",
+      "id": 27439049
+    },
+    "operations": [
+      "clone",
+      "fetch",
+      "pull",
+      "push",
+      "no-op push",
+      "non-fast-forward refusal",
+      "Git ancestry and tag round trip"
+    ],
+    "optimized_binary_runs": {
+      "host-e": {
+        "arch": "aarch64",
+        "candidate_sha256": "987a743c75e3f6a397060f6b1cdbbd3665a2dd71497436f6aa114083e5e52302",
+        "https": {
+          "airgap_zero_network_and_helper_calls": true,
+          "askpass_received_repository_path": true,
+          "git_posts": {
+            "git-receive-pack": 2,
+            "git-upload-pack": 13
+          },
+          "rejected_tls_peer_and_name": true,
+          "wrong_credential_refused": true
+        },
+        "os": "Linux",
+        "ssh": {
+          "airgap_zero_ssh_connections": true,
+          "git_sessions": {
+            "git-receive-pack": 4,
+            "git-upload-pack": 7
+          },
+          "untrusted_and_changed_host_key_refused": true,
+          "wrong_user_key_refused": true
+        }
+      },
+      "host-f": {
+        "arch": "aarch64",
+        "candidate_sha256": "987a743c75e3f6a397060f6b1cdbbd3665a2dd71497436f6aa114083e5e52302",
+        "https": {
+          "airgap_zero_network_and_helper_calls": true,
+          "askpass_received_repository_path": true,
+          "git_posts": {
+            "git-receive-pack": 2,
+            "git-upload-pack": 13
+          },
+          "rejected_tls_peer_and_name": true,
+          "wrong_credential_refused": true
+        },
+        "os": "Linux",
+        "ssh": {
+          "airgap_zero_ssh_connections": true,
+          "git_sessions": {
+            "git-receive-pack": 4,
+            "git-upload-pack": 7
+          },
+          "untrusted_and_changed_host_key_refused": true,
+          "wrong_user_key_refused": true
+        }
+      },
+      "macos": {
+        "arch": "arm64",
+        "candidate_sha256": "ba88bfeff137f6cf68fa976701d7e7ac0684e75a8d8b8b80f5969e49133bd028",
+        "https": {
+          "airgap_zero_network_and_helper_calls": true,
+          "askpass_received_repository_path": true,
+          "git_posts": {
+            "git-receive-pack": 2,
+            "git-upload-pack": 13
+          },
+          "rejected_tls_peer_and_name": true,
+          "wrong_credential_refused": true
+        },
+        "os": "Darwin",
+        "ssh": {
+          "airgap_zero_ssh_connections": true,
+          "git_sessions": {
+            "git-receive-pack": 4,
+            "git-upload-pack": 7
+          },
+          "untrusted_and_changed_host_key_refused": true,
+          "wrong_user_key_refused": true
+        }
+      }
+    },
+    "scope": "Disposable loopback Git smart HTTPS with HTTP Basic authentication and pinned CA, plus OpenSSH with public-key-only authentication and pinned host keys."
+  },
+  "existing_remote_regression": {
+    "host-e": [
+      "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+      "lit://: native first push and bare clone",
+      "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+      "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+      "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+    ],
+    "host-f": [
+      "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+      "lit://: native first push and bare clone",
+      "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+      "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+      "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+    ],
+    "macos": [
+      "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+      "lit://: native first push and bare clone",
+      "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+      "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+      "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+    ]
+  },
+  "mit_baseline": "98c59bb2dbebcf7f575993a4ad89e1300a578c83",
+  "reference": {
+    "macos_sha256": "e3911cf93c366a9d1c40792fb280d4cea5e5f073eccfdfcf16ae6f74026b7d16",
+    "observations": [
+      "v1.8.0 Git file clone/fetch/pull/push exits: [1, 1, 1, 1]",
+      "v1.8.0 Git http clone/fetch/pull/push exits: [1, 1, 1, 1]"
+    ],
+    "version": "lit 1.8.0"
+  },
+  "rust_release_suite": {
+    "linux": {
+      "ignored": 0,
+      "passed": 486
+    },
+    "macos": {
+      "ignored": 0,
+      "passed": 486
+    }
+  },
+  "tested_commit": "b705e961e40f6a2613113d554a659f0565902a4d"
+}
