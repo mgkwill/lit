@@ -1,0 +1,139 @@
+{
+  "command": "python3 tests/workspace_regression.py <candidate>",
+  "github_sandbox_policy_readback": {
+    "bypass_actors": [],
+    "check": [
+      {
+        "context": "Agent workflow candidate",
+        "integration_id": 15368
+      }
+    ],
+    "enforcement": "active",
+    "id": 27439049
+  },
+  "mit_baseline": "98c59bb2dbebcf7f575993a4ad89e1300a578c83",
+  "reference_blackbox": {
+    "binary_sha256": "e3911cf93c366a9d1c40792fb280d4cea5e5f073eccfdfcf16ae6f74026b7d16",
+    "each_pinned_at_current_tip": true,
+    "single_working_directory": true,
+    "version": "lit 1.8.0",
+    "virtual_branches_created": 2
+  },
+  "repository_migration_smoke": [
+    "macos",
+    "host-e"
+  ],
+  "rust_release_suites": {
+    "linux-arm": {
+      "ignored": 0,
+      "passed": 486
+    },
+    "macos": {
+      "ignored": 0,
+      "passed": 486
+    }
+  },
+  "tested_commit": "74b0495aca0c01fd3e25d2d0fd58914acfd1177f",
+  "workspace_runs": {
+    "host-a": {
+      "arch": "x86_64",
+      "candidate_sha256": "22030531d09363920e9d37b0191e89d346a73039ec797989957718ee3aa7987d",
+      "concurrency": {
+        "independent_heads": 24,
+        "pinned_packed_history": true,
+        "source_unchanged": true,
+        "usable_without_source": true,
+        "workers": 24
+      },
+      "encryption": {
+        "credential_required": true,
+        "encrypted_object_and_index": true,
+        "independent_commit": true,
+        "independent_key": true
+      },
+      "os": "Linux",
+      "publication": {
+        "abbreviated_and_non_commit_bases_refused": true,
+        "empty_target_race_refused": true,
+        "escaping_symlink_refused": true,
+        "interruption_then_retry": true,
+        "same_destination_competing_creators": true
+      }
+    },
+    "host-e": {
+      "arch": "aarch64",
+      "candidate_sha256": "35365076d3e9d17b946bfd8c02d2e698e0f2417ec12870b0fb847f8a7ba28d54",
+      "concurrency": {
+        "independent_heads": 24,
+        "pinned_packed_history": true,
+        "source_unchanged": true,
+        "usable_without_source": true,
+        "workers": 24
+      },
+      "encryption": {
+        "credential_required": true,
+        "encrypted_object_and_index": true,
+        "independent_commit": true,
+        "independent_key": true
+      },
+      "os": "Linux",
+      "publication": {
+        "abbreviated_and_non_commit_bases_refused": true,
+        "empty_target_race_refused": true,
+        "escaping_symlink_refused": true,
+        "interruption_then_retry": true,
+        "same_destination_competing_creators": true
+      }
+    },
+    "host-f": {
+      "arch": "aarch64",
+      "candidate_sha256": "35365076d3e9d17b946bfd8c02d2e698e0f2417ec12870b0fb847f8a7ba28d54",
+      "concurrency": {
+        "independent_heads": 24,
+        "pinned_packed_history": true,
+        "source_unchanged": true,
+        "usable_without_source": true,
+        "workers": 24
+      },
+      "encryption": {
+        "credential_required": true,
+        "encrypted_object_and_index": true,
+        "independent_commit": true,
+        "independent_key": true
+      },
+      "os": "Linux",
+      "publication": {
+        "abbreviated_and_non_commit_bases_refused": true,
+        "empty_target_race_refused": true,
+        "escaping_symlink_refused": true,
+        "interruption_then_retry": true,
+        "same_destination_competing_creators": true
+      }
+    },
+    "macos": {
+      "arch": "arm64",
+      "candidate_sha256": "19fdb70e0ab4e0cd2735a9d55ac05215434e794633fe6123e7dbc65d3b9a4d06",
+      "concurrency": {
+        "independent_heads": 24,
+        "pinned_packed_history": true,
+        "source_unchanged": true,
+        "usable_without_source": true,
+        "workers": 24
+      },
+      "encryption": {
+        "credential_required": true,
+        "encrypted_object_and_index": true,
+        "independent_commit": true,
+        "independent_key": true
+      },
+      "os": "Darwin",
+      "publication": {
+        "abbreviated_and_non_commit_bases_refused": true,
+        "empty_target_race_refused": true,
+        "escaping_symlink_refused": true,
+        "interruption_then_retry": true,
+        "same_destination_competing_creators": true
+      }
+    }
+  }
+}
