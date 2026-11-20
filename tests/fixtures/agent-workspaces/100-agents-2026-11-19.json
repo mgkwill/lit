@@ -1,0 +1,208 @@
+{
+  "host_a_authenticated_remote_regression": {
+    "arch": "x86_64",
+    "candidate_sha256": "96bcdfaa78fa56475edad329b587e4200decded1e3373c087275d9c1f93b1007",
+    "https": {
+      "airgap_zero_network_and_helper_calls": true,
+      "askpass_received_repository_path": true,
+      "git_posts": {
+        "git-receive-pack": 2,
+        "git-upload-pack": 13
+      },
+      "read_only_credential_qualified": true,
+      "rejected_tls_peer_and_name": true,
+      "wrong_credential_refused": true
+    },
+    "os": "Linux",
+    "ssh": {
+      "airgap_zero_ssh_connections": true,
+      "git_sessions": {
+        "writer:git-receive-pack": 4,
+        "writer:git-upload-pack": 7
+      },
+      "read_only_credential_qualified": true,
+      "untrusted_and_changed_host_key_refused": true,
+      "wrong_user_key_refused": true
+    }
+  },
+  "command": "python3 tests/workspace_regression.py <candidate> --workers 100",
+  "git_identity_failure_before_fix": {
+    "error": {
+      "code": "GENERAL_ERROR",
+      "message": "Git pull requires a fast-forward. Fetch and integrate the tracking branch explicitly.",
+      "suggestions": []
+    },
+    "expected_native_base_still_head": true,
+    "fast_forward": false,
+    "pull_exit": 1
+  },
+  "github_sandbox_policy_readback": {
+    "bypass_actors": [],
+    "check": [
+      {
+        "context": "Agent workflow candidate",
+        "integration_id": 15368
+      }
+    ],
+    "enforcement": "active",
+    "id": 27439049
+  },
+  "handoff_fixture": "A disposable Git repository accepts proposal branches and denies direct main updates. Two workspaces publish edits to the same nested file.",
+  "rust_release_suites": {
+    "host-a": {
+      "ignored": 0,
+      "passed": 486
+    },
+    "linux-arm": {
+      "ignored": 0,
+      "passed": 486
+    },
+    "macos": {
+      "ignored": 0,
+      "passed": 486
+    }
+  },
+  "tested_commit": "6daf65302f0b93212834d3365f53b02fae04267d",
+  "workspace_and_git_handoff_runs": {
+    "host-a": {
+      "arch": "x86_64",
+      "candidate_sha256": "96bcdfaa78fa56475edad329b587e4200decded1e3373c087275d9c1f93b1007",
+      "concurrency": {
+        "independent_heads": 100,
+        "pinned_packed_history": true,
+        "source_unchanged": true,
+        "usable_without_source": true,
+        "workers": 100
+      },
+      "encryption": {
+        "credential_required": true,
+        "encrypted_object_and_index": true,
+        "independent_commit": true,
+        "independent_key": true
+      },
+      "git_handoff": {
+        "exact_git_parent_preserved": true,
+        "proposal_branches": 2,
+        "protected_main_push_refused": true,
+        "same_path_conflict_preserved": true
+      },
+      "git_identity_roundtrip": {
+        "previously_exported_base_fast_forwards": true,
+        "unreachable_git_identity_excluded": true
+      },
+      "os": "Linux",
+      "publication": {
+        "abbreviated_and_non_commit_bases_refused": true,
+        "empty_target_race_refused": true,
+        "escaping_symlink_refused": true,
+        "interruption_then_retry": true,
+        "same_destination_competing_creators": true
+      }
+    },
+    "host-e": {
+      "arch": "aarch64",
+      "candidate_sha256": "a104152ff07bf8d8ef31d198bc4c603b89fe24820758cb57db4ea97a962771e2",
+      "concurrency": {
+        "independent_heads": 100,
+        "pinned_packed_history": true,
+        "source_unchanged": true,
+        "usable_without_source": true,
+        "workers": 100
+      },
+      "encryption": {
+        "credential_required": true,
+        "encrypted_object_and_index": true,
+        "independent_commit": true,
+        "independent_key": true
+      },
+      "git_handoff": {
+        "exact_git_parent_preserved": true,
+        "proposal_branches": 2,
+        "protected_main_push_refused": true,
+        "same_path_conflict_preserved": true
+      },
+      "git_identity_roundtrip": {
+        "previously_exported_base_fast_forwards": true,
+        "unreachable_git_identity_excluded": true
+      },
+      "os": "Linux",
+      "publication": {
+        "abbreviated_and_non_commit_bases_refused": true,
+        "empty_target_race_refused": true,
+        "escaping_symlink_refused": true,
+        "interruption_then_retry": true,
+        "same_destination_competing_creators": true
+      }
+    },
+    "host-f": {
+      "arch": "aarch64",
+      "candidate_sha256": "a104152ff07bf8d8ef31d198bc4c603b89fe24820758cb57db4ea97a962771e2",
+      "concurrency": {
+        "independent_heads": 100,
+        "pinned_packed_history": true,
+        "source_unchanged": true,
+        "usable_without_source": true,
+        "workers": 100
+      },
+      "encryption": {
+        "credential_required": true,
+        "encrypted_object_and_index": true,
+        "independent_commit": true,
+        "independent_key": true
+      },
+      "git_handoff": {
+        "exact_git_parent_preserved": true,
+        "proposal_branches": 2,
+        "protected_main_push_refused": true,
+        "same_path_conflict_preserved": true
+      },
+      "git_identity_roundtrip": {
+        "previously_exported_base_fast_forwards": true,
+        "unreachable_git_identity_excluded": true
+      },
+      "os": "Linux",
+      "publication": {
+        "abbreviated_and_non_commit_bases_refused": true,
+        "empty_target_race_refused": true,
+        "escaping_symlink_refused": true,
+        "interruption_then_retry": true,
+        "same_destination_competing_creators": true
+      }
+    },
+    "macos": {
+      "arch": "arm64",
+      "candidate_sha256": "a72cf8fa9c102cb8fb248ff85c0a1a7e9f6f2ec5dfc632ea06849c0e30f76107",
+      "concurrency": {
+        "independent_heads": 100,
+        "pinned_packed_history": true,
+        "source_unchanged": true,
+        "usable_without_source": true,
+        "workers": 100
+      },
+      "encryption": {
+        "credential_required": true,
+        "encrypted_object_and_index": true,
+        "independent_commit": true,
+        "independent_key": true
+      },
+      "git_handoff": {
+        "exact_git_parent_preserved": true,
+        "proposal_branches": 2,
+        "protected_main_push_refused": true,
+        "same_path_conflict_preserved": true
+      },
+      "git_identity_roundtrip": {
+        "previously_exported_base_fast_forwards": true,
+        "unreachable_git_identity_excluded": true
+      },
+      "os": "Darwin",
+      "publication": {
+        "abbreviated_and_non_commit_bases_refused": true,
+        "empty_target_race_refused": true,
+        "escaping_symlink_refused": true,
+        "interruption_then_retry": true,
+        "same_destination_competing_creators": true
+      }
+    }
+  }
+}
