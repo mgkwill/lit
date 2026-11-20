@@ -91,16 +91,22 @@ class GitHub:
               repository(owner:$owner,name:$repo) {
                 ref(qualifiedName:"refs/heads/main"){target{oid}}
                 pullRequest(number:$number) {
-                  id headRefOid headRefName baseRefName merged closed mergeable
+                  id headRefOid headRefName baseRefName merged mergedAt closed mergeable
                   headRepository{nameWithOwner} author{__typename login}
                   mergeCommit{oid}
                   mergeEvents:timelineItems(last:2,itemTypes:[MERGED_EVENT]) {
                     nodes { ... on MergedEvent { id createdAt mergeRefName commit{oid} } }
                   }
+                  closeEvents:timelineItems(last:2,itemTypes:[CLOSED_EVENT]) {
+                    nodes { ... on ClosedEvent {
+                      id createdAt actor{__typename login}
+                      closer{__typename ... on Commit{oid}}
+                    }}
+                  }
                   mergeQueueEntry{id state headCommit{oid}}
                   queueEvents:timelineItems(last:1,itemTypes:[ADDED_TO_MERGE_QUEUE_EVENT,REMOVED_FROM_MERGE_QUEUE_EVENT,MERGED_EVENT]) {
                     nodes { __typename ... on RemovedFromMergeQueueEvent {
-                      id reason actor{__typename login}
+                      id reason createdAt actor{__typename login} beforeCommit{oid} pullRequest{id}
                     }}
                   }
                 }
@@ -281,21 +287,53 @@ def conflict_proof(github, manifest, spec, main, args):
                 "git_conflict_sha256": hashlib.sha256(result.stdout.encode()).hexdigest()}
 
 
+def merge_record(pr):
+    merges = pr.get('mergeEvents', {}).get('nodes', [])
+    if merges:
+        if len(merges) == 1 and merges[0] and merges[0].get('mergeRefName') in ('main', 'refs/heads/main'):
+            return merges[0], None
+        return None, None
+
+    def queue_bot(event):
+        actor = (event or {}).get('actor') or {}
+        return actor == {'__typename': 'Bot', 'login': 'github-merge-queue'}
+
+    merged_at = pr.get('mergedAt')
+    if not merged_at:
+        return None, None
+    closures = [event for event in pr.get('closeEvents', {}).get('nodes', [])
+                if queue_bot(event) and isinstance(event.get('createdAt'), str)
+                and event['createdAt'] >= merged_at
+                and (event.get('closer') or {}).get('__typename') == 'Commit']
+    removals = pr.get('queueEvents', {}).get('nodes', [])
+    if len(closures) != 1 or len(removals) != 1 or not queue_bot(removals[0]):
+        return None, None
+    removal = removals[0]
+    if (removal.get('__typename') != 'RemovedFromMergeQueueEvent' or removal.get('reason') != 'merged'
+            or removal.get('createdAt') != merged_at or not removal.get('id')
+            or (removal.get('pullRequest') or {}).get('id') != pr['id']):
+        return None, None
+    closure = closures[0]
+    return {'id': closure.get('id'), 'createdAt': merged_at,
+            'closedAt': closure['createdAt'], 'commit': closure['closer']}, removal
+
+
 def integration_evidence(github, manifest, spec, snapshot, args):
     """Prove a frozen proposal landed on main and Actions checked that exact merge."""
     repo = manifest['repo']
     pr = snapshot['pullRequest']
     if not pr or not identity(repo, spec, pr) or not pr['merged'] or pr['mergeQueueEntry']:
         return None, 'merge_identity_unconfirmed'
-    events = pr.get('mergeEvents', {}).get('nodes', [])
-    if len(events) != 1 or not events[0]:
+    event, removal = merge_record(pr)
+    if not event or not event.get('id'):
         return None, 'merge_event_unconfirmed'
-    event = events[0]
-    merge = (event.get('commit') or {}).get('oid', '')
-    if event.get('mergeRefName') not in ('main', 'refs/heads/main') or not event.get('id'):
-        return None, 'merge_event_unconfirmed'
+    event_commit = (event.get('commit') or {}).get('oid', '')
+    # GitHub can report the preceding PR's merge in the closure. The queue
+    # removal identifies this proposal's integration candidate.
+    merge = (removal.get('beforeCommit') or {}).get('oid', '') if removal else event_commit
     main = snapshot['ref']['target']['oid']
-    if not all(isinstance(oid, str) and re.fullmatch(r'[0-9a-f]{40}', oid) for oid in (main, merge)):
+    if not all(isinstance(oid, str) and re.fullmatch(r'[0-9a-f]{40}', oid)
+               for oid in (main, merge, event_commit)):
         return None, 'merge_event_unconfirmed'
     check = github.actions_check(repo, merge, 'merge_group')
     if not check or not check['check_run_id']:
@@ -313,10 +351,10 @@ def integration_evidence(github, manifest, spec, snapshot, args):
                 observed = True
             if observed and len(parents) == 2 and parents[1] == spec['head']:
                 matches.append((commit, parents[0]))
-        if len(matches) != 1 or matches[0][0] != merge:
+        if len(matches) != 1 or matches[0][0] != merge or (removal and event_commit not in matches[0]):
             return None, 'git_history_unconfirmed'
     summary = (pr.get('mergeCommit') or {}).get('oid')
-    return {
+    receipt = {
         'version': 1, 'repository': repo, 'number': spec['number'],
         'proposal': spec, 'pull_request_id': pr['id'], 'base_ref': 'refs/heads/main',
         'observed_main': main, 'merge_commit': merge, 'first_parent': matches[0][1],
@@ -324,7 +362,11 @@ def integration_evidence(github, manifest, spec, snapshot, args):
         'forge_summary_commit': summary,
         'forge_summary_matches': None if summary is None else summary == merge,
         'actions': check, 'verified_at': time.time(),
-    }, None
+    }
+    if removal:
+        receipt.update(merge_event_kind='queue_closure', queue_closure_commit=event_commit,
+                       queue_closure_at=event['closedAt'], queue_removal_event_id=removal['id'])
+    return receipt, None
 
 
 def reconcile_integration(db, github, manifest, args):

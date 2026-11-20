@@ -24,6 +24,8 @@ class Forge:
         self.mergeable = "MERGEABLE"
         self.merged = False
         self.merge_event = None
+        self.merge_closed = None
+        self.merged_at = None
         self.merge_summary = None
         self.merge_check_head = None
         self.merge_check_event = 'merge_group'
@@ -266,9 +268,11 @@ class Forge:
                         "ref": {"target": {"oid": forge.main}},
                         "pullRequest": {"id": "PR_7", "headRefOid": p["head"],
                             "headRefName": p["branch"], "baseRefName": "main", "merged": forge.merged,
+                            "mergedAt": forge.merged_at,
                             "closed": forge.closed, "mergeable": forge.mergeable,
                             "mergeCommit": {"oid": forge.merge_summary} if forge.merge_summary else None,
                             "mergeEvents": {"nodes": [forge.merge_event] if forge.merge_event else []},
+                            "closeEvents": {"nodes": [forge.merge_closed] if forge.merge_closed else []},
                             "queueEvents":{"nodes":[forge.removal_event] if forge.removal_event else []},
                             "headRepository": {"nameWithOwner": "100latent/lit-merge-queue-sandbox"},
                             "author": {"__typename": forge.author_type,
@@ -440,6 +444,60 @@ class CoordinatorTests(unittest.TestCase):
         self.merged_fixture()
         self.remote.merge_event = None
         self.assert_integration_pending('merge_event_unconfirmed')
+
+    def native_queue_closure_fixture(self):
+        merge = self.merged_fixture()
+        merged_at = self.remote.merge_event['createdAt']
+        actor = {'__typename': 'Bot', 'login': 'github-merge-queue'}
+        self.remote.merge_event = None
+        self.remote.merged_at = merged_at
+        self.remote.merge_closed = {'id': 'closure-351', 'actor': actor, 'createdAt': merged_at,
+                                    'closer': {'__typename': 'Commit', 'oid': self.remote.merge_summary}}
+        self.remote.removal_event = {'__typename': 'RemovedFromMergeQueueEvent', 'reason': 'merged',
+                                     'id': 'queue-removal-351', 'actor': actor, 'createdAt': merged_at,
+                                     'beforeCommit': {'oid': merge},
+                                     'pullRequest': {'id': 'PR_7'}}
+        return merge
+
+    def test_native_queue_closure_and_removal_prove_pr_351_integration(self):
+        merge = self.native_queue_closure_fixture()
+        self.tick()
+        integration = self.cli('status')[0]['proposals'][0]['integration']
+        self.assertEqual(integration['state'], 'verified')
+        receipt = integration['receipt']
+        self.assertEqual(receipt['merge_commit'], merge)
+        self.assertEqual(receipt['merge_event_kind'], 'queue_closure')
+        self.assertEqual(receipt['merge_event_id'], 'closure-351')
+        self.assertEqual(receipt['queue_closure_commit'], receipt['first_parent'])
+        self.assertEqual(receipt['queue_removal_event_id'], 'queue-removal-351')
+        self.assertEqual(receipt['actions']['check_run_id'], 5010)
+        self.assertEqual(self.remote.mutations, [])
+
+    def test_queue_closure_requires_native_removal(self):
+        self.native_queue_closure_fixture()
+        self.remote.removal_event['actor'] = {'__typename': 'User', 'login': 'github-merge-queue'}
+        self.assert_integration_pending('merge_event_unconfirmed')
+
+    def test_pr_400_closure_after_native_removal_can_verify_integration(self):
+        merge = self.native_queue_closure_fixture()
+        self.remote.merge_closed['createdAt'] = '2026-11-18T16:42:16Z'
+        self.tick()
+        integration = self.cli('status')[0]['proposals'][0]['integration']
+        self.assertEqual(integration['state'], 'verified')
+        receipt = integration['receipt']
+        self.assertEqual(receipt['merge_commit'], merge)
+        self.assertEqual(receipt['merged_at'], self.remote.merged_at)
+        self.assertEqual(receipt['queue_closure_at'], self.remote.merge_closed['createdAt'])
+
+    def test_queue_closure_requires_merge_or_first_parent(self):
+        self.native_queue_closure_fixture()
+        self.remote.merge_closed['closer']['oid'] = '0' * 40
+        self.assert_integration_pending('git_history_unconfirmed')
+
+    def test_queue_closure_requires_exact_integration_actions(self):
+        self.native_queue_closure_fixture()
+        self.remote.merge_check_head = self.remote.merge_summary
+        self.assert_integration_pending('actions_check_unconfirmed')
 
     def tick(self, expected=0, token="good", extra=(), observer=""):
         result = subprocess.run(self.run_args() + list(extra), text=True, capture_output=True, timeout=20,
