@@ -1,0 +1,481 @@
+{
+  "repository": "100latent/lit-merge-queue-sandbox",
+  "campaign": "pinned-pi-8732fed2",
+  "git_base": "0c395bc2447b59f0a3223c4bf17c71a45d7a21a6",
+  "mit_baseline": "98c59bb2dbebcf7f575993a4ad89e1300a578c83",
+  "source_boundary": "MIT baseline and independently authored recovery code. Post-MIT upstream was black-box.",
+  "worker_source_commit": "30a8d1dbc3b5a5b03aede2bec09bbc7fe3880549",
+  "worker_source_sha256": "1f53be1dcbd92e8959bd810ef64f93f2b6171a9a44e1c69a5f013da5427ddace",
+  "pi_version": "1.5.2",
+  "node_version": "v22.23.5",
+  "runtime_readiness": [
+    {
+      "host": "host-a",
+      "node": "v22.23.5",
+      "pi": "1.5.2",
+      "node_archive_sha256": "cdeb8670a0c81f51b4dc4ac61919f9b1ad917b304bf8221eb939570663d240f8",
+      "lit_binary_sha256": "a210f9fdc2817a5494fd319b67f8ff46558e706569166839c1f3a1ea48c03d20",
+      "seed": {
+        "git_base": "0c395bc2447b59f0a3223c4bf17c71a45d7a21a6",
+        "lit_base": "2bf101266d15fa238f6669ad3bafca52f33e1547da15f6e8762b3668599e558254deecf696888e49e51173a86d0256db2325196a77be0b6b91653199233b9fc68de5bcc310b5482ab0a796fc53c93c3e072d39ddfbe62d9568bdfd4f7febc956"
+      }
+    },
+    {
+      "host": "host-e",
+      "node": "v22.23.5",
+      "pi": "1.5.2",
+      "node_archive_sha256": "2babb9eb5264860d540849f4b064a6fbdebcdc323657d9d382ce23d313fd5e09",
+      "lit_binary_sha256": "e428f4bad9e2af31ca5d6fdb604b806f16a855335ed19da95ed59b18b79e11c2",
+      "seed": {
+        "git_base": "0c395bc2447b59f0a3223c4bf17c71a45d7a21a6",
+        "lit_base": "2bf101266d15fa238f6669ad3bafca52f33e1547da15f6e8762b3668599e558254deecf696888e49e51173a86d0256db2325196a77be0b6b91653199233b9fc68de5bcc310b5482ab0a796fc53c93c3e072d39ddfbe62d9568bdfd4f7febc956"
+      }
+    },
+    {
+      "host": "host-f",
+      "node": "v22.23.5",
+      "pi": "1.5.2",
+      "node_archive_sha256": "2babb9eb5264860d540849f4b064a6fbdebcdc323657d9d382ce23d313fd5e09",
+      "lit_binary_sha256": "e428f4bad9e2af31ca5d6fdb604b806f16a855335ed19da95ed59b18b79e11c2",
+      "seed": {
+        "git_base": "0c395bc2447b59f0a3223c4bf17c71a45d7a21a6",
+        "lit_base": "2bf101266d15fa238f6669ad3bafca52f33e1547da15f6e8762b3668599e558254deecf696888e49e51173a86d0256db2325196a77be0b6b91653199233b9fc68de5bcc310b5482ab0a796fc53c93c3e072d39ddfbe62d9568bdfd4f7febc956"
+      }
+    }
+  ],
+  "all_inference_host": "host-a",
+  "hosta_runtime": {
+    "serving_host": "host-a",
+    "runtime_image": "vllm/vllm-openai:v0.32.0",
+    "api_aliases": [
+      "qwen3.8-27b-nvfp4",
+      "model-under-test"
+    ],
+    "local_gpu_worker_processes": 2,
+    "port": 8002
+  },
+  "accepted_episodes": [
+    {
+      "pr": 434,
+      "worker_host": "host-a",
+      "generation": 1,
+      "task": "pinned-pi-8732fed2-route",
+      "execution": {
+        "model": "model-under-test",
+        "provider": "pilot-local",
+        "inference_host": "host-a",
+        "inference_address": "127.0.0.1",
+        "filesystem_child_process_and_other_tcp_ports_denied": true,
+        "tool_calls": {
+          "write": 1
+        },
+        "assistant_turns": 3,
+        "duration_seconds": 3.33,
+        "transcript_sha256": "1e5f19733d2e89b88478c8a5ada32026bc2c6a3d9fdcbd275c1928bf37b36f94"
+      },
+      "usage": {
+        "input": 4900,
+        "output": 441,
+        "totalTokens": 5341
+      },
+      "local_cases": 4,
+      "file_sha256": "e7c26d5b41d63c272102346cd93bc04708b704cf8c0a51a6d414f6ed01374aa0",
+      "git_head": "3d80516257261d9a895bc036994e737019f079fd",
+      "workspace_base": "0c395bc2447b59f0a3223c4bf17c71a45d7a21a6",
+      "workspace_tree": "d890e7b2ca04eda99bb06c84dbbf1e93459c6273"
+    },
+    {
+      "pr": 435,
+      "worker_host": "host-e",
+      "generation": 1,
+      "task": "pinned-pi-8732fed2-retry",
+      "execution": {
+        "model": "model-under-test",
+        "provider": "pilot-local",
+        "inference_host": "host-a",
+        "inference_address": "192.0.2.10",
+        "filesystem_child_process_and_other_tcp_ports_denied": true,
+        "tool_calls": {
+          "write": 1
+        },
+        "assistant_turns": 3,
+        "duration_seconds": 6.37,
+        "transcript_sha256": "3bcd84d7981c6b6163bc429ca7dbef6f68f8f45fe2c9a741a7b4fc60eba69ff7"
+      },
+      "usage": {
+        "input": 5282,
+        "output": 865,
+        "totalTokens": 6147
+      },
+      "local_cases": 7,
+      "file_sha256": "eddc45741e1a549a7225d52454908aa56cc35ec2ed7df22a53464ccce01bd1e6",
+      "git_head": "c90a9a15a721e95390ce85b3d590b9d057906e94",
+      "workspace_base": "0c395bc2447b59f0a3223c4bf17c71a45d7a21a6",
+      "workspace_tree": "ddc6e855107013ef33f2991d696a6c9e837cda97"
+    },
+    {
+      "pr": 436,
+      "worker_host": "host-f",
+      "generation": 1,
+      "task": "pinned-pi-8732fed2-load",
+      "execution": {
+        "model": "model-under-test",
+        "provider": "pilot-local",
+        "inference_host": "host-a",
+        "inference_address": "192.0.2.10",
+        "filesystem_child_process_and_other_tcp_ports_denied": true,
+        "tool_calls": {
+          "write": 1
+        },
+        "assistant_turns": 3,
+        "duration_seconds": 3.54,
+        "transcript_sha256": "cbf0bfe7fe71b6dc8769daabfeb0e0d0576c70e654f0dc188239feb38fc10594"
+      },
+      "usage": {
+        "input": 4752,
+        "output": 391,
+        "totalTokens": 5143
+      },
+      "local_cases": 6,
+      "file_sha256": "4167ecc490b15058411f1cec60ac4f688427de53ae19f9156fdb7248bc7c1587",
+      "git_head": "a8f02090dc15860286f9ab4c9804eefab93f8614",
+      "workspace_base": "0c395bc2447b59f0a3223c4bf17c71a45d7a21a6",
+      "workspace_tree": "dc2ee7b21561b76ff4fad69920d98e109a84bb4d"
+    },
+    {
+      "pr": 437,
+      "worker_host": "host-a",
+      "generation": 2,
+      "task": "pinned-pi-8732fed2-load",
+      "execution": {
+        "model": "model-under-test",
+        "provider": "pilot-local",
+        "inference_host": "host-a",
+        "inference_address": "127.0.0.1",
+        "filesystem_child_process_and_other_tcp_ports_denied": true,
+        "tool_calls": {
+          "write": 1
+        },
+        "assistant_turns": 3,
+        "duration_seconds": 2.32,
+        "transcript_sha256": "5716feea57c4fc09d1b793cb9386e21f5f9567508e238667c265cbbbee0e3441"
+      },
+      "usage": {
+        "input": 4705,
+        "output": 263,
+        "totalTokens": 4968
+      },
+      "local_cases": 6,
+      "file_sha256": "f0b158a07416ceb090eb891bf67cdebac13261da56e040333967db87221bf5d3",
+      "git_head": "26e4d2ed3db8bc627723538385f10697c61ebbf4",
+      "workspace_base": "0c395bc2447b59f0a3223c4bf17c71a45d7a21a6",
+      "workspace_tree": "767fced6f4c9e44a537657828cf0873f64a67434"
+    },
+    {
+      "pr": 438,
+      "worker_host": "host-e",
+      "generation": 2,
+      "task": "pinned-pi-8732fed2-retry",
+      "execution": {
+        "model": "model-under-test",
+        "provider": "pilot-local",
+        "inference_host": "host-a",
+        "inference_address": "192.0.2.10",
+        "filesystem_child_process_and_other_tcp_ports_denied": true,
+        "tool_calls": {
+          "read": 2,
+          "edit": 1
+        },
+        "assistant_turns": 4,
+        "duration_seconds": 4.7,
+        "transcript_sha256": "a775c7e8735142e56b40ea66ab62bf87503d687f5d36ea3ced94351193d7c1ca"
+      },
+      "usage": {
+        "input": 7317,
+        "output": 647,
+        "totalTokens": 7964
+      },
+      "local_cases": 11,
+      "file_sha256": "9d7f58097f4899526b06c25589bcab2fbc3dba1ce1892e6cf781085c74c6a2d8",
+      "git_head": "6dd69f38eff412a2e06ee9eec91dd5fa8c3fd511",
+      "workspace_base": "e21a690b1c43063e08c64b342ae6db76557b6911",
+      "workspace_tree": "28ae4fa6ed1fc60e293262fb4f55228d5722dad6"
+    }
+  ],
+  "broker_regressions_per_platform": {
+    "macos": 144,
+    "host-a": 144,
+    "host-e": 144,
+    "host-f": 144
+  },
+  "superseded_first_attempt": {
+    "closed_without_merge": [
+      431,
+      432,
+      433
+    ],
+    "sandbox_main_unchanged": true,
+    "original_policies_restored": true,
+    "identities_revoked": 3,
+    "reason": "all pilot inference must run on host-a"
+  },
+  "raw_evidence_path": "<private-path>",
+  "milestones": {
+    "reassignment": {
+      "old": 436,
+      "new": 437,
+      "old_host": "host-f",
+      "new_host": "host-a"
+    },
+    "overlap": {
+      "winning": 434,
+      "held": 435,
+      "fresh_base": "e21a690b1c43063e08c64b342ae6db76557b6911",
+      "resolution": 438
+    }
+  },
+  "independent_overlap_verification": {
+    "pr": 438,
+    "winning_function": "normalize_route",
+    "ast_preserved": true,
+    "new_function": "retry_budget",
+    "base": "e21a690b1c43063e08c64b342ae6db76557b6911"
+  },
+  "reassigned_queued_entry": {
+    "id": "MQE_lQDOVxXMNs8AAAABQlWr284ABY2lzgQqLDs",
+    "state": "QUEUED",
+    "headCommit": null
+  },
+  "stale_attempts": [
+    {
+      "pr": 436,
+      "publish": {
+        "exit": 1,
+        "result": {
+          "retryable": false,
+          "error": "assignment_revoked"
+        }
+      },
+      "register": {
+        "exit": 1,
+        "result": {
+          "retryable": false,
+          "error": "assignment_revoked"
+        }
+      },
+      "workspace": "bc4c4cafc8ea36526a1c59f0503e2590216acc8f"
+    },
+    {
+      "pr": 435,
+      "publish": {
+        "exit": 1,
+        "result": {
+          "retryable": false,
+          "error": "assignment_revoked"
+        }
+      },
+      "register": {
+        "exit": 1,
+        "result": {
+          "retryable": false,
+          "error": "assignment_revoked"
+        }
+      },
+      "workspace": "043e2b486311d9bf576474538d77bbd6632c4bbd"
+    }
+  ],
+  "proposal_checks": [
+    {
+      "pr": 436,
+      "proposal_sha": "a8f02090dc15860286f9ab4c9804eefab93f8614",
+      "check": {
+        "run_id": 44676349134,
+        "run_attempt": 1,
+        "check_suite_id": 120930038983,
+        "check_run_id": 136088992733,
+        "app_id": 15368,
+        "event": "pull_request"
+      }
+    },
+    {
+      "pr": 437,
+      "proposal_sha": "26e4d2ed3db8bc627723538385f10697c61ebbf4",
+      "check": {
+        "run_id": 44676818532,
+        "run_attempt": 1,
+        "check_suite_id": 120931265254,
+        "check_run_id": 136090507438,
+        "app_id": 15368,
+        "event": "pull_request"
+      }
+    },
+    {
+      "pr": 435,
+      "proposal_sha": "c90a9a15a721e95390ce85b3d590b9d057906e94",
+      "check": {
+        "run_id": 44676330756,
+        "run_attempt": 1,
+        "check_suite_id": 120929993484,
+        "check_run_id": 136088934291,
+        "app_id": 15368,
+        "event": "pull_request"
+      }
+    },
+    {
+      "pr": 438,
+      "proposal_sha": "6dd69f38eff412a2e06ee9eec91dd5fa8c3fd511",
+      "check": {
+        "run_id": 44677525101,
+        "run_attempt": 1,
+        "check_suite_id": 120933110645,
+        "check_run_id": 136092805486,
+        "app_id": 15368,
+        "event": "pull_request"
+      }
+    },
+    {
+      "pr": 434,
+      "proposal_sha": "3d80516257261d9a895bc036994e737019f079fd",
+      "check": {
+        "run_id": 44676312465,
+        "run_attempt": 1,
+        "check_suite_id": 120929946988,
+        "check_run_id": 136088876072,
+        "app_id": 15368,
+        "event": "pull_request"
+      }
+    }
+  ],
+  "integration": {
+    "main": "2f9f55b9ab09d6094b25d9a9f48f4d9d49e7e4c2",
+    "merged": [
+      {
+        "number": 434,
+        "head": "3d80516257261d9a895bc036994e737019f079fd",
+        "merge_commit": "e21a690b1c43063e08c64b342ae6db76557b6911",
+        "first_parent": "0c395bc2447b59f0a3223c4bf17c71a45d7a21a6",
+        "actions": {
+          "app_id": 15368,
+          "check_run_id": 136090535670,
+          "check_suite_id": 120931287455,
+          "event": "merge_group",
+          "run_attempt": 1,
+          "run_id": 44676827185
+        },
+        "merge_event_id": "ME_lADOVxXMNs8AAAABg7nB-M8AAAAIjXrt3Q"
+      },
+      {
+        "number": 437,
+        "head": "26e4d2ed3db8bc627723538385f10697c61ebbf4",
+        "merge_commit": "5aac4df39c424ba0d6d215b65877c5a410cfda8b",
+        "first_parent": "e21a690b1c43063e08c64b342ae6db76557b6911",
+        "actions": {
+          "app_id": 15368,
+          "check_run_id": 136092581004,
+          "check_suite_id": 120932932157,
+          "event": "merge_group",
+          "run_attempt": 1,
+          "run_id": 44677458617
+        },
+        "merge_event_id": "ME_lADOVxXMNs8AAAABg7qTQM8AAAAIjYC7Dw"
+      },
+      {
+        "number": 438,
+        "head": "6dd69f38eff412a2e06ee9eec91dd5fa8c3fd511",
+        "merge_commit": "2f9f55b9ab09d6094b25d9a9f48f4d9d49e7e4c2",
+        "first_parent": "5aac4df39c424ba0d6d215b65877c5a410cfda8b",
+        "actions": {
+          "app_id": 15368,
+          "check_run_id": 136094592523,
+          "check_suite_id": 120934547753,
+          "event": "merge_group",
+          "run_attempt": 1,
+          "run_id": 44678069090
+        },
+        "merge_event_id": "ME_lADOVxXMNs8AAAABg7u8k88AAAAIjYUGaQ"
+      }
+    ],
+    "retired": [
+      435,
+      436
+    ],
+    "final_tests": 17,
+    "winner_function_ast_preserved": true,
+    "verified_files": [
+      "qualification/pinned-pi-8732fed2/capacity.py",
+      "qualification/pinned-pi-8732fed2/routing.py"
+    ],
+    "manual_statuses": 0,
+    "git_fsck": true,
+    "actions_required_app": 15368,
+    "actions_audits": [
+      {
+        "run": 44676827185,
+        "check": 136090535670
+      },
+      {
+        "run": 44677458617,
+        "check": 136092581004
+      },
+      {
+        "run": 44678069090,
+        "check": 136094592523
+      }
+    ]
+  },
+  "post_run_verified": {
+    "head": "2f9f55b9ab09d6094b25d9a9f48f4d9d49e7e4c2",
+    "main_rules_exactly_restored": true,
+    "queue_empty": true,
+    "broker_healthy": true,
+    "five_proposal_records_survived_restart": true,
+    "worker_directories_absent": [
+      "host-a",
+      "host-e",
+      "host-f"
+    ]
+  },
+  "cleanup": {
+    "original_rules_restored": true,
+    "broker_healthy": true,
+    "identities_revoked": 3,
+    "revoked_identity_denied_on": [
+      "host-a",
+      "host-e",
+      "host-f"
+    ],
+    "temporary_worker_directories_removed": 3
+  },
+  "evidence_sha256": {
+    "host-a-broker-regression.log": "4a4ce8df7aebe13f423b3321fafaed26e197edc535a85460ca3f3120819d42a2",
+    "host-e-broker-regression.log": "69095970665315d30403b7537af81a4060ec9284fb73fbc3e4b678b391eac472",
+    "host-f-broker-regression.log": "8b61d2409c81163f0f1a3ef9d17ffe238a350d859c1b4c67108b18383ff7de15",
+    "hosta-inference-runtime.json": "c2ac6ccf30fe076eb7fa7f74a5f07c791af582ae0a36c25d9238182936e406c7",
+    "cleanup.json": "9adb35cf61651d54d2016fffb364ffacb5a2b7dfb4d16574f4a06df71c3f6cff",
+    "coding-initial-verified-trees.json": "5e43b3a9a4d9ca995ab9e1a26b2b3d55804fe1d00472f143b829a659c7e4caed",
+    "independent-conflict.json": "5b2f7454432469c8dc25797f40c42cdcc64161479e88741191217a21ec7fba70",
+    "integration-proof.json": "2af73588c2c4fe8fcdd25955c6bdb5909f48ed8ad902fc02ebd5a8ad73ac0d4b",
+    "load-g1-pi.jsonl": "cbf0bfe7fe71b6dc8769daabfeb0e0d0576c70e654f0dc188239feb38fc10594",
+    "load-g1-prompt.txt": "40aa0c7b82c46a263dfce86587ca521d867dfc107beb04882f4de00efba70cb7",
+    "load-g2-old-closed.json": "c4524e16fd3b3492857da764bbd2f22d1a569919592c92ce363443511b940884",
+    "load-g2-pi.jsonl": "5716feea57c4fc09d1b793cb9386e21f5f9567508e238667c265cbbbee0e3441",
+    "load-g2-prompt.txt": "40aa0c7b82c46a263dfce86587ca521d867dfc107beb04882f4de00efba70cb7",
+    "load-queued.json": "f46a62f77e6ff6c58a1f4d058630c74e0a8d91f4e3b76c576393fb478e3ed9f8",
+    "macos-broker-regression.log": "19891a9230642219b54fc4a7e2fac7a2e716bf67e88489d90621d9d68103ae61",
+    "milestones.json": "e932ad7c3aeef0709fc5691dae6393daf3714e36086917e942949215c1d61319",
+    "overlap-preservation.json": "6be59c883e9a9716ce89daf1994ffc10b838bb4fd9fc560b82192bc6acbd6cf7",
+    "policy-before.json": "ef285363c9aa0c9397cdc376a49e97104ff8801c1fe7f8d13a6c8d203a1f8c51",
+    "post-run-verified.json": "eb464e980633b96163a394636a80aee410de8b9683a534cfcfce3fc1b30690d4",
+    "preflight-actions-audit.json": "612a333f3e49ce5a6f1fc9ef267e1f53e68a110a277e25f96373fe641a605dc5",
+    "retry-g1-pi.jsonl": "3bcd84d7981c6b6163bc429ca7dbef6f68f8f45fe2c9a741a7b4fc60eba69ff7",
+    "retry-g1-prompt.txt": "3939f0595028d3496164d9e7fb16d2c439c496fa4b2ca19ed65ab869eaf9468b",
+    "retry-g2-pi.jsonl": "a775c7e8735142e56b40ea66ab62bf87503d687f5d36ea3ced94351193d7c1ca",
+    "retry-g2-prompt.txt": "3939f0595028d3496164d9e7fb16d2c439c496fa4b2ca19ed65ab869eaf9468b",
+    "route-g1-verified-pi.jsonl": "1e5f19733d2e89b88478c8a5ada32026bc2c6a3d9fdcbd275c1928bf37b36f94",
+    "route-g1-verified-prompt.txt": "dc17b1cf1e889899138d730a83e9462a4c4500998ffdd8bcfcb26d8e5ba2331e",
+    "runtime-readiness.json": "ffd29a8f2afabdefe190c4610d346a631d8e7e0b9c43df7ff8cdc58aceb24344",
+    "stale-load-g1.json": "abae157b3ca503ba72f6ccb5d7833c01f15e307ef67f581be9853ab10b616cb7",
+    "stale-retry-g1.json": "64869296439d755dce77de86419e4df3082d037a7c73b924717accb04bc60afb"
+  },
+  "superseded_cleanup_sha256": "16ca9e78028f01f7feac3d7d13c8a097fd85c5974f7f5be0dff304b76d7b6a96"
+}
