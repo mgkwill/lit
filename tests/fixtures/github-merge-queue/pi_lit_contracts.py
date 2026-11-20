@@ -36,14 +36,14 @@ DESCRIPTIONS = {
 
 
 def prompt(cases):
-    examples = [{"id": case, "expect": BASELINES[case]} for case in cases]
+    example = {"cases": [{"id": case, "expect": BASELINES[case]} for case in cases]}
     return ("Maintain Lit's executable contract fixtures in this directory. Use your file tools to edit both "
             "cases.json and README.md. If either exists, read it and preserve every existing test case. "
             "cases.json has one key, cases, listing objects with id and expect. Add the following entries "
             "only if absent and write or extend README.md to explain each test, its setup, and the result "
             "it protects. Include each exact case ID in the README. These are fixtures consumed by an "
             "independent executable test. Do not modify other files. "
-            + " ".join(DESCRIPTIONS[case] for case in cases) + " " + json.dumps(examples))
+            + " ".join(DESCRIPTIONS[case] for case in cases) + " " + json.dumps(example))
 
 
 def command(argv, cwd, *, stdin=None):
@@ -127,19 +127,25 @@ def verify(binary, scope, selected):
                                                      or path.stat().st_size > 12_000 for path in files.values()):
         raise ValueError("expected two small contract files")
     manifest = json.loads(files["cases.json"].read_bytes())
+    if not isinstance(manifest, dict) or set(manifest) != {"cases"} or not isinstance(manifest["cases"], list):
+        raise ValueError("cases.json must be an object containing a cases array")
     entries = manifest["cases"]
-    if set(manifest) != {"cases"} or sorted(entry["id"] for entry in entries) != sorted(set(selected)):
+    if any(not isinstance(entry, dict) or set(entry) != {"id", "expect"} or not isinstance(entry["id"], str)
+           for entry in entries):
+        raise ValueError("each case must contain a string id and an expect value")
+    if sorted(entry["id"] for entry in entries) != sorted(set(selected)):
         raise ValueError("fixture must retain all assigned case IDs exactly once")
     text = files["README.md"].read_text()
     if len(text.strip()) < 90 or any(case not in text for case in selected):
         raise ValueError("README must explain the assigned cases")
     for entry in entries:
         case = entry["id"]
-        if set(entry) != {"id", "expect"} or entry["expect"] != BASELINES[case]:
+        expected = json.dumps(entry["expect"], sort_keys=True)
+        if expected != json.dumps(BASELINES[case], sort_keys=True):
             raise ValueError(f"fixture expectation differs for {case}")
         with tempfile.TemporaryDirectory(prefix="lit-contract-") as work:
             actual = observe(case, binary, Path(work).resolve())
-        if actual != entry["expect"]:
+        if json.dumps(actual, sort_keys=True) != expected:
             raise ValueError(f"runtime contract differs for {case}")
     return len(entries)
 

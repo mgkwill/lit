@@ -1,11 +1,14 @@
 """Focused recovery checks for the Pi pilot journal and broker handoff."""
 
+import json
 from pathlib import Path
 import sys
 import tempfile
 import unittest
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
+TESTS = Path(__file__).resolve().parent
+sys.path[:0] = [str(TESTS.parent / "tools"), str(TESTS / "fixtures" / "github-merge-queue")]
+from pi_lit_contracts import BASELINES, prompt, verify
 from pi_pilot_runner import PilotError, Runner
 
 
@@ -126,6 +129,32 @@ class PilotTests(unittest.TestCase):
         with self.runner.journal.controller():
             with self.assertRaisesRegex(PilotError, "another controller"), self.open().journal.controller():
                 self.fail("took a second controller lock")
+
+
+class ContractFixtureTests(unittest.TestCase):
+    def test_prompt_shows_the_same_object_shape_the_verifier_requires(self):
+        case = "batch-status"
+        example = prompt([case]).split("Do not modify other files. ", 1)[1]
+        document = json.loads(example[example.index("{"):])
+        self.assertEqual(document, {"cases": [{"id": case, "expect": BASELINES[case]}]})
+
+    def test_invalid_case_shapes_and_scalar_types_are_rejected_before_execution(self):
+        case = "batch-status"
+        with tempfile.TemporaryDirectory() as directory:
+            scope = Path(directory)
+            (scope / "README.md").write_text(f"This covers {case}. " + "A committed repo is clean. " * 4)
+            manifest = scope / "cases.json"
+            scenarios = (
+                ([{"id": case, "expect": BASELINES[case]}], "object containing a cases array"),
+                ({"cases": [case]}, "string id and an expect value"),
+                ({"cases": [{"id": case, "expect": {**BASELINES[case], "succeeded": True}}]},
+                 "expectation differs"),
+            )
+            for document, message in scenarios:
+                with self.subTest(document=document):
+                    manifest.write_text(json.dumps(document))
+                    with self.assertRaisesRegex(ValueError, message):
+                        verify(None, scope, [case])
 
 
 if __name__ == "__main__":
