@@ -52,7 +52,15 @@ def main():
                                         env=dict(env, OPENLIT_TEST_EXIT=str(code)),
                                         capture_output=True, text=True, timeout=20)
                 assert result.returncode == code, (result.returncode, result.stdout, result.stderr)
-                assert json.loads(log.read_text()) == expected + cargo_options
+                observed = json.loads(log.read_text())
+                wanted = expected + cargo_options
+                assert len(observed) == len(wanted), (observed, wanted)
+                for actual, intended in zip(observed, wanted):
+                    if intended in (str(checkout), str(install_root)):
+                        # PowerShell can expand the runner's short (8.3) temp path.
+                        assert Path(actual).resolve() == Path(intended).resolve(), (actual, intended)
+                    else:
+                        assert actual == intended, (observed, wanted)
                 assert {p.name: p.read_bytes() for p in home.iterdir()} == original
         print(json.dumps({'script': script, 'checkout_with_spaces': True,
                           'locked_local_package': True, 'failure_propagation': True,
