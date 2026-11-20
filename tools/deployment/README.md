@@ -128,6 +128,31 @@ The client's `--ca` authenticates the broker's server certificate. The broker's
 the client certificate signer. The three managed worker profiles store server
 trust in their existing `ca.crt` files.
 
+### Resumable Pi cohorts
+
+On the trusted controller, provision the worker runtimes and broker identities,
+then create a private state directory with `plan.json` and the lab's
+`adapter.py`. Run the same command after a controller interruption.
+
+```sh
+python3 tools/pi_pilot.py --state /path/to/private-pilot-state
+```
+
+The plan contains the Git pin and initial `agents`, a `handoffs` map from
+old worker ID to replacement worker ID, `overlaps` as pairs of initial
+worker IDs, and the temporary queue `build_capacity`. The adapter's
+`open_lab(state, plan)` supplies worker transport, scoped claim queries,
+GitHub policy operations, the integration audit, and cleanup verification.
+Keep TLS keys and assignment capabilities in the lab's credential stores.
+
+The command pins the plan and adapter digest in its journal. It adopts a
+matching broker generation after an interrupted reassignment, and confirms
+that the prior PR retired before attaching the successor. Cleanup restores
+policy and enrollment, saves denial checks before removing worker directories,
+and verifies the queue and integration receipts after recovery. In a test
+cohort, `--interrupt-after reassignment --interrupt-after worker-removal`
+exercises both interruption points once, with exit code 74.
+
 ### Task dependencies
 
 The scheduler can post `{"task":"integration","requires":["parser","storage"]}`
