@@ -261,7 +261,16 @@ class QuorumAuthority(Authority):
             self.commit({'writer':ticket},{'writer':None})
 
     def request(self, actor, route, data, epoch, revision):
-        names = ['head','writer']
+        if actor=='backup':
+            if route=='/backup':
+                from task_broker_quorum_backup import capture
+                _, archive = capture(self.store,self.manifest)
+                return archive
+            if route!='/head':
+                raise Rejected('backup identity is read-only')
+        if route=='/backup':
+            raise Rejected('backup identity required')
+        names = ['head'] if route=='/head' else ['head','writer']
         if route in ('/bootstrap','/snapshot'):
             names.append('snapshot')
         records = self.store.read(*names)

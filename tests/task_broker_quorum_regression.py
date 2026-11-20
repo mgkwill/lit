@@ -271,12 +271,50 @@ class QuorumTests(unittest.TestCase):
         self.assertEqual(report['recovery_blockers'],[])
         self.assertFalse(json.loads(payload.split(b'\n',1)[0])['writer_pending'])
 
+    def test_backup_identity_has_only_head_and_archive_access(self):
+        self.store.change({'writer':None},{'writer':b'{"token":"fixture-private-token","started":1}'})
+        self.assertEqual(self.old.request('backup','/head',b'',0,0),self.initial)
+        blob=self.old.request('backup','/backup',b'',0,0)
+        result,_=backup.read_archive(io.BytesIO(blob),BINDING)
+        self.assertEqual(result['head'],self.initial)
+        self.assertEqual(result['recovery_blockers'],['writer'])
+        self.assertNotIn(b'fixture-private-token',blob)
+        for route in ('/provider','/reader','/broker-reader','/snapshot','/checkpoint','/promote','/bootstrap'):
+            with self.subTest(route=route), self.assertRaises(Rejected):
+                self.old.request('backup',route,b'',7,4)
+        for actor in ('primary','standby','manager'):
+            with self.subTest(actor=actor), self.assertRaises(Rejected):
+                self.old.request(actor,'/backup',b'',7,4)
+        self.assertEqual(self.minted,0)
+
+    def test_gateway_job_verifies_source_cluster_and_archive_head(self):
+        manager=Mock()
+        def fetch(route,**_):
+            return self.old.request('backup',route,b'',0,0)
+        manager.call.side_effect=fetch
+        config=self.backup_config()
+
+        def encrypt(_openssl,_recipient,archive,destination):
+            report,_=backup.read_archive(io.BytesIO(archive),BINDING)
+            self.assertEqual(report['head'],self.initial)
+            destination.write_bytes(b'fixture ciphertext')
+
+        with patch.object(backup_job,'seal',side_effect=encrypt) as seal:
+            with self.assertRaisesRegex(Rejected,'different quorum'):
+                backup_job.run_backup(config|{'cluster_id':'2'},None,manager)
+            seal.assert_not_called()
+            result=backup_job.run_backup(config,None,manager)
+        self.assertEqual(result['epoch'],self.initial['epoch'])
+        requests=[call.args[0] for call in manager.call.call_args_list]
+        self.assertEqual(requests,['/head','/backup','/head']*2)
+
     def backup_config(self):
         vault=self.root/'vault'
         vault.mkdir(mode=0o700)
         recipient=self.root/'recipient.crt'
         recipient.touch(mode=0o600)
-        return {'manifest':BINDING,'vault':str(vault),'recipient':str(recipient),'openssl':'/fixture/openssl'}
+        return {'manifest':BINDING,'vault':str(vault),'recipient':str(recipient),'openssl':'/fixture/openssl',
+                'cluster_id':self.store.cluster_id}
 
 
 class GatewayClientTests(unittest.TestCase):

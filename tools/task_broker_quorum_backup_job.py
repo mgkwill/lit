@@ -1,6 +1,7 @@
 """Capture and seal a quorum backup for a supervisor running off the voters."""
 import argparse
 from datetime import datetime, timezone
+import io
 import json
 import os
 from pathlib import Path
@@ -14,7 +15,7 @@ import zlib
 from task_broker import private_file
 from task_broker_checkpoint import sha256
 from task_broker_quorum import EtcdStore
-from task_broker_quorum_backup import capture, decode_head, private_directory
+from task_broker_quorum_backup import capture, decode_head, private_directory, read_archive
 from task_broker_replica import Client, Rejected, ReplicaUnavailable
 from task_ownership import AuthorityBusy, state_lock
 
@@ -22,7 +23,11 @@ from task_ownership import AuthorityBusy, state_lock
 def capture_confirmed(store, manager, manifest):
     for attempt in range(3):
         before = decode_head(manager.call('/head'),manifest)
-        report, archive = capture(store,manifest)
+        if store is None:
+            archive = manager.call('/backup',binary=True)
+            report, _ = read_archive(io.BytesIO(archive),manifest)
+        else:
+            report, archive = capture(store,manifest)
         after = decode_head(manager.call('/head'),manifest)
         if before==report['head']==after and (not report['writer_pending'] or attempt==2):
             return report, archive, after
@@ -56,6 +61,8 @@ def run_backup(config, store, manager):
         raise Rejected('OpenSSL executable path must be absolute')
     with state_lock(vault,'.quorum-backup.lock','quorum backup already running'):
         report, archive, head = capture_confirmed(store,manager,config['manifest'])
+        if report['cluster_id']!=config['cluster_id']:
+            raise Rejected('backup belongs to a different quorum')
         started = datetime.now(timezone.utc)
         directory = vault / (started.strftime('%Y%m%dT%H%M%S.%fZ')+
                              f"-e{head['epoch']}-r{head['revision']}")
@@ -89,8 +96,14 @@ def main():
     try:
         config = json.loads(private_file(args.config).read_text())
         manifest = config['manifest']
-        store = EtcdStore(config['quorum'],manifest['repo'],cluster_id=config['cluster_id'])
-        manager = Client(config['manager'])
+        if 'gateway' in config:
+            if 'manager' in config or 'quorum' in config:
+                raise Rejected('choose a gateway or a direct quorum backup')
+            store = None
+            manager = Client(config['gateway'])
+        else:
+            store = EtcdStore(config['quorum'],manifest['repo'],cluster_id=config['cluster_id'])
+            manager = Client(config['manager'])
         result = run_backup(config,store,manager)
     except (KeyError,TypeError,ValueError,OSError,RuntimeError,sqlite3.Error,
             subprocess.TimeoutExpired,zlib.error) as error:

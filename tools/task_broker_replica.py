@@ -177,7 +177,7 @@ class Client:
         headers = {}
         if epoch is not None:
             headers = {'X-Lit-Epoch':str(epoch),'X-Lit-Revision':str(revision)}
-        retryable = route in ('/head','/snapshot','/reader','/broker-reader','/checkpoint','/promote')
+        retryable = route in ('/head','/snapshot','/backup','/reader','/broker-reader','/checkpoint','/promote')
         for url in dict.fromkeys([self.active_url,*self.urls]):
             timeout = 45 if len(self.urls)==1 or route in ('/provider','/promote') else 3
             try:
@@ -281,7 +281,7 @@ class Handler(BaseHTTPRequestHandler):
         actor = self.server.actors.get(digest(self.connection.getpeercert(binary_form=True)))
         if actor is None or self.headers.get('Origin'):
             return self.reply(403,{'error':'forbidden'})
-        get = ('/head','/snapshot','/reader','/broker-reader')
+        get = ('/head','/snapshot','/backup','/reader','/broker-reader')
         post = ('/bootstrap','/checkpoint','/promote','/provider')
         if self.path not in (get if self.command=='GET' else post):
             return self.reply(404,{'error':'unknown_replica_operation'})
@@ -334,7 +334,9 @@ def main():
     if not stat.S_ISDIR(mode) or mode & 0o077:
         raise ValueError('replica state requires a private directory')
     roles = list(config['actors'].values())
-    if (set(roles)!={'manager','primary','standby'} or roles.count('primary')!=1 or roles.count('standby')!=1
+    required = {'manager','primary','standby'}
+    optional = {'backup'} if config.get('quorum') else set()
+    if (not required<=set(roles)<=required|optional or roles.count('primary')!=1 or roles.count('standby')!=1
             or not all(re.fullmatch(r'[0-9a-f]{64}',fingerprint) for fingerprint in config['actors'])):
         raise ValueError('replica needs distinct manager, primary and standby identities')
     repo = config['manifest']['repo']

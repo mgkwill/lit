@@ -463,6 +463,13 @@ cluster ID and set `manager` to an authenticated replica client configuration.
 Set `recipient` to the private-path copy of the public recovery certificate,
 `openssl` to the absolute binary path, and `vault` to a private directory.
 
+For a second host, enroll a distinct replica mTLS fingerprint as `backup` and
+set the private job configuration's `gateway` to a replica client configuration
+in place of `quorum` and `manager`. Pin the same `cluster_id`. This identity can
+read `/head` and `/backup` only. It receives the checkpoint and writer-presence
+flag without etcd access or any provider or broker credential. Keep the public
+recipient certificate on the backup host and the recovery key in operator custody.
+
 The job verifies SQLite in memory and sends the archive to OpenSSL over stdin.
 It asks etcd for the writer key count and reads the independent manager head
 before and after capture. It retries a moving head or transient writer and

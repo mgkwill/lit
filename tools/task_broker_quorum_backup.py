@@ -98,10 +98,14 @@ def backup(store, manifest, path):
 def read_backup(path, manifest, expected_digest=None):
     private_directory(path.parent)
     with private_file(path).open('rb') as stream:
-        meta = stream.readline(MAX_HEADER+1)
-        if len(meta)>MAX_HEADER or not meta.endswith(b'\n'):
-            raise Rejected('invalid backup header')
-        compressed = stream.read(MAX_COMPRESSED+1)
+        return read_archive(stream,manifest,expected_digest)
+
+
+def read_archive(stream, manifest, expected_digest=None):
+    meta = stream.readline(MAX_HEADER+1)
+    if len(meta)>MAX_HEADER or not meta.endswith(b'\n'):
+        raise Rejected('invalid backup header')
+    compressed = stream.read(MAX_COMPRESSED+1)
     if len(compressed)>MAX_COMPRESSED:
         raise Rejected('backup checkpoint is too large')
     checksum = digest(meta+compressed)
