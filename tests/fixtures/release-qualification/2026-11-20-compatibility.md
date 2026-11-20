@@ -33,4 +33,25 @@ main ref and its required GitHub Actions check, empty bypass roster, and
 merge queue matched before and after. No post-MIT upstream code was used
 as input. [Passing Actions run](https://github.com/mgkwill/lit-release-qualification/actions/runs/44786290284)
 
+## Installation
+
+Verify the selected archive against `SHA256SUMS`, unpack it, and run
+`lit --version` or `lit.exe --version`. This candidate identifies its
+source commit in `SOURCE-COMMIT` and reports the inherited version
+`lit 1.0.0`. Keep the bundled `LICENSE` with the binary. Ordinary Git
+remotes use the system Git executable, and SSH Git remotes also use SSH.
+
+- **Linux** needs glibc and the system GCC support library
+  (`libgcc_s.so.1`). Both Ubuntu 22.04 architectures ran the packaged
+  binary on glibc 2.35.
+- **macOS** uses system libraries on both architectures. The binaries'
+  load commands record deployment targets 10.12 for Intel and 11.0 for
+  Apple Silicon. Both hosted runtime tests used macOS 15. An additional
+  Apple Silicon smoke run passed with the downloaded binary copied into
+  an empty user-writable install directory whose path contained spaces.
+- **Windows** imports `VCRUNTIME140.dll` and Universal CRT APIs. On a
+  machine without the v14 runtime, install Microsoft's x64 Visual C++
+  Redistributable. The runtime test used the Windows Server 2022 hosted
+  runner. [Microsoft runtime downloads](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist/)
+
 [Archive digests and host test results](2026-11-20-compatibility.json)
