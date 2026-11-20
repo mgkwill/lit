@@ -13,7 +13,10 @@ mod adversarial_tests {
         let correct = "SecureP@ssw0rd123456";
         let key = EncryptionKey::from_passphrase(correct, &EncryptionKey::generate_salt()).unwrap();
         key.save(key_path.to_str().unwrap(), correct).unwrap();
-        assert_eq!(EncryptionKey::load(&key_path, "test-guess").err().unwrap(), "Invalid passphrase");
+        assert_eq!(
+            EncryptionKey::load(&key_path, "test-guess").err().unwrap(),
+            "Invalid passphrase"
+        );
         let error = EncryptionKey::load(&key_path, "password").err().unwrap();
         assert!(error.contains("Passphrase rate limit:"), "{error}");
     }
