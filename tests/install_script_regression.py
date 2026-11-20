@@ -40,16 +40,20 @@ def main():
         env = dict(os.environ, HOME=str(home), USERPROFILE=str(home),
                    PATH=str(fake) + os.pathsep + os.environ['PATH'], OPENLIT_TEST_LOG=str(log))
         install_root = root / 'install with spaces'
-        command = (['pwsh', '-NoProfile', '-NonInteractive', '-File', str(checkout / script),
-                    '-InstallRoot', str(install_root)] if windows else
-                   ['bash', str(checkout / script), '--root', str(install_root)])
-        expected = ['install', '--locked', '--path', str(checkout), '--bin', 'lit', '--root', str(install_root)]
-        for code in [0, 23]:
-            result = subprocess.run(command, cwd=outside, env=dict(env, OPENLIT_TEST_EXIT=str(code)),
-                                    capture_output=True, text=True, timeout=20)
-            assert result.returncode == code, (result.returncode, result.stdout, result.stderr)
-            assert json.loads(log.read_text()) == expected
-            assert {p.name: p.read_bytes() for p in home.iterdir()} == original
+        command = (['pwsh', '-NoProfile', '-NonInteractive', '-File', str(checkout / script)]
+                   if windows else ['bash', str(checkout / script)])
+        expected = ['install', '--locked', '--path', str(checkout), '--bin', 'lit']
+        for explicit_root in [False, True]:
+            options = (['-InstallRoot' if windows else '--root', str(install_root)]
+                       if explicit_root else [])
+            cargo_options = ['--root', str(install_root)] if explicit_root else []
+            for code in [0, 23]:
+                result = subprocess.run(command + options, cwd=outside,
+                                        env=dict(env, OPENLIT_TEST_EXIT=str(code)),
+                                        capture_output=True, text=True, timeout=20)
+                assert result.returncode == code, (result.returncode, result.stdout, result.stderr)
+                assert json.loads(log.read_text()) == expected + cargo_options
+                assert {p.name: p.read_bytes() for p in home.iterdir()} == original
         print(json.dumps({'script': script, 'checkout_with_spaces': True,
                           'locked_local_package': True, 'failure_propagation': True,
                           'home_settings_preserved': True}, sort_keys=True))
