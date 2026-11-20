@@ -280,8 +280,10 @@ lit workspace create ../agent-42 --base "$base_commit" --branch agent/42
 
 Each workspace starts with the files and history reachable from the base, its
 own object store and index, and the requested branch. The workspace keeps its
-base after either repository advances. Source staging, working edits, and
-remotes stay with the source. Normal Lit commands operate on the workspace.
+base after either repository advances. A workspace carries Git identities
+for reachable objects so it can recognize history already published to Git.
+It starts with a clean checkout and an empty remotes configuration. Normal
+Lit commands operate on the workspace.
 
 Use a new destination outside existing Lit repositories. Lit verifies the
 checkout before publishing the directory. Symbolic links must use relative

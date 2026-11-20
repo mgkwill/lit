@@ -60,13 +60,17 @@ def save(cli, root, name, text, message, credentials=None):
     return invoke(cli, root, "commit", "-m", message, credentials=credentials)
 
 
-def git(root, *args):
+def git_result(root, *args, check=True):
     environment = {name: value for name, value in os.environ.items() if not name.startswith("GIT_")}
     environment.update(GIT_CONFIG_GLOBAL=os.devnull, GIT_CONFIG_NOSYSTEM="1")
     return subprocess.run(
         ("git", "-c", "user.name=Workspace fixture", "-c", "user.email=fixture@example.test", *args),
-        cwd=root, env=environment, check=True, capture_output=True, text=True, timeout=30,
-    ).stdout.strip()
+        cwd=root, env=environment, check=check, capture_output=True, text=True, timeout=30,
+    )
+
+
+def git(root, *args):
+    return git_result(root, *args).stdout.strip()
 
 
 def create_git(root):
@@ -265,6 +269,100 @@ def encryption(cli, root):
             "credential_required": True, "independent_commit": True}
 
 
+def git_handoff(cli, root):
+    seed, origin, source = root / "seed", root / "protected.git", root / "source"
+    path = "pkg/sub/module/input"
+    create_git(seed)
+    (seed / path).parent.mkdir(parents=True)
+    (seed / path).write_text("base\n")
+    git(seed, "add", ".")
+    git(seed, "commit", "-m", "Git base")
+    original = git(seed, "rev-parse", "HEAD")
+    origin.mkdir()
+    git(origin, "init", "--bare", "--template=", "--object-format=sha1", "-b", "main")
+    git(seed, "push", origin.as_uri(), "main")
+
+    # Model a server that accepts proposal branches while protecting main.
+    hook = origin / "hooks/update"
+    hook.parent.mkdir(exist_ok=True)
+    hook.write_text(
+        '#!/bin/sh\ncase "$1" in refs/heads/agent/*) exit 0 ;; *) exit 1 ;; esac\n'
+    )
+    hook.chmod(0o755)
+    invoke(cli, root, "clone", origin.as_uri(), source)
+    pinned = invoke(cli, source, "status")["head"]
+    start = Barrier(2)
+
+    def propose(name):
+        target, branch = root / name, f"agent/{name}"
+        checkout(cli, source, target, pinned, branch)
+        start.wait(timeout=30)
+        commit = save(cli, target, path, f"{name} edits the same path\n", f"{name} proposal")
+        assert commit["parent"] == pinned
+        invoke(cli, target, "remote", "add", "origin", origin.as_uri())
+        assert invoke(cli, target, "push", "origin", branch)["updated"]
+        return target, branch
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        proposals = list(pool.map(propose, ("alpha", "beta")))
+    for target, branch in proposals:
+        ref = f"refs/heads/{branch}"
+        assert git(origin, "rev-parse", f"{ref}^") == original
+        assert git(origin, "show", f"{ref}:{path}") == (target / path).read_text().strip()
+
+    target, _ = proposals[0]
+    invoke(cli, target, "branch", "main")
+    invoke(cli, target, "push", "origin", "main", error="Git push failed")
+    assert git(origin, "rev-parse", "refs/heads/main") == original
+    git(origin, "fsck", "--full", "--strict")
+
+    review = root / "review"
+    git(root, "clone", origin.as_uri(), review)
+    git(review, "merge", "--ff-only", "origin/agent/alpha")
+    collision = git_result(review, "merge", "--no-commit", "origin/agent/beta", check=False)
+    assert collision.returncode
+    assert git(review, "ls-files", "-u", "--", path)
+    assert git(origin, "rev-parse", "refs/heads/main") == original
+    return {"proposal_branches": 2, "exact_git_parent_preserved": True,
+            "protected_main_push_refused": True, "same_path_conflict_preserved": True}
+
+
+def git_identity_roundtrip(cli, root):
+    seed, origin, source, workspace = (root / name for name in ("seed", "origin.git", "source", "workspace"))
+    create_git(seed)
+    (seed / "file").write_text("initial\n")
+    git(seed, "add", ".")
+    git(seed, "commit", "-m", "Git base")
+    git(root, "clone", "--bare", seed.as_uri(), origin)
+    invoke(cli, root, "clone", origin.as_uri(), source)
+
+    pinned = save(cli, source, "file", "native publication\n", "native proposal")["hash"]
+    assert invoke(cli, source, "push", "origin", "main")["updated"]
+    pinned_git = git(origin, "rev-parse", "HEAD")
+    future = save(cli, source, "file", "source advanced\n", "newer native change")["hash"]
+    assert invoke(cli, source, "push", "origin", "main")["updated"]
+    future_git = git(origin, "rev-parse", "HEAD")
+
+    checkout(cli, source, workspace, pinned)
+    copied_map = workspace / ".lit/git-export-map"
+    assert (copied_map / pinned_git).read_text().strip() == pinned
+    assert not (copied_map / future_git).exists()
+    invoke(cli, workspace, "remote", "add", "origin", origin.as_uri())
+    git(seed, "pull", "--ff-only", origin.as_uri(), "main")
+    (seed / "file").write_text("Git after native publication\n")
+    git(seed, "commit", "-am", "advance on Git")
+    git(seed, "push", origin.as_uri(), "main")
+
+    # Fast-forward requires the importer to recognize the original Lit ID.
+    assert invoke(cli, workspace, "pull", "origin", "main")["fast_forward"]
+    assert (workspace / "file").read_text() == "Git after native publication\n"
+    assert invoke(cli, workspace, "workspace", "info")["base"] == pinned
+    assert invoke(cli, workspace, "verify")["valid"]
+    assert invoke(cli, source, "status")["head"] == future
+    return {"previously_exported_base_fast_forwards": True,
+            "unreachable_git_identity_excluded": True}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("candidate", type=Path)
@@ -278,6 +376,8 @@ def main():
         root = Path(directory).resolve()
         result["concurrency"] = concurrency(cli, root / "concurrent", args.workers)
         result["publication"] = publication(cli, root / "publication")
+        result["git_handoff"] = git_handoff(cli, root / "handoff")
+        result["git_identity_roundtrip"] = git_identity_roundtrip(cli, root / "mapping")
         result["encryption"] = encryption(cli, root / "encryption")
     print(json.dumps(result, indent=2, sort_keys=True))
 

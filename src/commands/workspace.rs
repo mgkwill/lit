@@ -10,7 +10,7 @@ use crate::storage::{Index, ObjectStore};
 use serde::Serialize;
 use std::collections::HashSet;
 use std::fs::{self, File, Permissions};
-use std::io::ErrorKind;
+use std::io::{ErrorKind, Read};
 use std::os::unix::fs::PermissionsExt;
 use std::path::{Component, Path};
 use walkdir::WalkDir;
@@ -111,9 +111,50 @@ fn populate(source: &Path, checkout: &Path, base: &str) -> Result<(), LitError> 
     let objects = walk_commit_graph(&source_store, &base, &HashSet::new())?;
     configure_encryption(source, checkout)?;
     let destination_store = ObjectStore::new(checkout);
-    for hash in objects {
-        let object = source_store.read_verified(&hash)?;
+    for hash in &objects {
+        let object = source_store.read_verified(hash)?;
         destination_store.write(&object)?;
+    }
+    let reachable = objects.iter().map(ObjectHash::as_str).collect();
+    copy_git_identities(source, checkout, &reachable)?;
+    Ok(())
+}
+
+fn copy_git_identities(
+    source: &Path,
+    checkout: &Path,
+    reachable: &HashSet<&str>,
+) -> Result<(), LitError> {
+    let mappings = source.join(".lit/git-export-map");
+    match mappings.symlink_metadata() {
+        Ok(meta) if meta.is_dir() => {}
+        Ok(_) => {
+            return Err(LitError::repository(
+                "Expected a Git identity mapping directory",
+            ))
+        }
+        Err(error) if error.kind() == ErrorKind::NotFound => return Ok(()),
+        Err(error) => return Err(error.into()),
+    }
+    let destination = checkout.join(".lit/git-export-map");
+    for entry in fs::read_dir(mappings)? {
+        let entry = entry?;
+        let name = entry.file_name();
+        if !name.to_str().is_some_and(super::git_interop::valid_oid)
+            || !entry.file_type()?.is_file()
+        {
+            continue;
+        }
+        // A native object ID is 192 hex characters plus a line ending.
+        let mut mapping = String::new();
+        File::open(entry.path())?
+            .take(195)
+            .read_to_string(&mut mapping)?;
+        let lit_id = mapping.trim();
+        if mapping.len() <= 194 && reachable.contains(lit_id) {
+            fs::create_dir_all(&destination)?;
+            fs::write(destination.join(name), format!("{lit_id}\n"))?;
+        }
     }
     Ok(())
 }
