@@ -42,7 +42,13 @@ python3 tools/release_dependency_notices.py
 python3 tools/release_dependency_notices.py --check
 ```
 
-Some packages declare licenses but ship no matching notice file. The manifest
-lists them explicitly. Resolve the required notices for distributed code before
-public release. This inventory is not a completed license-compliance review.
+The collector now includes r-efi's `AUTHORS` permission text and pinned repository
+licenses for seven WASI/wasm-tools packages. It checks supplemental notice hashes
+and source revisions. [Supplement records](licenses/README.md) explain the inputs.
+
+Two gaps remain: pqcrypto-internals 0.2.11 and pqcrypto-traits 0.3.5 declare
+MIT or Apache-2.0 but omit notice files from both their packages and pinned
+repository trees. The manifest lists them explicitly. Resolve required notices
+for distributed code before public release. This inventory is not a completed
+license-compliance review.
 Do not rewrite third-party license text into plain language.

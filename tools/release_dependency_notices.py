@@ -14,6 +14,9 @@ PREFIXES = ('LICENSE', 'LICENCE', 'COPYING', 'NOTICE', 'COPYRIGHT')
 def render(metadata):
     records = []
     texts = {}
+    supplements = json.loads((ROOT / 'docs/licenses/supplements.json').read_text())['packages']
+    supplements = {(p['name'], p['version']): p for p in supplements}
+    used_supplements = set()
     for package in sorted(metadata['packages'], key=lambda p: (p['name'], p['version'])):
         if package['source'] is None:
             continue
@@ -25,6 +28,9 @@ def render(metadata):
                  and path.suffix not in ('.rs', '.c', '.h')}
         if package.get('license_file'):
             paths.add(root / package['license_file'])
+        # r-efi carries its complete MIT permission and copyright in AUTHORS.
+        if package['name'] == 'r-efi':
+            paths.add(root / 'AUTHORS')
         for path in sorted(paths):
             data = path.read_bytes()
             digest = hashlib.sha256(data).hexdigest()
@@ -32,18 +38,39 @@ def render(metadata):
             text = data.decode('utf-8')
             texts[digest] = text
             record['notices'].append({'path': path.relative_to(root).as_posix(), 'sha256': digest})
+        key = (package['name'], package['version'])
+        if key in supplements:
+            supplement = supplements[key]
+            vcs = json.loads((root / '.cargo_vcs_info.json').read_text())
+            if (vcs['git']['sha1'] != supplement['revision']
+                    or vcs['path_in_vcs'] != supplement['path_in_vcs']):
+                raise ValueError('Supplement revision does not match package: ' + str(key))
+            for notice in supplement['notices']:
+                path = (ROOT / notice['path']).resolve()
+                path.relative_to((ROOT / 'docs/licenses').resolve())
+                data = path.read_bytes()
+                digest = hashlib.sha256(data).hexdigest()
+                if digest != notice['sha256']:
+                    raise ValueError('Supplement digest mismatch: ' + notice['path'])
+                texts[digest] = data.decode('utf-8')
+                record['notices'].append(dict(notice, origin='pinned dependency repository',
+                                              revision=supplement['revision']))
+            used_supplements.add(key)
         records.append(record)
+    if used_supplements != set(supplements):
+        raise ValueError('Notice supplements contain packages absent from the lockfile')
     missing = [p['name'] + '@' + p['version'] for p in records if not p['notices']]
     manifest = {'scope': 'All resolved Cargo packages, including dev and non-native targets. '
                          'This is an inventory, not a completed license compliance review.',
-                'missing_bundled_notices': missing, 'packages': records}
+                'missing_notices': missing, 'packages': records}
     lines = ['OpenLit third-party notices', '', manifest['scope'], '',
-             'Packages without a bundled notice need review before public distribution:',
+             'Packages without a collected notice need review before public distribution:',
              *missing, '', 'Package inventory', '=================']
     for p in records:
         lines.extend(['', p['name'] + ' ' + p['version'], 'Declared license: ' + str(p['license']),
                       'Repository: ' + str(p['repository'])])
         lines.extend('Notice: ' + n['path'] + ' (SHA-256 ' + n['sha256'] + ')' for n in p['notices'])
+        lines.extend('Notice source: ' + n['url'] for n in p['notices'] if 'url' in n)
     lines.extend(['', 'Full notice texts, grouped by SHA-256', '===================================='])
     for digest, body in sorted(texts.items()):
         lines.extend(['', 'SHA-256 ' + digest, '', body])

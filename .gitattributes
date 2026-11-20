@@ -1,0 +1,4 @@
+# Keep hashed distribution notices identical on Windows and Unix.
+/THIRD_PARTY_NOTICES.txt text eol=lf
+/docs/dependencies.json text eol=lf
+/docs/licenses/** text eol=lf

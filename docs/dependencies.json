@@ -1,16 +1,7 @@
 {
-  "missing_bundled_notices": [
+  "missing_notices": [
     "pqcrypto-internals@0.2.11",
-    "pqcrypto-traits@0.3.5",
-    "r-efi@5.3.0",
-    "r-efi@6.0.0",
-    "wasip2@1.0.2+wasi-0.2.9",
-    "wasip3@0.4.0+wasi-0.3.0-rc-2026-01-06",
-    "wasm-encoder@0.244.0",
-    "wasm-metadata@0.244.0",
-    "wasmparser@0.244.0",
-    "wit-component@0.244.0",
-    "wit-parser@0.244.0"
+    "pqcrypto-traits@0.3.5"
   ],
   "packages": [
     {
@@ -2266,7 +2257,12 @@
     {
       "license": "MIT OR Apache-2.0 OR LGPL-2.1-or-later",
       "name": "r-efi",
-      "notices": [],
+      "notices": [
+        {
+          "path": "AUTHORS",
+          "sha256": "ff92bed461f50338dd703a9ba9aee496a425957873df1d91192776e4bdf5dda7"
+        }
+      ],
       "repository": "https://github.com/r-efi/r-efi",
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "version": "5.3.0"
@@ -2274,7 +2270,12 @@
     {
       "license": "MIT OR Apache-2.0 OR LGPL-2.1-or-later",
       "name": "r-efi",
-      "notices": [],
+      "notices": [
+        {
+          "path": "AUTHORS",
+          "sha256": "d027e91dbc9cdbb2f1190068e498bd6b61cff022b6a032b191021ba658d96111"
+        }
+      ],
       "repository": "https://github.com/r-efi/r-efi",
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "version": "6.0.0"
@@ -3373,7 +3374,22 @@
     {
       "license": "Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT",
       "name": "wasip2",
-      "notices": [],
+      "notices": [
+        {
+          "origin": "pinned dependency repository",
+          "path": "docs/licenses/wasi/LICENSE-MIT",
+          "revision": "06ce201370fcde0d1b0d47cac8ecb1b0b312c9f9",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasi-rs/06ce201370fcde0d1b0d47cac8ecb1b0b312c9f9/LICENSE-MIT"
+        },
+        {
+          "origin": "pinned dependency repository",
+          "path": "docs/licenses/wasi/LICENSE-APACHE",
+          "revision": "06ce201370fcde0d1b0d47cac8ecb1b0b312c9f9",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasi-rs/06ce201370fcde0d1b0d47cac8ecb1b0b312c9f9/LICENSE-APACHE"
+        }
+      ],
       "repository": "https://github.com/bytecodealliance/wasi-rs",
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "version": "1.0.2+wasi-0.2.9"
@@ -3381,7 +3397,22 @@
     {
       "license": "Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT",
       "name": "wasip3",
-      "notices": [],
+      "notices": [
+        {
+          "origin": "pinned dependency repository",
+          "path": "docs/licenses/wasi/LICENSE-MIT",
+          "revision": "06ce201370fcde0d1b0d47cac8ecb1b0b312c9f9",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasi-rs/06ce201370fcde0d1b0d47cac8ecb1b0b312c9f9/LICENSE-MIT"
+        },
+        {
+          "origin": "pinned dependency repository",
+          "path": "docs/licenses/wasi/LICENSE-APACHE",
+          "revision": "06ce201370fcde0d1b0d47cac8ecb1b0b312c9f9",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasi-rs/06ce201370fcde0d1b0d47cac8ecb1b0b312c9f9/LICENSE-APACHE"
+        }
+      ],
       "repository": "https://github.com/bytecodealliance/wasi-rs",
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "version": "0.4.0+wasi-0.3.0-rc-2026-01-06"
@@ -3457,7 +3488,22 @@
     {
       "license": "Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT",
       "name": "wasm-encoder",
-      "notices": [],
+      "notices": [
+        {
+          "origin": "pinned dependency repository",
+          "path": "docs/licenses/wasm-tools/LICENSE-MIT",
+          "revision": "d4e317f22c3bace76cb3205003bcc34b4929037d",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasm-tools/d4e317f22c3bace76cb3205003bcc34b4929037d/LICENSE-MIT"
+        },
+        {
+          "origin": "pinned dependency repository",
+          "path": "docs/licenses/wasm-tools/LICENSE-APACHE",
+          "revision": "d4e317f22c3bace76cb3205003bcc34b4929037d",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasm-tools/d4e317f22c3bace76cb3205003bcc34b4929037d/LICENSE-APACHE"
+        }
+      ],
       "repository": "https://github.com/bytecodealliance/wasm-tools/tree/main/crates/wasm-encoder",
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "version": "0.244.0"
@@ -3465,7 +3511,22 @@
     {
       "license": "Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT",
       "name": "wasm-metadata",
-      "notices": [],
+      "notices": [
+        {
+          "origin": "pinned dependency repository",
+          "path": "docs/licenses/wasm-tools/LICENSE-MIT",
+          "revision": "d4e317f22c3bace76cb3205003bcc34b4929037d",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasm-tools/d4e317f22c3bace76cb3205003bcc34b4929037d/LICENSE-MIT"
+        },
+        {
+          "origin": "pinned dependency repository",
+          "path": "docs/licenses/wasm-tools/LICENSE-APACHE",
+          "revision": "d4e317f22c3bace76cb3205003bcc34b4929037d",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasm-tools/d4e317f22c3bace76cb3205003bcc34b4929037d/LICENSE-APACHE"
+        }
+      ],
       "repository": "https://github.com/bytecodealliance/wasm-tools/tree/main/crates/wasm-metadata",
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "version": "0.244.0"
@@ -3473,7 +3534,22 @@
     {
       "license": "Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT",
       "name": "wasmparser",
-      "notices": [],
+      "notices": [
+        {
+          "origin": "pinned dependency repository",
+          "path": "docs/licenses/wasm-tools/LICENSE-MIT",
+          "revision": "d4e317f22c3bace76cb3205003bcc34b4929037d",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasm-tools/d4e317f22c3bace76cb3205003bcc34b4929037d/LICENSE-MIT"
+        },
+        {
+          "origin": "pinned dependency repository",
+          "path": "docs/licenses/wasm-tools/LICENSE-APACHE",
+          "revision": "d4e317f22c3bace76cb3205003bcc34b4929037d",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasm-tools/d4e317f22c3bace76cb3205003bcc34b4929037d/LICENSE-APACHE"
+        }
+      ],
       "repository": "https://github.com/bytecodealliance/wasm-tools/tree/main/crates/wasmparser",
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "version": "0.244.0"
@@ -4182,7 +4258,22 @@
     {
       "license": "Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT",
       "name": "wit-component",
-      "notices": [],
+      "notices": [
+        {
+          "origin": "pinned dependency repository",
+          "path": "docs/licenses/wasm-tools/LICENSE-MIT",
+          "revision": "d4e317f22c3bace76cb3205003bcc34b4929037d",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasm-tools/d4e317f22c3bace76cb3205003bcc34b4929037d/LICENSE-MIT"
+        },
+        {
+          "origin": "pinned dependency repository",
+          "path": "docs/licenses/wasm-tools/LICENSE-APACHE",
+          "revision": "d4e317f22c3bace76cb3205003bcc34b4929037d",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasm-tools/d4e317f22c3bace76cb3205003bcc34b4929037d/LICENSE-APACHE"
+        }
+      ],
       "repository": "https://github.com/bytecodealliance/wasm-tools/tree/main/crates/wit-component",
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "version": "0.244.0"
@@ -4190,7 +4281,22 @@
     {
       "license": "Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT",
       "name": "wit-parser",
-      "notices": [],
+      "notices": [
+        {
+          "origin": "pinned dependency repository",
+          "path": "docs/licenses/wasm-tools/LICENSE-MIT",
+          "revision": "d4e317f22c3bace76cb3205003bcc34b4929037d",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasm-tools/d4e317f22c3bace76cb3205003bcc34b4929037d/LICENSE-MIT"
+        },
+        {
+          "origin": "pinned dependency repository",
+          "path": "docs/licenses/wasm-tools/LICENSE-APACHE",
+          "revision": "d4e317f22c3bace76cb3205003bcc34b4929037d",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+          "url": "https://raw.githubusercontent.com/bytecodealliance/wasm-tools/d4e317f22c3bace76cb3205003bcc34b4929037d/LICENSE-APACHE"
+        }
+      ],
       "repository": "https://github.com/bytecodealliance/wasm-tools/tree/main/crates/wit-parser",
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "version": "0.244.0"

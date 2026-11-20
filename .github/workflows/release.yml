@@ -78,6 +78,11 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Verify dependency notice inventory
+        run: |
+          python -B tests/dependency_notice_regression.py
+          python -B tools/release_dependency_notices.py --check
+
       - name: Qualify the unpacked release binary
         shell: bash
         run: |
