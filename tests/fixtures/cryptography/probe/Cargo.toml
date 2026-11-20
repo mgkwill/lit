@@ -1,0 +1,12 @@
+[package]
+name = "openlit-signature-probe"
+version = "0.0.0"
+edition = "2021"
+publish = false
+[features]
+affected-avx2 = ["pqcrypto-mldsa/avx2"]
+[dependencies]
+pqcrypto-mldsa = { version = "=0.1.2", default-features = false, features = ["std"] }
+pqcrypto-traits = "0.3"
+serde_json = "1"
+hex = "0.4"

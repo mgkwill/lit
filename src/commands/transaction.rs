@@ -113,7 +113,11 @@ fn recovery_required() -> LitError {
 }
 
 pub(super) fn require_inactive(root: &Path, operation: &str) -> Result<(), LitError> {
-    if root.join(".lit/transaction.json").try_exists().map_err(io_error)? {
+    if root
+        .join(".lit/transaction.json")
+        .try_exists()
+        .map_err(io_error)?
+    {
         return Err(format!("Finish the active transaction before {operation}").into());
     }
     Ok(())
@@ -136,7 +140,10 @@ impl<'a> BatchTransaction<'a> {
     pub(super) fn begin(root: &'a Path) -> Result<Self, LitError> {
         let guard = lock_repository(root)?;
         begin_locked(root, true)?;
-        Ok(Self { root, _guard: guard })
+        Ok(Self {
+            root,
+            _guard: guard,
+        })
     }
 
     pub(super) fn finish(self, rollback: bool) -> Result<(), LitError> {

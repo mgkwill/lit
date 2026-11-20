@@ -51,7 +51,8 @@ pub fn execute_stdio() -> Result<McpServeResponse, crate::errors::LitError> {
     let mut stdout = io::stdout().lock();
 
     for line in stdin.lock().lines() {
-        let line = line.map_err(|e| crate::errors::LitError::io(format!("Read MCP request: {e}")))?;
+        let line =
+            line.map_err(|e| crate::errors::LitError::io(format!("Read MCP request: {e}")))?;
         if line.trim().is_empty() {
             continue;
         }

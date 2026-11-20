@@ -1,15 +1,6 @@
 use hmac::{Hmac, Mac};
-/// FIPS 140-3 Compliance Module
-/// Implements Federal Information Processing Standards Publication 140-3
-/// Security Requirements for Cryptographic Modules
-///
-/// Standards Compliance:
-/// - FIPS 140-3 (ISO/IEC 19790:2012, ISO/IEC 24759:2017)
-/// - FIPS 180-4: Secure Hash Standard (SHA-2, SHA-3)
-/// - FIPS 197: Advanced Encryption Standard (AES)
-/// - FIPS 198-1: Keyed-Hash Message Authentication Code (HMAC)
-/// - NIST SP 800-90A Rev. 1: Random Number Generation
-/// - NIST SP 800-132: Password-Based Key Derivation
+// Legacy algorithm self-tests and settings. OpenLit is not a FIPS-validated
+// module; these names and internal checks do not establish certification.
 use sha2::{Digest, Sha256, Sha512};
 use sha3::Sha3_512;
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -18,14 +9,7 @@ use zeroize::Zeroize;
 /// Global FIPS mode indicator
 static FIPS_MODE_ENABLED: AtomicBool = AtomicBool::new(true);
 
-/// FIPS 140-3 security level (1-4)
-/// Lit targets Level 1: Software-based cryptographic module
-///
-/// FIPS 140-3 maintains the 4-level security hierarchy from 140-2:
-/// - Level 1: Basic security (software cryptography, approved algorithms)
-/// - Level 2: Physical tamper-evidence (requires hardware)
-/// - Level 3: Physical tamper-resistance (requires hardware)
-/// - Level 4: Complete envelope protection (requires hardware)
+/// Legacy security-level identifiers. No OpenLit validation level is claimed.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum FipsSecurityLevel {
     /// Level 1: Basic security requirements
@@ -38,32 +22,25 @@ pub enum FipsSecurityLevel {
     Level4 = 4,
 }
 
-/// FIPS 140-3 approved algorithms
-/// All algorithms listed are approved for use in FIPS 140-3 validated modules
+/// Algorithms named by the legacy self-test interface, not validated modules.
 #[derive(Debug, Clone)]
 pub enum FipsApprovedAlgorithm {
-    /// SHA-256 (FIPS 180-4, NIST CAVP validated)
+    /// SHA-256 (FIPS 180-4)
     Sha256,
-    /// SHA-512 (FIPS 180-4, NIST CAVP validated)
+    /// SHA-512 (FIPS 180-4)
     Sha512,
-    /// SHA3-512 (FIPS 202, NIST CAVP validated)
+    /// SHA3-512 (FIPS 202)
     Sha3_512,
-    /// HMAC-SHA-256 (FIPS 198-1, NIST CAVP validated)
+    /// HMAC-SHA-256 (FIPS 198-1)
     HmacSha256,
-    /// HMAC-SHA-512 (FIPS 198-1, NIST CAVP validated)
+    /// HMAC-SHA-512 (FIPS 198-1)
     HmacSha512,
-    /// AES-256-GCM (FIPS 197 + NIST SP 800-38D, NIST CAVP validated)
+    /// AES-256-GCM (FIPS 197 + NIST SP 800-38D)
     Aes256Gcm,
 }
 
-/// FIPS 140-3 Cryptographic Module
-///
-/// This software cryptographic module implements FIPS 140-3 Level 1 requirements:
-/// - Approved cryptographic algorithms (CAVP validated implementations)
-/// - Self-tests (power-on and conditional)
-/// - Key zeroization
-/// - Random number generation (DRBG, SP 800-90A Rev. 1)
-/// - Documentation and lifecycle management
+/// Internal algorithm self-tests and legacy mode settings.
+/// Passing these checks does not establish FIPS validation or a security level.
 #[allow(dead_code)]
 pub struct FipsModule {
     /// Current security level

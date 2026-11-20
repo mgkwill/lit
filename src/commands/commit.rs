@@ -16,7 +16,8 @@ pub fn execute(
 
 pub(super) fn execute_locked(
     repo_root: &std::path::Path,
-    message: String, author: Option<String>,
+    message: String,
+    author: Option<String>,
 ) -> Result<CommitResponse, crate::errors::LitError> {
     super::merge::require_inactive(repo_root)?;
     let store = ObjectStore::new(repo_root);

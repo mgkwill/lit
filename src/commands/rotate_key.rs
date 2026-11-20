@@ -154,7 +154,11 @@ fn prepare(
             let entry = entry.map_err(|e| e.to_string())?;
             if !entry.file_type().is_dir() {
                 if packed_refs.is_some_and(|packed| {
-                    entry.path().strip_prefix(&refs).ok().and_then(Path::to_str)
+                    entry
+                        .path()
+                        .strip_prefix(&refs)
+                        .ok()
+                        .and_then(Path::to_str)
                         .is_some_and(|name| packed.contains_key(name))
                 }) {
                     continue;

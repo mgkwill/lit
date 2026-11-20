@@ -1,24 +1,19 @@
 pub mod encryption;
 pub mod fips;
 mod key_state;
-/// Cryptographic primitives module
-/// Implements NIST-approved post-quantum cryptography standards
-/// Cryptographic operations for Lit version control
-///
-/// FIPS 140-3 compliant cryptographic operations
-/// All algorithms are approved for use in validated modules
+/// Repository signature operations. OpenLit is not a FIPS-validated module.
 pub mod signatures;
 
 use serde::{Deserialize, Serialize};
 
-/// Cryptographic configuration for FIPS 140-3 compliance
+/// Cryptographic settings. These flags do not establish FIPS validation.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CryptoConfig {
     /// Enable post-quantum signatures (ML-DSA/Dilithium)
     pub enable_pq_signatures: bool,
     /// Hash algorithm version
     pub hash_version: HashVersion,
-    /// FIPS 140-3 mode (uses only approved algorithms)
+    /// Legacy FIPS-mode setting; does not establish product validation
     pub fips_mode: bool,
     /// Enable power-on self-tests
     pub enable_self_tests: bool,

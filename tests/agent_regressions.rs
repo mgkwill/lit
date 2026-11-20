@@ -29,7 +29,8 @@ impl Fixture {
 
     fn command(&self, arguments: &[&str]) -> Command {
         let mut child = Command::new(env!("CARGO_BIN_EXE_lit"));
-        child.args(arguments)
+        child
+            .args(arguments)
             .current_dir(&self.repo)
             .env("HOME", &self.home)
             .env("USERPROFILE", &self.home)
@@ -42,7 +43,8 @@ impl Fixture {
     }
 
     fn output(&self, arguments: &[&str], input: &str) -> Output {
-        let mut child = self.command(arguments)
+        let mut child = self
+            .command(arguments)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
@@ -174,11 +176,10 @@ fn batch_can_signal_per_operation_failures_in_the_process_status() {
     assert_eq!(strict.status.code(), Some(1));
     assert_eq!(strict.stdout, legacy.stdout);
     assert!(strict.stderr.is_empty());
-    assert!(
-        f.output(&["batch", "--fail-on-error"], "{\"command\":\"status\"}\n")
-            .status
-            .success()
-    );
+    assert!(f
+        .output(&["batch", "--fail-on-error"], "{\"command\":\"status\"}\n")
+        .status
+        .success());
 }
 
 #[test]
@@ -207,8 +208,14 @@ fn batch_rollback_restores_index_and_branch_on_failure() {
     assert_eq!(response["results"][3]["status"], "skipped");
     assert_eq!(f.run(&["status"], "")["head"], base);
     assert_eq!(fs::read(&index_path).unwrap(), index);
-    assert_eq!(fs::read_to_string(f.repo.join("a")).unwrap(), "working edit");
-    assert_eq!(fs::read_to_string(f.repo.join("untracked")).unwrap(), "keep this");
+    assert_eq!(
+        fs::read_to_string(f.repo.join("a")).unwrap(),
+        "working edit"
+    );
+    assert_eq!(
+        fs::read_to_string(f.repo.join("untracked")).unwrap(),
+        "keep this"
+    );
     assert!(!f.repo.join(".lit/transaction.json").exists());
 
     let result = f.run(
@@ -216,7 +223,10 @@ fn batch_rollback_restores_index_and_branch_on_failure() {
         "{\"op\":\"snapshot\",\"message\":\"retry\"}\n",
     );
     assert_eq!(result["transaction"], "committed");
-    assert_eq!(f.run(&["status"], "")["head"], result["results"][0]["result"]["hash"]);
+    assert_eq!(
+        f.run(&["status"], "")["head"],
+        result["results"][0]["result"]["hash"]
+    );
     assert!(!f.repo.join(".lit/transaction.json").exists());
 }
 
@@ -248,7 +258,10 @@ fn batch_rollback_validates_capabilities_and_rejects_nested_transactions() {
     assert_eq!(result.status.code(), Some(1));
     let response: Value = serde_json::from_slice(&result.stdout).unwrap();
     assert_eq!(response["transaction"], "dry_run");
-    assert_eq!(response["results"][0]["error_code"], "BATCH_OPERATION_NOT_ROLLBACK_SAFE");
+    assert_eq!(
+        response["results"][0]["error_code"],
+        "BATCH_OPERATION_NOT_ROLLBACK_SAFE"
+    );
     assert_eq!(response["results"][1]["status"], "ok");
     let journal = f.repo.join(".lit/transaction.json");
     assert!(!journal.exists());
@@ -295,36 +308,66 @@ fn batch_rollback_recovers_a_killed_process_and_excludes_competing_writers() {
         .unwrap()
         .success());
 
-    let mut batch = Worker(f.command(&["batch", "--rollback-on-error"])
-        .stdin(Stdio::piped())
-        .stdout(Stdio::null())
-        .stderr(Stdio::null())
-        .spawn().unwrap());
-    batch.0.stdin.take().unwrap().write_all(concat!(
-        "{\"op\":\"add\",\"files\":[\"a\"]}\n",
-        "{\"op\":\"commit\",\"message\":\"before crash\"}\n",
-        "{\"op\":\"add\",\"files\":[\"pause\"]}\n",
-    ).as_bytes()).unwrap();
+    let mut batch = Worker(
+        f.command(&["batch", "--rollback-on-error"])
+            .stdin(Stdio::piped())
+            .stdout(Stdio::null())
+            .stderr(Stdio::null())
+            .spawn()
+            .unwrap(),
+    );
+    batch
+        .0
+        .stdin
+        .take()
+        .unwrap()
+        .write_all(
+            concat!(
+                "{\"op\":\"add\",\"files\":[\"a\"]}\n",
+                "{\"op\":\"commit\",\"message\":\"before crash\"}\n",
+                "{\"op\":\"add\",\"files\":[\"pause\"]}\n",
+            )
+            .as_bytes(),
+        )
+        .unwrap();
 
     let deadline = Instant::now() + Duration::from_secs(15);
     while !fs::read(&branch)
         .is_ok_and(|value| value.len() == before_ref.len() && value != before_ref)
     {
-        assert!(batch.0.try_wait().unwrap().is_none(), "batch exited before commit");
-        assert!(Instant::now() < deadline, "batch never reached the provisional commit");
+        assert!(
+            batch.0.try_wait().unwrap().is_none(),
+            "batch exited before commit"
+        );
+        assert!(
+            Instant::now() < deadline,
+            "batch never reached the provisional commit"
+        );
         thread::sleep(Duration::from_millis(10));
     }
     assert!(journal.exists());
     assert_ne!(fs::read(&index).unwrap(), before_index);
-    let guard = OpenOptions::new().read(true).write(true)
-        .open(metadata.join("transaction.guard")).unwrap();
-    assert!(matches!(guard.try_lock(), Err(std::fs::TryLockError::WouldBlock)));
-    let mut writer = Worker(f.command(&["add", "contender"])
-        .stdout(Stdio::null())
-        .stderr(Stdio::null())
-        .spawn().unwrap());
+    let guard = OpenOptions::new()
+        .read(true)
+        .write(true)
+        .open(metadata.join("transaction.guard"))
+        .unwrap();
+    assert!(matches!(
+        guard.try_lock(),
+        Err(std::fs::TryLockError::WouldBlock)
+    ));
+    let mut writer = Worker(
+        f.command(&["add", "contender"])
+            .stdout(Stdio::null())
+            .stderr(Stdio::null())
+            .spawn()
+            .unwrap(),
+    );
     thread::sleep(Duration::from_millis(100));
-    assert!(writer.0.try_wait().unwrap().is_none(), "competing writer escaped the lock");
+    assert!(
+        writer.0.try_wait().unwrap().is_none(),
+        "competing writer escaped the lock"
+    );
     fs::write(f.repo.join("a"), "edit made after the provisional commit").unwrap();
 
     batch.0.kill().unwrap();
@@ -336,7 +379,10 @@ fn batch_rollback_recovers_a_killed_process_and_excludes_competing_writers() {
     assert_eq!(fs::read(&head).unwrap(), before_head);
     assert_eq!(fs::read(&branch).unwrap(), before_ref);
     assert_eq!(fs::read(&index).unwrap(), before_index);
-    assert_eq!(fs::read_to_string(f.repo.join("a")).unwrap(), "edit made after the provisional commit");
+    assert_eq!(
+        fs::read_to_string(f.repo.join("a")).unwrap(),
+        "edit made after the provisional commit"
+    );
     assert!(!journal.exists());
     f.run(&["add", "contender"], "");
     assert_eq!(f.run(&["status"], "")["staged"], json!(["contender"]));
@@ -379,7 +425,11 @@ fn transaction_restores_dirty_worktree_index_and_ref_and_can_retry() {
 fn swarm_registration_stays_inside_the_repository_and_is_idempotent() {
     let f = Fixture::new();
     let outside = f._root.path().join("outside");
-    for name in [outside.to_str().unwrap(), "../../../../outside", r"..\outside"] {
+    for name in [
+        outside.to_str().unwrap(),
+        "../../../../outside",
+        r"..\outside",
+    ] {
         assert!(!f.output(&["swarm", "register", name], "").status.success());
         assert!(!outside.exists());
     }
@@ -401,7 +451,10 @@ fn swarm_registration_rejects_redirected_namespace() {
     let outside = f._root.path().join("outside");
     fs::create_dir(&outside).unwrap();
     std::os::unix::fs::symlink(&outside, f.repo.join(".lit/refs/agents")).unwrap();
-    assert!(!f.output(&["swarm", "register", "worker-1"], "").status.success());
+    assert!(!f
+        .output(&["swarm", "register", "worker-1"], "")
+        .status
+        .success());
     assert!(!outside.join("worker-1").exists());
 }
 
@@ -422,7 +475,10 @@ fn swarm_leases_preserve_legacy_records_without_path_collisions() {
     .unwrap();
 
     let acquire = |agent, path| {
-        f.output(&["swarm", "lease-acquire", "--agent", agent, "--path", path], "")
+        f.output(
+            &["swarm", "lease-acquire", "--agent", agent, "--path", path],
+            "",
+        )
     };
     assert!(!acquire("second", "src//a.rs").status.success());
     assert!(acquire("second", "src_a.rs").status.success());
@@ -432,7 +488,17 @@ fn swarm_leases_preserve_legacy_records_without_path_collisions() {
     let list = f.run(&["swarm", "lease-list"], "");
     assert_eq!(list["details"]["leases"].as_array().unwrap().len(), 2);
     let release = |agent| {
-        f.output(&["swarm", "lease-release", "--agent", agent, "--path", "./src/a.rs"], "")
+        f.output(
+            &[
+                "swarm",
+                "lease-release",
+                "--agent",
+                agent,
+                "--path",
+                "./src/a.rs",
+            ],
+            "",
+        )
     };
     assert!(!release("second").status.success());
     assert!(release("first").status.success());
@@ -446,7 +512,12 @@ fn swarm_lease_acquisition_serializes_competing_processes() {
     let contenders = (0..24)
         .map(|i| {
             f.command(&[
-                "swarm", "lease-acquire", "--agent", &format!("worker-{i}"), "--path", "shared",
+                "swarm",
+                "lease-acquire",
+                "--agent",
+                &format!("worker-{i}"),
+                "--path",
+                "shared",
             ])
             .stdout(Stdio::null())
             .stderr(Stdio::null())
@@ -473,7 +544,10 @@ fn checkout_cannot_invalidate_an_open_transaction() {
 
     assert!(!f.output(&["checkout", "-b", "other"], "").status.success());
     assert!(!f.repo.join(".lit/refs/heads/other").exists());
-    assert_eq!(fs::read_to_string(f.repo.join("a")).unwrap(), "keep my edit");
+    assert_eq!(
+        fs::read_to_string(f.repo.join("a")).unwrap(),
+        "keep my edit"
+    );
     f.run(&["tx", "rollback"], "");
     assert_eq!(f.run(&["status"], "")["head"], original);
 }
@@ -544,11 +618,17 @@ fn merge_rejects_head_changes_and_resumes_the_same_two_parent_commit() {
         f.run(&["checkout", "topic"], "");
         fs::write(f.repo.join("a"), "topic").unwrap();
         f.run(&["add", "a"], "");
-        let topic = f.run(&["commit", "-m", "topic"], "")["hash"].as_str().unwrap().to_owned();
+        let topic = f.run(&["commit", "-m", "topic"], "")["hash"]
+            .as_str()
+            .unwrap()
+            .to_owned();
         f.run(&["checkout", "main"], "");
         fs::write(f.repo.join("a"), "main").unwrap();
         f.run(&["add", "a"], "");
-        let main = f.run(&["commit", "-m", "main"], "")["hash"].as_str().unwrap().to_owned();
+        let main = f.run(&["commit", "-m", "main"], "")["hash"]
+            .as_str()
+            .unwrap()
+            .to_owned();
         assert_eq!(f.run(&["merge", "topic"], "")["has_conflicts"], true);
 
         let merge = f.repo.join(".lit/merge");
@@ -579,16 +659,29 @@ fn merge_rejects_head_changes_and_resumes_the_same_two_parent_commit() {
         let resolved = f.run(&["resolve", "a", "--strategy", strategy], "");
         assert_eq!(resolved["remaining_conflicts"], 0);
         assert_eq!(fs::read_to_string(f.repo.join("a")).unwrap(), chosen);
-        assert_eq!(f.run(&["resolve", "--continue"], "")["merge_complete"], true);
+        assert_eq!(
+            f.run(&["resolve", "--continue"], "")["merge_complete"],
+            true
+        );
 
         let finished = f.run(&["status"], "");
         assert_eq!(finished["clean"], true);
         let result = finished["head"].as_str().unwrap();
         let store = ObjectStore::new(&f.repo);
-        let Object::Commit(commit) = store.read(&ObjectHash::from_hex(result.to_owned())).unwrap() else {
+        let Object::Commit(commit) = store
+            .read(&ObjectHash::from_hex(result.to_owned()))
+            .unwrap()
+        else {
             panic!("expected merge commit");
         };
-        assert_eq!(commit.parents.iter().map(|hash| hash.as_str()).collect::<Vec<_>>(), [&main, &topic]);
+        assert_eq!(
+            commit
+                .parents
+                .iter()
+                .map(|hash| hash.as_str())
+                .collect::<Vec<_>>(),
+            [&main, &topic]
+        );
         assert!(!merge.exists());
 
         // Simulate interruption after the ref was published but before state was retired.
@@ -625,33 +718,55 @@ fn verify_reports_bad_transaction_metadata_and_rollback_preserves_worktree() {
     fs::write(f.repo.join("a"), "current bytes").unwrap();
     for (bytes, detail) in [
         (b"malformed".to_vec(), "transaction.json"),
-        (serde_json::to_vec(&invalid_blob).unwrap(), "checkpoint blob"),
-        (serde_json::to_vec(&invalid_index).unwrap(), "checkpoint index"),
-        (serde_json::to_vec(&invalid_branch).unwrap(), "checkpoint branch"),
+        (
+            serde_json::to_vec(&invalid_blob).unwrap(),
+            "checkpoint blob",
+        ),
+        (
+            serde_json::to_vec(&invalid_index).unwrap(),
+            "checkpoint index",
+        ),
+        (
+            serde_json::to_vec(&invalid_branch).unwrap(),
+            "checkpoint branch",
+        ),
     ] {
         fs::write(&journal, &bytes).unwrap();
         let verify = f.run(&["verify"], "");
         assert_eq!(verify["valid"], false);
-        assert!(verify["checks"].as_array().unwrap().iter().any(|check| {
-            check["check"] == "transaction_journal"
-                && check["status"] == "error"
-                && check["details"].as_str().unwrap().contains(detail)
-        }), "{verify}");
+        assert!(
+            verify["checks"].as_array().unwrap().iter().any(|check| {
+                check["check"] == "transaction_journal"
+                    && check["status"] == "error"
+                    && check["details"].as_str().unwrap().contains(detail)
+            }),
+            "{verify}"
+        );
         assert!(!f.output(&["tx", "rollback"], "").status.success());
-        assert_eq!(fs::read_to_string(f.repo.join("a")).unwrap(), "current bytes");
+        assert_eq!(
+            fs::read_to_string(f.repo.join("a")).unwrap(),
+            "current bytes"
+        );
         assert_eq!(fs::read(&journal).unwrap(), bytes);
     }
     fs::write(&journal, &saved).unwrap();
     assert_eq!(f.run(&["verify"], "")["valid"], true);
     f.run(&["tx", "rollback"], "");
-    assert_eq!(fs::read_to_string(f.repo.join("a")).unwrap(), "checkpoint bytes");
+    assert_eq!(
+        fs::read_to_string(f.repo.join("a")).unwrap(),
+        "checkpoint bytes"
+    );
     assert!(!journal.exists());
     assert_eq!(f.run(&["verify"], "")["valid"], true);
 
     // A journal from the MIT baseline can still be verified and closed.
     let id = "a93b4aef-828d-4231-88a5-d6d6e1ebe6ce";
     let lock = f.repo.join(".lit/transaction.lock");
-    fs::write(&journal, json!({"tx_id": id, "started_at": 0, "wal": []}).to_string()).unwrap();
+    fs::write(
+        &journal,
+        json!({"tx_id": id, "started_at": 0, "wal": []}).to_string(),
+    )
+    .unwrap();
     fs::write(&lock, id).unwrap();
     assert_eq!(f.run(&["verify"], "")["valid"], true);
     f.run(&["tx", "commit"], "");
@@ -689,7 +804,10 @@ fn mixed_merge(f: &Fixture) -> String {
     fs::write(f.repo.join("a"), "main\n").unwrap();
     fs::write(f.repo.join("lines"), "ONE\ntwo\nthree\nfour\n").unwrap();
     f.run(&["add", "a", "lines"], "");
-    f.run(&["commit", "-m", "main"], "")["hash"].as_str().unwrap().to_owned()
+    f.run(&["commit", "-m", "main"], "")["hash"]
+        .as_str()
+        .unwrap()
+        .to_owned()
 }
 
 #[test]
@@ -712,7 +830,10 @@ fn conflicted_merge_installs_and_commits_non_conflicting_changes() {
     f.run(&["resolve", "--continue"], "");
     assert_eq!(f.run(&["status"], "")["clean"], true);
     assert_eq!(fs::read_to_string(f.repo.join("a")).unwrap(), "topic\n");
-    assert_eq!(fs::read_to_string(f.repo.join("incoming")).unwrap(), "incoming edit\n");
+    assert_eq!(
+        fs::read_to_string(f.repo.join("incoming")).unwrap(),
+        "incoming edit\n"
+    );
     assert!(!f.repo.join(".lit/merge").exists());
     assert_eq!(f.run(&["verify"], "")["valid"], true);
 }
@@ -753,11 +874,26 @@ fn merge_abort_protects_local_edits_and_resumes_a_partial_restore() {
     assert_eq!(status["staged"], json!(["keep", "local"]));
     assert_eq!(status["modified"], json!([]));
     assert_eq!(fs::read_to_string(f.repo.join("a")).unwrap(), "main\n");
-    assert_eq!(fs::read_to_string(f.repo.join("incoming")).unwrap(), "base\n");
-    assert_eq!(fs::read_to_string(f.repo.join("removed")).unwrap(), "restore me\n");
-    assert_eq!(fs::read_to_string(f.repo.join("lines")).unwrap(), "ONE\ntwo\nthree\nfour\n");
-    assert_eq!(fs::read_to_string(f.repo.join("keep")).unwrap(), "after merge\n");
-    assert_eq!(fs::read_to_string(f.repo.join("local")).unwrap(), "preexisting change\n");
+    assert_eq!(
+        fs::read_to_string(f.repo.join("incoming")).unwrap(),
+        "base\n"
+    );
+    assert_eq!(
+        fs::read_to_string(f.repo.join("removed")).unwrap(),
+        "restore me\n"
+    );
+    assert_eq!(
+        fs::read_to_string(f.repo.join("lines")).unwrap(),
+        "ONE\ntwo\nthree\nfour\n"
+    );
+    assert_eq!(
+        fs::read_to_string(f.repo.join("keep")).unwrap(),
+        "after merge\n"
+    );
+    assert_eq!(
+        fs::read_to_string(f.repo.join("local")).unwrap(),
+        "preexisting change\n"
+    );
     assert!(!f.repo.join("new").exists());
     assert!(!f.repo.join(".lit/merge").exists());
     assert_eq!(f.run(&["verify"], "")["valid"], true);
@@ -781,7 +917,10 @@ fn merge_abort_restores_premerge_index_and_keeps_preexisting_files() {
     #[cfg(unix)]
     {
         use std::os::unix::fs::PermissionsExt;
-        assert_eq!(fs::metadata(&path).unwrap().permissions().mode() & 0o777, 0o600);
+        assert_eq!(
+            fs::metadata(&path).unwrap().permissions().mode() & 0o777,
+            0o600
+        );
     }
     f.run(&["resolve", "--abort"], "");
     assert_eq!(f.run(&["status"], "")["head"], main);
@@ -799,16 +938,37 @@ fn verify_follows_nested_links_and_checks_the_bytes_under_each_object_id() {
 
     let f = Fixture::new();
     let store = ObjectStore::new(&f.repo);
-    let leaf = store.write(&Object::Blob(Blob::new(b"leaf".to_vec()))).unwrap();
-    let different = store.write(&Object::Blob(Blob::new(b"different blob".to_vec()))).unwrap();
+    let leaf = store
+        .write(&Object::Blob(Blob::new(b"leaf".to_vec())))
+        .unwrap();
+    let different = store
+        .write(&Object::Blob(Blob::new(b"different blob".to_vec())))
+        .unwrap();
     let mut subtree = Tree::new();
     subtree.add_entry("100644".into(), "leaf".into(), leaf.clone(), "blob".into());
     let subtree = store.write(&Object::Tree(subtree)).unwrap();
     let mut tree = Tree::new();
-    tree.add_entry("040000".into(), "nested".into(), subtree.clone(), "tree".into());
-    tree.add_entry("160000".into(), "submodule".into(), ObjectHash::from_hex("a".repeat(40)), "gitlink".into());
+    tree.add_entry(
+        "040000".into(),
+        "nested".into(),
+        subtree.clone(),
+        "tree".into(),
+    );
+    tree.add_entry(
+        "160000".into(),
+        "submodule".into(),
+        ObjectHash::from_hex("a".repeat(40)),
+        "gitlink".into(),
+    );
     let tree = store.write(&Object::Tree(tree)).unwrap();
-    let commit = store.write(&Object::Commit(Commit::new(tree.clone(), vec![], "tester".into(), "root".into()))).unwrap();
+    let commit = store
+        .write(&Object::Commit(Commit::new(
+            tree.clone(),
+            vec![],
+            "tester".into(),
+            "root".into(),
+        )))
+        .unwrap();
     fs::write(f.repo.join(".lit/refs/heads/main"), commit.as_str()).unwrap();
 
     let object_path = |hash: &ObjectHash| {
@@ -816,7 +976,11 @@ fn verify_follows_nested_links_and_checks_the_bytes_under_each_object_id() {
         f.repo.join(".lit/objects").join(&id[..4]).join(&id[4..])
     };
     assert_eq!(f.run(&["verify"], "")["valid"], true);
-    for (hash, what) in [(&leaf, "leaf"), (&subtree, "nested"), (&tree, "Commit tree")] {
+    for (hash, what) in [
+        (&leaf, "leaf"),
+        (&subtree, "nested"),
+        (&tree, "Commit tree"),
+    ] {
         let path = object_path(hash);
         let before = fs::read(&path).unwrap();
         fs::remove_file(&path).unwrap();
@@ -850,17 +1014,34 @@ fn verify_checks_typed_edges_from_detached_head_remote_refs_and_annotated_tags()
     let f = Fixture::new();
     let store = ObjectStore::new(&f.repo);
     let tree = store.write(&Object::Tree(Tree::new())).unwrap();
-    let blob = store.write(&Object::Blob(Blob::new(b"not a commit".to_vec()))).unwrap();
-    let make_commit = |tree, parents| store.write(&Object::Commit(
-        Commit::new(tree, parents, "tester".into(), "fixture".into()),
-    )).unwrap();
+    let blob = store
+        .write(&Object::Blob(Blob::new(b"not a commit".to_vec())))
+        .unwrap();
+    let make_commit = |tree, parents| {
+        store
+            .write(&Object::Commit(Commit::new(
+                tree,
+                parents,
+                "tester".into(),
+                "fixture".into(),
+            )))
+            .unwrap()
+    };
     let wrong_parent = make_commit(tree.clone(), vec![blob.clone()]);
     let wrong_tree = make_commit(blob.clone(), vec![]);
     let missing = ObjectHash::from_hex("a".repeat(192));
     let tagged = make_commit(tree.clone(), vec![missing.clone()]);
-    let tag_object = |target| store.write(&Object::Tag(
-        Tag::new(target, "commit".into(), "notice".into(), "tester".into(), "tag".into()),
-    )).unwrap();
+    let tag_object = |target| {
+        store
+            .write(&Object::Tag(Tag::new(
+                target,
+                "commit".into(),
+                "notice".into(),
+                "tester".into(),
+                "tag".into(),
+            )))
+            .unwrap()
+    };
     let tag = tag_object(tagged);
     let head = f.repo.join(".lit/HEAD");
     let remote = f.repo.join(".lit/refs/remotes/origin/topic");
@@ -890,11 +1071,14 @@ fn verify_checks_typed_edges_from_detached_head_remote_refs_and_annotated_tags()
 fn assert_verify_error(f: &Fixture, category: &str, detail: &str) {
     let report = f.run(&["verify"], "");
     assert_eq!(report["valid"], false, "{report}");
-    assert!(report["checks"].as_array().unwrap().iter().any(|check| {
-        check["status"] == "error"
-            && check["check"].as_str().unwrap().starts_with(category)
-            && check["details"].as_str().unwrap().contains(detail)
-    }), "{category} {detail}: {report}");
+    assert!(
+        report["checks"].as_array().unwrap().iter().any(|check| {
+            check["status"] == "error"
+                && check["check"].as_str().unwrap().starts_with(category)
+                && check["details"].as_str().unwrap().contains(detail)
+        }),
+        "{category} {detail}: {report}"
+    );
 }
 
 #[test]
@@ -931,7 +1115,10 @@ fn native_gc_keeps_history_checkout_and_clone_working_across_multiple_packs() {
     assert_eq!(packed["loose_removed"], packed["objects_packed"]);
     assert_eq!(f.run(&["status"], "")["clean"], true);
     assert_eq!(f.run(&["verify"], "")["valid"], true);
-    assert_eq!(f.run(&["verify"], "")["objects_checked"], packed["objects_packed"]);
+    assert_eq!(
+        f.run(&["verify"], "")["objects_checked"],
+        packed["objects_packed"]
+    );
     assert_eq!(f.run(&["gc"], "")["packs_created"], 0);
     fs::write(f.repo.join("a"), "new content").unwrap();
     f.run(&["add", "a"], "");
@@ -941,8 +1128,11 @@ fn native_gc_keeps_history_checkout_and_clone_working_across_multiple_packs() {
     assert_eq!(f.run(&["verify"], "")["valid"], true);
     assert_eq!(f.run(&["gc"], "")["packs_created"], 1);
     assert_eq!(
-        fs::read_dir(f.repo.join(".lit/packs")).unwrap()
-            .filter_map(Result::ok).filter(|entry| entry.path().extension().unwrap() == "idx").count(),
+        fs::read_dir(f.repo.join(".lit/packs"))
+            .unwrap()
+            .filter_map(Result::ok)
+            .filter(|entry| entry.path().extension().unwrap() == "idx")
+            .count(),
         2
     );
     assert_eq!(f.run(&["gc"], "")["packs_created"], 0);
@@ -953,10 +1143,15 @@ fn native_gc_keeps_history_checkout_and_clone_working_across_multiple_packs() {
     assert_eq!(fs::read_to_string(f.repo.join("a")).unwrap(), "new content");
 
     let clone = f._root.path().join("clone");
-    f.run(&["clone", f.repo.to_str().unwrap(), clone.to_str().unwrap()], "");
+    f.run(
+        &["clone", f.repo.to_str().unwrap(), clone.to_str().unwrap()],
+        "",
+    );
     assert_eq!(fs::read_to_string(clone.join("a")).unwrap(), "new content");
     let cloned = ObjectStore::new(&clone);
-    assert!(cloned.read(&ObjectHash::from_hex(initial.to_owned())).is_ok());
+    assert!(cloned
+        .read(&ObjectHash::from_hex(initial.to_owned()))
+        .is_ok());
 }
 
 #[test]
@@ -969,8 +1164,12 @@ fn native_pack_verification_detects_corruption_even_with_a_good_loose_copy() {
     let object = Object::Blob(Blob::new(b"one packed blob".to_vec()));
     let hash = store.write(&object).unwrap();
     assert_eq!(f.run(&["gc"], "")["objects_packed"], 1);
-    let index = fs::read_dir(f.repo.join(".lit/packs")).unwrap().filter_map(Result::ok)
-        .map(|entry| entry.path()).find(|path| path.extension().unwrap() == "idx").unwrap();
+    let index = fs::read_dir(f.repo.join(".lit/packs"))
+        .unwrap()
+        .filter_map(Result::ok)
+        .map(|entry| entry.path())
+        .find(|path| path.extension().unwrap() == "idx")
+        .unwrap();
     let pack = index.with_extension("pack");
     let original_index = fs::read(&index).unwrap();
     let original_pack = fs::read(&pack).unwrap();
@@ -1014,7 +1213,9 @@ fn native_gc_keeps_loose_objects_when_pack_preparation_fails() {
     let f = Fixture::new();
     f.seed();
     let store = ObjectStore::new(&f.repo);
-    let hash = store.write(&Object::Blob(Blob::new(b"will be corrupted".to_vec()))).unwrap();
+    let hash = store
+        .write(&Object::Blob(Blob::new(b"will be corrupted".to_vec())))
+        .unwrap();
     let id = hash.as_str();
     let path = f.repo.join(".lit/objects").join(&id[..4]).join(&id[4..]);
     let saved = fs::read(&path).unwrap();
@@ -1041,7 +1242,9 @@ fn encrypted_gc_verify_and_rotation_work_through_the_cli() {
     if let Ok(tip) = std::env::var(FIXTURE_HEAD) {
         let repo = std::env::current_dir().unwrap();
         let store = ObjectStore::new_with_encryption(&repo, Some(OLD)).unwrap();
-        let loose = store.write(&Object::Blob(Blob::new(b"loose after gc".to_vec()))).unwrap();
+        let loose = store
+            .write(&Object::Blob(Blob::new(b"loose after gc".to_vec())))
+            .unwrap();
         let mut manager = EncryptionManager::new(EncryptionConfig::load(&repo).unwrap());
         manager.initialize(OLD).unwrap();
         let manager = Arc::new(Mutex::new(manager));
@@ -1065,28 +1268,42 @@ fn encrypted_gc_verify_and_rotation_work_through_the_cli() {
     fs::write(&old_file, OLD).unwrap();
     fs::write(&new_file, NEW).unwrap();
     let call = |arguments: &[&str], credential: &std::path::Path| -> Value {
-        let output = f.command(arguments)
+        let output = f
+            .command(arguments)
             .env("LIT_PASSPHRASE_FILE", credential)
             .env("LIT_NEW_PASSPHRASE_FILE", &new_file)
-            .output().unwrap();
-        assert!(output.status.success(), "{arguments:?}: {}", String::from_utf8_lossy(&output.stderr));
+            .output()
+            .unwrap();
+        assert!(
+            output.status.success(),
+            "{arguments:?}: {}",
+            String::from_utf8_lossy(&output.stderr)
+        );
         serde_json::from_slice(&output.stdout).unwrap()
     };
 
     fs::write(f.repo.join("a"), "encrypted fixture payload").unwrap();
     call(&["add", "a"], &old_file);
-    let tip = call(&["commit", "-m", "encrypted pack"], &old_file)["hash"].as_str().unwrap().to_owned();
+    let tip = call(&["commit", "-m", "encrypted pack"], &old_file)["hash"]
+        .as_str()
+        .unwrap()
+        .to_owned();
     let original_key = fs::read(&key_path).unwrap();
     let result = call(&["gc"], &old_file);
     assert_eq!(result["loose_removed"], 3);
-    let pack_index = fs::read_dir(f.repo.join(".lit/packs")).unwrap().filter_map(Result::ok)
-        .map(|entry| entry.path()).find(|path| path.extension().unwrap() == "idx").unwrap();
+    let pack_index = fs::read_dir(f.repo.join(".lit/packs"))
+        .unwrap()
+        .filter_map(Result::ok)
+        .map(|entry| entry.path())
+        .find(|path| path.extension().unwrap() == "idx")
+        .unwrap();
     let pack = pack_index.with_extension("pack");
     let original_pack = fs::read(&pack).unwrap();
     let original_index = fs::read(&pack_index).unwrap();
     assert_eq!(&original_pack[..8], b"LITP\0\0\0\x02");
     assert_eq!(&original_index[..8], b"LITI\0\0\0\x02");
-    assert!(!original_pack.windows(b"encrypted fixture payload".len())
+    assert!(!original_pack
+        .windows(b"encrypted fixture payload".len())
         .any(|window| window == b"encrypted fixture payload"));
 
     let store = ObjectStore::new_with_encryption(&f.repo, Some(OLD)).unwrap();
@@ -1094,13 +1311,17 @@ fn encrypted_gc_verify_and_rotation_work_through_the_cli() {
     assert!(matches!(store.read(&hash).unwrap(), Object::Commit(_)));
     let offsets = lit::commands::gc::load_pack_index(&pack_index).unwrap();
     let offset = offsets[&tip].1 as usize;
-    let len = u64::from_be_bytes(original_pack[offset + 9..offset + 17].try_into().unwrap()) as usize;
+    let len =
+        u64::from_be_bytes(original_pack[offset + 9..offset + 17].try_into().unwrap()) as usize;
     let mut tampered = original_pack.clone();
     tampered[offset + 17 + len - 1] ^= 1;
     let mut tampered_index = original_index.clone();
-    let record = tampered_index[12..].chunks_exact_mut(208)
-        .find(|record| &record[4..196] == tip.as_bytes()).unwrap();
-    record[204..208].copy_from_slice(&crc32fast::hash(&tampered[offset + 17..offset + 17 + len]).to_be_bytes());
+    let record = tampered_index[12..]
+        .chunks_exact_mut(208)
+        .find(|record| &record[4..196] == tip.as_bytes())
+        .unwrap();
+    record[204..208]
+        .copy_from_slice(&crc32fast::hash(&tampered[offset + 17..offset + 17 + len]).to_be_bytes());
     fs::write(&pack, tampered).unwrap();
     fs::write(&pack_index, tampered_index).unwrap();
     store.list().unwrap();
@@ -1109,13 +1330,21 @@ fn encrypted_gc_verify_and_rotation_work_through_the_cli() {
     fs::write(&pack_index, &original_index).unwrap();
 
     let fixture = Command::new(std::env::current_exe().unwrap())
-        .args(["--exact", "encrypted_gc_verify_and_rotation_work_through_the_cli"])
+        .args([
+            "--exact",
+            "encrypted_gc_verify_and_rotation_work_through_the_cli",
+        ])
         .current_dir(&f.repo)
         .env("HOME", &f.home)
         .env("USERPROFILE", &f.home)
         .env(FIXTURE_HEAD, &tip)
-        .output().unwrap();
-    assert!(fixture.status.success(), "{}", String::from_utf8_lossy(&fixture.stdout));
+        .output()
+        .unwrap();
+    assert!(
+        fixture.status.success(),
+        "{}",
+        String::from_utf8_lossy(&fixture.stdout)
+    );
     let loose = ObjectHash::from_hex(fs::read_to_string(f.home.join("loose-hash")).unwrap());
     let result = call(&["rotate-key"], &old_file);
     assert_eq!(result["objects_rotated"], 4);
@@ -1126,8 +1355,12 @@ fn encrypted_gc_verify_and_rotation_work_through_the_cli() {
 
     let rotated = ObjectStore::new_with_encryption(&f.repo, Some(NEW)).unwrap();
     assert!(matches!(rotated.read(&hash).unwrap(), Object::Commit(_)));
-    assert!(matches!(rotated.read(&loose).unwrap(), Object::Blob(blob) if blob.content == b"loose after gc"));
-    assert!(store.write(&Object::Blob(Blob::new(b"stale cipher".to_vec()))).is_err());
+    assert!(
+        matches!(rotated.read(&loose).unwrap(), Object::Blob(blob) if blob.content == b"loose after gc")
+    );
+    assert!(store
+        .write(&Object::Blob(Blob::new(b"stale cipher".to_vec())))
+        .is_err());
     assert_eq!(call(&["verify"], &new_file)["valid"], true);
     let status = call(&["status"], &new_file);
     assert_eq!(status["clean"], true);

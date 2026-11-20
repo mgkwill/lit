@@ -191,7 +191,12 @@ fn parse_operation(input: &str, command: &mut String) -> Result<Operation, Strin
 
 impl Operation {
     fn supports_rollback(&self) -> bool {
-        !matches!(self, Self::Checkout { .. } | Self::Branch { name: Some(_), .. } | Self::Branch { delete: true, .. })
+        !matches!(
+            self,
+            Self::Checkout { .. }
+                | Self::Branch { name: Some(_), .. }
+                | Self::Branch { delete: true, .. }
+        )
     }
 }
 
@@ -202,12 +207,10 @@ fn apply(operation: Operation, locked_root: Option<&Path>) -> Result<Value, LitE
             Some(root) => commands::add::execute_locked(root, files)?,
             None => commands::add::execute(files)?,
         }),
-        Operation::Commit { message, author } => {
-            serde_json::to_value(match locked_root {
-                Some(root) => commands::commit::execute_locked(root, message, author)?,
-                None => commands::commit::execute(message, author)?,
-            })
-        }
+        Operation::Commit { message, author } => serde_json::to_value(match locked_root {
+            Some(root) => commands::commit::execute_locked(root, message, author)?,
+            None => commands::commit::execute(message, author)?,
+        }),
         Operation::Status {} => serde_json::to_value(commands::status::execute()?),
         Operation::Branch { name, delete, all } => {
             serde_json::to_value(commands::branch::execute(name, delete, all)?)

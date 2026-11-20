@@ -88,7 +88,10 @@ fn remote_branch_tip_must_name_an_existing_commit() {
     for hash in ["invalid", &"a".repeat(192), blob_id.as_str()] {
         for force in [false, true] {
             let result = lit::network::transport::update_remote_branch_ref(
-                remote.path(), "main", hash, force,
+                remote.path(),
+                "main",
+                hash,
+                force,
             );
             assert!(result.unwrap_err().contains("existing commit"));
             assert!(!remote.path().join(".lit/refs/heads/main").exists());

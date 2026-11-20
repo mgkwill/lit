@@ -1,6 +1,8 @@
 use serde::{Deserialize, Serialize};
 use std::fs;
-use std::path::{Path, PathBuf};
+#[cfg(target_os = "windows")]
+use std::path::Path;
+use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
 
 /// Global airgap mode flag
@@ -239,6 +241,7 @@ impl AirgapValidator {
         }
 
         // Path-based detection
+        #[cfg(target_os = "windows")]
         let path_obj = Path::new(path);
 
         // Windows network share detection (\\server\share or //server/share)
@@ -322,11 +325,6 @@ impl AirgapValidator {
         }
 
         #[cfg(not(target_os = "windows"))]
-        Ok(false)
-    }
-
-    #[cfg(not(target_os = "windows"))]
-    fn is_removable_drive(&self, _path: &str) -> Result<bool, String> {
         Ok(false)
     }
 

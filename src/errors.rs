@@ -237,7 +237,9 @@ impl fmt::Display for LitError {
             LitError::IO(_) => write!(f, "I/O operation failed"),
             LitError::Config(_) => write!(f, "Configuration error"),
             LitError::Network(_) => write!(f, "Network operation failed"),
-            LitError::SandboxUnavailable(_) => write!(f, "Required sandbox isolation is unavailable"),
+            LitError::SandboxUnavailable(_) => {
+                write!(f, "Required sandbox isolation is unavailable")
+            }
             LitError::Repository(_) => write!(f, "Repository operation failed"),
             LitError::Object(_) => write!(f, "Object operation failed"),
             LitError::Index(_) => write!(f, "Index operation failed"),
@@ -289,6 +291,7 @@ fn get_secure_log_path() -> Result<std::path::PathBuf, String> {
         if !log_file.exists() {
             OpenOptions::new()
                 .create(true)
+                .truncate(false)
                 .write(true)
                 .open(&log_file)
                 .ok();

@@ -49,7 +49,9 @@ pub(crate) fn decode_ref_bytes(repo: &Path, bytes: &[u8]) -> std::io::Result<Str
     if is_encrypted_ref(bytes) {
         let manager = EncryptionManager::for_repository(repo, None, false).map_err(invalid)?;
         if !manager.is_enabled() {
-            return Err(invalid("Encrypted ref requires repository encryption".into()));
+            return Err(invalid(
+                "Encrypted ref requires repository encryption".into(),
+            ));
         }
         let decoded = manager.decrypt(bytes).map_err(invalid)?;
         String::from_utf8(decoded).map_err(|e| invalid(e.to_string()))
@@ -64,7 +66,11 @@ pub(crate) fn is_encrypted_ref(bytes: &[u8]) -> bool {
     bytes.first() == Some(&ENCRYPTION_VERSION)
 }
 
-pub(crate) fn encode_ref_file(repo: &Path, destination: &Path, text: &str) -> Result<Vec<u8>, String> {
+pub(crate) fn encode_ref_file(
+    repo: &Path,
+    destination: &Path,
+    text: &str,
+) -> Result<Vec<u8>, String> {
     require_rotation_complete(repo)?;
     match fs::read(destination) {
         Ok(bytes) if is_encrypted_ref(&bytes) => {
@@ -248,7 +254,11 @@ pub fn get_current_branch(repo_path: &Path) -> Result<String, String> {
 pub fn update_head(repo_path: &Path, branch: &str) -> Result<(), String> {
     let head_path = get_lit_dir(repo_path).join("HEAD");
 
-    let bytes = encode_ref_file(repo_path, &head_path, &format!("ref: refs/heads/{branch}\n"))?;
+    let bytes = encode_ref_file(
+        repo_path,
+        &head_path,
+        &format!("ref: refs/heads/{branch}\n"),
+    )?;
     fs::write(&head_path, bytes).map_err(|e| format!("Failed to update HEAD: {e}"))
 }
 
@@ -456,7 +466,9 @@ mod tests {
         };
 
         let mut enc_manager = EncryptionManager::new(config);
-        enc_manager.initialize("test-passphrase-detached-A1!").unwrap();
+        enc_manager
+            .initialize("test-passphrase-detached-A1!")
+            .unwrap();
         let encryption = Arc::new(Mutex::new(enc_manager));
 
         let commit_hash = "cafebabe987654";
@@ -488,7 +500,9 @@ mod tests {
         };
 
         let mut enc_manager = EncryptionManager::new(config);
-        enc_manager.initialize("test-passphrase-tamper-A1!").unwrap();
+        enc_manager
+            .initialize("test-passphrase-tamper-A1!")
+            .unwrap();
         let encryption = Arc::new(Mutex::new(enc_manager));
 
         let test_hash = "original123";

@@ -1,5 +1,5 @@
-use super::worktree::publish_new_directory as promote;
 use super::verify;
+use super::worktree::publish_new_directory as promote;
 use crate::core::repository_format::{self, Receipt};
 use crate::crypto::encryption::{EncryptionConfig, EncryptionManager};
 use crate::errors::LitError;

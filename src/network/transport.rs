@@ -215,7 +215,8 @@ pub fn update_remote_branch_ref(
     hash: &str,
     force: bool,
 ) -> Result<(), String> {
-    let _lock = crate::commands::transaction::lock_writes(remote_path).map_err(|e| e.to_string())?;
+    let _lock =
+        crate::commands::transaction::lock_writes(remote_path).map_err(|e| e.to_string())?;
     let store = ObjectStore::new(remote_path);
     let next = ObjectHash::from_hex(hash.to_owned());
     if !matches!(store.read_verified(&next), Ok(Object::Commit(_))) {
@@ -224,9 +225,7 @@ pub fn update_remote_branch_ref(
     let reference = format!("heads/{branch}");
     if !force {
         if let Ok(old) = crate::core::read_ref(remote_path, &reference) {
-            if !is_fast_forward_push(
-                &store, &next, &ObjectHash::from_hex(old),
-            )? {
+            if !is_fast_forward_push(&store, &next, &ObjectHash::from_hex(old))? {
                 return Err("Push rejected: non-fast-forward update".into());
             }
         }
@@ -277,7 +276,9 @@ pub fn read_remote_head(remote_path: &Path) -> Result<String, String> {
             match branches.as_slice() {
                 [] => Ok("ref: refs/heads/main".to_owned()),
                 [(branch, _)] => Ok(format!("ref: refs/heads/{branch}")),
-                _ if branches.iter().any(|(branch, _)| branch == "main") => Ok("ref: refs/heads/main".to_owned()),
+                _ if branches.iter().any(|(branch, _)| branch == "main") => {
+                    Ok("ref: refs/heads/main".to_owned())
+                }
                 _ => Err("Remote HEAD is missing and its default branch is ambiguous".to_owned()),
             }
         }

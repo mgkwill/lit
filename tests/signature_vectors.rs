@@ -3,9 +3,10 @@ use lit::crypto::signatures::PQSignature;
 
 #[test]
 fn signature_verification_matches_external_vectors() {
-    let fixture: serde_json::Value =
-        serde_json::from_str(include_str!("fixtures/cryptography/mldsa87-verification.json"))
-            .unwrap();
+    let fixture: serde_json::Value = serde_json::from_str(include_str!(
+        "fixtures/cryptography/mldsa87-verification.json"
+    ))
+    .unwrap();
     let mut checked = 0;
     for group in fixture["testGroups"].as_array().unwrap() {
         let public_key = hex::decode(group["publicKey"].as_str().unwrap()).unwrap();

@@ -4,7 +4,10 @@ use crate::storage::{Index, ObjectStore};
 use std::fs;
 use std::path::Path;
 
-pub fn execute(target: String, create_new: bool) -> Result<CheckoutResponse, crate::errors::LitError> {
+pub fn execute(
+    target: String,
+    create_new: bool,
+) -> Result<CheckoutResponse, crate::errors::LitError> {
     let repo_root = find_repo_root()?;
     let _guard = super::transaction::lock_writes(&repo_root)?;
     super::merge::require_inactive(&repo_root)?;
@@ -43,7 +46,10 @@ pub fn execute(target: String, create_new: bool) -> Result<CheckoutResponse, cra
     }
 }
 
-fn checkout_commit(repo_root: &Path, commit_hash: &ObjectHash) -> Result<(), crate::errors::LitError> {
+fn checkout_commit(
+    repo_root: &Path,
+    commit_hash: &ObjectHash,
+) -> Result<(), crate::errors::LitError> {
     let store = ObjectStore::new(repo_root);
 
     // Read commit

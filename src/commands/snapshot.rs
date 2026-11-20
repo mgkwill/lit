@@ -21,7 +21,9 @@ pub fn execute(
 
 pub(super) fn execute_locked(
     repo_root: &std::path::Path,
-    message: String, author: Option<String>, metadata: Option<serde_json::Value>,
+    message: String,
+    author: Option<String>,
+    metadata: Option<serde_json::Value>,
 ) -> Result<SnapshotResponse, crate::errors::LitError> {
     super::merge::require_inactive(repo_root)?;
     let store = ObjectStore::new(repo_root);
@@ -121,7 +123,10 @@ fn add_all_files(
     Ok(count)
 }
 
-fn build_tree_from_index(index: &Index, store: &ObjectStore) -> Result<ObjectHash, crate::errors::LitError> {
+fn build_tree_from_index(
+    index: &Index,
+    store: &ObjectStore,
+) -> Result<ObjectHash, crate::errors::LitError> {
     let mut tree_map: HashMap<String, Vec<(String, String, String)>> = HashMap::new();
 
     for entry in index.sorted_entries() {

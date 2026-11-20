@@ -816,14 +816,27 @@ fn run() {
             run!(commands::branch::execute(name, delete, all))
         }
         Commands::Checkout { target, b } => run!(commands::checkout::execute(target, b)),
-        Commands::Merge { branch, strategy, abort } => {
+        Commands::Merge {
+            branch,
+            strategy,
+            abort,
+        } => {
             if abort {
                 run!(commands::merge::abort())
             } else {
-                run!(commands::merge::execute(branch.expect("branch required for merge"), strategy))
+                run!(commands::merge::execute(
+                    branch.expect("branch required for merge"),
+                    strategy
+                ))
             }
         }
-        Commands::Resolve { file, strategy, all, finish, abort } => {
+        Commands::Resolve {
+            file,
+            strategy,
+            all,
+            finish,
+            abort,
+        } => {
             if abort {
                 run!(commands::resolve::abort())
             } else {
@@ -889,16 +902,20 @@ fn run() {
         Commands::Reflog { ref_name, count } => run!(commands::reflog::execute(ref_name, count)),
 
         // Phase 2
-        Commands::Batch { atomic, dry_run, fail_on_error, rollback_on_error } => {
+        Commands::Batch {
+            atomic,
+            dry_run,
+            fail_on_error,
+            rollback_on_error,
+        } => {
             let mut failed = false;
             let result = if rollback_on_error {
                 commands::batch::execute_with_rollback(dry_run)
             } else {
                 commands::batch::execute(atomic, dry_run)
             };
-            run!(result.map(|response| {
+            run!(result.inspect(|response| {
                 failed = response.failed != 0;
-                response
             }));
             if (fail_on_error || rollback_on_error) && failed {
                 process::exit(1);
@@ -950,7 +967,11 @@ fn run() {
         Commands::MigrateRepo { command } => run!(commands::migrate_repo::execute(command)),
         #[cfg(any(target_os = "linux", target_os = "macos"))]
         Commands::Workspace { command } => match command {
-            WorkspaceCommands::Create { destination, base, branch } => {
+            WorkspaceCommands::Create {
+                destination,
+                base,
+                branch,
+            } => {
                 run!(commands::workspace::create(&destination, &base, &branch))
             }
             WorkspaceCommands::Info => run!(commands::workspace::info()),
@@ -1051,7 +1072,9 @@ fn run() {
         Commands::Sandbox { command } => match command {
             SandboxCommands::Init { name } => run!(commands::sandbox::execute_init(name)),
             SandboxCommands::Run { name, strict, cmd } => {
-                run!(commands::sandbox::execute_run_with_options(name, cmd, strict))
+                run!(commands::sandbox::execute_run_with_options(
+                    name, cmd, strict
+                ))
             }
             SandboxCommands::List => run!(commands::sandbox::execute_list()),
             SandboxCommands::Destroy { name } => run!(commands::sandbox::execute_destroy(name)),

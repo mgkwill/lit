@@ -47,11 +47,8 @@ lazy_static! {
 /// AES-GCM nonce size in bytes (96 bits recommended)
 const NONCE_SIZE: usize = 12;
 
-/// PBKDF2 iteration count for FIPS 140-3 compliance
-/// NIST SP 800-132 (2010) recommends minimum 10,000
-/// NIST SP 800-63B (2024) recommends minimum 210,000
-/// We use 600,000 for enhanced security against modern GPU attacks
-/// This provides ~2.85x the current NIST recommendation
+/// PBKDF2 work factor used by the stored key format.
+/// This parameter does not establish FIPS validation.
 const PBKDF2_ITERATIONS: u32 = 600_000;
 
 /// Salt size for PBKDF2 (16 bytes = 128 bits)
@@ -70,7 +67,7 @@ pub struct EncryptionConfig {
     pub enabled: bool,
     /// Path to encrypted key file
     pub key_file: String,
-    /// FIPS 140-3 mode (strict algorithm compliance)
+    /// Legacy FIPS-mode setting; does not establish product validation
     pub fips_mode: bool,
     /// Passphrase cache timeout in seconds (0 to disable caching)
     #[serde(default = "default_cache_timeout")]
@@ -697,7 +694,9 @@ pub struct EncryptionManager {
 
 impl EncryptionManager {
     pub(crate) fn has_legacy_key(&self) -> bool {
-        self.engine.as_ref().is_some_and(|engine| engine.budget.is_none())
+        self.engine
+            .as_ref()
+            .is_some_and(|engine| engine.budget.is_none())
     }
 
     /// Create new encryption manager

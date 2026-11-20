@@ -10,7 +10,10 @@ pub fn execute() -> Result<VerifyResponse, crate::errors::LitError> {
     Ok(at(&find_repo_root()?, None))
 }
 
-pub(super) fn at(repo_root: &Path, legacy_refs: Option<&BTreeMap<String, String>>) -> VerifyResponse {
+pub(super) fn at(
+    repo_root: &Path,
+    legacy_refs: Option<&BTreeMap<String, String>>,
+) -> VerifyResponse {
     let store = ObjectStore::new(repo_root);
 
     let mut checks = Vec::new();
@@ -148,7 +151,10 @@ fn verify_refs(
     } else {
         let path = repo_root.join(crate::core::repository_format::LEGACY_REFS_FILE);
         match path.symlink_metadata() {
-            Ok(_) => checks.push(check("refs", Err("Packed encrypted refs require 'lit migrate-repo'".into()))),
+            Ok(_) => checks.push(check(
+                "refs",
+                Err("Packed encrypted refs require 'lit migrate-repo'".into()),
+            )),
             Err(error) if error.kind() == io::ErrorKind::NotFound => {}
             Err(error) => checks.push(check("refs", Err(error.to_string()))),
         }
@@ -180,8 +186,13 @@ fn verify_refs(
                 if let Some(packed) = legacy_refs.and_then(|refs| refs.get::<str>(&name)) {
                     match read_regular_ref(repo_root, entry.path()) {
                         Ok(loose) if loose.trim() == packed => {}
-                        Ok(_) => checks.push(check(format!("ref:{name}"), Err("Conflicting loose and encrypted packed refs".into()))),
-                        Err(error) => checks.push(check(format!("ref:{name}"), Err(error.to_string()))),
+                        Ok(_) => checks.push(check(
+                            format!("ref:{name}"),
+                            Err("Conflicting loose and encrypted packed refs".into()),
+                        )),
+                        Err(error) => {
+                            checks.push(check(format!("ref:{name}"), Err(error.to_string())))
+                        }
                     }
                     continue;
                 }
@@ -237,7 +248,8 @@ fn read_ref_root(
     name: &str,
     graph: &HashMap<ObjectHash, ObjectLinks>,
 ) -> Result<ObjectHash, String> {
-    let value = read_regular_ref(repo, path).map_err(|error| format!("Cannot read ref: {error}"))?;
+    let value =
+        read_regular_ref(repo, path).map_err(|error| format!("Cannot read ref: {error}"))?;
     verify_ref_target(&value, name, graph)
 }
 

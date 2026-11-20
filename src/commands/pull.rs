@@ -7,7 +7,11 @@ pub fn execute(remote: String, branch: String) -> Result<PullResponse, LitError>
     let root = find_repo_root()?;
     let _lock = super::transaction::lock_writes(&root)?;
     super::merge::require_inactive(&root)?;
-    if root.join(".lit/transaction.json").try_exists().map_err(|e| LitError::io(e.to_string()))? {
+    if root
+        .join(".lit/transaction.json")
+        .try_exists()
+        .map_err(|e| LitError::io(e.to_string()))?
+    {
         return Err("Finish the active transaction before pulling".into());
     }
     let current = get_current_branch(&root)?;

@@ -1500,7 +1500,10 @@ impl CommandResponse for SandboxResponse {
     fn human_readable(&self) -> String {
         let mut out = format!("{}\n", self.message);
         if !self.controls_unenforced.is_empty() {
-            out.push_str(&format!("Unenforced controls: {}\n", self.controls_unenforced.join(", ")));
+            out.push_str(&format!(
+                "Unenforced controls: {}\n",
+                self.controls_unenforced.join(", ")
+            ));
         }
         if let Some(ref text) = self.output {
             if !text.is_empty() {
