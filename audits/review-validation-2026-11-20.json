@@ -1,0 +1,281 @@
+{
+  "date": "2026-11-20",
+  "projection": {
+    "source": "d71c16897148a6cd9213a1fbd5345ec9c2fe7f80",
+    "projection": "f591fe7f3a7bc9e959b51eeb0e528c4ab5ff8044",
+    "branch": "openlit-install-qualification-d71c168",
+    "excluded_workflows": [
+      ".github/workflows/agent-merge-gate.yml",
+      ".github/workflows/ci.yml",
+      ".github/workflows/nightly-security.yml"
+    ],
+    "repository": "mgkwill/lit-release-qualification"
+  },
+  "actions_run": 44858457882,
+  "actions_url": "https://github.com/mgkwill/lit-release-qualification/actions/runs/44858457882",
+  "jobs": [
+    {
+      "id": 136706053380,
+      "name": "installer (macos-15)",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44858457882,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Run python -B tests/install_script_regression.py",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Run python -B tests/dependency_notice_regression.py",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Run python -B tests/provenance_export_regression.py",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        }
+      ]
+    },
+    {
+      "id": 136706053575,
+      "name": "installer (ubuntu-22.04)",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44858457882,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Run python -B tests/install_script_regression.py",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Run python -B tests/dependency_notice_regression.py",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Run python -B tests/provenance_export_regression.py",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        }
+      ]
+    },
+    {
+      "id": 136706053581,
+      "name": "installer (windows-2022)",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44858457882,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Run python -B tests/install_script_regression.py",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Run python -B tests/dependency_notice_regression.py",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Run python -B tests/provenance_export_regression.py",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        }
+      ]
+    }
+  ],
+  "lab": {
+    "source": "d71c16897148a6cd9213a1fbd5345ec9c2fe7f80",
+    "archive_sha256": "a1c2585919ca18164c52c17e6a2c33e0a8c4ec1c0a86359122615e267cd59d4a",
+    "results": [
+      {
+        "host": "host-a",
+        "notice_tests": 9,
+        "export_tests": 2,
+        "exit_code": 0,
+        "log_sha256": "85d07dcd8959ceada8473a301fa19e04855e0b6e725cdfbf7261208d178cb604",
+        "platform": "Linux x86_64"
+      },
+      {
+        "host": "host-e",
+        "notice_tests": 9,
+        "export_tests": 2,
+        "exit_code": 0,
+        "log_sha256": "155a71b17566125768f44dbdc42710e3ef5a91a8577e48f0cedea4f7b325ddd8",
+        "platform": "Linux aarch64"
+      },
+      {
+        "host": "host-f",
+        "notice_tests": 9,
+        "export_tests": 2,
+        "exit_code": 0,
+        "log_sha256": "a8445210d5771712047738ea3a2161d4fae43761ee5228c7dc12564a86c7090e",
+        "platform": "Linux aarch64"
+      }
+    ]
+  },
+  "local": {
+    "notice_tests": 9,
+    "export_privacy_tests": 2,
+    "docs_smoke": "passed",
+    "notice_inventory_check": "passed",
+    "missing_notices": [],
+    "resolved_packages": 246,
+    "archive_reproduction": {
+      "sessions": 8,
+      "records": 33515,
+      "commits": 120,
+      "export_hashes": "passed",
+      "original_reproduction": "passed",
+      "commit_record_links": "passed"
+    }
+  },
+  "prior_failure": {
+    "run": 44858319789,
+    "source": "844f520d486241d67763e96bc6702e899f496d38",
+    "reason": "Windows assertion used newline-normalizing read_text against correctly preserved CRLF notice bytes. Fixed in d71c168; added explicit CRLF test.",
+    "log_sha256": "7bb851fffdd51209bf6fbacd159c8077f3cbd2bafd69840e48f141ed0355abea"
+  },
+  "controls": {
+    "actions_only_unchanged": true,
+    "ruleset_id": 27439049,
+    "bypass_actors": [],
+    "backup_branch_deleted": "codex/pre-mit-reset-2026-11-16",
+    "runtime_inputs_unchanged_from": "f9f49c9503c043bb51228a347f43db7a4f1fad95",
+    "compared_paths": [
+      "src",
+      "Cargo.toml",
+      "Cargo.lock",
+      "LICENSE"
+    ],
+    "published": false
+  },
+  "limits": [
+    "Original transcript snapshot ends at notice-fix 7ed82dd; subsequent audit/test/evidence commits are outside that fixed archive.",
+    "No post-MIT upstream source similarity comparison was performed; prior full comparison remains bounded to cfdf7e6.",
+    "No full Rust suite or new release binary builds were needed for notice and audit tooling changes. Final signed archives still require qualification."
+  ]
+}

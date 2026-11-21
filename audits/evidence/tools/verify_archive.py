@@ -53,6 +53,19 @@ def main():
         data = b''.join(sessions[prefix['session_id']][:prefix['records']])
         assert len(data) == prefix['bytes']
         assert hashlib.sha256(data).hexdigest() == prefix['sha256']
+        for excerpt in json.loads((base / 'reviewed-excerpts.json').read_text()):
+            payload = json.loads(sessions[excerpt['session_id']][excerpt['record'] - 1])['payload']
+            if payload['type'] == 'message':
+                text = '\n'.join(c.get('text', '') for c in payload.get('content', [])
+                                 if isinstance(c, dict))
+            else:
+                text = payload['input']
+            assert hashlib.sha256(text.encode()).hexdigest() == excerpt['payload_text_sha256']
+            if excerpt['record'] in (4744, 4865):
+                start = text.index("python3 - <<'PY'\n") + len("python3 - <<'PY'\n")
+                text = text[start:text.index('\nPY', start)]
+            text = re.sub(r'/Users/[^\s`<>"\']+', '<private-local-path>', text)
+            assert text == excerpt['text']
     for filename in ['reviewed-excerpts.json', 'source-selector-review.json', 'commit-records.json']:
         data = (base / filename).read_text()
         assert not re.search(r'(?:gh[opusr]_|github_pat_)[A-Za-z0-9]{15,}|-----BEGIN .*PRIVATE KEY|/Users/|10\.10\.', data), filename

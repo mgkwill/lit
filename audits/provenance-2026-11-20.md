@@ -123,6 +123,15 @@ links, and unchanged-source/license checks passed. Runtime Rust suites were not
 repeated for notice and audit tooling changes. Older unsigned archives do not
 contain this notice fix and must not be published as the final distribution.
 
+[Final validation receipts](review-validation-2026-11-20.json) record the private
+[Actions run](https://github.com/mgkwill/lit-release-qualification/actions/runs/44858457882)
+on macOS, Ubuntu and Windows, plus host-a x86-64 and host-e/host-f arm64 checks.
+All nine notice-integrity and two export-privacy tests passed. Installer contracts
+also passed on the three native runners. The first Windows attempt exposed a
+newline-normalizing test assertion; it was corrected to compare original bytes,
+and an explicit CRLF preservation case was added. The adverse run and log hash
+remain in the receipts. No license text was normalized to make the test pass.
+
 Next: choose the publisher identities, configure signing/notarization and verified
 Actions attestations, build fresh archives with the final notices, test those
 signed bytes, and present the exact release for owner approval. No public release,
