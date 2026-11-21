@@ -105,7 +105,9 @@ def mcp_http(fixture, repo, requests):
                 try:
                     with socket.create_connection(("127.0.0.1", port), timeout=0.25):
                         break
-                except ConnectionRefusedError:
+                except (ConnectionRefusedError, TimeoutError):
+                    # Windows can time out instead of refusing the connection
+                    # while the child is starting. Keep the same bounded wait.
                     if time.monotonic() >= deadline:
                         raise
                     time.sleep(0.025)
