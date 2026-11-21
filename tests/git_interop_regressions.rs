@@ -293,3 +293,21 @@ fn rejects_sha256_source_before_initializing_lit() {
     assert!(String::from_utf8_lossy(&response.stderr).contains("Only SHA-1"));
     assert!(!f.lit.join(".lit").exists());
 }
+
+#[test]
+fn import_ignores_ancestor_log_directory() {
+    let f = Fixture::new();
+    let logs = f._root.path().join(".lit/logs");
+    fs::create_dir_all(&logs).unwrap();
+    fs::write(logs.join("debug.log"), "preserve logs").unwrap();
+    f.commit("a", "data", "root");
+    f.import(&f.git);
+    assert!(f.lit.join(".lit/HEAD").is_file());
+    assert!(!f._root.path().join(".lit/HEAD").exists());
+    assert!(!f._root.path().join(".lit/objects").exists());
+    assert_eq!(
+        fs::read_to_string(logs.join("debug.log")).unwrap(),
+        "preserve logs"
+    );
+    f.assert_ref_fidelity(&f.git, &f.export("ignores-user-logs"));
+}

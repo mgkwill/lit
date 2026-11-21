@@ -16,9 +16,29 @@ pub fn get_lit_dir(repo_path: &Path) -> PathBuf {
     repo_path.join(".lit")
 }
 
-/// Check if a directory is a Lit repository
+/// Recognize repository metadata without mistaking user logs for a repository.
 pub fn is_lit_repo(path: &Path) -> bool {
-    get_lit_dir(path).exists()
+    let metadata = get_lit_dir(path);
+    // Error reporting also creates ~/.lit/logs. A .lit directory alone must
+    // not cause commands in unrelated descendants to operate on the home dir.
+    // Retain partial/damaged repositories as candidates so discovery does not
+    // silently fall through to an ancestor when one metadata file is missing.
+    [
+        "objects",
+        "refs",
+        "HEAD",
+        "index",
+        "config",
+        "config.toml",
+        "encryption.toml",
+        "refs.enc",
+        "repository-format.json",
+    ]
+    .iter()
+    .any(|marker| {
+        !matches!(fs::symlink_metadata(metadata.join(marker)),
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound)
+    })
 }
 
 /// Find the repository root from current directory
