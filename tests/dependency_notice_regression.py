@@ -44,8 +44,15 @@ class NoticeIntegrity(unittest.TestCase):
 
     def test_pinned_notice_is_preserved(self):
         outputs = self.render()
-        self.assertIn(self.license.read_text(), outputs[self.root / 'THIRD_PARTY_NOTICES.txt'])
+        self.assertIn(self.license.read_bytes().decode('utf-8'),
+                      outputs[self.root / 'THIRD_PARTY_NOTICES.txt'])
         self.assertEqual(json.loads(outputs[self.root / 'docs/dependencies.json'])['missing_notices'], [])
+
+    def test_crlf_notice_bytes_are_preserved(self):
+        self.license.write_bytes(b'Example permission notice\r\nSecond line\r\n')
+        self.entry['notices'][0]['sha256'] = hashlib.sha256(self.license.read_bytes()).hexdigest()
+        output = self.render()[self.root / 'THIRD_PARTY_NOTICES.txt'].encode('utf-8')
+        self.assertIn(self.license.read_bytes(), output)
 
     def test_changed_notice_is_rejected(self):
         self.license.write_text('Changed permission\n')
