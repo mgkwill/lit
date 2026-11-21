@@ -12,6 +12,7 @@ from github_app_credentials import InstallationToken
 import hashlib
 import hmac
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from socketserver import TCPServer
 import json
 import math
 from pathlib import Path
@@ -34,6 +35,12 @@ def private_file(path):
 class Server(ThreadingHTTPServer):
     daemon_threads = True
     request_queue_size = 128
+
+    def server_bind(self):
+        # The configured listening address is sufficient for server metadata.
+        # Reverse DNS must not delay readiness or the independent writer fence.
+        TCPServer.server_bind(self)
+        self.server_name, self.server_port = self.server_address[:2]
 
     def process_request(self, request, client_address):
         if not self.slots.acquire(blocking=False):

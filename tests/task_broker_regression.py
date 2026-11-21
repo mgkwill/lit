@@ -131,7 +131,7 @@ class BrokerTests(unittest.TestCase):
         self.path.write_text(json.dumps(self.config));self.path.chmod(0o600)
         self.log=(self.root/'service.log').open('a+')
         self.addCleanup(self.log.close)
-        self.process=subprocess.Popen([sys.executable,str(Path(__file__).with_name('run_with_trace.py')),str(CLI),'--config',str(self.path),
+        self.process=subprocess.Popen([sys.executable,'-B',str(Path(__file__).with_name('run_with_trace.py')),str(CLI),'--config',str(self.path),
             '--ready-file',str(self.root/'ready.json'),'--test-api-url',self.forge.url,
             '--test-token-file',str(self.token),'--test-read-token-file',str(self.reader)],stdout=self.log,stderr=self.log,
             env=dict(os.environ,GH_TOKEN=self.inherited_token,GITHUB_TOKEN='',LIT_QUEUE_OBSERVER_TOKEN=''))

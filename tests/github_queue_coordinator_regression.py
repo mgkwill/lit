@@ -10,9 +10,16 @@ import threading
 import time
 import unittest
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from socketserver import TCPServer
 from urllib.parse import parse_qs, urlsplit
 
 CLI = Path(__file__).resolve().parents[1] / "tools/github_queue_coordinator.py"
+
+
+class FixtureHTTPServer(ThreadingHTTPServer):
+    def server_bind(self):
+        TCPServer.server_bind(self)
+        self.server_name, self.server_port = self.server_address[:2]
 
 
 class Forge:
@@ -310,7 +317,7 @@ class Forge:
                         return
                     self.respond({"data": {"result": {"mergeQueueEntry": {"id": "MQE_7"}}}})
 
-        self.server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+        self.server = FixtureHTTPServer(("127.0.0.1", 0), Handler)
         self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
         self.thread.start()
         self.url = f"http://127.0.0.1:{self.server.server_port}"
