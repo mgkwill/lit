@@ -33,13 +33,20 @@ runs before replacing it. On Unix use `command -v lit`; in PowerShell use
 ## Candidate archives
 
 Archives use `openlit-VERSION-TARGET.tar.gz` on Unix and `.zip` on Windows.
-Inside is `lit` or `lit.exe`, plus the original `LICENSE` and `THIRD_PARTY_NOTICES.txt`. Qualification builds
-include their branch name in place of VERSION so they cannot be mistaken for a
-published release. Keep the license with the installed binary.
+Inside is `lit` or `lit.exe`, plus the original `LICENSE` and `THIRD_PARTY_NOTICES.txt`. Qualification builds use signed metadata marked `qualification` and disposable
+test keys. They are not publisher-signed releases. Keep the license with the installed binary.
 
-Once an approved release is available, verify its build provenance and checksum
-before unpacking. A checksum alone detects changed bytes; it does not establish
-who built them. See [release signing](RELEASING.md).
+Once an approved release is available, verify its Minisign signature with the
+independently trusted OpenLit public key before unpacking:
+
+```sh
+minisign -V -H -p /path/to/trusted/openlit.pub \
+  -m openlit-0.1.0-aarch64-apple-darwin.tar.gz
+```
+
+Use the archive for your platform and keep its matching `.minisig` beside it.
+A checksum alone does not authenticate a download. See
+[full release verification](RELEASE_CREDENTIALS.md).
 
 ## Platforms
 
@@ -61,5 +68,5 @@ If Windows reports a missing `VCRUNTIME140.dll`, install the
 Git remotes need the system Git executable; SSH remotes also need SSH.
 
 Do not disable Gatekeeper or other platform checks to make an unsigned candidate
-look like a signed release. Public signing and clean-download testing remain
-release requirements.
+look like a signed release. Minisign verifies the download but does not supply Apple notarization or
+Windows publisher trust; OS warnings may remain.

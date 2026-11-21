@@ -7,6 +7,7 @@ returns JSON that programs can read, and lets separate workers propose changes
 without sharing a working directory. The command is still **`lit`**.
 
 We are preparing **0.1.0**, the first OpenLit release. It is not published yet.
+Release downloads will use [Minisign verification](docs/RELEASE_CREDENTIALS.md).
 OpenLit starts from the MIT-licensed Lit snapshot and adds independent recovery
 work. It does not claim full compatibility with every upstream feature.
 

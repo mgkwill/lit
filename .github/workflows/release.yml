@@ -1,6 +1,7 @@
-name: Release qualification
+name: Minisign candidate qualification (disposable keys)
 
 on:
+  workflow_dispatch:
   # Qualification only. Publishing requires a separately approved workflow.
   push:
     branches:
@@ -15,7 +16,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
     env:
-      RELEASE_TAG: ${{ github.ref_name }}
+      RELEASE_TAG: 0.1.0
     strategy:
       fail-fast: false
       matrix:
@@ -38,7 +39,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
 
@@ -74,7 +75,7 @@ jobs:
           Compress-Archive -LiteralPath 'target/${{ matrix.target }}/release/${{ matrix.artifact }}', 'LICENSE', 'THIRD_PARTY_NOTICES.txt' -DestinationPath "openlit-$env:RELEASE_TAG-${{ matrix.target }}.zip"
 
       - name: Set up Python for package tests
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: '3.12'
 
@@ -83,12 +84,18 @@ jobs:
           python -B tests/dependency_notice_regression.py
           python -B tools/release_dependency_notices.py --check
 
-      - name: Qualify the unpacked release binary
+      - name: Install pinned Minisign without publisher credentials
         shell: bash
         run: |
-          python -B tests/qualify_release_archive.py \
+          python -B tools/release/fetch_minisign.py "$RUNNER_TEMP/minisign" >> "$GITHUB_PATH"
+      - name: Test real signatures and rejection paths
+        run: python -B tests/minisign_release_regression.py
+      - name: Qualify fresh signed archives using disposable keys
+        shell: bash
+        run: |
+          python -B tests/qualify_minisign_archive.py \
             "openlit-${RELEASE_TAG}-${{ matrix.target }}.${{ runner.os == 'Windows' && 'zip' || 'tar.gz' }}" \
-            "${{ matrix.target }}" > "qualification-${{ matrix.target }}.json"
+            "${{ matrix.target }}" --commit "$GITHUB_SHA" --output "signed-${{ matrix.target }}" > "qualification-${{ matrix.target }}.json"
           cat "qualification-${{ matrix.target }}.json"
 
       - name: Check the documented quick start
@@ -96,10 +103,11 @@ jobs:
         run: python -B tests/docs_smoke.py target/${{ matrix.target }}/release/lit
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: openlit-${{ matrix.target }}
           path: |
-            openlit-${{ github.ref_name }}-${{ matrix.target }}.*
+            signed-${{ matrix.target }}/*
+            signed-${{ matrix.target }}.pub
             qualification-${{ matrix.target }}.json
           if-no-files-found: error

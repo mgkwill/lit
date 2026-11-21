@@ -80,7 +80,7 @@ def main():
     parser.add_argument('--repository', required=True)
     parser.add_argument('--commit', required=True)
     parser.add_argument('--ref', required=True)
-    parser.add_argument('--workflow', default='.github/workflows/signing.yml')
+    parser.add_argument('--workflow', default='.github/workflows/platform-signing.yml')
     args = parser.parse_args()
     print(json.dumps(verify(args.folder, args.repository, args.commit, args.ref, args.workflow), indent=2))
 

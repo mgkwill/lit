@@ -16,3 +16,7 @@ clippy_output.txt
 # Dev scripts
 fix_*.ps1
 append_responses.ps1
+
+# Defense in depth; release private keys must live outside the checkout.
+*.key
+*.key.*

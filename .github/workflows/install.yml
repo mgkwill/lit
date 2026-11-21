@@ -2,6 +2,7 @@ name: Source release checks
 on:
   push:
     branches:
+      - main
       - 'openlit-install-qualification-*'
   pull_request:
     paths:
@@ -11,6 +12,8 @@ on:
       - 'tests/dependency_notice_regression.py'
       - 'tests/provenance_export_regression.py'
       - 'tests/release_signing_regression.py'
+      - 'tests/minisign_release_regression.py'
+      - 'tests/qualify_minisign_archive.py'
       - 'tests/qualify_release_archive.py'
       - 'tools/release/**'
       - 'tools/release_dependency_notices.py'
@@ -44,3 +47,7 @@ jobs:
           if (-not $Tool) { throw 'Windows SDK SignTool not found' }
           $Tool.DirectoryName | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
       - run: python -B tests/release_signing_regression.py
+      - name: Install pinned Minisign for disposable-key tests
+        shell: bash
+        run: python -B tools/release/fetch_minisign.py "$RUNNER_TEMP/minisign" >> "$GITHUB_PATH"
+      - run: python -B tests/minisign_release_regression.py

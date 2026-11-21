@@ -91,7 +91,25 @@ def main():
     parser.add_argument("--apple-team")
     parser.add_argument("--certificate", help="Expected platform signer certificate SHA-1 fingerprint")
     parser.add_argument("--require-signed", action="store_true")
+    parser.add_argument("--minisign-public-key", type=Path)
+    parser.add_argument("--source-commit", help="Independently approved full source SHA")
+    parser.add_argument("--qualification", action="store_true", help="Accept disposable-key qualification identity")
+    parser.add_argument("--single-target-candidate", action="store_true", help="Verify an explicitly partial Minisign bundle")
     args = parser.parse_args()
+    minisign_receipt = None
+    if args.minisign_public_key:
+        if not args.source_commit:
+            parser.error("Minisign verification requires --source-commit")
+        spec = importlib.util.spec_from_file_location("minisign_release", TESTS.parent / "tools/release/minisign_release.py")
+        signing = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(signing)
+        targets = [args.target] if args.single_target_candidate else list(TARGETS)
+        minisign_receipt = signing.verify(args.archive.parent, args.minisign_public_key,
+                                         args.source_commit, targets, args.qualification)
+        if args.archive.name not in minisign_receipt["archives"]:
+            parser.error("Requested archive is not in the verified candidate")
+    elif args.source_commit or args.qualification or args.single_target_candidate:
+        parser.error("Minisign options require --minisign-public-key")
     if args.require_signed:
         if "apple" in args.target and (args.archive.suffix != ".dmg" or not args.apple_team or not args.certificate):
             parser.error("Signed macOS qualification requires a DMG, Team ID, and certificate fingerprint")
@@ -119,7 +137,8 @@ def main():
         if native_windows and (args.require_signed or args.certificate):
             run("pwsh", "-NoProfile", "-File", TESTS.parent / "tools/release/sign_windows.ps1",
                 "-Binary", binary, "-Thumbprint", args.certificate, "-Mode", "Verify")
-        receipt["final_candidate_policy"] = args.require_signed
+        receipt["final_candidate_policy"] = args.require_signed or (minisign_receipt is not None and not args.qualification)
+        receipt["minisign"] = minisign_receipt
         receipt["platform_signature_required"] = args.require_signed and platform.system() != "Linux"
         receipt["expected_certificate_sha1"] = args.certificate
         receipt["binary_sha256"] = digest(binary)

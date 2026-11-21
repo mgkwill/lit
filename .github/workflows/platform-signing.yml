@@ -1,4 +1,4 @@
-name: Signed candidate qualification
+name: Optional platform signing and attestations
 
 # Preparation only: no tag, release, registry, or publication operation.
 on:
