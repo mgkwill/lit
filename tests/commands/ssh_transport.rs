@@ -1,6 +1,6 @@
 /// Integration tests for SSH transport (pipe mode)
 ///
-/// These tests use `SshPipe::open_local()` which spawns `lit serve --stdio`
+/// These tests use Cargo's selected executable to spawn `lit serve --stdio`
 /// directly, bypassing actual SSH. This tests the full pipe protocol and
 /// transport logic without requiring SSH infrastructure.
 ///
@@ -9,6 +9,13 @@
 use std::collections::HashSet;
 use std::fs;
 use tempfile::TempDir;
+
+fn open_local(repo: &std::path::Path) -> Result<lit::network::ssh::SshPipe, String> {
+    lit::network::ssh::SshPipe::open_local_with_binary(
+        repo,
+        std::path::Path::new(env!("CARGO_BIN_EXE_lit")),
+    )
+}
 
 /// Helper: init a repo and make a commit so there's content to push/pull
 fn ssh_init_repo_with_commit(dir: &std::path::Path) -> String {
@@ -91,7 +98,7 @@ fn test_ssh_pipe_list_refs_empty() {
     let server_dir = TempDir::new().unwrap();
     ssh_init_bare_repo(server_dir.path());
 
-    let mut pipe = lit::network::ssh::SshPipe::open_local(server_dir.path()).unwrap();
+    let mut pipe = open_local(server_dir.path()).unwrap();
 
     let refs = lit::network::ssh::list_refs_ssh(&mut pipe, "heads").unwrap();
     assert!(refs.is_empty(), "Bare repo should have no refs");
@@ -102,7 +109,7 @@ fn test_ssh_pipe_list_refs_with_branches() {
     let server_dir = TempDir::new().unwrap();
     ssh_init_repo_with_commit(server_dir.path());
 
-    let mut pipe = lit::network::ssh::SshPipe::open_local(server_dir.path()).unwrap();
+    let mut pipe = open_local(server_dir.path()).unwrap();
 
     let refs = lit::network::ssh::list_refs_ssh(&mut pipe, "heads").unwrap();
     assert!(!refs.is_empty(), "Should have at least one branch");
@@ -117,7 +124,7 @@ fn test_ssh_pipe_read_head() {
     let server_dir = TempDir::new().unwrap();
     ssh_init_repo_with_commit(server_dir.path());
 
-    let mut pipe = lit::network::ssh::SshPipe::open_local(server_dir.path()).unwrap();
+    let mut pipe = open_local(server_dir.path()).unwrap();
 
     let head = lit::network::ssh::read_head_ssh(&mut pipe).unwrap();
     assert!(
@@ -132,7 +139,7 @@ fn test_ssh_pipe_read_ref() {
     let server_dir = TempDir::new().unwrap();
     let commit_hash = ssh_init_repo_with_commit(server_dir.path());
 
-    let mut pipe = lit::network::ssh::SshPipe::open_local(server_dir.path()).unwrap();
+    let mut pipe = open_local(server_dir.path()).unwrap();
 
     let hash = lit::network::ssh::read_ref_ssh(&mut pipe, "main").unwrap();
     assert_eq!(hash, commit_hash, "Branch ref should match commit hash");
@@ -147,7 +154,7 @@ fn test_ssh_pipe_negotiate_and_download() {
     let server_dir = TempDir::new().unwrap();
     let commit_hash = ssh_init_repo_with_commit(server_dir.path());
 
-    let mut pipe = lit::network::ssh::SshPipe::open_local(server_dir.path()).unwrap();
+    let mut pipe = open_local(server_dir.path()).unwrap();
 
     // Negotiate: we want the commit, we have nothing
     let needed =
@@ -190,7 +197,7 @@ fn test_ssh_pipe_upload_objects() {
     let server_dir = TempDir::new().unwrap();
     ssh_init_bare_repo(server_dir.path());
 
-    let mut pipe = lit::network::ssh::SshPipe::open_local(server_dir.path()).unwrap();
+    let mut pipe = open_local(server_dir.path()).unwrap();
 
     // Create a client with content
     let client_dir = TempDir::new().unwrap();
@@ -226,7 +233,7 @@ fn test_ssh_pipe_multiple_requests() {
     let server_dir = TempDir::new().unwrap();
     let commit_hash = ssh_init_repo_with_commit(server_dir.path());
 
-    let mut pipe = lit::network::ssh::SshPipe::open_local(server_dir.path()).unwrap();
+    let mut pipe = open_local(server_dir.path()).unwrap();
 
     // First request
     let refs = lit::network::ssh::list_refs_ssh(&mut pipe, "heads").unwrap();
@@ -257,7 +264,7 @@ fn test_push_fetch_roundtrip_over_pipe() {
 
     // Push from client A to server via pipe
     {
-        let mut pipe = lit::network::ssh::SshPipe::open_local(server_dir.path()).unwrap();
+        let mut pipe = open_local(server_dir.path()).unwrap();
         let client_store = lit::storage::ObjectStore::new(client_a.path());
 
         // Walk to find all objects
@@ -283,7 +290,7 @@ fn test_push_fetch_roundtrip_over_pipe() {
         ssh_init_bare_repo(client_b.path());
         let client_store = lit::storage::ObjectStore::new(client_b.path());
 
-        let mut pipe = lit::network::ssh::SshPipe::open_local(server_dir.path()).unwrap();
+        let mut pipe = open_local(server_dir.path()).unwrap();
 
         // Get server's main ref
         let server_hash = lit::network::ssh::read_ref_ssh(&mut pipe, "main").unwrap();

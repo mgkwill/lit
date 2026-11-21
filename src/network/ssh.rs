@@ -138,8 +138,8 @@ impl SshPipe {
 
     /// Open a pipe directly to a `lit serve --stdio` process (for testing without SSH)
     pub fn open_local(repo_path: &std::path::Path) -> Result<Self, String> {
-        // Find the lit binary: look in the same directory as the current executable,
-        // which covers both `cargo run` and `cargo test` scenarios.
+        // Locate an adjacent installed binary. Integration tests should use
+        // open_local_with_binary with Cargo's explicit executable path.
         let current_exe = std::env::current_exe()
             .map_err(|e| format!("Cannot find current executable: {}", e))?;
         let exe_dir = current_exe
@@ -160,6 +160,14 @@ impl SshPipe {
                 .with_extension(std::env::consts::EXE_EXTENSION)
         };
 
+        Self::open_local_with_binary(repo_path, &lit_exe)
+    }
+
+    /// Open a local protocol pipe using an explicitly selected executable.
+    pub fn open_local_with_binary(
+        repo_path: &std::path::Path,
+        lit_exe: &std::path::Path,
+    ) -> Result<Self, String> {
         if !lit_exe.exists() {
             return Err(format!(
                 "lit binary not found at {}. Run `cargo build` first.",

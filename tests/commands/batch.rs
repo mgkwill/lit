@@ -33,21 +33,7 @@ fn create_commit(repo_path: &std::path::Path, filename: &str, content: &str, mes
 }
 
 fn lit_binary() -> std::path::PathBuf {
-    // Find the lit binary in target/debug or target/release
-    let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
-    let debug_path = manifest_dir.join("target/debug/lit.exe");
-    if debug_path.exists() {
-        return debug_path;
-    }
-    let debug_path_unix = manifest_dir.join("target/debug/lit");
-    if debug_path_unix.exists() {
-        return debug_path_unix;
-    }
-    let release_path = manifest_dir.join("target/release/lit.exe");
-    if release_path.exists() {
-        return release_path;
-    }
-    manifest_dir.join("target/release/lit")
+    std::path::PathBuf::from(env!("CARGO_BIN_EXE_lit"))
 }
 
 #[test]
@@ -57,10 +43,6 @@ fn test_batch_dry_run_with_empty_stdin() {
     create_commit(temp.path(), "test.txt", "hello", "Initial commit");
 
     let binary = lit_binary();
-    if !binary.exists() {
-        // Skip if binary not built
-        return;
-    }
 
     let output = Command::new(&binary)
         .args(["batch", "--dry-run"])
@@ -79,9 +61,6 @@ fn test_batch_requires_repository() {
     let temp = TempDir::new().unwrap();
 
     let binary = lit_binary();
-    if !binary.exists() {
-        return;
-    }
 
     let output = Command::new(&binary)
         .args(["batch"])
@@ -107,9 +86,6 @@ fn test_batch_dry_run_with_operations() {
     create_commit(temp.path(), "test.txt", "hello", "Initial commit");
 
     let binary = lit_binary();
-    if !binary.exists() {
-        return;
-    }
 
     // Send a batch operation via stdin
     let mut child = Command::new(&binary)
@@ -149,9 +125,6 @@ fn test_batch_atomic_flag() {
     create_commit(temp.path(), "test.txt", "hello", "Initial commit");
 
     let binary = lit_binary();
-    if !binary.exists() {
-        return;
-    }
 
     let mut child = Command::new(&binary)
         .args(["batch", "--atomic", "--dry-run"])

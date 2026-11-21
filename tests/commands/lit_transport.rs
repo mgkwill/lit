@@ -19,24 +19,11 @@ fn find_available_port() -> u16 {
 
 /// Start a lit daemon in the background and wait for it to be ready
 fn start_daemon(repo_path: &std::path::Path, port: u16) -> std::thread::JoinHandle<()> {
-    // Find the lit binary
-    let current_exe = std::env::current_exe().unwrap();
-    let exe_dir = current_exe.parent().unwrap();
-    let lit_exe = if exe_dir.ends_with("deps") {
-        exe_dir
-            .parent()
-            .unwrap()
-            .join("lit")
-            .with_extension(std::env::consts::EXE_EXTENSION)
-    } else {
-        exe_dir
-            .join("lit")
-            .with_extension(std::env::consts::EXE_EXTENSION)
-    };
+    let lit_exe = std::path::Path::new(env!("CARGO_BIN_EXE_lit"));
 
     let repo = repo_path.to_path_buf();
     let handle = std::thread::spawn(move || {
-        let mut child = std::process::Command::new(&lit_exe)
+        let mut child = std::process::Command::new(lit_exe)
             .arg("serve")
             .arg("--daemon")
             .arg("--port")
