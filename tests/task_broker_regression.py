@@ -5,6 +5,7 @@ from contextlib import closing
 import hashlib
 import json
 import os
+import signal
 from pathlib import Path
 import sqlite3
 import ssl
@@ -130,7 +131,7 @@ class BrokerTests(unittest.TestCase):
         self.path.write_text(json.dumps(self.config));self.path.chmod(0o600)
         self.log=(self.root/'service.log').open('a+')
         self.addCleanup(self.log.close)
-        self.process=subprocess.Popen([sys.executable,str(CLI),'--config',str(self.path),
+        self.process=subprocess.Popen([sys.executable,str(Path(__file__).with_name('run_with_trace.py')),str(CLI),'--config',str(self.path),
             '--ready-file',str(self.root/'ready.json'),'--test-api-url',self.forge.url,
             '--test-token-file',str(self.token),'--test-read-token-file',str(self.reader)],stdout=self.log,stderr=self.log,
             env=dict(os.environ,GH_TOKEN=self.inherited_token,GITHUB_TOKEN='',LIT_QUEUE_OBSERVER_TOKEN=''))
@@ -138,7 +139,14 @@ class BrokerTests(unittest.TestCase):
         deadline=time.monotonic()+8
         while not (self.root/'ready.json').exists() and self.process.poll() is None and time.monotonic()<deadline:
             time.sleep(0.03)
-        self.assertTrue((self.root/'ready.json').exists(),(self.root/'service.log').read_text())
+        if not (self.root/'ready.json').exists() and self.process.poll() is None:
+            try:
+                self.process.send_signal(signal.SIGUSR1)
+                time.sleep(0.2)
+            except ProcessLookupError:
+                pass
+        self.assertTrue((self.root/'ready.json').exists(),
+                        f'broker exit={self.process.poll()}\n' + (self.root/'service.log').read_text())
         self.url='https://localhost:'+str(json.loads((self.root/'ready.json').read_text())['port'])
 
     def stop(self):
