@@ -42,7 +42,7 @@ finish and review that adapter first. GitHub-hosted workers perform Linux builds
 and download and test all five final distributions without publisher keys.
 
 Create a protected `release-signing` environment in the selected private
-repository, with a required reviewer, no self-approval, and deployment restricted
+repository, with a required reviewer, no self-approval or administrator bypass, and deployment restricted
 to the reviewed release branch. Verify those protection features are actually
 available before adding credentials or registering signing workers. Restrict the
 runner group to the reviewed workflow. Install the key providers, SignTool,

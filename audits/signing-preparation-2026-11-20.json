@@ -1,0 +1,132 @@
+{
+  "source": "1918abb390f648b8419cf70717655def1bce3cdc",
+  "projection": "f0e1d22017f109669428452e7aace5b3dde5bfe6",
+  "excluded_workflows": [
+    ".github/workflows/agent-merge-gate.yml",
+    ".github/workflows/ci.yml",
+    ".github/workflows/nightly-security.yml"
+  ],
+  "run": {
+    "id": 44865122855,
+    "url": "https://github.com/mgkwill/lit-release-qualification/actions/runs/44865122855",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "installer (windows-2022)",
+        "id": 136726973456,
+        "conclusion": "success"
+      },
+      {
+        "name": "installer (macos-15)",
+        "id": 136726973651,
+        "conclusion": "success"
+      },
+      {
+        "name": "installer (ubuntu-22.04)",
+        "id": 136726973672,
+        "conclusion": "success"
+      }
+    ]
+  },
+  "local": {
+    "release_signing_tests": {
+      "run": 10,
+      "passed": 10
+    },
+    "notice_tests_passed": 9,
+    "export_tests_passed": 2,
+    "actionlint": "passed",
+    "cargo_build_locked_release": "passed"
+  },
+  "lab": [
+    {
+      "host": "host-a",
+      "returncode": 0,
+      "output": "Linux x86_64\nPython 3.13.7\n.......s..\n----------------------------------------------------------------------\nRan 10 tests in 0.094s\n\nOK (skipped=1)\n"
+    },
+    {
+      "host": "host-e.lab.wsub.net",
+      "returncode": 0,
+      "output": "Linux aarch64\nPython 3.12.3\n.......s..\n----------------------------------------------------------------------\nRan 10 tests in 0.049s\n\nOK (skipped=1)\n"
+    },
+    {
+      "host": "host-f.lab.wsub.net",
+      "returncode": 0,
+      "output": "Linux aarch64\nPython 3.12.3\n.......s..\n----------------------------------------------------------------------\nRan 10 tests in 0.049s\n\nOK (skipped=1)\n"
+    }
+  ],
+  "unsigned_archive": {
+    "archive": "openlit-unsigned-1918abb-aarch64-apple-darwin.tar.gz",
+    "archive_sha256": "4d5ef3094b4998ee26fea32fe254a01ff8ce7694ebcd8679dba63f007933f1a1",
+    "batch_and_mcp": {
+      "arch": "arm64",
+      "batch": {
+        "dry_run_reports_invalid_line": true,
+        "retry_committed": true,
+        "rollback_restores_head_and_index": true,
+        "working_bytes_preserved": true
+      },
+      "candidate_sha256": "deb8e7fcde77d80bf759f5b3eb19cce32f435e28b896ec4fd344236854ace01c",
+      "mcp": {
+        "http": {
+          "invalid_tool_and_ping": true,
+          "legacy_arguments_preserved": true,
+          "notification_silent": true,
+          "ref_diff_and_branch_creation": true,
+          "tool_discovery_and_staged_write": true
+        },
+        "stdio": {
+          "invalid_tool_and_ping": true,
+          "legacy_arguments_preserved": true,
+          "notification_silent": true,
+          "ref_diff_and_branch_creation": true,
+          "tool_discovery_and_staged_write": true
+        }
+      },
+      "platform": "Darwin",
+      "version": "lit 0.1.0"
+    },
+    "binary_sha256": "deb8e7fcde77d80bf759f5b3eb19cce32f435e28b896ec4fd344236854ace01c",
+    "expected_certificate_sha1": null,
+    "final_candidate_policy": false,
+    "git": "git version 2.56.0",
+    "head": "1918abb390f648b8419cf70717655def1bce3cdc",
+    "mldsa_features": [
+      "std"
+    ],
+    "package": "openlit",
+    "platform_signature_required": false,
+    "remotes": [
+      "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+      "lit://: native first push and bare clone",
+      "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+      "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+      "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+    ],
+    "rustc": "rustc 1.99.0 (b940084d7 2026-09-28) (Homebrew)",
+    "target": "aarch64-apple-darwin",
+    "version": "lit 0.1.0"
+  },
+  "credential_inventory": {
+    "local_developer_id_application_identities": 0,
+    "qualification_repository_secrets": 0,
+    "qualification_repository_environments": 0,
+    "repository_owner_type": "User"
+  },
+  "live_signed_archive_tests": "blocked_missing_publisher_credentials_and_configured_signing_runners",
+  "live_attestations": "not_run_private_enterprise_repository_selection_pending",
+  "publication": "not_requested_not_performed",
+  "actions_only": {
+    "ruleset_id": 27439049,
+    "enforcement": "active",
+    "bypass_actors": [],
+    "required_status_checks": [
+      {
+        "context": "Agent workflow candidate",
+        "integration_id": 15368
+      }
+    ]
+  },
+  "raw_evidence": "<private-path>"
+}

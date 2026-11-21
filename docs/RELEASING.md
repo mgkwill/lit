@@ -10,8 +10,9 @@ owner explicitly changes it.
 ## Publication is a separate approval
 
 The current release workflow only builds and tests private candidates. It has
-read-only repository permissions and no release, tag, registry, or upload-to-store
-step. Pushing a version tag no longer publishes anything. `publish = false` in
+read-only repository content permissions and no release, tag, registry, or
+upload-to-store step. The separate, disabled-by-default signing workflow grants
+only its attestation job the additional OIDC and attestation permissions. Pushing a version tag no longer publishes anything. `publish = false` in
 Cargo.toml also prevents accidental registry publication.
 
 Before publishing, show the owner the exact source commit, target list, artifact
@@ -45,7 +46,9 @@ hosted repository, or publish a package as part of preparation.
    archive smoke checks on those final bytes. Keep source, build, signature,
    checksum, and test receipts together. Signing changes binary bytes.
 6. Use a separate, protected publication environment with a required human
-   reviewer. Grant write permissions only to that approved publication job.
+   reviewer. Grant repository content or package publication permissions only to
+   that approved publication job. The preparation workflow may grant OIDC and
+   attestation write permissions solely to its attestation job.
    Pin third-party actions to reviewed full commit SHAs before giving a workflow
    signing credentials. Never expose signing secrets to pull-request builds.
 
