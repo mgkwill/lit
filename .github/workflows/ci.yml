@@ -73,7 +73,8 @@ jobs:
         run: cargo clippy -- -D warnings
 
       - name: Run tests
-        run: cargo test --locked --verbose -- --test-threads=1
+        # Exercise the shipped configuration without lowering cryptographic work factors.
+        run: cargo test --locked --release --verbose -- --test-threads=1
 
       - name: Build release
         run: cargo build --locked --release
