@@ -1,0 +1,250 @@
+name: Signed candidate qualification
+
+# Preparation only: no tag, release, registry, or publication operation.
+on:
+  workflow_dispatch:
+    inputs:
+      source:
+        description: Full reviewed source SHA (must equal the dispatched workflow commit)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: openlit-signing
+  cancel-in-progress: false
+
+jobs:
+  preflight:
+    permissions:
+      contents: read
+      deployments: read
+    runs-on: ubuntu-22.04
+    environment: release-signing
+    steps:
+      - name: Require configured signing and an explicitly reviewed revision
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ENABLED: ${{ vars.OPENLIT_SIGNING_ENABLED }}
+          EXPECTED_REPOSITORY: ${{ vars.OPENLIT_SIGNING_REPOSITORY }}
+          APPROVED_SOURCE: ${{ vars.OPENLIT_SIGNING_APPROVED_SOURCE }}
+          REQUESTED_SOURCE: ${{ inputs.source }}
+          APPLE_TEAM: ${{ vars.OPENLIT_APPLE_TEAM }}
+          APPLE_CERT: ${{ vars.OPENLIT_APPLE_CERTIFICATE }}
+          WINDOWS_CERT: ${{ vars.OPENLIT_WINDOWS_CERTIFICATE }}
+          NOTARY_PROFILE: ${{ vars.OPENLIT_NOTARY_PROFILE }}
+          TIMESTAMP_URL: ${{ vars.OPENLIT_TIMESTAMP_URL }}
+        run: |
+          test "$ENABLED" = true
+          test "$EXPECTED_REPOSITORY" = "$GITHUB_REPOSITORY"
+          test "$REQUESTED_SOURCE" = "$GITHUB_SHA"
+          test "$APPROVED_SOURCE" = "$GITHUB_SHA"
+          [[ "$GITHUB_REF" == refs/heads/* ]]
+          [[ "$APPLE_TEAM" =~ ^[A-Z0-9]{10}$ ]]
+          [[ "$APPLE_CERT" =~ ^[A-Fa-f0-9]{40}$ ]]
+          [[ "$WINDOWS_CERT" =~ ^[A-Fa-f0-9]{40}$ ]]
+          test -n "$NOTARY_PROFILE"
+          [[ "$TIMESTAMP_URL" == https://* ]]
+          test "$(gh api "repos/$GITHUB_REPOSITORY" --jq .private)" = true
+          gh api "repos/$GITHUB_REPOSITORY/environments/release-signing" > environment.json
+          python3 - <<'PYENV'
+          import json
+          policy = json.load(open('environment.json'))
+          reviewers = [r for r in policy['protection_rules'] if r['type'] == 'required_reviewers']
+          assert reviewers and reviewers[0]['reviewers'], 'A signing reviewer is required'
+          assert reviewers[0].get('prevent_self_review') is True, 'Self approval must be disabled'
+          assert policy.get('can_admins_bypass') is False, 'Environment bypass must be disabled'
+          assert policy.get('deployment_branch_policy'), 'Restrict the signing environment to reviewed branches'
+          PYENV
+
+  build:
+    needs: preflight
+    environment: release-signing
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            runner: '["ubuntu-22.04"]'
+            file: lit
+            extension: tar.gz
+          - target: aarch64-unknown-linux-gnu
+            runner: '["ubuntu-22.04-arm"]'
+            file: lit
+            extension: tar.gz
+          # Dedicated EPHEMERAL signing workers must be provisioned first.
+          # Never attach these labels to shared development or PR workers.
+          - target: x86_64-apple-darwin
+            runner: '["self-hosted", "macOS", "X64", "openlit-signing"]'
+            file: lit
+            extension: dmg
+          - target: aarch64-apple-darwin
+            runner: '["self-hosted", "macOS", "ARM64", "openlit-signing"]'
+            file: lit
+            extension: dmg
+          - target: x86_64-pc-windows-msvc
+            runner: '["self-hosted", "Windows", "X64", "openlit-signing"]'
+            file: lit.exe
+            extension: zip
+    runs-on: ${{ fromJSON(matrix.runner) }}
+    defaults:
+      run:
+        shell: bash
+    env:
+      CARGO_TARGET_DIR: target
+      APPLE_TEAM: ${{ vars.OPENLIT_APPLE_TEAM }}
+      APPLE_CERT: ${{ vars.OPENLIT_APPLE_CERTIFICATE }}
+      WINDOWS_CERT: ${{ vars.OPENLIT_WINDOWS_CERTIFICATE }}
+      NOTARY_PROFILE: ${{ vars.OPENLIT_NOTARY_PROFILE }}
+      TIMESTAMP_URL: ${{ vars.OPENLIT_TIMESTAMP_URL }}
+      TARGET: ${{ matrix.target }}
+      BINARY: target/${{ matrix.target }}/release/${{ matrix.file }}
+      ARCHIVE: openlit-0.1.0-${{ matrix.target }}.${{ matrix.extension }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+      - name: Build reviewed source without a shared build cache
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test -z "$(git status --porcelain)"
+          rustup toolchain install 1.100.0 --profile minimal --target "$TARGET"
+          rustup override set 1.100.0
+          cargo build --locked --release --target "$TARGET"
+          cargo test --locked --release --target "$TARGET" --test signature_vectors
+          python -B tools/release_dependency_notices.py --check
+          mkdir dist
+      - name: Sign and notarize macOS distribution
+        if: runner.os == 'macOS'
+        run: |
+          python -B tools/release/sign_macos.py "$BINARY" "dist/$ARCHIVE" \
+            --team "$APPLE_TEAM" --certificate "$APPLE_CERT" --notary-profile "$NOTARY_PROFILE"
+      - name: Sign Windows executable using the configured certificate provider
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          ./tools/release/sign_windows.ps1 -Binary $env:BINARY -Thumbprint $env:WINDOWS_CERT -Mode Sign -TimestampUrl $env:TIMESTAMP_URL
+          Compress-Archive -LiteralPath $env:BINARY, 'LICENSE', 'THIRD_PARTY_NOTICES.txt' -DestinationPath "dist/$env:ARCHIVE"
+      - name: Package Linux distribution
+        if: runner.os == 'Linux'
+        run: |
+          mkdir package
+          cp "$BINARY" LICENSE THIRD_PARTY_NOTICES.txt package/
+          tar -czf "dist/$ARCHIVE" -C package lit LICENSE THIRD_PARTY_NOTICES.txt
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: signed-${{ matrix.target }}
+          path: dist/*
+          if-no-files-found: error
+
+  verify:
+    needs: build
+    # Download on fresh hosted workers; no publisher private keys are available.
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: ubuntu-22.04, target: x86_64-unknown-linux-gnu, extension: tar.gz}
+          - {os: ubuntu-22.04-arm, target: aarch64-unknown-linux-gnu, extension: tar.gz}
+          - {os: macos-15-intel, target: x86_64-apple-darwin, extension: dmg}
+          - {os: macos-15, target: aarch64-apple-darwin, extension: dmg}
+          - {os: windows-2022, target: x86_64-pc-windows-msvc, extension: zip}
+    runs-on: ${{ matrix.os }}
+    environment: release-signing
+    timeout-minutes: 30
+    env:
+      APPLE_TEAM: ${{ vars.OPENLIT_APPLE_TEAM }}
+      APPLE_CERT: ${{ vars.OPENLIT_APPLE_CERTIFICATE }}
+      WINDOWS_CERT: ${{ vars.OPENLIT_WINDOWS_CERTIFICATE }}
+      TARGET: ${{ matrix.target }}
+      ARCHIVE: openlit-0.1.0-${{ matrix.target }}.${{ matrix.extension }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: signed-${{ matrix.target }}
+          path: dist
+      - name: Locate Windows verification tools
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $Tool = Get-ChildItem 'C:\Program Files (x86)\Windows Kits\10\bin\*\x64\signtool.exe' | Sort-Object FullName -Descending | Select-Object -First 1
+          if (-not $Tool) { throw 'Windows SDK SignTool not found' }
+          $Tool.DirectoryName | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      - name: Test the downloaded final bytes
+        shell: bash
+        run: |
+          mkdir receipts
+          extra=()
+          if [[ "$RUNNER_OS" = macOS ]]; then
+            xattr -w com.apple.quarantine "0081;$(printf '%x' "$(date +%s)");OpenLitQualification;" "dist/$ARCHIVE"
+            extra=(--apple-team "$APPLE_TEAM" --certificate "$APPLE_CERT")
+          elif [[ "$RUNNER_OS" = Windows ]]; then
+            extra=(--certificate "$WINDOWS_CERT")
+          fi
+          python -B tests/qualify_release_archive.py "dist/$ARCHIVE" "$TARGET" \
+            --require-signed "${extra[@]}" > "receipts/$TARGET.json"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: verified-${{ matrix.target }}
+          path: receipts/*
+          if-no-files-found: error
+
+  attest:
+    needs: verify
+    runs-on: ubuntu-22.04
+    environment: release-signing
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: signed-*
+          merge-multiple: true
+          path: dist
+      - name: Hash final distributions
+        run: |
+          cd dist
+          sha256sum openlit-*.tar.gz openlit-*.dmg openlit-*.zip > SHA256SUMS
+      - uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # v3
+        id: attest
+        with:
+          subject-path: |
+            dist/openlit-*.tar.gz
+            dist/openlit-*.dmg
+            dist/openlit-*.zip
+            dist/SHA256SUMS
+      - name: Verify all attestations against this exact workflow and source
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python -B tools/release/verify_attestations.py dist --repository "$GITHUB_REPOSITORY" \
+            --commit "$GITHUB_SHA" --ref "$GITHUB_REF" > attestation-verification.json
+          cp "${{ steps.attest.outputs.bundle-path }}" attestation-bundle.jsonl
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: attested-candidate
+          path: |
+            dist/*
+            attestation-verification.json
+            attestation-bundle.jsonl
+          if-no-files-found: error

@@ -60,13 +60,16 @@ checks, and a publication-disabled workflow. The new README and guides describe
 current behavior rather than inherited marketing claims.
 
 Still required before publication: select and verify the publisher identities;
-wire signing and attestation into a reviewed workflow; qualify the signed final
+configure the prepared signing and attestation workflow; qualify the signed final
 archives with the final notices; obtain approval. The bounded
 [provenance and record review](../audits/provenance-2026-11-20.md) and known
 crypto-notice gaps are complete through their recorded revisions. Later
 implementation changes need updated evidence.
 No signing credentials have been created or used by this preparation. Publisher
-identity selection is pending. See [dependency review](DEPENDENCIES.md) for the
+identity selection is pending. The manual workflow, native signing helpers, and
+exact-identity attestation verifier are prepared; their successful live paths
+remain untested until credentials are available. See
+[publisher credentials and setup](RELEASE_CREDENTIALS.md). See [dependency review](DEPENDENCIES.md) for the
 remaining maintenance warnings and the completed notice inventory.
 
 ## Candidate testing

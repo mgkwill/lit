@@ -10,6 +10,9 @@ on:
       - 'tests/install_script_regression.py'
       - 'tests/dependency_notice_regression.py'
       - 'tests/provenance_export_regression.py'
+      - 'tests/release_signing_regression.py'
+      - 'tests/qualify_release_archive.py'
+      - 'tools/release/**'
       - 'tools/release_dependency_notices.py'
       - 'audits/evidence/tools/**'
       - '.github/workflows/install.yml'
@@ -33,3 +36,11 @@ jobs:
       - run: python -B tests/install_script_regression.py
       - run: python -B tests/dependency_notice_regression.py
       - run: python -B tests/provenance_export_regression.py
+      - name: Locate Windows SDK for native signature rejection test
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $Tool = Get-ChildItem 'C:\Program Files (x86)\Windows Kits\10\bin\*\x64\signtool.exe' | Sort-Object FullName -Descending | Select-Object -First 1
+          if (-not $Tool) { throw 'Windows SDK SignTool not found' }
+          $Tool.DirectoryName | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      - run: python -B tests/release_signing_regression.py
