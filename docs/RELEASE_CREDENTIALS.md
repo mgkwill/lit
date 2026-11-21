@@ -29,9 +29,52 @@ with your account's Windows access controls.
 
 Keep the public key available separately through the project's trusted website
 or reviewed repository. Users must obtain that trusted key independently of
-an untrusted download. The public key is safe to commit after its identity has
-been reviewed; the private key is not. No publisher key is supplied by this
-checkout. The automated tests generate and delete their own disposable keys.
+an untrusted download. The reviewed public key is in
+[`keys/openlit.pub`](../keys/openlit.pub). Its key ID is `E22218B425ADC29C`;
+the SHA-256 of that public-key file is
+`020727c93e30003cbab9f902459465e55ed6db37e951b2d006b9ec95ac4d77c3`.
+The private key must never enter Git. Automated regression tests generate and
+delete their own disposable keys.
+
+## Sign in GitHub Actions
+
+Run **Publisher signing (approval required; no release)** from the Actions tab
+on `main`. It builds and tests all five platforms, then waits for approval of
+the `release-signing` environment. Review the workflow commit and native build
+results before approving. Approval lets the job use the publisher key; it does
+not approve publication.
+
+The environment must have these settings:
+
+- Required reviewer: `mgkwill` only.
+- Allowed ref: the `main` branch only, with no tag rule.
+- Administrator bypass disabled.
+- Self-review allowed so the owner can approve a run they started.
+- Environment secrets `OPENLIT_MINISIGN_SECRET_KEY` (the encrypted key file)
+  and `OPENLIT_MINISIGN_PASSWORD` (its password).
+
+These are environment secrets, not repository-wide secrets. Build jobs and
+PR checks receive neither. GitHub releases them to the signing job only after
+approval. Changing or deleting the environment's protection rules changes that
+security boundary; the repository owner must preserve them. The password and
+encrypted key remain backed up in the owner's vault.
+
+The signing job verifies the five same-run qualification artifacts and their
+source commit before it reads either secret. It writes the encrypted key to
+an owner-only temporary file outside Git, sends the password through standard
+input to Minisign, and removes the temporary file on success or failure. It
+never puts secrets in command arguments, retained files, or logs.
+
+It then verifies all seven signatures and checks rejection of a wrong key,
+wrong source, altered archive, altered manifests, and broken signature. Only
+a fully verified result is uploaded as `openlit-0.1.0-publisher-signed`, retained
+for 14 days. Inside are `bundle/` with the five archives, two manifests, and
+their signatures; the public key; and assembly, signing, and verification
+receipts. The artifact's source commit identifies the candidate being signed.
+
+This workflow has read-only repository permissions and cannot create a release
+or tag. Publishing `0.1.0` remains a separate, explicitly approved action.
+Minisign signatures do not provide Apple notarization or Windows Authenticode.
 
 ## Sign the approved archives
 
@@ -102,11 +145,13 @@ keys outside the checkout to sign fresh archives. It verifies signatures before
 unpacking, rejects tampered copies and wrong keys, then exercises the extracted
 binary. Public test keys and receipts are retained; private test keys are deleted.
 
-These candidates say `qualification` in their signed metadata. The normal
+These test candidates say `qualification` in their signed metadata. The normal
 release verifier rejects them unless `--qualification` is explicitly passed.
 `--target` allows an explicit subset for local tests; a full release uses the
-default five-target requirement. CI artifacts are not publisher-signed releases.
-Run qualification in the private test repository until publication is approved.
+default five-target requirement. Qualification artifacts are not publisher-signed
+releases. The separate approval-protected publisher workflow converts the
+qualified archive bytes into a publisher-signed candidate; neither workflow
+publishes a release.
 
 ## What this signature means
 

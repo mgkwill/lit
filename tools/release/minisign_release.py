@@ -73,7 +73,7 @@ def verify(folder, public_key, commit, targets, qualification=False):
     return expected
 
 
-def sign(folder, secret_key, public_key, commit, targets, qualification=False):
+def sign(folder, secret_key, public_key, commit, targets, qualification=False, *, password=None):
     folder = Path(folder).resolve()
     key = Path(secret_key).resolve(strict=True)
     regular(key)
@@ -97,11 +97,14 @@ def sign(folder, secret_key, public_key, commit, targets, qualification=False):
     try:
         (folder / "SHA256SUMS").write_bytes(checksums.encode())
         (folder / "RELEASE.json").write_bytes((json.dumps(metadata, indent=2, sort_keys=True) + "\n").encode())
-        # Inherit the terminal: an encrypted key prompts locally, never via a
-        # password argument, environment variable, committed file, or receipt.
+        # Local signing inherits the terminal. The protected CI adapter can
+        # supply a password through stdin; it removes credential environment
+        # variables first. Neither path puts passwords in arguments or logs.
+        options = {} if password is None else dict(
+            input=password + "\n", text=True, capture_output=True, timeout=120)
         subprocess.run(["minisign", "-S", "-q", "-s", str(key), "-t",
                         f"OpenLit {VERSION} {metadata['purpose']} source {commit}",
-                        "-m", *[str(folder / name) for name in files]], check=True)
+                        "-m", *[str(folder / name) for name in files]], check=True, **options)
         return verify(folder, public_key, commit, targets, qualification)
     except BaseException:
         # Keep original archives; never leave a partly signed candidate looking

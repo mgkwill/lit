@@ -13,7 +13,8 @@ release line built from the MIT baseline, not an upstream 1.8.0 patch.
    notices and version. Unix archives use `.tar.gz`; Windows uses `.zip`.
 3. Sign every archive, `SHA256SUMS`, and `RELEASE.json` with the encrypted
    OpenLit Minisign publisher key kept outside Git. Independently verify with
-   the trusted public key. See [key setup and commands](RELEASE_CREDENTIALS.md).
+   the trusted public key. Use the approval-protected publisher workflow or the
+   [local signing commands](RELEASE_CREDENTIALS.md).
 4. Verify signatures before extraction, then run batch rollback, MCP, remote,
    and native package checks on those final archive bytes. Keep tamper and
    wrong-key rejection evidence too.
@@ -36,9 +37,17 @@ The manual workflow `.github/workflows/release.yml` builds fresh candidates on
 all five native targets. It also runs for `lit-release-qualification-*` branches.
 It signs with disposable test keys, rejects tampered copies, and tests the
 extracted programs. The signed metadata marks these as qualification artifacts;
-they are not publisher-signed releases. Keep these runs in the private
-qualification repository. If a test projection changes workflow files, retain
+they are not publisher-signed releases. The private qualification repository
+can still test candidate changes. If a test projection changes workflow files, retain
 both commit IDs and verify every other tracked file is identical.
+
+`.github/workflows/publisher-signing.yml` calls that qualification workflow for
+the exact `main` revision selected when the owner starts a run. Once all five
+targets pass, it waits for the owner's approval of `release-signing`. It then
+signs the qualified bytes with the permanent key, checks all signatures and
+tamper rejection, and retains a signed candidate for 14 days. Both workflows
+have read-only repository permissions. Approval to use the key does not approve
+a release or tag; publication still requires a separate decision.
 
 `.github/workflows/platform-signing.yml` preserves the optional native signing
 and attestation path, disabled until its separate credentials are configured.

@@ -1,6 +1,7 @@
 name: Minisign candidate qualification (disposable keys)
 
 on:
+  workflow_call:
   workflow_dispatch:
   # Qualification only. Publishing requires a separately approved workflow.
   push:

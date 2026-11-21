@@ -13,12 +13,16 @@ on:
       - 'tests/provenance_export_regression.py'
       - 'tests/release_signing_regression.py'
       - 'tests/minisign_release_regression.py'
+      - 'tests/ci_minisign_regression.py'
       - 'tests/qualify_minisign_archive.py'
       - 'tests/qualify_release_archive.py'
       - 'tools/release/**'
       - 'tools/release_dependency_notices.py'
       - 'audits/evidence/tools/**'
       - '.github/workflows/install.yml'
+      - '.github/workflows/publisher-signing.yml'
+      - '.github/workflows/release.yml'
+      - 'keys/openlit.pub'
 permissions:
   contents: read
 jobs:
@@ -51,3 +55,4 @@ jobs:
         shell: bash
         run: python -B tools/release/fetch_minisign.py "$RUNNER_TEMP/minisign" >> "$GITHUB_PATH"
       - run: python -B tests/minisign_release_regression.py
+      - run: python -B tests/ci_minisign_regression.py
