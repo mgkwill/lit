@@ -8,8 +8,8 @@ We prioritize agent workflows over a checklist of every upstream feature.
 - [x] Use the OpenLit product and package name while keeping `lit` at the command line.
 - [x] Rewrite active guides in plain language and check the examples against the binary.
 - [x] Rebuild the renamed version on all five native targets and save exact evidence.
-- [ ] Review dependency notices and final source provenance. Archive reviewed
-  implementation records with the manifest required by AGENTS.md.
+- [x] Resolve the known notice gaps and complete the bounded provenance/record
+  review through `7ed82dd`. [Scope and archived evidence](audits/provenance-2026-11-20.md).
 - [ ] Choose publisher identities, implement signing and attestations, and test the
   final signed archives on clean machines.
 - [ ] Present the exact release to the owner and ask before tagging or publishing.

@@ -61,11 +61,13 @@ current behavior rather than inherited marketing claims.
 
 Still required before publication: select and verify the publisher identities;
 wire signing and attestation into a reviewed workflow; qualify the signed final
-archives; complete the source-provenance and dependency-notice review; archive
-reviewed implementation records as required by AGENTS.md; obtain approval.
+archives with the final notices; obtain approval. The bounded
+[provenance and record review](../audits/provenance-2026-11-20.md) and known
+crypto-notice gaps are complete through their recorded revisions. Later
+implementation changes need updated evidence.
 No signing credentials have been created or used by this preparation. Publisher
 identity selection is pending. See [dependency review](DEPENDENCIES.md) for the
-remaining maintenance and notice work.
+remaining maintenance warnings and the completed notice inventory.
 
 ## Candidate testing
 

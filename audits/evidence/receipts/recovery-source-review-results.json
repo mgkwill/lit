@@ -1,0 +1,237 @@
+{
+  "method": "Recovery-only source input indicator screen; no post-MIT upstream source comparison.",
+  "baseline": "98c59bb2dbebcf7f575993a4ad89e1300a578c83",
+  "previous_audit_endpoint": "cfdf7e69aa7f267ebe56c56c33de8bd427f8cd7a",
+  "endpoint": "f9f49c9503c043bb51228a347f43db7a4f1fad95",
+  "endpoint_tree": "d83c0a2f25632991dfa927f125aa43a5b495a466",
+  "commits": 105,
+  "changed_paths": 262,
+  "merges": [],
+  "license_matches_baseline": true,
+  "license_sha256": "4448dab94f2c8366b38f763128ba73f0a99b631607187a8efd591e3c06c4ccca",
+  "history_screen_bytes": 3265147,
+  "history_screen_lines": 71837,
+  "history_screen_sha256": "b752dc0ffb9e37b36fc45f97c287f6066c2e381a8c9ec2341e9bcc07e90931db",
+  "historical_indicator_hits": [
+    {
+      "commit": "b53c7cbc106c4f19d65741e7925190b5ce8fd969",
+      "path": "tests/fixtures/github-merge-queue/TASK-OWNERSHIP-2026-11-17.md",
+      "indicators": [
+        "upstream implementation"
+      ],
+      "added_line_sha256": "008d5dc939b59184d5530f57af642613c1fde5fedf21e68c2bd5662223d785cb"
+    },
+    {
+      "commit": "2be102a049841bebdb1d8dad026e0b695cfadcdb",
+      "path": "tests/fixtures/github-merge-queue/BROKER-LIVE-QUORUM-2026-11-19.md",
+      "indicators": [
+        "copied from"
+      ],
+      "added_line_sha256": "f4c3e1de31a3bdb15adb8acdaa68140862a6b8119d30f33914dd8cb95c40dd4d"
+    },
+    {
+      "commit": "5b8e1dffc88d82f12bdc547a96030f245be12934",
+      "path": "Cargo.toml",
+      "indicators": [
+        "Nervosys"
+      ],
+      "added_line_sha256": "e4339b08b0511a67dbd67cdc01ba02c03b69723bd3458eab183a69271277bb58"
+    },
+    {
+      "commit": "2e34a3e115be44d03de299fcd1d8197effed3aea",
+      "path": "tests/fixtures/cryptography/README.md",
+      "indicators": [
+        "raw.githubusercontent"
+      ],
+      "added_line_sha256": "806f4dd7b5af87622ce3cc3c90d994289547720d2fe2c179eaecfae47be50c58"
+    }
+  ],
+  "source_revision_records": [
+    {
+      "path": "tests/fixtures/github-merge-queue/admission-results-2026-11-18.json",
+      "pointer": "/source_parent",
+      "revision": "f1b5c8551bafc6dcaa03ae07e0c42f45ec7377a7",
+      "in_recovery_history": true
+    },
+    {
+      "path": "tests/fixtures/github-merge-queue/broker-burst-results-2026-11-18.json",
+      "pointer": "/source_commit",
+      "revision": "49834391be072651ae6ab4150c6d783e374ae1bb",
+      "in_recovery_history": true
+    },
+    {
+      "path": "tests/fixtures/github-merge-queue/broker-live-quorum-2026-11-19.json",
+      "pointer": "/deployed_source",
+      "revision": "06dee2a4be4405e466545b4148dfa7ea9cc9d5c8",
+      "in_recovery_history": true
+    },
+    {
+      "path": "tests/fixtures/github-merge-queue/broker-live-replica-cutover-2026-11-19.json",
+      "pointer": "/baseline_source",
+      "revision": "98c59bb2dbebcf7f575993a4ad89e1300a578c83",
+      "in_recovery_history": true
+    },
+    {
+      "path": "tests/fixtures/github-merge-queue/broker-live-replica-cutover-2026-11-19.json",
+      "pointer": "/live_service_source",
+      "revision": "7a0d7bc651d4c55dd7af809bb11f1381f59adcea",
+      "in_recovery_history": true
+    },
+    {
+      "path": "tests/fixtures/github-merge-queue/broker-live-replica-cutover-2026-11-19.json",
+      "pointer": "/watcher_supervision/watcher_source",
+      "revision": "4dbf53c2e5f4dc4e4d433fc904501bad5edcc54d",
+      "in_recovery_history": true
+    },
+    {
+      "path": "tests/fixtures/github-merge-queue/broker-operations-drill-results-2026-11-18.json",
+      "pointer": "/deployment/source_commit",
+      "revision": "cc36a28eaa68c072a62cc9fea246ec10c981f863",
+      "in_recovery_history": true
+    },
+    {
+      "path": "tests/fixtures/github-merge-queue/broker-operations-drill-results-2026-11-18.json",
+      "pointer": "/checkpoint_smoke/source_commit",
+      "revision": "86f7a4f3205b1ab3fe6d2efe8cf5ea8506f73dc0",
+      "in_recovery_history": true
+    },
+    {
+      "path": "tests/fixtures/github-merge-queue/broker-pinned-workspaces-2026-11-19.json",
+      "pointer": "/workspace_client_source",
+      "revision": "511711a904c6ac315659be7dec4d88b79508f85d",
+      "in_recovery_history": true
+    },
+    {
+      "path": "tests/fixtures/github-merge-queue/broker-pinned-workspaces-2026-11-19.json",
+      "pointer": "/lit_binary_source",
+      "revision": "6daf65302f0b93212834d3365f53b02fae04267d",
+      "in_recovery_history": true
+    },
+    {
+      "path": "tests/fixtures/github-merge-queue/broker-pinned-workspaces-2026-11-19.json",
+      "pointer": "/tracked_deletion_followup/source_commit",
+      "revision": "46fa531e0e36fd66f549af9f00bf1eabf91203e8",
+      "in_recovery_history": true
+    },
+    {
+      "path": "tests/fixtures/github-merge-queue/broker-provider-failure-results-2026-11-18.json",
+      "pointer": "/broker_source_commit",
+      "revision": "d5c85f06c0e2636c70daa6a3932e71f602862ed4",
+      "in_recovery_history": true
+    },
+    {
+      "path": "tests/fixtures/github-merge-queue/broker-scheduled-quorum-backup-2026-11-19.json",
+      "pointer": "/deployed_source",
+      "revision": "9f915326a1ce38ebc4943e4c31a50220faa05ef7",
+      "in_recovery_history": true
+    },
+    {
+      "path": "tests/fixtures/github-merge-queue/broker-second-offsite-backup-2026-11-19.json",
+      "pointer": "/source_commit",
+      "revision": "e25de42b3ff0b532ba94b8eb75ed21fb03634549",
+      "in_recovery_history": true
+    },
+    {
+      "path": "tests/fixtures/github-merge-queue/broker-second-offsite-backup-2026-11-19.json",
+      "pointer": "/first_cron_tick/source_commit",
+      "revision": "e25de42b3ff0b532ba94b8eb75ed21fb03634549",
+      "in_recovery_history": true
+    },
+    {
+      "path": "tests/fixtures/github-merge-queue/broker-unattended-failover-results-2026-11-18.json",
+      "pointer": "/live_sandbox_validation/source_commit",
+      "revision": "fdff529d7d15c83fcffd37fa159e609ab6b0ac1a",
+      "in_recovery_history": true
+    },
+    {
+      "path": "tests/fixtures/github-merge-queue/broker-v2-burst-results-2026-11-18.json",
+      "pointer": "/source_commit",
+      "revision": "f74b9401071f0d730bf119687abf0558f73ab4d5",
+      "in_recovery_history": true
+    },
+    {
+      "path": "tests/fixtures/github-merge-queue/broker-v2-burst-results-2026-11-18.json",
+      "pointer": "/implementation_record_context/source_parent",
+      "revision": "f74b9401071f0d730bf119687abf0558f73ab4d5",
+      "in_recovery_history": true
+    },
+    {
+      "path": "tests/fixtures/github-merge-queue/broker-v3-100-results-2026-11-18.json",
+      "pointer": "/source_commit",
+      "revision": "924dc161e80b440fd70d1673c0e1419a0333c9a2",
+      "in_recovery_history": true
+    },
+    {
+      "path": "tests/fixtures/github-merge-queue/pi-hosta-coding-pilot-2026-11-19.json",
+      "pointer": "/worker_source_commit",
+      "revision": "30a8d1dbc3b5a5b03aede2bec09bbc7fe3880549",
+      "in_recovery_history": true
+    },
+    {
+      "path": "tests/fixtures/github-merge-queue/pi-cohort25-2026-11-19.json",
+      "pointer": "/source_commit",
+      "revision": "3cdecf4c9a341d787be7b1bf75171ba44943e0bf",
+      "in_recovery_history": true
+    },
+    {
+      "path": "tests/fixtures/github-merge-queue/pi-resumable-pilot-2026-11-19.json",
+      "pointer": "/source_commit",
+      "revision": "9bf78757e2d3cfd57ccebc5765fc2ca6c53deef1",
+      "in_recovery_history": true
+    },
+    {
+      "path": "tests/fixtures/github-merge-queue/pi-source50-2026-11-19.json",
+      "pointer": "/source_commit",
+      "revision": "01b750d116f5235177d1136e8c9734472508cb28",
+      "in_recovery_history": true
+    },
+    {
+      "path": "tests/fixtures/release-qualification/2026-11-20-compatibility.json",
+      "pointer": "/initial_run/source_commit",
+      "revision": "d8d0d0759865a438b074dd7b773e8ca2bb032d5d",
+      "in_recovery_history": true
+    },
+    {
+      "path": "tests/fixtures/release-qualification/2026-11-20-compatibility.json",
+      "pointer": "/source_commit",
+      "revision": "fabaf3fa1350bd8b45e4fb069e5bb65ece074f31",
+      "in_recovery_history": true
+    },
+    {
+      "path": "tests/fixtures/release-qualification/2026-11-20-openlit-notices.json",
+      "pointer": "/source_commit",
+      "revision": "83b2fe963e8bc6d2d1fa68e6354e9e6a15bedad4",
+      "in_recovery_history": true
+    },
+    {
+      "path": "tests/fixtures/release-qualification/2026-11-20-openlit.json",
+      "pointer": "/binary_source",
+      "revision": "53a23ccc9caedbd86a38e5b059348d78c1f42b56",
+      "in_recovery_history": true
+    },
+    {
+      "path": "tests/fixtures/release-qualification/2026-11-20-openlit.json",
+      "pointer": "/installer_source",
+      "revision": "4d6a1dbb206d6d363c872ac1ba4dc845a9afb903",
+      "in_recovery_history": true
+    },
+    {
+      "path": "tests/fixtures/repository-migration/2026-11-19.json",
+      "pointer": "/tested_source_commit",
+      "revision": "d18f856f7baf5fa61d7f33f9ec6831649ed2e0f8",
+      "in_recovery_history": true
+    }
+  ],
+  "source_revision_unique_count": 27,
+  "lock_sources": {
+    "registry+https://github.com/rust-lang/crates.io-index": 246
+  },
+  "inventory_packages": 246,
+  "frozen_endpoint_missing_notices": [
+    "pqcrypto-internals@0.2.11",
+    "pqcrypto-traits@0.3.5"
+  ],
+  "commit_record_index_sha256": "8a1cffea27d96cd3e2dc30b6248981b55fdac658d31905512eba1f17de5e90f6",
+  "indexed_incremental_commits": 105,
+  "script_sha256": "0f9d6b9d1819bc1bf2acf7211f52093df936aa27ffb3f35f59e6debd5b99af01"
+}

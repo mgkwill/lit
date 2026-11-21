@@ -1,0 +1,76 @@
+[
+  {
+    "selector": "lit-pi-scale-path",
+    "revision": "2f9f55b9ab09d6094b25d9a9f48f4d9d49e7e4c2",
+    "files": {
+      "Cargo.toml": {
+        "blob": "650b4ce8811e2ba05ebbece221ac97396f3ef4a6",
+        "present_in_allowed_recovery_history": true
+      }
+    }
+  },
+  {
+    "selector": "lit-pi-resume-path",
+    "revision": "44417d32877fc5dbd937eb348fbf6b80b4fd986f",
+    "files": {
+      ".github/workflows/agent-merge-gate.yml": {
+        "blob": "0b7ff912bbf19e0c5d0eceb3dd8dec734ac4edd1",
+        "present_in_allowed_recovery_history": false
+      }
+    }
+  },
+  {
+    "selector": "lit-pi-lit100-path",
+    "revision": "57910ab4cf28b8807a627f8ffdd23dc75a0bc3c8",
+    "files": {
+      "src/core/diff.rs": {
+        "blob": "7fe036939e3d41d125d0f3894eb6bfa8fb51ed4f",
+        "present_in_allowed_recovery_history": true
+      },
+      "src/core/merge.rs": {
+        "blob": "a44365b423f0778f771f20be567d8b3420adad3a",
+        "present_in_allowed_recovery_history": true
+      },
+      "src/core/objects.rs": {
+        "blob": "b5a57a97a75b661c6601493bff33ff8a2dc6c14a",
+        "present_in_allowed_recovery_history": true
+      },
+      "src/core/refs.rs": {
+        "blob": "57d78c8af8a6c86b81a278d0d4db984d75c83433",
+        "present_in_allowed_recovery_history": true
+      },
+      "src/errors.rs": {
+        "blob": "e5e29d91d9c09dd0abec01efae546ee91de4e682",
+        "present_in_allowed_recovery_history": true
+      },
+      "src/config.rs": {
+        "blob": "6cfecee12257b18e18c576adfc78f27eaf75bb3f",
+        "present_in_allowed_recovery_history": true
+      },
+      "src/network/airgap.rs": {
+        "blob": "4883876eb83c8c0aacd355aeea8a0d1c8c0fb18e",
+        "present_in_allowed_recovery_history": true
+      },
+      "src/storage/index.rs": {
+        "blob": "3faca266211ea1b23b41f7a86579f810aad15afa",
+        "present_in_allowed_recovery_history": true
+      },
+      "src/core/mod.rs": {
+        "blob": "d26d60092fc4e7d35c130835692d2b7fd1b0b5b4",
+        "present_in_allowed_recovery_history": true
+      },
+      "src/response.rs": {
+        "blob": "1c63d169f1f6e9bcea33effeb82e7a4e3ae6551c",
+        "present_in_allowed_recovery_history": true
+      },
+      "Cargo.toml": {
+        "blob": "650b4ce8811e2ba05ebbece221ac97396f3ef4a6",
+        "present_in_allowed_recovery_history": true
+      },
+      ".github/workflows/agent-merge-gate.yml": {
+        "blob": "0b7ff912bbf19e0c5d0eceb3dd8dec734ac4edd1",
+        "present_in_allowed_recovery_history": false
+      }
+    }
+  }
+]

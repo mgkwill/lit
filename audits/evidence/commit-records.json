@@ -1,0 +1,1442 @@
+[
+  {
+    "commit": "2e23eaeca16e0d48b50809a56091ada9abb9bf99",
+    "committed_utc": "2026-11-16T22:06:49-08:00",
+    "subject": "Recover Lit agent workflows from the MIT baseline",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 4126,
+        "utc": "2026-11-17T06:06:49.290Z"
+      }
+    ]
+  },
+  {
+    "commit": "908199d0480603cc5536dc806300ad0b6e0d2ff9",
+    "committed_utc": "2026-11-16T22:09:24-08:00",
+    "subject": "Confine swarm agent registration to repository metadata",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 4191,
+        "utc": "2026-11-17T06:09:24.857Z"
+      }
+    ]
+  },
+  {
+    "commit": "293315d77bfbe962c71a57db9accd5d0c5395ee8",
+    "committed_utc": "2026-11-16T22:11:50-08:00",
+    "subject": "Serialize advisory swarm lease updates without path collisions",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 4239,
+        "utc": "2026-11-17T06:11:50.106Z"
+      }
+    ]
+  },
+  {
+    "commit": "b96c2325a16861ab71409038ecc38a977dd7d4a2",
+    "committed_utc": "2026-11-16T22:13:23-08:00",
+    "subject": "Expose mixed batch failures through opt-in exit status",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 4285,
+        "utc": "2026-11-17T06:13:23.272Z"
+      }
+    ]
+  },
+  {
+    "commit": "09c6267eaf667ea0fe89311622db50ee34d5476f",
+    "committed_utc": "2026-11-16T22:40:21-08:00",
+    "subject": "Roll back failed batches under the repository write lock",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 4473,
+        "utc": "2026-11-17T06:40:21.397Z"
+      }
+    ]
+  },
+  {
+    "commit": "3b6f5deb0ae738b2cafbfdc1d8071da397bf0072",
+    "committed_utc": "2026-11-16T22:44:25-08:00",
+    "subject": "Qualify the Git-backed workflow with 100 concurrent agents",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 4553,
+        "utc": "2026-11-17T06:44:25.835Z"
+      }
+    ]
+  },
+  {
+    "commit": "bafdc65301ae2980e3ce4f7e0eeb7a517d263fe4",
+    "committed_utc": "2026-11-16T23:01:54-08:00",
+    "subject": "Add exact-candidate checks for GitHub merge queues",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 4669,
+        "utc": "2026-11-17T07:01:54.190Z"
+      }
+    ]
+  },
+  {
+    "commit": "1fb3a7e1902d2259d71ff4bdc5b828904fd4a918",
+    "committed_utc": "2026-11-16T23:50:43-08:00",
+    "subject": "Preserve hosted GitHub queue qualification fixtures",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 5483,
+        "utc": "2026-11-17T07:50:43.934Z"
+      }
+    ]
+  },
+  {
+    "commit": "5ed1a3a92a7e44f81be8c3683fb8817c9354da5a",
+    "committed_utc": "2026-11-17T00:23:13-08:00",
+    "subject": "Document verified Actions-only merge queue qualification",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 5760,
+        "utc": "2026-11-17T08:23:15.873Z"
+      }
+    ]
+  },
+  {
+    "commit": "59d9214184e294e2fbd0d66ba0d20551f9655d84",
+    "committed_utc": "2026-11-17T00:55:51-08:00",
+    "subject": "Document verified multi-host GitHub merge queue qualification",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 6167,
+        "utc": "2026-11-17T08:55:51.781Z"
+      }
+    ]
+  },
+  {
+    "commit": "645f81cee19a49e4b70bdc67c21903b75a5e1770",
+    "committed_utc": "2026-11-17T09:06:42-08:00",
+    "subject": "Preserve verified GitHub App branch ownership pilot",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 6828,
+        "utc": "2026-11-17T17:06:42.530Z"
+      }
+    ]
+  },
+  {
+    "commit": "e96e0cb4e1447673da14aabfaac748f39b4ba895",
+    "committed_utc": "2026-11-17T16:56:58-08:00",
+    "subject": "Qualify three-App PR burst and record queue cleanup limitation",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 7609,
+        "utc": "2026-11-18T00:56:58.644Z"
+      }
+    ]
+  },
+  {
+    "commit": "64d873505241bfee1f473b14138db6aee12b24b3",
+    "committed_utc": "2026-11-17T19:46:15-08:00",
+    "subject": "Add durable GitHub queue coordination and recovery",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 8646,
+        "utc": "2026-11-18T03:46:15.172Z"
+      }
+    ]
+  },
+  {
+    "commit": "cfdf7e69aa7f267ebe56c56c33de8bd427f8cd7a",
+    "committed_utc": "2026-11-17T21:44:40-08:00",
+    "subject": "Verify live stale withdrawal and handle queued conflicts",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 9154,
+        "utc": "2026-11-18T05:44:40.981Z"
+      }
+    ]
+  },
+  {
+    "commit": "b53c7cbc106c4f19d65741e7925190b5ce8fd969",
+    "committed_utc": "2026-11-17T22:13:25-08:00",
+    "subject": "Fence task ownership and reassignment through queue retirement",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 9547,
+        "utc": "2026-11-18T06:13:25.090Z"
+      }
+    ]
+  },
+  {
+    "commit": "6159a48b949167f5304b276c740e98cddfcc123f",
+    "committed_utc": "2026-11-17T22:59:51-08:00",
+    "subject": "Document MIT-baseline provenance rules and audit findings",
+    "records": [
+      {
+        "session_id": "01a1ed36-7f65-7033-9af9-2b9075365bc7",
+        "line": 369,
+        "utc": "2026-11-18T06:59:51.431Z"
+      }
+    ]
+  },
+  {
+    "commit": "49834391be072651ae6ab4150c6d783e374ae1bb",
+    "committed_utc": "2026-11-18T00:58:28-08:00",
+    "subject": "Deploy authenticated task broker with fenced GitHub publication",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 11211,
+        "utc": "2026-11-18T08:58:28.260Z"
+      }
+    ]
+  },
+  {
+    "commit": "f1b5c8551bafc6dcaa03ae07e0c42f45ec7377a7",
+    "committed_utc": "2026-11-18T01:47:55-08:00",
+    "subject": "Qualify 30 authenticated broker agents across lab hosts",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 11935,
+        "utc": "2026-11-18T09:47:55.339Z"
+      }
+    ]
+  },
+  {
+    "commit": "f74b9401071f0d730bf119687abf0558f73ab4d5",
+    "committed_utc": "2026-11-18T07:38:05-08:00",
+    "subject": "Add durable fair broker admission and explicit retry contracts",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 12343,
+        "utc": "2026-11-18T15:38:05.366Z"
+      }
+    ]
+  },
+  {
+    "commit": "3c9b942f65d76cf344e245c3341e8171303bfaa2",
+    "committed_utc": "2026-11-18T09:09:01-08:00",
+    "subject": "Qualify live 60-client v2 broker burst and merge integrity",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 13089,
+        "utc": "2026-11-18T17:09:01.589Z"
+      }
+    ]
+  },
+  {
+    "commit": "bb059297b726824c48185d90b2f540849df0bef9",
+    "committed_utc": "2026-11-18T09:15:25-08:00",
+    "subject": "Verify broker integration receipts against Git and Actions",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 13267,
+        "utc": "2026-11-18T17:15:25.556Z"
+      }
+    ]
+  },
+  {
+    "commit": "4b6889f766ac6384ee916b1c58339513d15d5860",
+    "committed_utc": "2026-11-18T17:54:23-08:00",
+    "subject": "Queue broker registrations fairly across owners",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 13595,
+        "utc": "2026-11-19T01:54:23.398Z"
+      }
+    ]
+  },
+  {
+    "commit": "924dc161e80b440fd70d1673c0e1419a0333c9a2",
+    "committed_utc": "2026-11-18T18:53:02-08:00",
+    "subject": "Pace broker polling and prioritize revoked attempts",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 13718,
+        "utc": "2026-11-19T02:53:02.234Z"
+      }
+    ]
+  },
+  {
+    "commit": "c6ace8eb98e3a8960012ecfd157b7699af90e7ed",
+    "committed_utc": "2026-11-18T19:46:10-08:00",
+    "subject": "Record live 100-identity API v3 broker qualification",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 14448,
+        "utc": "2026-11-19T03:46:10.608Z"
+      }
+    ]
+  },
+  {
+    "commit": "5c69e8f1c9d7162bd2c7678bbc48a7f62d09e763",
+    "committed_utc": "2026-11-18T20:12:18-08:00",
+    "subject": "Support binary edits, deletions, and modes in broker publication",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 14648,
+        "utc": "2026-11-19T04:12:19.048Z"
+      }
+    ]
+  },
+  {
+    "commit": "b6dbcaf93a20325e1675bf82a4dfe343c4c33688",
+    "committed_utc": "2026-11-18T20:50:32-08:00",
+    "subject": "Record live mixed-file broker publication through GitHub Actions",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 15174,
+        "utc": "2026-11-19T04:50:51.097Z"
+      }
+    ]
+  },
+  {
+    "commit": "d5c85f06c0e2636c70daa6a3932e71f602862ed4",
+    "committed_utc": "2026-11-18T20:55:53-08:00",
+    "subject": "Gate task assignments on verified prerequisite merges",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 15282,
+        "utc": "2026-11-19T04:55:53.326Z"
+      }
+    ]
+  },
+  {
+    "commit": "3d12f4c61e60eaf63dbcd138de56b939b938419a",
+    "committed_utc": "2026-11-18T20:59:48-08:00",
+    "subject": "Qualify 100-client broker recovery from provider faults",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 15396,
+        "utc": "2026-11-19T04:59:48.127Z"
+      }
+    ]
+  },
+  {
+    "commit": "b3a563b60f1beffae52086a31bf127676e0ae18a",
+    "committed_utc": "2026-11-18T21:05:22-08:00",
+    "subject": "Recover broker publication receipts from exact GitHub evidence",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 15498,
+        "utc": "2026-11-19T05:05:23.036Z"
+      }
+    ]
+  },
+  {
+    "commit": "0be68f20ae100e138b5076c920db1c7002b81ad9",
+    "committed_utc": "2026-11-18T21:08:53-08:00",
+    "subject": "Expose advisory task path overlaps to the scheduler",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 15576,
+        "utc": "2026-11-19T05:08:53.345Z"
+      }
+    ]
+  },
+  {
+    "commit": "cc36a28eaa68c072a62cc9fea246ec10c981f863",
+    "committed_utc": "2026-11-18T21:13:11-08:00",
+    "subject": "Coalesce scoped GitHub installation token refreshes",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 15667,
+        "utc": "2026-11-19T05:13:12.091Z"
+      }
+    ]
+  },
+  {
+    "commit": "b32527b338e227e7458e1f01d44ded81fd8a9799",
+    "committed_utc": "2026-11-18T21:46:08-08:00",
+    "subject": "Add guarded broker authority snapshots and restore",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 15943,
+        "utc": "2026-11-19T05:46:08.249Z"
+      }
+    ]
+  },
+  {
+    "commit": "b7e45f6d2335b14736e3d88780fcad2d1a2498d3",
+    "committed_utc": "2026-11-18T21:49:58-08:00",
+    "subject": "Record live broker failover and certificate renewal rehearsal",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 16025,
+        "utc": "2026-11-19T05:49:58.862Z"
+      }
+    ]
+  },
+  {
+    "commit": "86f7a4f3205b1ab3fe6d2efe8cf5ea8506f73dc0",
+    "committed_utc": "2026-11-18T21:50:11-08:00",
+    "subject": "Prepare verified client certificate renewal configs",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 16034,
+        "utc": "2026-11-19T05:50:11.253Z"
+      }
+    ]
+  },
+  {
+    "commit": "a73d23ead7b6fef2e2fcfee8ffc3198216a91da4",
+    "committed_utc": "2026-11-18T21:51:12-08:00",
+    "subject": "Verify guarded checkpoint against the sandbox backup",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 16054,
+        "utc": "2026-11-19T05:51:12.425Z"
+      }
+    ]
+  },
+  {
+    "commit": "115faa4ec78b99e4eeb46e503c69e840144253c5",
+    "committed_utc": "2026-11-18T22:39:50-08:00",
+    "subject": "Record rotation of all standing broker TLS leaves",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 16146,
+        "utc": "2026-11-19T06:39:50.174Z"
+      }
+    ]
+  },
+  {
+    "commit": "bcc4437a9505907f457974d491928de698850672",
+    "committed_utc": "2026-11-18T22:54:30-08:00",
+    "subject": "Fence and restore broker authority during unattended takeover",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 16420,
+        "utc": "2026-11-19T06:54:30.155Z"
+      }
+    ]
+  },
+  {
+    "commit": "fdff529d7d15c83fcffd37fa159e609ab6b0ac1a",
+    "committed_utc": "2026-11-18T22:59:45-08:00",
+    "subject": "Follow broker claims and policy observations to a trusted standby",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 16504,
+        "utc": "2026-11-19T06:59:45.577Z"
+      }
+    ]
+  },
+  {
+    "commit": "018e1fbe261d0c36db5ae823b797627178513434",
+    "committed_utc": "2026-11-18T23:00:52-08:00",
+    "subject": "Verify unattended takeover against the live 100latent sandbox",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 16533,
+        "utc": "2026-11-19T07:00:52.168Z"
+      }
+    ]
+  },
+  {
+    "commit": "7a0d7bc651d4c55dd7af809bb11f1381f59adcea",
+    "committed_utc": "2026-11-18T23:35:27-08:00",
+    "subject": "Replicate broker authority and fence writer independently of the source host",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 16880,
+        "utc": "2026-11-19T07:35:27.254Z"
+      }
+    ]
+  },
+  {
+    "commit": "8d228e49434e348c2425e0fbd87e034c1c34be95",
+    "committed_utc": "2026-11-19T07:25:45-08:00",
+    "subject": "Rearm replicated standby after failback",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 17315,
+        "utc": "2026-11-19T15:25:47.227Z"
+      }
+    ]
+  },
+  {
+    "commit": "30a3b00c5e1255dcfd4182b79a1048d745d6250b",
+    "committed_utc": "2026-11-19T07:27:24-08:00",
+    "subject": "Resume broker reads when the primary is fenced",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 17363,
+        "utc": "2026-11-19T15:27:24.470Z"
+      }
+    ]
+  },
+  {
+    "commit": "920b9e14326ce588d0f6336ab9d56bf8e2a6ae6c",
+    "committed_utc": "2026-11-19T07:34:20-08:00",
+    "subject": "Record live replicated broker cutover and Actions failover proof",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 17523,
+        "utc": "2026-11-19T15:34:20.814Z"
+      }
+    ]
+  },
+  {
+    "commit": "4dbf53c2e5f4dc4e4d433fc904501bad5edcc54d",
+    "committed_utc": "2026-11-19T07:36:12-08:00",
+    "subject": "Preserve authenticated watcher baseline across restarts",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 17567,
+        "utc": "2026-11-19T15:36:12.715Z"
+      }
+    ]
+  },
+  {
+    "commit": "2bc16b11943598011ff36ae6b3f2c7db87944cdc",
+    "committed_utc": "2026-11-19T07:40:08-08:00",
+    "subject": "Record live watcher restart and supervision proof",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 17635,
+        "utc": "2026-11-19T15:40:08.495Z"
+      }
+    ]
+  },
+  {
+    "commit": "664299b088a2701327e736480a3986d8e39ce65a",
+    "committed_utc": "2026-11-19T08:26:05-08:00",
+    "subject": "Verify expiry of legacy sandbox writer tokens",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 17921,
+        "utc": "2026-11-19T16:26:06.002Z"
+      }
+    ]
+  },
+  {
+    "commit": "06dee2a4be4405e466545b4148dfa7ea9cc9d5c8",
+    "committed_utc": "2026-11-19T08:44:49-08:00",
+    "subject": "Add quorum authority and independently scoped policy observation",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 18185,
+        "utc": "2026-11-19T16:44:50.493Z"
+      }
+    ]
+  },
+  {
+    "commit": "76935ad227398564670e0647fae502d38c88684e",
+    "committed_utc": "2026-11-19T08:55:28-08:00",
+    "subject": "Run broker authority and failover regressions in CI",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 18369,
+        "utc": "2026-11-19T16:55:28.317Z"
+      }
+    ]
+  },
+  {
+    "commit": "cbe0787ffccaabcf41c641fd369d7b773b2baab4",
+    "committed_utc": "2026-11-19T08:58:58-08:00",
+    "subject": "Record live quorum operation through host-c outage",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 18420,
+        "utc": "2026-11-19T16:58:59.285Z"
+      }
+    ]
+  },
+  {
+    "commit": "fc5f4613a9d0480afae1f6146be40cdd85b58bc2",
+    "committed_utc": "2026-11-19T09:02:15-08:00",
+    "subject": "Verify quorum gateway retry safety",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 18480,
+        "utc": "2026-11-19T17:02:16.424Z"
+      }
+    ]
+  },
+  {
+    "commit": "2be102a049841bebdb1d8dad026e0b695cfadcdb",
+    "committed_utc": "2026-11-19T09:12:09-08:00",
+    "subject": "Record Mac-independent failover and joint outage evidence",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 18622,
+        "utc": "2026-11-19T17:12:09.088Z"
+      }
+    ]
+  },
+  {
+    "commit": "698f6f0a3e784c1296bbde03f1a0dd4eb16fe2ac",
+    "committed_utc": "2026-11-19T15:11:52-08:00",
+    "subject": "Back up and recover broker authority into a new quorum",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 18827,
+        "utc": "2026-11-19T23:11:52.570Z"
+      }
+    ]
+  },
+  {
+    "commit": "1043f1ae5f7d3d8b7f215f3262b26583e3041064",
+    "committed_utc": "2026-11-19T15:12:43-08:00",
+    "subject": "Record encrypted recovery after permanent two-voter loss",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 18842,
+        "utc": "2026-11-19T23:12:43.831Z"
+      }
+    ]
+  },
+  {
+    "commit": "eb6bd334b87be27381badad762cb065b01cc7ef1",
+    "committed_utc": "2026-11-19T15:19:36-08:00",
+    "subject": "Verify quorum recovery on three lab hosts and seal live backup",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 18935,
+        "utc": "2026-11-19T23:19:36.545Z"
+      }
+    ]
+  },
+  {
+    "commit": "a541678963b36b4122f86347b72ef40fc1e08e28",
+    "committed_utc": "2026-11-19T15:45:06-08:00",
+    "subject": "Seal scheduled quorum backups off the voter hosts",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 19052,
+        "utc": "2026-11-19T23:45:06.696Z"
+      }
+    ]
+  },
+  {
+    "commit": "9f915326a1ce38ebc4943e4c31a50220faa05ef7",
+    "committed_utc": "2026-11-19T15:48:22-08:00",
+    "subject": "Retry transient writer reservations before scheduled backup",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 19105,
+        "utc": "2026-11-19T23:48:23.349Z"
+      }
+    ]
+  },
+  {
+    "commit": "0cbfb7c5faf89da2b6a4194e42dc8a3b075ef2a4",
+    "committed_utc": "2026-11-19T15:52:28-08:00",
+    "subject": "Verify timed quorum backup restores after losing two lab voters",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 19178,
+        "utc": "2026-11-19T23:52:28.281Z"
+      }
+    ]
+  },
+  {
+    "commit": "e25de42b3ff0b532ba94b8eb75ed21fb03634549",
+    "committed_utc": "2026-11-19T16:11:31-08:00",
+    "subject": "Scope off-voter backup clients to read-only archive access",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 19271,
+        "utc": "2026-11-20T00:11:31.983Z"
+      }
+    ]
+  },
+  {
+    "commit": "ce743d1b934c80526439dd84a268d2fe59c5db74",
+    "committed_utc": "2026-11-19T16:21:13-08:00",
+    "subject": "Verify independent host-e backups and restore with Mac services offline",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 19424,
+        "utc": "2026-11-20T00:21:13.082Z"
+      }
+    ]
+  },
+  {
+    "commit": "d18f856f7baf5fa61d7f33f9ec6831649ed2e0f8",
+    "committed_utc": "2026-11-19T17:03:27-08:00",
+    "subject": "Add verified native repository migration and rollback",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 20179,
+        "utc": "2026-11-20T01:03:27.739Z"
+      }
+    ]
+  },
+  {
+    "commit": "d7e1f581f43c276885ffce3c9b99b9332b7f755a",
+    "committed_utc": "2026-11-19T17:04:02-08:00",
+    "subject": "Record macOS and Linux arm64 repository migration evidence",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 20193,
+        "utc": "2026-11-20T01:04:02.894Z"
+      }
+    ]
+  },
+  {
+    "commit": "cb07236d99363e32f701d830e4748c770ebf5411",
+    "committed_utc": "2026-11-19T17:06:13-08:00",
+    "subject": "Qualify release assets and strict sandbox refusal on arm64 lab hosts",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 20253,
+        "utc": "2026-11-20T01:06:13.325Z"
+      }
+    ]
+  },
+  {
+    "commit": "b705e961e40f6a2613113d554a659f0565902a4d",
+    "committed_utc": "2026-11-19T17:25:28-08:00",
+    "subject": "Support authenticated Git remotes over HTTPS and SSH",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 20568,
+        "utc": "2026-11-20T01:25:28.257Z"
+      }
+    ]
+  },
+  {
+    "commit": "6ff58175560ccb865af6c9c63186203efb528a4b",
+    "committed_utc": "2026-11-19T17:26:23-08:00",
+    "subject": "Record authenticated Git remote evidence on macOS and arm64 Linux",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 20586,
+        "utc": "2026-11-20T01:26:23.403Z"
+      }
+    ]
+  },
+  {
+    "commit": "95b1195a950b2e1c4066b13d4716f4571ca76182",
+    "committed_utc": "2026-11-19T17:27:12-08:00",
+    "subject": "Verify read-only credentials on both Git transports",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 20604,
+        "utc": "2026-11-20T01:27:12.580Z"
+      }
+    ]
+  },
+  {
+    "commit": "74b0495aca0c01fd3e25d2d0fd58914acfd1177f",
+    "committed_utc": "2026-11-19T18:21:39-08:00",
+    "subject": "Create private agent workspaces from pinned Lit commits",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 20884,
+        "utc": "2026-11-20T02:21:40.325Z"
+      }
+    ]
+  },
+  {
+    "commit": "f51308d4828134b83fe0e95eeb2bf724c45aac29",
+    "committed_utc": "2026-11-19T18:23:44-08:00",
+    "subject": "Record pinned workspace verification on macOS and both Linux architectures",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 20926,
+        "utc": "2026-11-20T02:23:44.903Z"
+      }
+    ]
+  },
+  {
+    "commit": "6daf65302f0b93212834d3365f53b02fae04267d",
+    "committed_utc": "2026-11-19T18:27:03-08:00",
+    "subject": "Preserve published Git identities in pinned workspaces",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 21003,
+        "utc": "2026-11-20T02:27:03.977Z"
+      }
+    ]
+  },
+  {
+    "commit": "1c1fb805369e2234db9eac75e5e9319d6e2945b2",
+    "committed_utc": "2026-11-19T18:28:57-08:00",
+    "subject": "Record 100-workspace bursts and Git handoff verification",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 21047,
+        "utc": "2026-11-20T02:28:57.061Z"
+      }
+    ]
+  },
+  {
+    "commit": "511711a904c6ac315659be7dec4d88b79508f85d",
+    "committed_utc": "2026-11-19T18:45:01-08:00",
+    "subject": "Derive broker proposals from pinned Lit workspaces",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 21291,
+        "utc": "2026-11-20T02:45:01.644Z"
+      }
+    ]
+  },
+  {
+    "commit": "3a782b59d254a5ed3385df9316c909fedc60c0e6",
+    "committed_utc": "2026-11-19T19:02:28-08:00",
+    "subject": "Preserve completed broker burst receipts after worker failure",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 21761,
+        "utc": "2026-11-20T03:02:28.653Z"
+      }
+    ]
+  },
+  {
+    "commit": "c7239ddc3a6b78280262faead03629bf29d85143",
+    "committed_utc": "2026-11-19T19:16:18-08:00",
+    "subject": "Record live pinned workspace burst and fencing evidence",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 22019,
+        "utc": "2026-11-20T03:16:18.393Z"
+      }
+    ]
+  },
+  {
+    "commit": "46fa531e0e36fd66f549af9f00bf1eabf91203e8",
+    "committed_utc": "2026-11-19T19:31:17-08:00",
+    "subject": "Stage tracked deletions in pinned Lit workspaces",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 22383,
+        "utc": "2026-11-20T03:31:17.407Z"
+      }
+    ]
+  },
+  {
+    "commit": "02ef381b5ae25324a05c91961b18fedb5b4cf7a7",
+    "committed_utc": "2026-11-19T19:52:16-08:00",
+    "subject": "Verify merge-queue closure receipts against Git and Actions",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 22779,
+        "utc": "2026-11-20T03:52:17.413Z"
+      }
+    ]
+  },
+  {
+    "commit": "858a331b1586c9d15d223c03ae42a0039810a8aa",
+    "committed_utc": "2026-11-19T20:00:47-08:00",
+    "subject": "Release freeze rules after verified proposal settlement",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 22958,
+        "utc": "2026-11-20T04:00:48.888Z"
+      }
+    ]
+  },
+  {
+    "commit": "4b241fe53edd44a620c6ca3319f8a049d380aeb9",
+    "committed_utc": "2026-11-19T20:02:13-08:00",
+    "subject": "Record completed Actions-only workspace burst and cleanup",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 22992,
+        "utc": "2026-11-20T04:02:13.619Z"
+      }
+    ]
+  },
+  {
+    "commit": "d55b5c29da07b66b357ac19ad81b1be32cf58298",
+    "committed_utc": "2026-11-19T20:37:12-08:00",
+    "subject": "Add confined Pi pilot for pinned Lit workspaces",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 23266,
+        "utc": "2026-11-20T04:37:12.932Z"
+      }
+    ]
+  },
+  {
+    "commit": "30a8d1dbc3b5a5b03aede2bec09bbc7fe3880549",
+    "committed_utc": "2026-11-19T20:43:56-08:00",
+    "subject": "Run all Pi pilot inference through host-a",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 23403,
+        "utc": "2026-11-20T04:43:56.308Z"
+      }
+    ]
+  },
+  {
+    "commit": "3c19031ca9f3de7fc0c09fbca814c1732e0ebb0b",
+    "committed_utc": "2026-11-19T21:06:20-08:00",
+    "subject": "Record real Pi agent pilot with centralized host-a inference",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 23735,
+        "utc": "2026-11-20T05:06:20.386Z"
+      }
+    ]
+  },
+  {
+    "commit": "bed61afa7f64bb41d5fb933ceaac522d7f58fd46",
+    "committed_utc": "2026-11-19T21:18:58-08:00",
+    "subject": "Support multiple work units in pinned Pi pilots",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 23803,
+        "utc": "2026-11-20T05:18:58.329Z"
+      }
+    ]
+  },
+  {
+    "commit": "929628e733db13ad20382c6e6a1e7ba2d36d3708",
+    "committed_utc": "2026-11-19T21:46:41-08:00",
+    "subject": "Record ten-agent Pi pilot with centralized host-a inference",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 24180,
+        "utc": "2026-11-20T05:46:41.655Z"
+      }
+    ]
+  },
+  {
+    "commit": "9bf78757e2d3cfd57ccebc5765fc2ca6c53deef1",
+    "committed_utc": "2026-11-19T22:11:38-08:00",
+    "subject": "Resume pinned Pi pilot publication after controller restart",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 24411,
+        "utc": "2026-11-20T06:11:38.837Z"
+      }
+    ]
+  },
+  {
+    "commit": "bf1c9de7c1d6bed4019a01328cbe60fd43f8df10",
+    "committed_utc": "2026-11-19T22:37:31-08:00",
+    "subject": "Record live ten-agent Pi restart and Actions-only integration",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 24928,
+        "utc": "2026-11-20T06:37:31.951Z"
+      }
+    ]
+  },
+  {
+    "commit": "5c122b5c101455d176ea446bbf0be6285bf2988d",
+    "committed_utc": "2026-11-19T22:37:44-08:00",
+    "subject": "Make Pi fixture prompts match the required JSON shape",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 24941,
+        "utc": "2026-11-20T06:37:51.760Z"
+      }
+    ]
+  },
+  {
+    "commit": "3cdecf4c9a341d787be7b1bf75171ba44943e0bf",
+    "committed_utc": "2026-11-19T22:54:13-08:00",
+    "subject": "Resume Pi cohorts across reassignment and cleanup",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 25048,
+        "utc": "2026-11-20T06:54:13.859Z"
+      }
+    ]
+  },
+  {
+    "commit": "170151109b64ac74d0d2694ef0a99d868d870de3",
+    "committed_utc": "2026-11-19T22:59:03-08:00",
+    "subject": "Document the resumable Pi cohort command",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 25148,
+        "utc": "2026-11-20T06:59:03.297Z"
+      }
+    ]
+  },
+  {
+    "commit": "65d5c5d9f1b9eb57634b604691b7939fa8e1a451",
+    "committed_utc": "2026-11-19T23:27:54-08:00",
+    "subject": "Record live 25-agent Pi cohort recovery and cleanup",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 25625,
+        "utc": "2026-11-20T07:27:57.848Z"
+      }
+    ]
+  },
+  {
+    "commit": "01b750d116f5235177d1136e8c9734472508cb28",
+    "committed_utc": "2026-11-19T23:37:04-08:00",
+    "subject": "Run resumable Pi cohorts with a configured lab adapter",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 25772,
+        "utc": "2026-11-20T07:37:05.047Z"
+      }
+    ]
+  },
+  {
+    "commit": "a444ac51f3b615aca34f293f09cd2d80ad96dbc4",
+    "committed_utc": "2026-11-19T23:39:58-08:00",
+    "subject": "Document configuration for the checked-in Pi lab adapter",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 25831,
+        "utc": "2026-11-20T07:39:58.804Z"
+      }
+    ]
+  },
+  {
+    "commit": "626a79f64a7ab4d0fb7c3737106f678f5a8e71ec",
+    "committed_utc": "2026-11-19T23:48:08-08:00",
+    "subject": "Reject adapter changes when resuming a saved Pi run",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 25969,
+        "utc": "2026-11-20T07:48:13.069Z"
+      }
+    ]
+  },
+  {
+    "commit": "eb64628ec1aab730394db27be5e04154f515fe12",
+    "committed_utc": "2026-11-20T00:45:59-08:00",
+    "subject": "Record 50-agent source pilot and fresh controller recovery",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 26644,
+        "utc": "2026-11-20T08:45:59.141Z"
+      }
+    ]
+  },
+  {
+    "commit": "ba618326e2e1f15c551d4977eeb1bd49976f75d1",
+    "committed_utc": "2026-11-20T00:58:30-08:00",
+    "subject": "Support fenced Pi controller handoffs and shared Rust workloads",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 26870,
+        "utc": "2026-11-20T08:58:30.869Z"
+      }
+    ]
+  },
+  {
+    "commit": "abaa79646f5ea079e7274c40033d0f5c9874df11",
+    "committed_utc": "2026-11-20T03:21:23-08:00",
+    "subject": "Record Linux controller failover and 100-agent Lit source pilot",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 28383,
+        "utc": "2026-11-20T11:21:23.950Z"
+      }
+    ]
+  },
+  {
+    "commit": "e72ef2d4e1264956bb8c7a4c8f8706d410b7c574",
+    "committed_utc": "2026-11-20T07:44:34-08:00",
+    "subject": "Replicate Pi checkpoints and bound worker admission",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 28518,
+        "utc": "2026-11-20T15:44:34.362Z"
+      }
+    ]
+  },
+  {
+    "commit": "580c8082dc189b6fe02eac471d13acd5cff39e41",
+    "committed_utc": "2026-11-20T07:53:23-08:00",
+    "subject": "Fail closed on ambiguous Pi authority and default to bounded launches",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 28647,
+        "utc": "2026-11-20T15:53:23.185Z"
+      }
+    ]
+  },
+  {
+    "commit": "83501d40d39bd3269acf187d6371df4e1fcd20f6",
+    "committed_utc": "2026-11-20T08:12:13-08:00",
+    "subject": "Record Pi checkpoint takeover and bounded launch canary",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 28889,
+        "utc": "2026-11-20T16:12:13.288Z"
+      }
+    ]
+  },
+  {
+    "commit": "0500c68ff8d66dbd32e7be0c37f73cdc6c3beb51",
+    "committed_utc": "2026-11-20T08:37:51-08:00",
+    "subject": "Qualify Pi recovery without live inference",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 29138,
+        "utc": "2026-11-20T16:37:51.697Z"
+      }
+    ]
+  },
+  {
+    "commit": "8099119d4c92575d2aa22e15abee1d81eebe9767",
+    "committed_utc": "2026-11-20T08:50:12-08:00",
+    "subject": "Align MCP discovery with accepted tool inputs",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 29500,
+        "utc": "2026-11-20T16:50:12.503Z"
+      }
+    ]
+  },
+  {
+    "commit": "b327208b18b21fe34d14e5e3d865ade8ea1191df",
+    "committed_utc": "2026-11-20T08:55:08-08:00",
+    "subject": "Smoke-test optimized Lit binaries in CI",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 29673,
+        "utc": "2026-11-20T16:55:08.185Z"
+      }
+    ]
+  },
+  {
+    "commit": "97ffa0d35388b4eab76f925c1411e4e922117d4d",
+    "committed_utc": "2026-11-20T08:57:14-08:00",
+    "subject": "Include MIT attribution and checksums in release assets",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 29760,
+        "utc": "2026-11-20T16:57:14.084Z"
+      }
+    ]
+  },
+  {
+    "commit": "ba6bc04d5a6771cbca6c8051e8f01a991874436d",
+    "committed_utc": "2026-11-20T08:59:54-08:00",
+    "subject": "Record cross-platform release candidate qualification",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 29888,
+        "utc": "2026-11-20T16:59:54.492Z"
+      }
+    ]
+  },
+  {
+    "commit": "d8d0d0759865a438b074dd7b773e8ca2bb032d5d",
+    "committed_utc": "2026-11-20T09:35:25-08:00",
+    "subject": "Qualify release packages on native compatibility runners",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 29984,
+        "utc": "2026-11-20T17:35:28.513Z"
+      }
+    ]
+  },
+  {
+    "commit": "af0dfa68ef254690928e9d390379b849fd283af4",
+    "committed_utc": "2026-11-20T09:39:20-08:00",
+    "subject": "Decode native file remotes with platform URL paths",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 30142,
+        "utc": "2026-11-20T17:39:21.436Z"
+      }
+    ]
+  },
+  {
+    "commit": "fabaf3fa1350bd8b45e4fb069e5bb65ece074f31",
+    "committed_utc": "2026-11-20T09:45:00-08:00",
+    "subject": "Honor isolated home directories for LAN configuration",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 30292,
+        "utc": "2026-11-20T17:45:01.913Z"
+      }
+    ]
+  },
+  {
+    "commit": "729fd4a7fb0e1d738cbda8bf456aed6182c44733",
+    "committed_utc": "2026-11-20T09:52:55-08:00",
+    "subject": "Record Actions proof for older glibc, Intel macOS and Windows",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 30494,
+        "utc": "2026-11-20T17:52:55.536Z"
+      }
+    ]
+  },
+  {
+    "commit": "2c068030f6ab469b94d6fac40446e3fb80e2cd35",
+    "committed_utc": "2026-11-20T09:53:56-08:00",
+    "subject": "Document release candidate installation requirements",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 30520,
+        "utc": "2026-11-20T17:53:56.069Z"
+      }
+    ]
+  },
+  {
+    "commit": "5b8e1dffc88d82f12bdc547a96030f245be12934",
+    "committed_utc": "2026-11-20T12:33:25-08:00",
+    "subject": "Prepare OpenLit 0.1.0 with plain-language guides and gated publication",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 30730,
+        "utc": "2026-11-20T20:33:38.462Z"
+      }
+    ]
+  },
+  {
+    "commit": "0bd93f95b31a014b26e5adee4409460f912a84c1",
+    "committed_utc": "2026-11-20T12:41:03-08:00",
+    "subject": "Harden release dependencies and verify portable ML-DSA behavior",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 30914,
+        "utc": "2026-11-20T20:41:03.478Z"
+      }
+    ]
+  },
+  {
+    "commit": "2e34a3e115be44d03de299fcd1d8197effed3aea",
+    "committed_utc": "2026-11-20T12:43:53-08:00",
+    "subject": "Clear formatting and Clippy release gates and retain signature reproducer",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 30993,
+        "utc": "2026-11-20T20:43:53.814Z"
+      }
+    ]
+  },
+  {
+    "commit": "53a23ccc9caedbd86a38e5b059348d78c1f42b56",
+    "committed_utc": "2026-11-20T12:44:39-08:00",
+    "subject": "Include adversarial test formatting in the release candidate",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 31012,
+        "utc": "2026-11-20T20:44:40.315Z"
+      }
+    ]
+  },
+  {
+    "commit": "8aed154b80f0b26bcf02b61c9063bb7b04648c5b",
+    "committed_utc": "2026-11-20T12:53:55-08:00",
+    "subject": "Simplify OpenLit installation and correct configuration and sandbox examples",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 31203,
+        "utc": "2026-11-20T20:53:55.293Z"
+      }
+    ]
+  },
+  {
+    "commit": "e89b8443f00a776f621ef322f1cf8213840a1c65",
+    "committed_utc": "2026-11-20T12:54:48-08:00",
+    "subject": "Cover default installer arguments and Bash 3 compatibility",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 31222,
+        "utc": "2026-11-20T20:54:48.776Z"
+      }
+    ]
+  },
+  {
+    "commit": "83a6ec1a19ba37215863a3464aa9b8fecde14b80",
+    "committed_utc": "2026-11-20T12:56:24-08:00",
+    "subject": "Normalize Windows installer paths and read structured sandbox errors",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 31244,
+        "utc": "2026-11-20T20:56:24.903Z"
+      }
+    ]
+  },
+  {
+    "commit": "4d6a1dbb206d6d363c872ac1ba4dc845a9afb903",
+    "committed_utc": "2026-11-20T12:57:42-08:00",
+    "subject": "Separate PowerShell runtime caches from installer settings checks",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 31272,
+        "utc": "2026-11-20T20:57:44.071Z"
+      }
+    ]
+  },
+  {
+    "commit": "8b4d427d786c8fa4ca783964a9ec531049f1e439",
+    "committed_utc": "2026-11-20T13:05:18-08:00",
+    "subject": "Record OpenLit 0.1.0 native and lab qualification evidence",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 31401,
+        "utc": "2026-11-20T21:05:19.454Z"
+      }
+    ]
+  },
+  {
+    "commit": "b466f3efccf42ef679f5c2f145d125b748cc7eee",
+    "committed_utc": "2026-11-20T13:07:10-08:00",
+    "subject": "Pin supplemental dependency notices and verify distribution inventory",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 31452,
+        "utc": "2026-11-20T21:07:10.114Z"
+      }
+    ]
+  },
+  {
+    "commit": "3fff588e7ed848ec30d021c6b467d20e11b199cb",
+    "committed_utc": "2026-11-20T13:07:19-08:00",
+    "subject": "Preserve original third-party license bytes across checkouts",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 31458,
+        "utc": "2026-11-20T21:07:20.502Z"
+      }
+    ]
+  },
+  {
+    "commit": "83b2fe963e8bc6d2d1fa68e6354e9e6a15bedad4",
+    "committed_utc": "2026-11-20T13:07:33-08:00",
+    "subject": "Retain embedded dependency notice line endings in Git",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 31473,
+        "utc": "2026-11-20T21:07:34.429Z"
+      }
+    ]
+  },
+  {
+    "commit": "f9f49c9503c043bb51228a347f43db7a4f1fad95",
+    "committed_utc": "2026-11-20T13:17:18-08:00",
+    "subject": "Record final OpenLit archive qualification and remaining release gates",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 31754,
+        "utc": "2026-11-20T21:17:21.554Z"
+      }
+    ]
+  },
+  {
+    "commit": "7ed82dd4c3a16f8f93cb84f9f5c7366adf1dcdd3",
+    "committed_utc": "2026-11-20T18:44:38-08:00",
+    "subject": "Resolve PQCrypto notice gaps with pinned embedded and NIST notices",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 32051,
+        "utc": "2026-11-21T02:44:38.260Z"
+      }
+    ]
+  }
+]

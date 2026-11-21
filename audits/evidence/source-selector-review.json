@@ -1,0 +1,1876 @@
+{
+  "scope": "Four historical implementation sessions through f9f49c9; literal selector screen and targeted manual review, not semantic review of every tool payload",
+  "primary_candidates": 134,
+  "additional_candidates": 133,
+  "entries": [
+    {
+      "session_id": "01a1e819-1df7-7751-b96d-e9c40c75e091",
+      "record": 18,
+      "input_sha256": "d6a07a527ae4eab2d11632b4f4e1e5fb517ad61a46aaae41b7ec42718221ecd0",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "MIT baseline documentation"
+    },
+    {
+      "session_id": "01a1e817-14e6-7c90-a93c-5ecf1d102ea5",
+      "record": 85,
+      "input_sha256": "0a8a5e0555b22d2acb0a1136fafa0388279fc070e5075086e222afd64c7a8b95",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "MIT baseline and recovery source"
+    },
+    {
+      "session_id": "01a1e816-fb63-7bf1-9dba-455df09539c2",
+      "record": 23,
+      "input_sha256": "50a4331b6dd1b201870ef0416865e051321aa9418977629cc8d247ecb3326905",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "MIT baseline and recovery source"
+    },
+    {
+      "session_id": "01a1e816-fb63-7bf1-9dba-455df09539c2",
+      "record": 30,
+      "input_sha256": "f8686e1b2c30d6c9170d7cf2118530fd0f03d422debdb7c1fb2a77a34b70ba65",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "MIT baseline documentation"
+    },
+    {
+      "session_id": "01a1e816-fb63-7bf1-9dba-455df09539c2",
+      "record": 89,
+      "input_sha256": "ecf16346021678ebc75a3c75eeda25501ee844b1546d78a6f2e772bfe3562079",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "MIT baseline and recovery source"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 17,
+      "input_sha256": "03f262810e3725ce9d57070d55a93821e51e9b581591b04a80930ecc38a0a00a",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 24,
+      "input_sha256": "db703e6acc42bcc9adee500763f0e8ff152b44a8043a4b6ee0efbbf46163e9d5",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 31,
+      "input_sha256": "cbce9caf427f627aef48186d1a6537b7ae4be03bdfdef338210bda9977b2c803",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "MIT commit, release metadata and public documentation"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 38,
+      "input_sha256": "f4870a939f19bc6f09fcfe678ae6de55cc0f59ec885eab4c60d09fb69385ee39",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 43,
+      "input_sha256": "972271e35c901384e1c768283d001564a9b1749db0c19fd99a28de55a83f9d81",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recorded reset to MIT baseline; old tip saved, not read as implementation"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 48,
+      "input_sha256": "7eeaf89bccc23fd7b0e02038cccb01d08823b635e60b57a574b428a5b92a73ff",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Reference release metadata/assets and tag identity"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 67,
+      "input_sha256": "9f20aded4281c4e6745239724bc77f5f10c67fd850dd9e3bbac6e8ce0d9d73d6",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 83,
+      "input_sha256": "1a9956ea96eb3486118a5c36757ee382bf3306f1c70a1b24b735061083391f4d",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 98,
+      "input_sha256": "0b221cfbad7c9ff146ea6ef541624e15002d167f5f7c4ca4d18e37f6123d89e2",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Post-MIT public README/architecture documentation exposure; handled in earlier audit"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 149,
+      "input_sha256": "6bbec834d73e8f24f41e1920222124d21deb06e819e73da0c700f4359d24609c",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 197,
+      "input_sha256": "93d8304f976f29caaa120b9695b8bd21b086c8c7dbc8700005b6e0c67ae00382",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 224,
+      "input_sha256": "569a971da195de64d068f6e0bc5146896b80a15ca8b46792f8ab0c9775f816c2",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Baseline license and license-transition metadata, not implementation"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 253,
+      "input_sha256": "a84b6d0d7c30709bd265a56c7d2cda29104e2d1c148d282b42a65d8e5208414e",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 269,
+      "input_sha256": "298a84208457e72797efe5b41804a0be8e219fc260d507fa0be8bed5b12fa89a",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 283,
+      "input_sha256": "5ffa20b4ac5c411076cafcbab9aa233ac6d8ebbb5225c51923a3dd7afa96093d",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 290,
+      "input_sha256": "5e353d28beaca55b920996890c4cb8e86120000a97f3f1ba0613418887ab0cf1",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 320,
+      "input_sha256": "23ebe0cec1a0583c7785a2286f2b0e3bd45e86decf277c7d62a9a5febf5ee8d6",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 560,
+      "input_sha256": "f82cff63839535c73f2a433fd09a494995be3fcd6beffe950bd93b299848d5bd",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 787,
+      "input_sha256": "301930d604d3ff142f394a488d7b5bd77b3cc3d0f11e7b7e9aaad85750cd25f3",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 829,
+      "input_sha256": "14270dcfdbd6d52e4e3379bad56a2ae32afa916f16b8758190cccc1a060d8235",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 2191,
+      "input_sha256": "0a24c0fc4a8e8643530725544e76c050f12cbf319d502ff913774342ab0eeb67",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 3803,
+      "input_sha256": "d6a07a527ae4eab2d11632b4f4e1e5fb517ad61a46aaae41b7ec42718221ecd0",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 4320,
+      "input_sha256": "5ef0dc3392a17e462789d30a81b831faf21a3418939d571a33837e5f44911962",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 4645,
+      "input_sha256": "8f20401e52b2b0119196610f3e70b72f101425b2d01fd38a30e27a7ccefd0edf",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 4719,
+      "input_sha256": "b446a153bc6f54f3edf49e1085195105a5646f8bbcca113cf4442230b368ada6",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 4819,
+      "input_sha256": "9550a178f73df6b3d936e8726fb9cefd05e65a3593741cdd986b3674939bf881",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 4865,
+      "input_sha256": "7b4b9fc77bcc573ece877c4030ab66fec410a8f71806108b925fbcb23761d3ba",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 4934,
+      "input_sha256": "69ae8ffbc5262845c0a26f897c51c734037ff8db4c57604cc9704420f332b9c4",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 5001,
+      "input_sha256": "e524df055ea8cddb8e0d15ae0cc9b1698fa48a02e926a93ee0f04d9d28440a7f",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 5030,
+      "input_sha256": "7bcd4c545cd4de5de79201e993c5902250f34310b2157d50d32a0c6003675b90",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 5157,
+      "input_sha256": "f7e924428763260ccdf9df1bdfe43ddad67f79367675473f110fa2372fca0d64",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 5383,
+      "input_sha256": "d881d841e727e30843571f0c522a7ca58e6c9eab52dc6af1402febc97184398d",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 5511,
+      "input_sha256": "b1b18076909b56b9ef7147a75e2e323ff74a6012b5138f3b8d0a1e95b74215b1",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 5850,
+      "input_sha256": "89eac6e5215198eb15bf5debb89fefb52449b44a72cf9b92b5253fca17ae0352",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 6133,
+      "input_sha256": "0e5c2f2aaedbc70767bc3a205cb6d13cea5882806e8acc099f1f8f8b7aa205a9",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 6154,
+      "input_sha256": "d2234f0cf9cd4a34bc62f8425085219d7bc9632efedcb0fa1fec6c7954515bdb",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 7144,
+      "input_sha256": "f9b557a208472ced12d49adddaad34191a15b7628a47feef0f0b5f7ccdcf1482",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 7380,
+      "input_sha256": "157cbcc778b2a8bc221f95add88645977482d9ca116b40b0aef8f7e865d5a20d",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 7504,
+      "input_sha256": "42f6bb55ce1b05ea06781036515a612847040885c06ee44873ff1e2e5d96ca80",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 7854,
+      "input_sha256": "b61a3e3a148a1140ba996df76c21bc917c82f642a7cefa2c62af39f6ca052918",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 8022,
+      "input_sha256": "d592f07caf3e05195787239f8dcd836a5bfee06d5b25c70f570604832650641e",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 8290,
+      "input_sha256": "b1061e8437511720aef423306813d5e21dc11de58985343fb101b4871f63c06e",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 8440,
+      "input_sha256": "ee000574fec5e5dfb5f7fd48321cf1b0efac84146ae145d658c88e7bc248a650",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 8627,
+      "input_sha256": "5f398177dad099f1bce8ef43cd9df7e456cc9ca74642dc21e2c9f20f867b95bc",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 9427,
+      "input_sha256": "e9173f8fb5cadffce8a0cdf178bb391b9f29349023f79f1d93138dae917442d7",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 11189,
+      "input_sha256": "2ed8e7cabecb41366e9473e692e0e50826a8c5c8dc510d24d68fad653a67774e",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 11826,
+      "input_sha256": "e24f225f94346e346bcc617e9d70d2b8f6312c0a234160638f080e1d1d2520fa",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 12792,
+      "input_sha256": "42a201ecbd932e1239733849d879dfc7a9811316abb62fdb0d7a9368402b5043",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 12982,
+      "input_sha256": "703b3900a5e4af6fff3c9be93aeb09df53ffb3860dfb640fd86fe74ce269d735",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 13012,
+      "input_sha256": "f7c5f73ba31fd84846e77aaf27da4da6fd595676d76458462531f0ba173a991c",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 13281,
+      "input_sha256": "1ee7f0ff1d13d335e44d31b931301d57e79a1ee1d39014f98a8e6519fb438b68",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 13311,
+      "input_sha256": "9b0aeb6efade3e793d0750b7a08c9de6c92b1d108398aeb12f0b453cd7c6de4e",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 14366,
+      "input_sha256": "f1bdad6ee27473dc0ebe250eff7e8bfd3cfe2461664824ea828f7280bc271442",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 14500,
+      "input_sha256": "0000e043ba230424b35ad654644f5634dacd4b8d5c59f61999edcb4b0d0fc474",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 15629,
+      "input_sha256": "a740179df1bcfc4544f09755b6e1f267d9a2ee58676888f36c6cd9ea26ed04d2",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 16051,
+      "input_sha256": "125a09e7fb3b840c3e1faa54ea88369b4881df5adbf3a961aa8e5dd847b08411",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 16537,
+      "input_sha256": "296dbbca0bd6efdb952cd0f8554df7e3428c74b05725d39c32b5c14c4d5a9527",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 16886,
+      "input_sha256": "8eab4fd276e7444c6b1a992fa83ba0bcaf1eca17aa8a322097544e7dba4e224f",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 17131,
+      "input_sha256": "ec06b93d9fa827c87677e7ce65d20df610a719b7ca2c19aebff15314eecbc3a6",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 17520,
+      "input_sha256": "d417ac4c4e3d7accddcf18609478c440577657146357a20d124e1c21248e64dd",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 17918,
+      "input_sha256": "975611f6a176a3a48895824c1d0c8f65ceae13811f8fe7f601671a888a5b9afd",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 18619,
+      "input_sha256": "b666f667ebaf28137de24253273dad5f372301d459169c03ca4bd11125b58068",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 18846,
+      "input_sha256": "84f0b413214728507f144504e80030b22df4e3c623c130abc25dadc75c54df34",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 18939,
+      "input_sha256": "4754e09d5f3736be09a8de53f6cbfb10c31574316c75f4277415ee050b5e730d",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 19428,
+      "input_sha256": "2881af23987c34fc36bc097cc08d1273aa81feeebb8a8368fb5ed4f29da703e7",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 19458,
+      "input_sha256": "4110be15910728cb0b630be8f016cd6a414b93604bedeae30857aeafab0ef686",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 20077,
+      "input_sha256": "161e00b75fa71af4dad6314788fe2b56fade62c105fac55fabe3309aa8c5471e",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 20110,
+      "input_sha256": "16a1223f350ca222d49ca7b6caacae6601a76be0628a435cc34a05cac81cc1f8",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 20266,
+      "input_sha256": "456305e8f879e9c187655eda5e4bac7750d7ab16d53655f5ad9b65d287d5644c",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 20391,
+      "input_sha256": "4e685bcd74120f705dee4e449bf7538850f8eb75fd8c2e0ab6a6dccf166d5d5b",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 20426,
+      "input_sha256": "9fb18299b3da06a27d4ca92483948bd3a4f7c77a3d26ca340970d9f6122da34d",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 20610,
+      "input_sha256": "1a925be6c2cf3ae5eb25daafb6ad525a5b6ac25ae195fdcb78d35ea39eca81ef",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 21044,
+      "input_sha256": "2b1860a9f7e74dadc170db7e8c39bec21983e882d85e1e36fe356cca60655af4",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 21378,
+      "input_sha256": "806210efe0d8073ee0cdee2bdd7755acb92c83eaf56ea7340e792904eff4cd38",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 21442,
+      "input_sha256": "bb86233a92bcc7a86cfc10a4e2a31952cd126681c2fb706f3ce3354281bcbe74",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 21516,
+      "input_sha256": "d5c1516a0cf57c1b350a11441751d083a43f05b86e9142199da05ef8aa2cf937",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 21520,
+      "input_sha256": "cc6a9a9fd3196bd904e900b678193f89eb3c3fecb48ee5bdd9e7a4629c8d162f",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 21661,
+      "input_sha256": "05f5e6d3872d13c7c82c510a4bcece7670f7a24a75511a97e2789a9ea05cbde8",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 21772,
+      "input_sha256": "1494bcab75e21488b11e36d393b1eb24abd431f946632c3787237d7e269f358a",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 22221,
+      "input_sha256": "1dc4da8c907dddb9a3da33632095e72ec79b6cccbcf5b60e2bf0b5fc34fe10c8",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 22453,
+      "input_sha256": "7bd44ac08774f6dbe3a6edc7dca68f9fa2dfd62631514c25c169d52f9d2440ad",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 22603,
+      "input_sha256": "1de64277c6ec4e38fe7205e7b16bebfc19138da0794a8c3ae2f4345b0fa30ac2",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 22643,
+      "input_sha256": "e83fb6f361645f6f2a703a1ac37c24513c3e078ae3870fdc569c6ec514c4bdbe",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 22695,
+      "input_sha256": "a483906a7fb1aa38f16743f9d72131d9771789f2c0890a46e877121ee4f55962",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 22741,
+      "input_sha256": "41717a84a9aea4699336508f34edda54c38a777f013bb6cb6c838c4b5b46a69b",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 22824,
+      "input_sha256": "6d5c92170c3b8bb8e4dad803cd2d06f107bbbbeac820dd10dce10efc98523e8e",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 22918,
+      "input_sha256": "c48d54dd6c8699fb485ae4e15e93503d4a54de4d75d3d1e94b9cc11421443662",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 23061,
+      "input_sha256": "e1321995f8430da8ce08d65b268d3a0f86a8008fe2d885720d06fef7f53f8269",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 23574,
+      "input_sha256": "1d0d8511cfe5ac2e3e7d30f5b29f6b17e452c4e0c6a08091fdf767151c1a9766",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 24258,
+      "input_sha256": "f662a2244e10c4d327ccb7727e7efddc60242dc17b5d1f9c2ca0384e3ea8bbe0",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Sandbox Cargo source blob matches recovery history"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 24393,
+      "input_sha256": "c91a420e4db7ff0b8e38c202ce03fc264441c778bdf76f2ab8e44fa32c7df5a3",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 24513,
+      "input_sha256": "2ba63c72cec1b47b4ad703464d77c8a93571773932774ecfdedc3b62b9f0648e",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Sandbox workflow reconstructed from recorded authored edits"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 25058,
+      "input_sha256": "e157a1f16c41b0c82d37d9af28cd2ecf8b54c08afa6d40401bf8464c2eedf1c4",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 25089,
+      "input_sha256": "9cf3a16343cd0f30d3cc63cdc864352dda3bf40bdbcd109a48bbc9e71e615c69",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 25604,
+      "input_sha256": "e0791d5f6d8eb52f853ec8e6d045a0584a4aff95f4bbe5ec3a056584cc4b3c82",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 25762,
+      "input_sha256": "c1066854424a933f8357f71b500e7639e63c7a4354517d1879f2ab7fcb6db878",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 25769,
+      "input_sha256": "b5846b7c2db7c5b23c1cbf8c2e329c812684f07d28e940ac1fec501824c44f6b",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 25799,
+      "input_sha256": "325da1b7ed56607401e4724c770e8a46b901ddd0c3eab811e33a4921675ed646",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 26754,
+      "input_sha256": "c074833d011049ec2f0b3ee82f035f44242b0312a2613e0df14dc481210aba44",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Sandbox Rust source identities match recovery history"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 26761,
+      "input_sha256": "d7ec818e766d5c20764434a8e6aece149f5bdb8ea4365ae7bebd48f636b3e6d2",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Sandbox Rust identities match; workflow replay matches exact blob"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 26777,
+      "input_sha256": "7210863b05cbccb99dc0a15a7ad4f443903d52324d5683922c7354a55250e9fc",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Sandbox Rust/Cargo identities match recovery history"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 26866,
+      "input_sha256": "5aa6f27e9e24b2a477e0bb4ac87112a7313e379c979c0efc51b055cbe5453586",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 26876,
+      "input_sha256": "3368f18f0c7e6389b7c6d71e73c8aefd44f3548430d9f6b2d1a518304b3c047f",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 27155,
+      "input_sha256": "46a2befc30274b0d803e79c96519cfefbecbbf973e518e11aa85a30cd3f34153",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 28515,
+      "input_sha256": "8c80b54940b241f47f79581ba8cfab7293b6db47c2e346e5e573accb98a10c29",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 28522,
+      "input_sha256": "540ad6f4a5924c10566c2d8f1591e7c8c168188a9a913f44c873426dce0d3fcc",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 28866,
+      "input_sha256": "20070334e3d8a9aa28c792f9c83b16e269a787543b42a36de0ff9195d87b7c9f",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 28871,
+      "input_sha256": "97b99f3ed80a482273962496cf9a29bdc02b1a7dfd5577953d91c5540d2441c4",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 28910,
+      "input_sha256": "84ffe48de4f4349abbb49966d955259e70f6c69492e66d2436dd42ed0e82b9a0",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 29004,
+      "input_sha256": "2a5b182ee81756f77891e29b10f0734dfa17130f787e64cdda58f1b4d332a80b",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 29017,
+      "input_sha256": "8c385a7b1cec04663de585558ca91cd862826081953a90bf4fc288b918f87a82",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 29155,
+      "input_sha256": "2402d6f47d9d272060468b8033129d5990c9b4cb98947ded2161f0af1b0a1d2d",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 29163,
+      "input_sha256": "cfdaa8cf9e41d37f1787f739954b6dad28bc671d58a171bda0bb459bbbd75b69",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 29177,
+      "input_sha256": "0c5ef05281f05d9b51bfbc0abca745d40ed2cf67dcaaa4d3845e22894b85ece4",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 29399,
+      "input_sha256": "5206b092b9a3f75d85b818dfdbfe068edbee9f106899dccc17b2bb1fe64e4b4d",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 29705,
+      "input_sha256": "75f4d4cba2b65d5d18d7178775e16f6ede3ef44a8aa15e1170c0e4fe5424b57e",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 29721,
+      "input_sha256": "8d4243343f649d616d3afb46f3004f32ada5126cca86d57c72458362ad1998bf",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 29884,
+      "input_sha256": "6c7d0d34d0455a02a779f2793905341e095d5231029f180458742a030d2b8a77",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 29946,
+      "input_sha256": "fe469043b22b553a8a612f88a42e637a6888162009f5bc9ecd2a6d615544329f",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 30008,
+      "input_sha256": "866125fede2e7d5a6c4fe4063768cdbb73a9839ec53a86b8df507d521a747db4",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 30353,
+      "input_sha256": "f43d0add29519aa7e0ba285a5f52048a4545a8ce2abc4ccd1011b9fcd32a5b06",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 30525,
+      "input_sha256": "5010a676d26c1b61237ffae24352a9519fed39bde0d45583a5866ea09a2549bf",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 30569,
+      "input_sha256": "d11f7f63af1a13811c28d0bb519c687dbaa12a033501af1f4694a5fcef1b4d17",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 30607,
+      "input_sha256": "d8460f9cbf561a957a1804506eda926d87ec94a0d52e12967212beafcb76a4f7",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Authored package metadata rename preserves baseline attribution"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 30622,
+      "input_sha256": "380c404a559708ce9ea17da0a4496d60c40582fd39353b94f0e72e1489159a30",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 30712,
+      "input_sha256": "7b322fbe035116f009212a925763cefd310dd37499bf60860b2b1df6bb485ab7",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 30984,
+      "input_sha256": "660b21742aa933dc0c80a98dad4e84d29ae1348690b8104d18cb2873844f1217",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 31144,
+      "input_sha256": "d2126b648f36884221a2bb0fae9e4bbd9ebca4cfd7c90079cc08fb28ba8e7622",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 31500,
+      "input_sha256": "3525c9ebb4e3eb9f745b65458ce6d9c49e5c8fb99cb95cc275d63ec1671f88be",
+      "review": "matching source-selector statements reviewed",
+      "disposition": "Recovery source, metadata, authored test/report text, or sandbox qualification reference; no post-MIT implementation acquisition identified in reviewed statements"
+    },
+    {
+      "session_id": "01a1e819-1df7-7751-b96d-e9c40c75e091",
+      "record": 78,
+      "input_sha256": "ff7953fe97a3a0c447af5bf8dad5db5548b4bb11b5c49f17c32acfdaaf65365c",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e819-1df7-7751-b96d-e9c40c75e091",
+      "record": 84,
+      "input_sha256": "eb0512e20ac98a465a12de5d3e4737b7f8c67b72c1683d319ab104efce549841",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 553,
+      "input_sha256": "2419823dcaa7a07e68baae3be4287c8596be91dfd18ac2cfc8f33cb992fc561b",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 608,
+      "input_sha256": "1c9501b569be019b8a4419d264135847df20fbe71e6520d5864b5b2393c55afa",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 757,
+      "input_sha256": "972d7dde4e6dbdd74a4837f12d7efbea769cc133263e39dc7318704439003993",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 966,
+      "input_sha256": "fe858d02ebbf0b3c37261151cc01dc96401cb9c72fa58f9c44011a6a6204b17c",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 1164,
+      "input_sha256": "abe34ba2bbb6dade82c5ca395a98b1b6117fa3d2f1db35aa5e64952b9e03b6b3",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 2948,
+      "input_sha256": "9d56ce174f1ed68f6f17f33d7db5755299832f347ff7a0be0c26ecad1acc9104",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 3066,
+      "input_sha256": "42dc9414f29ed234e56d7c2803232e8b675e6c823e9944eb85121e2c1d410e77",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 3465,
+      "input_sha256": "411fb627bddee0d9d94c9ae4dba8eef3d44a9259d20c7ccbf8d1b8f56cc9aee0",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 3945,
+      "input_sha256": "e5c5095f7ffa9303be96b4e991a76079f22801c995f8c7fed8d93954538b340c",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 4577,
+      "input_sha256": "f44717ce7a78617572641342f4b553f4ae1f5a39f40f02e11e85ef41e7afa821",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 4687,
+      "input_sha256": "c3f8d02f703e7fab54a4bd49c51e9b0ecac0213343cef53b0acc476e4fd9fea2",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 4710,
+      "input_sha256": "e546c786f451ff9c604b943c302c375c4dbd09c566c9733e2cf556d48d35fefb",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 4726,
+      "input_sha256": "3134f7fd0f19dcf277b02969a052e1613304f291705443541b257157ebbbddc4",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 4731,
+      "input_sha256": "69dd45baffc1a3bea64572f33550917ef3df31195bd0329cfabe5a3c0ff65240",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 5023,
+      "input_sha256": "81702a906ceeb8d57510e9fadcb287fa198b4a9b064f78b740c623b973fd6eeb",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 5502,
+      "input_sha256": "b759f3325629a70348ad901f7b6a1e71c741a9865acacfd9b32ed28963b8f7e2",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 5778,
+      "input_sha256": "85cb9bc330e8056bafb4a65c3544979a2f34636c97a48108a579967c5fca0090",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 5821,
+      "input_sha256": "e45f20119cc6ec6be85c0bd760e6e93345629ff4909ec0084a12668f089c0092",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 5832,
+      "input_sha256": "a380ce53a2b257ac563fb97f7f7e8bd63c3d84890c357437622cf02abd7e315e",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 6185,
+      "input_sha256": "7fa9850388486cd94d7ac6fab24a5d6677ca9ddc78f634fbe8c6a2879cbf736b",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 6205,
+      "input_sha256": "9518bdf4d2b2a640f79d7cb287893f1ace9a590c53f1e4fb31112bbeb6e30122",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 7659,
+      "input_sha256": "9eaf2d659779c305a13eb19dfdf0d378e56a3846198a7347715646af68714850",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 8713,
+      "input_sha256": "54b62dbc39b53f76052cb3a06da2bcc2eee3f8c278337bd55769d8e5081f743c",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 9011,
+      "input_sha256": "8f1aba9efdbc534ac62aae0a990c6eec8d29cccd90880ef08778e62370866d8e",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 9044,
+      "input_sha256": "34329ac35b15111b5ced6b4fa503af54bb723809c86e70e4a3819ea455c2dd18",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 9284,
+      "input_sha256": "1a8d212cd9d63ddae53d2abe216caa292c4765c44dfe6f4527f2ca80645007bc",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 9549,
+      "input_sha256": "913eba5e692fe3c2a72c4e822d20bd5a858046a51f54b48d42e8f7a9184b2fe5",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 9595,
+      "input_sha256": "e6eb5af7b61870743eee87cf0005ec35a989390e747fefd379627af6f1d08599",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 10077,
+      "input_sha256": "8aba0f45013428c8bbe331e50aad78a0d3e594b4a17b2e599775d95c78c40d2a",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 10085,
+      "input_sha256": "edb3c410d42642a7578de3725ba709341f2e03da157d000bc7f6f347baf438d8",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 10343,
+      "input_sha256": "a9ab1ed2140153d95ab34edd0afe7ebfcd3703d38257ec70c529da069433c069",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 10474,
+      "input_sha256": "9e5ca402c1b929132d05c5c661b0592576e53a42fbfe041c78d1ec2ef5cbf347",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 11067,
+      "input_sha256": "ead028c2fc44e063c96f2900a5a2e64d9f63e3607b4e3a2201f0ccb9744f605d",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 11196,
+      "input_sha256": "e6d36de5ad5dc1cf9812a41778d3691f91839121791f87162810dc845541bdde",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 11213,
+      "input_sha256": "9f83d7d551d16c8a7e8926531b739167480d103d0ef6180b2b74c0f32883040e",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 11575,
+      "input_sha256": "10c12eb3cf53c704463a24283e3011e738e89669119c092878faee5bef58209a",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 11925,
+      "input_sha256": "7d789d5301cb67947479fdc1d5441e27f1853607cef70f922d7c69317b32e19f",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 11932,
+      "input_sha256": "2035d836769772cfb19520c9ad2d9a7b08a25bd9521535d5a2405b8cf2833b48",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 12333,
+      "input_sha256": "a271a6876ad46d350a5075c7682468dd0fac30065b9df34bbd425fad01055bb6",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 12340,
+      "input_sha256": "52deba77aea04f503cf89aa2318b05c689fcad61835b2c4891492193de77799d",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 12377,
+      "input_sha256": "f8a35876863a62a914c1bc4217f0f8a108e3f706e9fdbefe2fe4708a65ecc253",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 12938,
+      "input_sha256": "b12eaa504dbf2fa8e8b2ce3485702d08b30a270f2d97f90a45b97daaadf167cb",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 12945,
+      "input_sha256": "2616e2c49c89b41a5da7e6766654360a017a948619486c1fc472c5291a64b03d",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 12965,
+      "input_sha256": "8d941fab528cbc785f4a6b5655d6196b40f0590511691c7d0e4610904580f59e",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 13078,
+      "input_sha256": "00e3fc93c012c7aea22a4f09df6e771ce453c456e7d73c5a0d33d3e831bb3213",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 13086,
+      "input_sha256": "dc31359ee564ff9e1f343f7de9e566fd3e4e26e26f743c42561009d959c7db36",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 13126,
+      "input_sha256": "333dbea5b2a3e152e2cf15b2f91d74527deafc82088f856419b0f79d22c56c4e",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 13288,
+      "input_sha256": "8327b98d207f18ed769bcbb60bd9c2e1fbdeed7eb5ac3261bd092130572c127a",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 13660,
+      "input_sha256": "27afdf1e8467ec24df660ff63769506034a30ae85fe14a6f384da1ef80f6deb1",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 13688,
+      "input_sha256": "815b462a080867af61a0bd189c7a87edba98e12dd41e3eba67331c3a50488a2d",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 14054,
+      "input_sha256": "8fad0a79e99e8638bf4badfb234d744d14a94f7fc8319f8748ab4999b5299555",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 14472,
+      "input_sha256": "7fc8a42d80eb7381e671c25a08ad597bd3d9cc219d6a6effee26e9d7a47fee74",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 14485,
+      "input_sha256": "283e154d19cadfef695139ad98348526535203dfc4cf84c8b2e85cf09fc8c722",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 14650,
+      "input_sha256": "416dc71456cd64f5aa2d38be1e786d5aa00ea20ad86b83a29c0d8f0453d691d6",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 14669,
+      "input_sha256": "61ef574d22040601ae87c009c0e6e6a322e2a898dbee714bf777c96bc31f86a0",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 14715,
+      "input_sha256": "c2ea58f8def20447fb1504883aed005d147fa6206f09c20579866dced4a8e44f",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 15081,
+      "input_sha256": "9434c3e6496dd4b60352f2fb49f8a4ee0a1bf4ee00cb891826e90412177218b4",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 15408,
+      "input_sha256": "f831c5ea60c63b95addf2ca45eb447b3edefd0fc1ad1c0fa5bf01cc0dc0ef42f",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 15664,
+      "input_sha256": "d470990d6ca59ef08b6038372182cb37aa1680fe045bd15323bc87b7d8f62548",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 16038,
+      "input_sha256": "cd9facc65cd76178e3fed970d8ece6b1e4c2bad4130ef8d98e8647440353d941",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 16058,
+      "input_sha256": "905390ecc256473dcd01d761f4e7ab4265968968da21d72b0d4e90793665a2ff",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 16114,
+      "input_sha256": "6eeff085fb9f74891cc2fedcf66e4ef22e6ac6ed59db026340b2f79ddf45a9b5",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 16581,
+      "input_sha256": "65565e62ae93d87347e67a235cca5626e776a444cd77460741aeb21ff69265d3",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 16735,
+      "input_sha256": "f85046e6229a9f3d40772ede7f95802897468c24810fbec87d1e1e057769d5ea",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 16926,
+      "input_sha256": "17248f32fb2b0930c5c3df6b953b52afc606085b4aa44e26bb368515d1c12d0b",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 16946,
+      "input_sha256": "c149898095c416e69968db83e152e98f6043cd8d5e105b1d5f9d011e187e5654",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 16994,
+      "input_sha256": "6d80354e519ad71ff0177b09ac5075a48bb6d15240ee6d3abed55d8b5f12173e",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 17051,
+      "input_sha256": "018ab81c04cd72d3b31d429eb398c6ad0d19f2bb4d774a70389e1e36469f3d70",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 17059,
+      "input_sha256": "75d927fb7a96a319373e36e1e3f35715d2cee863c41d3972450378193ef53509",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 17096,
+      "input_sha256": "929e1cec692a79257995a16b5df70621489f649eb404aa6fe1a94d5a824a00dd",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 17963,
+      "input_sha256": "992213fd335fa184dd16b110e13fb835f3641333a95d3c3f30212831a29a0684",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 17976,
+      "input_sha256": "58046cb2567957fd1106496b6e86b1d4c7d7bb4eb6122de7f7d9981172b089cb",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 18655,
+      "input_sha256": "fb22fb7ef9e0a675fa318551086d19c02d1024caa3398c3493537453d2e60521",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 18984,
+      "input_sha256": "14ed9cbb83673c3c3269baa6cce9694a647b98f73a80c6bc9495f449c098e46c",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 19056,
+      "input_sha256": "4c8ed718178b74c0d4f299b92cf81d66fc169749b921fc2e42a73e1cb21a0610",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 19728,
+      "input_sha256": "0fa805d2b99cf882a0b933fecc4ac00bbfc3f8b26213964748fdf8662fd2611b",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 20336,
+      "input_sha256": "b832fdd8b86762e18a25bedf1a40cc4ce9d24683ac3d401c25ffc41e1119496c",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 21186,
+      "input_sha256": "ad7de334ad4f77ec04c37bdbb3a5a1eced6fd024f70d59932fb93238965597b0",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 21203,
+      "input_sha256": "d42729efa854ac1c2267f99cad6b556f7aa336fd17ccac9f0e6805a3d749e436",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 21246,
+      "input_sha256": "8eed82981ceb92ecf3693c9c084c520652179fa64af2dc46755a6904ca8e81bf",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 21813,
+      "input_sha256": "96b0c0baa2d30e940dcf2b78e52e61a144826122b200e2f4a0a7f47d84cd689a",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 21939,
+      "input_sha256": "1eed905d70732e06295eae89876d3f6c7a054b31daef0355eeb5caa7ca42225a",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 22228,
+      "input_sha256": "c53050de4d8095ea7c678e54cc0363fa86285ab583e35e5cf745f1d8fa6a283f",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 22472,
+      "input_sha256": "b6db2effbbd04a5da311e9fa5b1c6d8c24389a4f3f45856429cb927c7277e7eb",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 22572,
+      "input_sha256": "9ce0606a3b4aca3d4fa1df14eeabd47ba27bcae2f3b7ae7fbfbba66af2ef6b73",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 22610,
+      "input_sha256": "cd6cc5c55f1b3fd4bd46e2d11d6c88ee503f44268fb2e73fd384b43bd891b1ac",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 22671,
+      "input_sha256": "53c4f8df1d6f035b2bdfb9fcfdf73ab791abe3313255fbe081bc280dd3fccecc",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 22724,
+      "input_sha256": "bfb4824f9ea1c5a698ce942143be279d43222287cb80088fffa0a67fe4e8d9e8",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 22931,
+      "input_sha256": "2137ba2d91a29d4e1531b661b141e37d2ee89dc317efffcce3403257949f9e7a",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 23022,
+      "input_sha256": "1e9eca408298f07d174ccaa4ff7768e59ee98414285cbfd961662db878d1e623",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 23027,
+      "input_sha256": "f95a28bf3d03dfd93a16378d503dcc02d5018c66dd10c8ec5010e204ce823dc1",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 23095,
+      "input_sha256": "782e58479ec1025b98e9705b73f70a1ab8674aae561fa58b3026b5e78e61c733",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 23156,
+      "input_sha256": "fda35a6759af3afae85b4ecf65317eb8c35ab2a6694689c698af1ad41f3cd5db",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 23179,
+      "input_sha256": "d93dad615ffc9f2f1287b822c2b5544d91935fdf5c023a9f9930374045cffe4c",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 23249,
+      "input_sha256": "fbb58d4ce3d07ec3ade18cc6c493e47e3626bbdf3ddbbed10deeb08545050042",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 23559,
+      "input_sha256": "1040fa61cb3e1e0702810523e4f1fce5c176558f8a96749110a311fdea910711",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 23781,
+      "input_sha256": "eee81e8b7c3d4638d313c21402894cc27ff96f55aa552af5f10651913f616bd4",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 23863,
+      "input_sha256": "76941659141a7184213205f5a315c59e25d64f7cf4c7121bb3254bc2f414acdf",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 24520,
+      "input_sha256": "75204b8242b14b405b74cd0e63e7209d4c5a5e2c80a523b039b1ddac2d628dee",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 25124,
+      "input_sha256": "4a14d84eb4f876814b75b18fb84de4916cdc96890d7ec89590323898d8aff660",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 25720,
+      "input_sha256": "8ac9ae3aed4b7e6b96496ece72ef978dde6d2224e31b35a3449fab72a3e0c315",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 26641,
+      "input_sha256": "1f165a733d175a5bb8b561010ec002eefd1ca8c5cad0454e5b92e4e8c276cf7f",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 28566,
+      "input_sha256": "ef67394d1b84309cae4ccca481b03637ddb36499488e9ae52045319c02b4f19f",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 29925,
+      "input_sha256": "bfbcefb22295bb1e6c22e2a07c3f8c1517666678475c9e4fd7fe5990e80367ad",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 30030,
+      "input_sha256": "3e62d6d0c00192e88acf446a4e6cf80eeb171ccfe52ef3721279de27f1db54d4",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 30223,
+      "input_sha256": "5a749d6c5f131a96b977dae9ab01f9e508966996c7adc19eb2026f9c56d84d52",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 30261,
+      "input_sha256": "879003a2a85ffcf236385ef7a329dc0beb1a7765b887815bd5339ce42d345383",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 30379,
+      "input_sha256": "56f8ee9600c3890b7dc914d5e378fa9923fa5f1f1fbe3468a04b334d7af8e241",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 30509,
+      "input_sha256": "cfdb4d1f6f004592af86edc1f921c30d466aeaeb8aa238d265bedb2bb6ac03c9",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 30582,
+      "input_sha256": "9409c12e766ddbf13402c56061d9a2d96e19db4a43bbba04b623c1cf7490aebe",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 30743,
+      "input_sha256": "719ea30765031875ca0b31286e16d85cefafb43625d137131e4a6d7063215ea4",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 30755,
+      "input_sha256": "d50ede7b5cb10a0c4f3bf755833140c9d29eef6ede3f4d82b9f494626c143a0c",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 30969,
+      "input_sha256": "4b0c6b2e620f9323e781d4b382dc51ed95728b9cb00214bb9e138878de30527c",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 31030,
+      "input_sha256": "4d0d18d5992a5276fe16acbee5773aea5a1750b7cbeaa076f99606d69aba0c4e",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 31208,
+      "input_sha256": "10f5132ec5a2d24cb1d28ef5029a41d760e4e3abe1929b2bc634335a431382a5",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 31241,
+      "input_sha256": "8745bf19b5d21ed2dc2c8e12a2a875b55f020ca984d1f2794d996c009a15f374",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 31269,
+      "input_sha256": "431c0a6fd0a232dc8860d77b04fb6c09d5a61991e49d229497462d8eb23f278f",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 31360,
+      "input_sha256": "5a4c2fa673b3c2de25ee725c8e402396acc1014d0c78d86d5ff6f3ae76e68f6a",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 31463,
+      "input_sha256": "a0cf930c821a203564b828919f7c8c43ef82b12943245b75f81d3956469a6435",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 31470,
+      "input_sha256": "ce84d1f77dd7b55002d76945aa8967c820459fe16562712cf35b7c71b5eb48be",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 31523,
+      "input_sha256": "05ca0c17476df17f1cc1834a34c02d8a2ad4905cb09abc7f0f3bc805cfb96432",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 31578,
+      "input_sha256": "ba502e1b22214284676d232255b7a7c5685784d378c3eac744fd893f729ffbee",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 31585,
+      "input_sha256": "a12b8f4664d7f7a9fa069b02ed01e6e6e54fb5f9c17eebe6336e117fa6fd07de",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 31605,
+      "input_sha256": "7c604179cc55959ca78583aa7722ffceeb0af2169cd7064b841734da0b8e5130",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 31615,
+      "input_sha256": "d3a19748b974d6761a66e5159987eac8ba434155bafe24823abfcf98a89c513b",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 31627,
+      "input_sha256": "c363d397a125546c5ff3dd2bc4fc004240a4c8313fb7259fa6177cc2c4be3f42",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 31634,
+      "input_sha256": "f0e8368b89793e9592999e521315f9c88179fdd1067fe3f385620ed5e84b8d46",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 31652,
+      "input_sha256": "af9ba9222c7688b1ecda488430bf95435f23670eca68fb4e714b09e5af627622",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 31682,
+      "input_sha256": "c363d397a125546c5ff3dd2bc4fc004240a4c8313fb7259fa6177cc2c4be3f42",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 31696,
+      "input_sha256": "c363d397a125546c5ff3dd2bc4fc004240a4c8313fb7259fa6177cc2c4be3f42",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 31710,
+      "input_sha256": "29d60ec6e5472089d70079236379545f0268c06b5027759f6611c64a2ee57cd0",
+      "review": "additional acquisition-selector screen",
+      "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-name: Installer checks
+name: Source release checks
 on:
   push:
     branches:
@@ -8,6 +8,10 @@ on:
       - 'install.sh'
       - 'install.ps1'
       - 'tests/install_script_regression.py'
+      - 'tests/dependency_notice_regression.py'
+      - 'tests/provenance_export_regression.py'
+      - 'tools/release_dependency_notices.py'
+      - 'audits/evidence/tools/**'
       - '.github/workflows/install.yml'
 permissions:
   contents: read
@@ -27,3 +31,5 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -B tests/install_script_regression.py
+      - run: python -B tests/dependency_notice_regression.py
+      - run: python -B tests/provenance_export_regression.py

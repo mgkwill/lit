@@ -1,0 +1,64 @@
+[
+  {
+    "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+    "record": 13,
+    "utc": "2026-11-16T16:23:40.646Z",
+    "payload_text_sha256": "8ec0acd5238a9e4658ca823f534f8abea9d44a5f40a56bb78eefd2a7ef239d14",
+    "text": "Rewrite this prompt to be the best version of itself and then run that prompt.\n\n\nVerify this is correct, the research, the testing etc: <private-local-path>\n\nThen write a plan to fix the issue if true.\n\nReset my version to [https://github.com/mgkwill/Lit/commit/98c59bb2dbebcf7f575993a4ad89e1300a578c83](https://github.com/mgkwill/Lit/commit/98c59bb2dbebcf7f575993a4ad89e1300a578c83)\u00a0when MIT was still in force and then check what it would take to black box get back to full features and fix the issues found in testing \n",
+    "redactions": [
+      "Private local path replaced."
+    ]
+  },
+  {
+    "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+    "record": 43,
+    "utc": "2026-11-16T16:24:23.988Z",
+    "payload_text_sha256": "972271e35c901384e1c768283d001564a9b1749db0c19fd99a28de55a83f9d81",
+    "text": "text(await tools.exec_command({cmd:`test -z \"$(git status --porcelain=v1 --untracked-files=all)\" &&\ntest \"$(git rev-parse HEAD)\" = 66b2c771e38d3355fba9e0cc77751410d156c23e &&\ntest \"$(git branch --show-current)\" = master &&\ngit branch codex/pre-mit-reset-2026-11-16 HEAD &&\ngit reset --hard 98c59bb2dbebcf7f575993a4ad89e1300a578c83 &&\ngit status --short --branch &&\ngit rev-parse HEAD codex/pre-mit-reset-2026-11-16`}))\n",
+    "redactions": []
+  },
+  {
+    "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+    "record": 98,
+    "utc": "2026-11-16T16:25:39.962Z",
+    "payload_text_sha256": "0b221cfbad7c9ff146ea6ef541624e15002d167f5f7c4ca4d18e37f6123d89e2",
+    "text": "const r=await tools.web__run({open:[{ref_id:\"https://github.com/entireio/forgemark\"},{ref_id:\"https://news.ycombinator.com/item?id=46961345\"},{ref_id:\"https://news.ycombinator.com/item?id=50247453\"},{ref_id:\"https://docs.diversion.dev/advanced/selective-sync.md\"},{ref_id:\"https://docs.diversion.dev/agent-quickstart.md\"},{ref_id:\"https://docs.diversion.dev/changelog.md\"},{ref_id:\"https://docs.entire.com/llms.txt\"},{ref_id:\"https://modelcontextprotocol.io/specification/2024-11-05/basic/lifecycle\"},{ref_id:\"https://github.com/nervosys/Lit/blob/v1.8.0/README.md\"}],find:[{ref_id:\"https://github.com/nervosys/Lit/blob/v1.8.0/docs/ARCHITECTURE.md\",pattern:\"10,000\"}],response_length:\"short\"});text(r)\n",
+    "redactions": []
+  },
+  {
+    "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+    "record": 342,
+    "utc": "2026-11-16T16:51:27.894Z",
+    "payload_text_sha256": "3a82cf5338a183c671f64c6eaf6cf7e5333a8a96a64a3068d21cc3037e09671b",
+    "text": "Start now on codex/mit-lit-recovery from 98c59bb. Use v1.8.0 as a black box and fix status, rollback, batch validation, and MCP first. Run the regression tests before moving on to Git interop.\n",
+    "redactions": []
+  },
+  {
+    "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+    "record": 4744,
+    "utc": "2026-11-17T07:11:40.979Z",
+    "payload_text_sha256": "6e6a63c65df882292a08bb096c93ce274e2db22d98321754a2c53c235f4a6d3d",
+    "text": "from pathlib import Path\npath = Path('.github/workflows/agent-merge-gate.yml')\nsource = path.read_text()\nneedle = '      - name: Install stable Rust\\\\n'\nfixture = '''      - name: Exercise the negative merge-group control\n        if: github.event_name == 'merge_group'\n        run: |\n          if grep -qx fail .queue-qualification 2>/dev/null; then\n            echo \"Controlled merge-group failure\"\n            exit 1\n          fi\n\n'''\nassert source.count(needle) == 1\npath.write_text(source.replace(needle, fixture + needle))",
+    "redactions": [
+      "Only the authored workflow transformation block retained; operational commands omitted."
+    ]
+  },
+  {
+    "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+    "record": 4865,
+    "utc": "2026-11-17T07:16:58.898Z",
+    "payload_text_sha256": "7b4b9fc77bcc573ece877c4030ab66fec410a8f71806108b925fbcb23761d3ba",
+    "text": "from pathlib import Path\npath = Path('.github/workflows/agent-merge-gate.yml')\nsource = path.read_text().replace('  pull_request:\\\\n', '  pull_request:\\\\n    types: [opened, synchronize, reopened]\\\\n  workflow_dispatch:\\\\n')\nsource = source.replace(\"if: github.event_name == 'merge_group'\", \"if: github.event_name == 'merge_group' || startsWith(github.ref, 'refs/heads/gh-readonly-queue/')\")\nsource = source.replace('if [ \"$GITHUB_EVENT_NAME\" = merge_group ]; then', 'if [ \"$GITHUB_EVENT_NAME\" = merge_group ] || [[ \"$GITHUB_REF\" == refs/heads/gh-readonly-queue/* ]]; then')\npath.write_text(source)",
+    "redactions": [
+      "Only the authored workflow transformation block retained; operational commands omitted."
+    ]
+  },
+  {
+    "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+    "record": 9167,
+    "utc": "2026-11-18T05:49:17.277Z",
+    "payload_text_sha256": "989d4be46a3d25e38d176fd4d16ada244d43499abed09745b9734a2d402e875a",
+    "text": "Now implement task ownership and reassignment fencing on codex/mit-lit-recovery. Keep v1.8.0 and any code past MIT license as a black box, test stale agents and competing claims locally and on host-a, host-e, and host-f, then commit and tell me what\u2019s left.\n",
+    "redactions": []
+  }
+]

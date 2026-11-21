@@ -1,0 +1,13 @@
+{
+  "start_commit": "bafdc65301ae2980e3ce4f7e0eeb7a517d263fe4",
+  "path": ".github/workflows/agent-merge-gate.yml",
+  "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+  "authored_edit_records": [
+    4744,
+    4865
+  ],
+  "intermediate_blob": "a81e4ebdaaad92df2fe910ef2c39a3908e90e12b",
+  "final_blob": "0b7ff912bbf19e0c5d0eceb3dd8dec734ac4edd1",
+  "matches_both_seed_inputs": true,
+  "method": "Replay the recorded string edits against allowed recovery source, without reading post-MIT upstream source."
+}
