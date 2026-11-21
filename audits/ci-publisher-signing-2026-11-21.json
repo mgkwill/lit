@@ -1,0 +1,499 @@
+{
+  "approval": {
+    "gate_observed_waiting": true,
+    "reviewer": "mgkwill",
+    "scope": "Signing and verification only; publication not authorized",
+    "state": "approved",
+    "submission": "Normal GitHub deployment-review API, following explicit owner approval in chat; no bypass"
+  },
+  "artifact": {
+    "digest": "sha256:ef4762b89a7137e4fa846d6d0d230627d37d3b3a6f6514a4ba0fa233358d398d",
+    "expired": false,
+    "expires_at": "2026-12-05T23:36:55Z",
+    "id": 14730013365,
+    "name": "openlit-0.1.0-publisher-signed",
+    "size_in_bytes": 19467633
+  },
+  "artifact_digest_evidence": "GitHub-reported artifact ZIP digest; individual signed payload hashes independently verified below",
+  "ci_checks": [
+    {
+      "conclusion": "success",
+      "jobs": [
+        {
+          "conclusion": "success",
+          "name": "Test on macos-latest"
+        },
+        {
+          "conclusion": "success",
+          "name": "Queue coordinator on macos-latest"
+        },
+        {
+          "conclusion": "success",
+          "name": "Queue coordinator on ubuntu-latest"
+        },
+        {
+          "conclusion": "success",
+          "name": "Test on windows-latest"
+        },
+        {
+          "conclusion": "success",
+          "name": "Test on ubuntu-latest"
+        }
+      ],
+      "source_commit": "67cbd625a372800b7f626de66a43310255c82b82",
+      "url": "https://github.com/mgkwill/lit/actions/runs/44958884026"
+    },
+    {
+      "conclusion": "success",
+      "jobs": [
+        {
+          "conclusion": "success",
+          "name": "installer (windows-2022)"
+        },
+        {
+          "conclusion": "success",
+          "name": "installer (ubuntu-22.04)"
+        },
+        {
+          "conclusion": "success",
+          "name": "installer (macos-15)"
+        }
+      ],
+      "source_commit": "67cbd625a372800b7f626de66a43310255c82b82",
+      "url": "https://github.com/mgkwill/lit/actions/runs/44958883950"
+    }
+  ],
+  "encrypted_private_key_scan": {
+    "matches": 0,
+    "retained_artifact_files_and_signer_log_checked": 19,
+    "scope": "Encrypted key file and payload string only; password was not available to this check"
+  },
+  "environment": {
+    "allowed_refs": [
+      {
+        "name": "main",
+        "type": "branch"
+      }
+    ],
+    "can_admins_bypass": false,
+    "name": "release-signing",
+    "prevent_self_review": false,
+    "required_reviewers": [
+      "mgkwill"
+    ]
+  },
+  "limits": [
+    "No Apple notarization, Windows Authenticode, or build attestations",
+    "Native qualification used disposable signatures before publisher signing; exact archive hashes match afterward",
+    "Downloaded publisher bundle received independent signature and tamper checks; downloaded macOS arm64 archive also received local native smoke tests",
+    "Vault backup is owner-confirmed; restore comparison remains unverified",
+    "This evidence summary is not a transcript archive or an extension of the historical provenance audit"
+  ],
+  "local_regressions": {
+    "actionlint": "passed",
+    "ci_minisign": 13,
+    "minisign_release": 12
+  },
+  "local_signed_macos_smoke": {
+    "archive_sha256": "9ff1ca70fa064c06e8dabf4b0f18b863204c3b9f2d6947bd42a3b3f5bf01e527",
+    "batch_and_mcp": {
+      "arch": "arm64",
+      "batch": {
+        "dry_run_reports_invalid_line": true,
+        "retry_committed": true,
+        "rollback_restores_head_and_index": true,
+        "working_bytes_preserved": true
+      },
+      "candidate_sha256": "640ea774d262cea9876eb575925c2f0cbf6f89089e3b6bc19ce4eff667ead9e7",
+      "mcp": {
+        "http": {
+          "invalid_tool_and_ping": true,
+          "legacy_arguments_preserved": true,
+          "notification_silent": true,
+          "ref_diff_and_branch_creation": true,
+          "tool_discovery_and_staged_write": true
+        },
+        "stdio": {
+          "invalid_tool_and_ping": true,
+          "legacy_arguments_preserved": true,
+          "notification_silent": true,
+          "ref_diff_and_branch_creation": true,
+          "tool_discovery_and_staged_write": true
+        }
+      },
+      "platform": "Darwin",
+      "version": "lit 0.1.0"
+    },
+    "binary_sha256": "640ea774d262cea9876eb575925c2f0cbf6f89089e3b6bc19ce4eff667ead9e7",
+    "remotes": [
+      "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+      "lit://: native first push and bare clone",
+      "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+      "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+      "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+    ],
+    "version": "lit 0.1.0"
+  },
+  "native_qualification": {
+    "aarch64-apple-darwin": {
+      "archive": "openlit-0.1.0-aarch64-apple-darwin.tar.gz",
+      "archive_sha256": "9ff1ca70fa064c06e8dabf4b0f18b863204c3b9f2d6947bd42a3b3f5bf01e527",
+      "batch_and_mcp": {
+        "arch": "arm64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "640ea774d262cea9876eb575925c2f0cbf6f89089e3b6bc19ce4eff667ead9e7",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Darwin",
+        "version": "lit 0.1.0"
+      },
+      "binary_sha256": "640ea774d262cea9876eb575925c2f0cbf6f89089e3b6bc19ce4eff667ead9e7",
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "tamper_tests": {
+        "archive": "rejected",
+        "manifest": "rejected",
+        "signature": "rejected",
+        "wrong_key": "rejected"
+      },
+      "version": "lit 0.1.0"
+    },
+    "aarch64-unknown-linux-gnu": {
+      "archive": "openlit-0.1.0-aarch64-unknown-linux-gnu.tar.gz",
+      "archive_sha256": "6f5cc99104d8fce3afdc6da03f3510a1462c0c4d0ba43c6d35f143760c29f21c",
+      "batch_and_mcp": {
+        "arch": "aarch64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "51e31330f938cb17e83807e133ee763f6dc0d7120f05079790e8827d4d1be113",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Linux",
+        "version": "lit 0.1.0"
+      },
+      "binary_sha256": "51e31330f938cb17e83807e133ee763f6dc0d7120f05079790e8827d4d1be113",
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "tamper_tests": {
+        "archive": "rejected",
+        "manifest": "rejected",
+        "signature": "rejected",
+        "wrong_key": "rejected"
+      },
+      "version": "lit 0.1.0"
+    },
+    "x86_64-apple-darwin": {
+      "archive": "openlit-0.1.0-x86_64-apple-darwin.tar.gz",
+      "archive_sha256": "6a82357bc3c42e716a217e4264f2269031ff370be0e3ac830b26155f1c3ca458",
+      "batch_and_mcp": {
+        "arch": "x86_64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "95d233d0f825a948b24f570105625c9eb3a84f7054c023c1b5adfd73082bd79f",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Darwin",
+        "version": "lit 0.1.0"
+      },
+      "binary_sha256": "95d233d0f825a948b24f570105625c9eb3a84f7054c023c1b5adfd73082bd79f",
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "tamper_tests": {
+        "archive": "rejected",
+        "manifest": "rejected",
+        "signature": "rejected",
+        "wrong_key": "rejected"
+      },
+      "version": "lit 0.1.0"
+    },
+    "x86_64-pc-windows-msvc": {
+      "archive": "openlit-0.1.0-x86_64-pc-windows-msvc.zip",
+      "archive_sha256": "6df90930b7c98cdd7cdf4c19c52677a9b2d98e0dee3b0bef9edbc4b59ed982c1",
+      "batch_and_mcp": {
+        "arch": "AMD64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "9ade6a0b8141ca73318e0ddcec02fd1bc5c9ce2a0a78d660b976c7db26058823",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Windows",
+        "version": "lit 0.1.0"
+      },
+      "binary_sha256": "9ade6a0b8141ca73318e0ddcec02fd1bc5c9ce2a0a78d660b976c7db26058823",
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "tamper_tests": {
+        "archive": "rejected",
+        "manifest": "rejected",
+        "signature": "rejected",
+        "wrong_key": "rejected"
+      },
+      "version": "lit 0.1.0"
+    },
+    "x86_64-unknown-linux-gnu": {
+      "archive": "openlit-0.1.0-x86_64-unknown-linux-gnu.tar.gz",
+      "archive_sha256": "23017456b99bcfe78a58641ad15d1c19d858588f9db9c2f31541fc0cafec1fbe",
+      "batch_and_mcp": {
+        "arch": "x86_64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "fabb7ab2107a7baaced637b2741af1b4642c145572af0744661cae4767f60d00",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Linux",
+        "version": "lit 0.1.0"
+      },
+      "binary_sha256": "fabb7ab2107a7baaced637b2741af1b4642c145572af0744661cae4767f60d00",
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "tamper_tests": {
+        "archive": "rejected",
+        "manifest": "rejected",
+        "signature": "rejected",
+        "wrong_key": "rejected"
+      },
+      "version": "lit 0.1.0"
+    }
+  },
+  "post_mit_upstream_source_accessed": false,
+  "prior_local_candidate_commit": "ca57a8f6e3b4ea914f20614f805bfa14f0faa3ec",
+  "publication": {
+    "approval_required": true,
+    "release_created": false,
+    "tag_created": false
+  },
+  "publisher_verification": {
+    "file_sha256": {
+      "RELEASE.json": "54158221288f98c8df5d322aff79a562d25846535471c318129427942aade782",
+      "RELEASE.json.minisig": "7eae00d1d5c109addb65fab6be75c4daa4a069558ec006547165250a4cb18a25",
+      "SHA256SUMS": "9a579f9d271b748d0e66410360f9c3ad96a635f67a10c7bac0673d07c4481fa1",
+      "SHA256SUMS.minisig": "0a6ee40906c6bdc4995c8b4997e934fc79994a6e8bfd8352c68cdb706b74f24a",
+      "openlit-0.1.0-aarch64-apple-darwin.tar.gz": "9ff1ca70fa064c06e8dabf4b0f18b863204c3b9f2d6947bd42a3b3f5bf01e527",
+      "openlit-0.1.0-aarch64-apple-darwin.tar.gz.minisig": "65b75815165b57af600b9465fbd18227597a1e71ec68f6dc983e87172700c7a5",
+      "openlit-0.1.0-aarch64-unknown-linux-gnu.tar.gz": "6f5cc99104d8fce3afdc6da03f3510a1462c0c4d0ba43c6d35f143760c29f21c",
+      "openlit-0.1.0-aarch64-unknown-linux-gnu.tar.gz.minisig": "5bbfd290f5d4a76a8e91fc75f84c7874b3469a2a60c3812e9559609870cba86c",
+      "openlit-0.1.0-x86_64-apple-darwin.tar.gz": "6a82357bc3c42e716a217e4264f2269031ff370be0e3ac830b26155f1c3ca458",
+      "openlit-0.1.0-x86_64-apple-darwin.tar.gz.minisig": "5691b23936d542af8f8c4baa1e0e39bc660721a2352894fdc2390877796a45ba",
+      "openlit-0.1.0-x86_64-pc-windows-msvc.zip": "6df90930b7c98cdd7cdf4c19c52677a9b2d98e0dee3b0bef9edbc4b59ed982c1",
+      "openlit-0.1.0-x86_64-pc-windows-msvc.zip.minisig": "6856bdc9ff61d2288a0d5c980c9c3893649bc3914e86a023b77b9fc742606732",
+      "openlit-0.1.0-x86_64-unknown-linux-gnu.tar.gz": "23017456b99bcfe78a58641ad15d1c19d858588f9db9c2f31541fc0cafec1fbe",
+      "openlit-0.1.0-x86_64-unknown-linux-gnu.tar.gz.minisig": "e5f05e65bc2e3d95862c6c4406fa337f048ca91da07b0c17bbf67980cee794d1"
+    },
+    "public_key_sha256": "020727c93e30003cbab9f902459465e55ed6db37e951b2d006b9ec95ac4d77c3",
+    "published": false,
+    "signed_identity": {
+      "archives": {
+        "openlit-0.1.0-aarch64-apple-darwin.tar.gz": "9ff1ca70fa064c06e8dabf4b0f18b863204c3b9f2d6947bd42a3b3f5bf01e527",
+        "openlit-0.1.0-aarch64-unknown-linux-gnu.tar.gz": "6f5cc99104d8fce3afdc6da03f3510a1462c0c4d0ba43c6d35f143760c29f21c",
+        "openlit-0.1.0-x86_64-apple-darwin.tar.gz": "6a82357bc3c42e716a217e4264f2269031ff370be0e3ac830b26155f1c3ca458",
+        "openlit-0.1.0-x86_64-pc-windows-msvc.zip": "6df90930b7c98cdd7cdf4c19c52677a9b2d98e0dee3b0bef9edbc4b59ed982c1",
+        "openlit-0.1.0-x86_64-unknown-linux-gnu.tar.gz": "23017456b99bcfe78a58641ad15d1c19d858588f9db9c2f31541fc0cafec1fbe"
+      },
+      "product": "OpenLit",
+      "purpose": "release-candidate",
+      "source_commit": "67cbd625a372800b7f626de66a43310255c82b82",
+      "version": "0.1.0"
+    },
+    "tamper_tests": {
+      "archive": "rejected",
+      "checksums": "rejected",
+      "release_identity": "rejected",
+      "signature": "rejected",
+      "wrong_key": "rejected",
+      "wrong_source": "rejected"
+    }
+  },
+  "recorded_at_utc": "2026-11-21T23:39:06.781417+00:00",
+  "retained_external_evidence_sha256": {
+    "approval-history.json": "8624a15b6a2cacaad3833a736483ecddaf6032b6d6143f5b76e8a94fd4e0ce71",
+    "approval-submission.json": "55f497986a5c8868de2864be682e3558c5c944fef1be3f2ec11abf6a92451721",
+    "artifact-metadata.json": "8ad6cf8b4aa846cbff2b3d3a4995f0815a4d29353aa23e3c6563af9a7a93a430",
+    "assembly-local.json": "667566c928ef3c9a2cc4a2ff6285d639bc573bc2514ae686b4cd8f68868b2632",
+    "branch-policies-after.json": "218946a9a88d3bb49d157b03cad3457ccef9698cc3a714871a41a1c02edbc867",
+    "environment-after.json": "08c0c2c240785ce389e270c9c0614328ad18bf033c88ae9d10457cf311a3ccd4",
+    "independent-verification.json": "5c450c5a9031e59af1502b29aa62ecf72647d74d003ecdb0068a9fd471020ce2",
+    "local-minisign-regressions.log": "06a9699976c92a448bff4a6dc758e1b92973c4c4f5dfd7eed12b38363ab80b37",
+    "local-publisher-macos-smoke.json": "41c1a96f4a6847c2d00728cfb1fab1de81b54182783acf94c707e31ad575a401",
+    "local-regressions.log": "2fd8315167220a28c2d6520c10a8a2fe553626f1618fb118bc27a32bb21fe95c",
+    "main-ci.json": "0e05643b81a2fcf1b1dd437e10e407b38882eefb2785b4fcba1d1a958dc460b3",
+    "pending-approval.json": "5a085f6f858c74577d88fa311d59339d970cf5e19ad7b3a595a743ad80dbf59b",
+    "publisher-artifact/assembly.json": "667566c928ef3c9a2cc4a2ff6285d639bc573bc2514ae686b4cd8f68868b2632",
+    "publisher-artifact/bundle/RELEASE.json": "54158221288f98c8df5d322aff79a562d25846535471c318129427942aade782",
+    "publisher-artifact/bundle/RELEASE.json.minisig": "7eae00d1d5c109addb65fab6be75c4daa4a069558ec006547165250a4cb18a25",
+    "publisher-artifact/bundle/SHA256SUMS": "9a579f9d271b748d0e66410360f9c3ad96a635f67a10c7bac0673d07c4481fa1",
+    "publisher-artifact/bundle/SHA256SUMS.minisig": "0a6ee40906c6bdc4995c8b4997e934fc79994a6e8bfd8352c68cdb706b74f24a",
+    "publisher-artifact/bundle/openlit-0.1.0-aarch64-apple-darwin.tar.gz": "9ff1ca70fa064c06e8dabf4b0f18b863204c3b9f2d6947bd42a3b3f5bf01e527",
+    "publisher-artifact/bundle/openlit-0.1.0-aarch64-apple-darwin.tar.gz.minisig": "65b75815165b57af600b9465fbd18227597a1e71ec68f6dc983e87172700c7a5",
+    "publisher-artifact/bundle/openlit-0.1.0-aarch64-unknown-linux-gnu.tar.gz": "6f5cc99104d8fce3afdc6da03f3510a1462c0c4d0ba43c6d35f143760c29f21c",
+    "publisher-artifact/bundle/openlit-0.1.0-aarch64-unknown-linux-gnu.tar.gz.minisig": "5bbfd290f5d4a76a8e91fc75f84c7874b3469a2a60c3812e9559609870cba86c",
+    "publisher-artifact/bundle/openlit-0.1.0-x86_64-apple-darwin.tar.gz": "6a82357bc3c42e716a217e4264f2269031ff370be0e3ac830b26155f1c3ca458",
+    "publisher-artifact/bundle/openlit-0.1.0-x86_64-apple-darwin.tar.gz.minisig": "5691b23936d542af8f8c4baa1e0e39bc660721a2352894fdc2390877796a45ba",
+    "publisher-artifact/bundle/openlit-0.1.0-x86_64-pc-windows-msvc.zip": "6df90930b7c98cdd7cdf4c19c52677a9b2d98e0dee3b0bef9edbc4b59ed982c1",
+    "publisher-artifact/bundle/openlit-0.1.0-x86_64-pc-windows-msvc.zip.minisig": "6856bdc9ff61d2288a0d5c980c9c3893649bc3914e86a023b77b9fc742606732",
+    "publisher-artifact/bundle/openlit-0.1.0-x86_64-unknown-linux-gnu.tar.gz": "23017456b99bcfe78a58641ad15d1c19d858588f9db9c2f31541fc0cafec1fbe",
+    "publisher-artifact/bundle/openlit-0.1.0-x86_64-unknown-linux-gnu.tar.gz.minisig": "e5f05e65bc2e3d95862c6c4406fa337f048ca91da07b0c17bbf67980cee794d1",
+    "publisher-artifact/openlit.pub": "020727c93e30003cbab9f902459465e55ed6db37e951b2d006b9ec95ac4d77c3",
+    "publisher-artifact/publisher-verification.json": "805e79e84b098c465d97d40045e58a68ff0520daa2667d903340d9e1ddb4f352",
+    "publisher-artifact/signing.json": "54158221288f98c8df5d322aff79a562d25846535471c318129427942aade782",
+    "publisher-job.log": "3e019ff27214427cdc4d703d8ce01c6f978e3a4e06f814bbc3823f4214a728ab",
+    "qualification/openlit-aarch64-apple-darwin/qualification-aarch64-apple-darwin.json": "92ba4c30f6e61a69f747d32874ffa2def77d932bcc4ebcf815e0c8b25f7fcdb7",
+    "qualification/openlit-aarch64-unknown-linux-gnu/qualification-aarch64-unknown-linux-gnu.json": "88286407dc014bf01c7428a9610cda4ceda9abb4f78ee94e0fd91bd0752bf623",
+    "qualification/openlit-x86_64-apple-darwin/qualification-x86_64-apple-darwin.json": "67965f490f002f15fe82461cdf453107497c3c9bec07678f5dd9071b7b6b8ebd",
+    "qualification/openlit-x86_64-pc-windows-msvc/qualification-x86_64-pc-windows-msvc.json": "c0c4ee3d2b0d3ba3595d345aa6b7dbb67356a4341ddf6b42625e641c333bcc1c",
+    "qualification/openlit-x86_64-unknown-linux-gnu/qualification-x86_64-unknown-linux-gnu.json": "5f5e78af33db6cc3a46d9a1d11c689dafd2dbc64c2ae85a5d1aada416b2130cb",
+    "run-after-approval.json": "64e2bfe0891c91dcba26aa7c5e02d47720ba14ac42858e871d196a36479ddaad",
+    "run-before-approval.json": "f9b91d5439665a0a3e351495c0c77e1a4828727752e749f012c6355c32c785c4",
+    "source-release-checks.json": "c9c40a11f395a4057709e7d4fa528d67a742083f001b79e39800915485d9c689",
+    "verify_download.py": "e59ca0d056436013596f20b86b9e22c29e9397b0ef507ce55f78ce16d0e60823",
+    "workflow-source.json": "b0e966411ac84310077518965c41c666ca3fac265b13dcefffd05c2315f30bb8"
+  },
+  "source_commit": "67cbd625a372800b7f626de66a43310255c82b82",
+  "workflow_run": {
+    "attempt": 1,
+    "conclusion": "success",
+    "id": 44958839171,
+    "jobs": [
+      {
+        "conclusion": "success",
+        "name": "qualify / Build aarch64-apple-darwin"
+      },
+      {
+        "conclusion": "success",
+        "name": "qualify / Build x86_64-pc-windows-msvc"
+      },
+      {
+        "conclusion": "success",
+        "name": "qualify / Build aarch64-unknown-linux-gnu"
+      },
+      {
+        "conclusion": "success",
+        "name": "qualify / Build x86_64-unknown-linux-gnu"
+      },
+      {
+        "conclusion": "success",
+        "name": "qualify / Build x86_64-apple-darwin"
+      },
+      {
+        "conclusion": "success",
+        "name": "Approve publisher key access"
+      }
+    ],
+    "url": "https://github.com/mgkwill/lit/actions/runs/44958839171"
+  }
+}

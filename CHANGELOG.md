@@ -21,5 +21,7 @@ and Apple Silicon, and Windows x86-64. Windows strict sandbox mode refuses to
 launch because it has no confinement backend. Isolated workspaces and native
 repository migration currently require macOS or Linux.
 
-Public release signing, final signed-artifact testing, and publication approval
-are still pending. See [release requirements](docs/RELEASING.md).
+The 0.1.0 candidate has passed approval-protected publisher signing and final
+signature, tamper-rejection, and archive checks. Publication still requires
+the owner's approval. See the [signing evidence](audits/ci-publisher-signing-2026-11-21.md)
+and [release requirements](docs/RELEASING.md).

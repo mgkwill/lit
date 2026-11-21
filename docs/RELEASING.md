@@ -60,6 +60,11 @@ Use [the 0.1.0 release notes](../CHANGELOG.md). Retain exact source and archive
 hashes, the trusted publisher public key, signatures, and verification receipts.
 Repeat qualification after rebuilding or changing the packaged bytes.
 
+The [publisher-signing evidence](../audits/ci-publisher-signing-2026-11-21.md)
+records successful CI signing and independent download verification for source
+`67cbd625a372800b7f626de66a43310255c82b82`. The artifact source stays pinned to
+that commit even when later documentation commits record the results.
+
 The bounded [provenance review](../audits/provenance-2026-11-20.md) and
 [dependency review](DEPENDENCIES.md) describe their recorded scope. Later changes
 need their own evidence. Post-MIT upstream code remains a black box.
