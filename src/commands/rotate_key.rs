@@ -230,8 +230,10 @@ fn prepare(
     stage_bytes(&stage.join("manifest"), &new.encrypt(&bytes)?)?;
     // The staged verifier allows authenticated recovery after the config changes.
     fs::copy(&replacement_key, stage.join("replacement.key"))?;
-    File::open(stage.join("replacement.key"))?.sync_all()?;
-    File::open(replacement_key)?.sync_all()?;
+    // Windows requires write access when flushing a file handle.
+    for path in [stage.join("replacement.key"), replacement_key] {
+        fs::OpenOptions::new().write(true).open(path)?.sync_all()?;
+    }
     for entry in walkdir::WalkDir::new(stage).contents_first(true) {
         let entry = entry.map_err(|e| e.to_string())?;
         if entry.file_type().is_dir() {
