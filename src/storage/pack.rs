@@ -418,6 +418,7 @@ pub(crate) fn rotate(
     Ok(count)
 }
 
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 pub(crate) fn has_plaintext_pack(repo: &Path) -> io::Result<bool> {
     let indexes = match fs::read_dir(repo.join(".lit/packs")) {
         Ok(entries) => entries,

@@ -693,6 +693,7 @@ pub struct EncryptionManager {
 }
 
 impl EncryptionManager {
+    #[cfg(any(target_os = "linux", target_os = "macos"))]
     pub(crate) fn has_legacy_key(&self) -> bool {
         self.engine
             .as_ref()
