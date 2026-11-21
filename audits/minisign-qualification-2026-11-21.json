@@ -1,0 +1,608 @@
+{
+  "actions_only": "unchanged; GitHub Actions integration 15368, no bypass actors",
+  "checked_at_utc": "2026-11-21T17:57:44.800715+00:00",
+  "full_candidate": {
+    "encrypted_external_key": true,
+    "private_test_key_deleted_after_run": true,
+    "public_key_sha256": "6c6eed17eb5fa1b65c8371ba29e30aa61918c0c191ee666b5b8723d10b4a2ab6",
+    "publisher_identity": false,
+    "signed_identity": {
+      "archives": {
+        "openlit-0.1.0-aarch64-apple-darwin.tar.gz": "56b95c7fd05fb1680fcbd72ea7c24dc186d1499eeb32f06f621ac7f78c8daf67",
+        "openlit-0.1.0-aarch64-unknown-linux-gnu.tar.gz": "ea942ee8faa3e5cbd826e146611426ac28979b36be6eb40d0d0a93149b7268f4",
+        "openlit-0.1.0-x86_64-apple-darwin.tar.gz": "9a1ac8c676a6c0008a1b465a71ff00f14ef485f1f5f9a93f12a23d3be07af074",
+        "openlit-0.1.0-x86_64-pc-windows-msvc.zip": "ef280a24be6a1d8f5eef3737b4a2a660004cdeddd1921db4a5471c6280c98996",
+        "openlit-0.1.0-x86_64-unknown-linux-gnu.tar.gz": "5d274811c32d7b8da7887541e6e40129461f8a665ffdeb250d21f0c9e2611ab2"
+      },
+      "product": "OpenLit",
+      "purpose": "qualification",
+      "source_commit": "9f308bd0a8fb2bb2103b3ab27953af5bc4f7e0e4",
+      "version": "0.1.0"
+    },
+    "tamper_tests": {
+      "altered_archive": "rejected",
+      "qualification_as_publisher_release": "rejected",
+      "wrong_key": "rejected"
+    }
+  },
+  "implementation_session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+  "lab": {
+    "host-a": {
+      "batch_and_mcp": {
+        "arch": "x86_64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "fabb7ab2107a7baaced637b2741af1b4642c145572af0744661cae4767f60d00",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Linux",
+        "version": "lit 0.1.0"
+      },
+      "binary_sha256": "fabb7ab2107a7baaced637b2741af1b4642c145572af0744661cae4767f60d00",
+      "platform": "Linux-6.17.0-41-generic-x86_64-with-glibc2.42",
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "signature_regressions": "12 passed including wrong-key rejection",
+      "signed_identity": {
+        "archives": {
+          "openlit-0.1.0-x86_64-unknown-linux-gnu.tar.gz": "5d274811c32d7b8da7887541e6e40129461f8a665ffdeb250d21f0c9e2611ab2"
+        },
+        "product": "OpenLit",
+        "purpose": "qualification",
+        "source_commit": "9f308bd0a8fb2bb2103b3ab27953af5bc4f7e0e4",
+        "version": "0.1.0"
+      },
+      "tamper_tests": {
+        "archive": "rejected",
+        "manifest": "rejected",
+        "signature": "rejected"
+      },
+      "target": "x86_64-unknown-linux-gnu"
+    },
+    "host-e": {
+      "batch_and_mcp": {
+        "arch": "aarch64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "51e31330f938cb17e83807e133ee763f6dc0d7120f05079790e8827d4d1be113",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Linux",
+        "version": "lit 0.1.0"
+      },
+      "binary_sha256": "51e31330f938cb17e83807e133ee763f6dc0d7120f05079790e8827d4d1be113",
+      "platform": "Linux-7.0.0-1019-nvidia-aarch64-with-glibc2.39",
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "signature_regressions": "12 passed including wrong-key rejection",
+      "signed_identity": {
+        "archives": {
+          "openlit-0.1.0-aarch64-unknown-linux-gnu.tar.gz": "ea942ee8faa3e5cbd826e146611426ac28979b36be6eb40d0d0a93149b7268f4"
+        },
+        "product": "OpenLit",
+        "purpose": "qualification",
+        "source_commit": "9f308bd0a8fb2bb2103b3ab27953af5bc4f7e0e4",
+        "version": "0.1.0"
+      },
+      "tamper_tests": {
+        "archive": "rejected",
+        "manifest": "rejected",
+        "signature": "rejected"
+      },
+      "target": "aarch64-unknown-linux-gnu"
+    },
+    "host-f": {
+      "batch_and_mcp": {
+        "arch": "aarch64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "51e31330f938cb17e83807e133ee763f6dc0d7120f05079790e8827d4d1be113",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Linux",
+        "version": "lit 0.1.0"
+      },
+      "binary_sha256": "51e31330f938cb17e83807e133ee763f6dc0d7120f05079790e8827d4d1be113",
+      "platform": "Linux-7.0.0-1019-nvidia-aarch64-with-glibc2.39",
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "signature_regressions": "12 passed including wrong-key rejection",
+      "signed_identity": {
+        "archives": {
+          "openlit-0.1.0-aarch64-unknown-linux-gnu.tar.gz": "ea942ee8faa3e5cbd826e146611426ac28979b36be6eb40d0d0a93149b7268f4"
+        },
+        "product": "OpenLit",
+        "purpose": "qualification",
+        "source_commit": "9f308bd0a8fb2bb2103b3ab27953af5bc4f7e0e4",
+        "version": "0.1.0"
+      },
+      "tamper_tests": {
+        "archive": "rejected",
+        "manifest": "rejected",
+        "signature": "rejected"
+      },
+      "target": "aarch64-unknown-linux-gnu"
+    }
+  },
+  "native": {
+    "aarch64-apple-darwin": {
+      "archive": "openlit-0.1.0-aarch64-apple-darwin.tar.gz",
+      "archive_sha256": "56b95c7fd05fb1680fcbd72ea7c24dc186d1499eeb32f06f621ac7f78c8daf67",
+      "batch_and_mcp": {
+        "arch": "arm64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "22c4f0d6df46a9ce40dd260b61928ae0acd18154b19fe126211ed0d52d142314",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Darwin",
+        "version": "lit 0.1.0"
+      },
+      "binary_sha256": "22c4f0d6df46a9ce40dd260b61928ae0acd18154b19fe126211ed0d52d142314",
+      "expected_certificate_sha1": null,
+      "final_candidate_policy": false,
+      "git": "git version 2.56.1",
+      "head": "9f308bd0a8fb2bb2103b3ab27953af5bc4f7e0e4",
+      "minisign": {
+        "archives": {
+          "openlit-0.1.0-aarch64-apple-darwin.tar.gz": "56b95c7fd05fb1680fcbd72ea7c24dc186d1499eeb32f06f621ac7f78c8daf67"
+        },
+        "product": "OpenLit",
+        "purpose": "qualification",
+        "source_commit": "9f308bd0a8fb2bb2103b3ab27953af5bc4f7e0e4",
+        "version": "0.1.0"
+      },
+      "mldsa_features": [
+        "std"
+      ],
+      "package": "openlit",
+      "platform_signature_required": false,
+      "publisher_identity": false,
+      "qualification_public_key_sha256": "1b5891ba5836d3a745774edb75e096e0a69ae781d37b16aaca115976c742c76f",
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)",
+      "tamper_tests": {
+        "archive": "rejected",
+        "manifest": "rejected",
+        "signature": "rejected",
+        "wrong_key": "rejected"
+      },
+      "target": "aarch64-apple-darwin",
+      "version": "lit 0.1.0"
+    },
+    "aarch64-unknown-linux-gnu": {
+      "archive": "openlit-0.1.0-aarch64-unknown-linux-gnu.tar.gz",
+      "archive_sha256": "ea942ee8faa3e5cbd826e146611426ac28979b36be6eb40d0d0a93149b7268f4",
+      "batch_and_mcp": {
+        "arch": "aarch64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "51e31330f938cb17e83807e133ee763f6dc0d7120f05079790e8827d4d1be113",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Linux",
+        "version": "lit 0.1.0"
+      },
+      "binary_sha256": "51e31330f938cb17e83807e133ee763f6dc0d7120f05079790e8827d4d1be113",
+      "expected_certificate_sha1": null,
+      "final_candidate_policy": false,
+      "git": "git version 2.56.1",
+      "glibc": {
+        "highest_required_symbol_version": "2.34",
+        "runtime": "glibc 2.35"
+      },
+      "head": "9f308bd0a8fb2bb2103b3ab27953af5bc4f7e0e4",
+      "minisign": {
+        "archives": {
+          "openlit-0.1.0-aarch64-unknown-linux-gnu.tar.gz": "ea942ee8faa3e5cbd826e146611426ac28979b36be6eb40d0d0a93149b7268f4"
+        },
+        "product": "OpenLit",
+        "purpose": "qualification",
+        "source_commit": "9f308bd0a8fb2bb2103b3ab27953af5bc4f7e0e4",
+        "version": "0.1.0"
+      },
+      "mldsa_features": [
+        "std"
+      ],
+      "package": "openlit",
+      "platform_signature_required": false,
+      "publisher_identity": false,
+      "qualification_public_key_sha256": "57cbdf00a71c3373e6835594b054da7ce8a16ff57346efde582e017cca353a75",
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)",
+      "tamper_tests": {
+        "archive": "rejected",
+        "manifest": "rejected",
+        "signature": "rejected",
+        "wrong_key": "rejected"
+      },
+      "target": "aarch64-unknown-linux-gnu",
+      "version": "lit 0.1.0"
+    },
+    "x86_64-apple-darwin": {
+      "archive": "openlit-0.1.0-x86_64-apple-darwin.tar.gz",
+      "archive_sha256": "9a1ac8c676a6c0008a1b465a71ff00f14ef485f1f5f9a93f12a23d3be07af074",
+      "batch_and_mcp": {
+        "arch": "x86_64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "b18358e54d306a3ae2ad22d8275a8eb6e6eb3b28f0a4c060986b26c67fe7289a",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Darwin",
+        "version": "lit 0.1.0"
+      },
+      "binary_sha256": "b18358e54d306a3ae2ad22d8275a8eb6e6eb3b28f0a4c060986b26c67fe7289a",
+      "expected_certificate_sha1": null,
+      "final_candidate_policy": false,
+      "git": "git version 2.55.0",
+      "head": "9f308bd0a8fb2bb2103b3ab27953af5bc4f7e0e4",
+      "minisign": {
+        "archives": {
+          "openlit-0.1.0-x86_64-apple-darwin.tar.gz": "9a1ac8c676a6c0008a1b465a71ff00f14ef485f1f5f9a93f12a23d3be07af074"
+        },
+        "product": "OpenLit",
+        "purpose": "qualification",
+        "source_commit": "9f308bd0a8fb2bb2103b3ab27953af5bc4f7e0e4",
+        "version": "0.1.0"
+      },
+      "mldsa_features": [
+        "std"
+      ],
+      "package": "openlit",
+      "platform_signature_required": false,
+      "publisher_identity": false,
+      "qualification_public_key_sha256": "6d11ce867d620a9bb96dfcde319ffe684779181cbc96c436fcc2969e09684d73",
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)",
+      "tamper_tests": {
+        "archive": "rejected",
+        "manifest": "rejected",
+        "signature": "rejected",
+        "wrong_key": "rejected"
+      },
+      "target": "x86_64-apple-darwin",
+      "version": "lit 0.1.0"
+    },
+    "x86_64-pc-windows-msvc": {
+      "archive": "openlit-0.1.0-x86_64-pc-windows-msvc.zip",
+      "archive_sha256": "ef280a24be6a1d8f5eef3737b4a2a660004cdeddd1921db4a5471c6280c98996",
+      "batch_and_mcp": {
+        "arch": "AMD64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "3a8d5e8c34f1508d82fbb452e8e299d9eabfc177fe4cb1f7e8f417d95861e7be",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Windows",
+        "version": "lit 0.1.0"
+      },
+      "binary_sha256": "3a8d5e8c34f1508d82fbb452e8e299d9eabfc177fe4cb1f7e8f417d95861e7be",
+      "expected_certificate_sha1": null,
+      "final_candidate_policy": false,
+      "git": "git version 2.56.1.windows.1",
+      "head": "9f308bd0a8fb2bb2103b3ab27953af5bc4f7e0e4",
+      "minisign": {
+        "archives": {
+          "openlit-0.1.0-x86_64-pc-windows-msvc.zip": "ef280a24be6a1d8f5eef3737b4a2a660004cdeddd1921db4a5471c6280c98996"
+        },
+        "product": "OpenLit",
+        "purpose": "qualification",
+        "source_commit": "9f308bd0a8fb2bb2103b3ab27953af5bc4f7e0e4",
+        "version": "0.1.0"
+      },
+      "mldsa_features": [
+        "std"
+      ],
+      "package": "openlit",
+      "platform_signature_required": false,
+      "publisher_identity": false,
+      "qualification_public_key_sha256": "842177c639801951fe48067adeabe0f88e65273f4ef9d208b240b143912cf616",
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)",
+      "sandbox": [
+        "Strict mode refused on a platform without a backend"
+      ],
+      "tamper_tests": {
+        "archive": "rejected",
+        "manifest": "rejected",
+        "signature": "rejected",
+        "wrong_key": "rejected"
+      },
+      "target": "x86_64-pc-windows-msvc",
+      "version": "lit 0.1.0"
+    },
+    "x86_64-unknown-linux-gnu": {
+      "archive": "openlit-0.1.0-x86_64-unknown-linux-gnu.tar.gz",
+      "archive_sha256": "5d274811c32d7b8da7887541e6e40129461f8a665ffdeb250d21f0c9e2611ab2",
+      "batch_and_mcp": {
+        "arch": "x86_64",
+        "batch": {
+          "dry_run_reports_invalid_line": true,
+          "retry_committed": true,
+          "rollback_restores_head_and_index": true,
+          "working_bytes_preserved": true
+        },
+        "candidate_sha256": "fabb7ab2107a7baaced637b2741af1b4642c145572af0744661cae4767f60d00",
+        "mcp": {
+          "http": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          },
+          "stdio": {
+            "invalid_tool_and_ping": true,
+            "legacy_arguments_preserved": true,
+            "notification_silent": true,
+            "ref_diff_and_branch_creation": true,
+            "tool_discovery_and_staged_write": true
+          }
+        },
+        "platform": "Linux",
+        "version": "lit 0.1.0"
+      },
+      "binary_sha256": "fabb7ab2107a7baaced637b2741af1b4642c145572af0744661cae4767f60d00",
+      "expected_certificate_sha1": null,
+      "final_candidate_policy": false,
+      "git": "git version 2.56.1",
+      "glibc": {
+        "highest_required_symbol_version": "2.34",
+        "runtime": "glibc 2.35"
+      },
+      "head": "9f308bd0a8fb2bb2103b3ab27953af5bc4f7e0e4",
+      "minisign": {
+        "archives": {
+          "openlit-0.1.0-x86_64-unknown-linux-gnu.tar.gz": "5d274811c32d7b8da7887541e6e40129461f8a665ffdeb250d21f0c9e2611ab2"
+        },
+        "product": "OpenLit",
+        "purpose": "qualification",
+        "source_commit": "9f308bd0a8fb2bb2103b3ab27953af5bc4f7e0e4",
+        "version": "0.1.0"
+      },
+      "mldsa_features": [
+        "std"
+      ],
+      "package": "openlit",
+      "platform_signature_required": false,
+      "publisher_identity": false,
+      "qualification_public_key_sha256": "7b02179ab6077ef619d27047a310869235116a79b757640f48c491bf544c3ff8",
+      "remotes": [
+        "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+        "lit://: native first push and bare clone",
+        "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+        "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+      ],
+      "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)",
+      "tamper_tests": {
+        "archive": "rejected",
+        "manifest": "rejected",
+        "signature": "rejected",
+        "wrong_key": "rejected"
+      },
+      "target": "x86_64-unknown-linux-gnu",
+      "version": "lit 0.1.0"
+    }
+  },
+  "platform_signing_claimed": false,
+  "post_MIT_upstream_source_read": false,
+  "projection": {
+    "branch": "lit-release-qualification-minisign-a1459c7",
+    "non_workflow_files_identical": true,
+    "only_changes": {
+      "removed_workflows": [
+        ".github/workflows/agent-merge-gate.yml",
+        ".github/workflows/ci.yml",
+        ".github/workflows/install.yml",
+        ".github/workflows/nightly-security.yml",
+        ".github/workflows/platform-signing.yml"
+      ]
+    },
+    "projection_commit": "9f308bd0a8fb2bb2103b3ab27953af5bc4f7e0e4",
+    "release_workflow_identical": true,
+    "repository": "mgkwill/lit-release-qualification",
+    "source_commit": "a1459c7f3865495eeda83c065859363b14130e60"
+  },
+  "publisher_key_created": false,
+  "raw_record_sha256": {
+    "host-a-qualification.json": "2db26fcdc8b50cfba70a53b47c85e9551c00c000352d8ee583deb7894252cc4e",
+    "host-e-qualification.json": "ad6774740e671b447f912bcfe6586456f4967449ac64466aae7aefe49b147348",
+    "host-f-qualification.json": "ad6774740e671b447f912bcfe6586456f4967449ac64466aae7aefe49b147348",
+    "downloads/aarch64-apple-darwin/qualification-aarch64-apple-darwin.json": "817cc9a516c846e19a6ed06e2a56bba99053ba4b8f04a22f5c25b583d6285329",
+    "downloads/aarch64-unknown-linux-gnu/qualification-aarch64-unknown-linux-gnu.json": "99f892acf9d02687cfc9abbce55ab6f697a5993f1391f8c99f1a9d41782cd777",
+    "downloads/x86_64-apple-darwin/qualification-x86_64-apple-darwin.json": "11599391c86eb450f9c9cc16cb65fec66a1ddeb125c74eda54bdce92be975aaa",
+    "downloads/x86_64-pc-windows-msvc/qualification-x86_64-pc-windows-msvc.json": "4c99329bd598d3b6f6f831314963e55a390fbd3208f0df3808f6847d5ff9a0b8",
+    "downloads/x86_64-unknown-linux-gnu/qualification-x86_64-unknown-linux-gnu.json": "41c276575f7fae33efa56c45a36863c76ca47d470e1d4d733a7489fc9899e2ab",
+    "final-aarch64-apple-darwin.log": "eb9fba97366f471bb6831093dd03a65237ed045cb0c10e6a1825eb8f7a303751",
+    "final-aarch64-unknown-linux-gnu.log": "30a7653ae3990783d7a7f6253bea529e039cb1c88885d6354fdb17b2b64a6b1a",
+    "final-run.json": "a8dcaffe0bebf1cd09d3adad4fd87ead4fa5373f5241e09886692479b9ef6237",
+    "final-test-counts.json": "f617043e69e6201a5b56955497077b16c38af1169a75d4820159bc0c0c2b1faf",
+    "final-x86_64-apple-darwin.log": "5e8b7e04e2fa5d4a70f2b44321fa8a9b342886568774941f7a1827778aab209b",
+    "final-x86_64-pc-windows-msvc.log": "558edb404989a7adc454551db2307f067a37e27ad183eaa96bdcdfffc7082100",
+    "final-x86_64-unknown-linux-gnu.log": "b49fb6a8cae8d7e6469eedb0a4b277e125bf82625e4a1e1c5681793a6d199dab",
+    "full-candidate-macos-smoke.json": "228094a844b99f6b144ce31c1bbfab920d92e0d0036ac052696a949be2276fab",
+    "full-candidate-verification.json": "bb3f3f6da9d87a0032d52fd799999a8dc094f2a86168f3b058eabe8ac92fdd72",
+    "intel-wrong-architecture.log": "fde2b784959a88d93b65103a15c6e1fee8a7762b0813fb017043ccc371e3302a",
+    "local-signature-regressions.log": "06a0b7a34bd30494cfd20a91310c08cd587ccbce357b1b8f20d6eed88db64af5",
+    "optional-platform-regressions.log": "74c79e7e0709501019852d7103a16bf6348c7c7fd4847f2776f66b966f9dcbe9",
+    "projection.json": "e648202b441454a671235ee3b0b84d38936b1a2b56edc406586e5593e131e101",
+    "readiness-timeout-deadline.json": "f3e1e3b39bd45fece82e0f3d084ec804d69c2dc3c368ae52772ed58a52f1e422",
+    "readiness-timeout-retry.json": "16e5816f7db1f4eadc146013ae77d98821715f6f9b999f1d29facf97570a7901",
+    "source-and-key-boundaries.json": "34593a2bfa2e5aec6782d2472ceb492485ce9a67c686fa27043a2a76d8b2659a",
+    "vendor-verification.json": "732d66175c34b0a0fd8cb81caa4c087bd700b97ee5d5f5fd925e42b767c5cc9f",
+    "windows-first-run.log": "d697a0380642db831ea73e791986e94980f068d6ee23ae62aa6ac66b6d846d65"
+  },
+  "release_published": false,
+  "run": {
+    "conclusion": "success",
+    "id": 44931789832,
+    "url": "https://github.com/mgkwill/lit-release-qualification/actions/runs/44931789832"
+  }
+}
