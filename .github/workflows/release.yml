@@ -87,7 +87,13 @@ jobs:
       - name: Install pinned Minisign without publisher credentials
         shell: bash
         run: |
-          python -B tools/release/fetch_minisign.py "$RUNNER_TEMP/minisign" >> "$GITHUB_PATH"
+          if [[ "${{ matrix.target }}" == x86_64-apple-darwin ]]; then
+            HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_CLEANUP=1 brew install minisign
+            "$(brew --prefix)/bin/minisign" -v | grep -Fx 'minisign 0.12'
+            echo "$(brew --prefix)/bin" >> "$GITHUB_PATH"
+          else
+            python -B tools/release/fetch_minisign.py "$RUNNER_TEMP/minisign" >> "$GITHUB_PATH"
+          fi
       - name: Test real signatures and rejection paths
         run: python -B tests/minisign_release_regression.py
       - name: Qualify fresh signed archives using disposable keys

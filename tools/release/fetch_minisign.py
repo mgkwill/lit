@@ -28,6 +28,8 @@ def main():
     arch = {"arm64": "aarch64", "amd64": "x86_64"}.get(platform.machine().lower(), platform.machine().lower())
     if system not in ASSETS or arch not in {"x86_64", "aarch64"}:
         parser.error("Unsupported Minisign platform")
+    if system == "Darwin" and arch == "x86_64":
+        parser.error("Upstream Minisign 0.12 macOS archive is arm64-only; install native Minisign with Homebrew on Intel")
     asset, expected = ASSETS[system]
     url = "https://github.com/jedisct1/minisign/releases/download/0.12/minisign-0.12-" + asset
     with urllib.request.urlopen(url, timeout=60) as response:
