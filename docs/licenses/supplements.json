@@ -125,6 +125,193 @@
           "url": "https://raw.githubusercontent.com/bytecodealliance/wasm-tools/d4e317f22c3bace76cb3205003bcc34b4929037d/LICENSE-APACHE"
         }
       ]
+    },
+    {
+      "name": "pqcrypto-internals",
+      "version": "0.2.11",
+      "revision": "ea05906fb47c99411b21ce3c2ead3fcffe4a365a",
+      "path_in_vcs": "pqcrypto-internals",
+      "selected_license": "Apache-2.0",
+      "notices": [
+        {
+          "path": "docs/licenses/pqcrypto/LICENSE-APACHE",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+          "origin": "canonical license text selected from declared SPDX alternative"
+        },
+        {
+          "path": "docs/licenses/pqcrypto/NOTICE-cfiles-aes.c.txt",
+          "sha256": "1024162fa6bd5f4b709114d83f231d0951e7d5abbe15b392f763929b17ed66ee",
+          "url": "https://raw.githubusercontent.com/rustpq/pqcrypto/ea05906fb47c99411b21ce3c2ead3fcffe4a365a/pqcrypto-internals/cfiles/aes.c",
+          "source_path": "cfiles/aes.c",
+          "source_sha256": "3770ac6719eb9a596365af07b1eb8e65948dfc71d31bd9ad6acfe608cd398b72",
+          "source_start_line": 1,
+          "source_end_line": 27,
+          "origin": "pinned dependency source notice excerpt"
+        },
+        {
+          "path": "docs/licenses/pqcrypto/NOTICE-cfiles-randombytes.c.txt",
+          "sha256": "6b9ea46cfe92b68605edb63ecf16af1485c17211e37c5bb4570c92bed78ac5f6",
+          "url": "https://raw.githubusercontent.com/rustpq/pqcrypto/ea05906fb47c99411b21ce3c2ead3fcffe4a365a/pqcrypto-internals/cfiles/randombytes.c",
+          "source_path": "cfiles/randombytes.c",
+          "source_sha256": "5d229e881bf8bca764214a775a0c0fc3cfc0c4e07f320787fa328602e5b7fcd7",
+          "source_start_line": 1,
+          "source_end_line": 23,
+          "origin": "pinned dependency source notice excerpt"
+        },
+        {
+          "path": "docs/licenses/pqcrypto/NOTICE-cfiles-fips202.c.txt",
+          "sha256": "722fab2590a3e2fcf426c86d805f9aecd5320892d335551cabb198a37ec7f8f5",
+          "url": "https://raw.githubusercontent.com/rustpq/pqcrypto/ea05906fb47c99411b21ce3c2ead3fcffe4a365a/pqcrypto-internals/cfiles/fips202.c",
+          "source_path": "cfiles/fips202.c",
+          "source_sha256": "b82b36f7302a0325c8de0dc299733ae97f4c6f81d1fb8e42ecf2c4301ccc575e",
+          "source_start_line": 1,
+          "source_end_line": 6,
+          "origin": "pinned dependency source notice excerpt"
+        },
+        {
+          "path": "docs/licenses/pqcrypto/NOTICE-cfiles-sha2.c.txt",
+          "sha256": "745a24cf09b799e3c418bca14119d6a34b55669709d59c196e946ab0accfe470",
+          "url": "https://raw.githubusercontent.com/rustpq/pqcrypto/ea05906fb47c99411b21ce3c2ead3fcffe4a365a/pqcrypto-internals/cfiles/sha2.c",
+          "source_path": "cfiles/sha2.c",
+          "source_sha256": "4ad19915f2ef4d3d6820dea8f7ca54f48b35b203fd7e493e28a361d78483a79a",
+          "source_start_line": 1,
+          "source_end_line": 3,
+          "origin": "pinned dependency source notice excerpt"
+        },
+        {
+          "path": "docs/licenses/pqcrypto/NOTICE-cfiles-keccak2x-fips202x2.c.txt",
+          "sha256": "bf878cebd92e6db40fac69cb9546003a9a0eac8cb1f1c255bdd2f54f275b546b",
+          "url": "https://raw.githubusercontent.com/rustpq/pqcrypto/ea05906fb47c99411b21ce3c2ead3fcffe4a365a/pqcrypto-internals/cfiles/keccak2x/fips202x2.c",
+          "source_path": "cfiles/keccak2x/fips202x2.c",
+          "source_sha256": "35abe92de15fc34e4847aaa04df1076d4b79dbebec5d814732dd9210d11528d3",
+          "source_start_line": 2,
+          "source_end_line": 34,
+          "origin": "pinned dependency source notice excerpt"
+        },
+        {
+          "path": "docs/licenses/pqcrypto/NOTICE-cfiles-keccak2x-fips202x2.h.txt",
+          "sha256": "b7165d7881b60df1566ce85aaf07efef7d412067916cd3ad98d2b384ec8165bc",
+          "url": "https://raw.githubusercontent.com/rustpq/pqcrypto/ea05906fb47c99411b21ce3c2ead3fcffe4a365a/pqcrypto-internals/cfiles/keccak2x/fips202x2.h",
+          "source_path": "cfiles/keccak2x/fips202x2.h",
+          "source_sha256": "496aca3480ebebba13740208b6bf5023f1a42178a9f42efa665e74ac16fbc298",
+          "source_start_line": 4,
+          "source_end_line": 9,
+          "origin": "pinned dependency source notice excerpt"
+        },
+        {
+          "path": "docs/licenses/pqcrypto/NOTICE-cfiles-keccak2x-feat.S.txt",
+          "sha256": "4db2491ae35ef3307b0f9fd3ff1bcea73d4fe6a8a44e584f5b490239383bfc3b",
+          "url": "https://raw.githubusercontent.com/rustpq/pqcrypto/ea05906fb47c99411b21ce3c2ead3fcffe4a365a/pqcrypto-internals/cfiles/keccak2x/feat.S",
+          "source_path": "cfiles/keccak2x/feat.S",
+          "source_sha256": "a61e2583e4759a15316c6c92f10236c384867bcbe3e76f4ca4255eba005dff60",
+          "source_start_line": 2,
+          "source_end_line": 25,
+          "origin": "pinned dependency source notice excerpt"
+        },
+        {
+          "path": "docs/licenses/pqcrypto/NOTICE-cfiles-keccak4x-KeccakP-1600-times4-SIMD256.c.txt",
+          "sha256": "dd7072d401d53d1476f1206446e668b7ca4e799d9694338fd66f02617daa0083",
+          "url": "https://raw.githubusercontent.com/rustpq/pqcrypto/ea05906fb47c99411b21ce3c2ead3fcffe4a365a/pqcrypto-internals/cfiles/keccak4x/KeccakP-1600-times4-SIMD256.c",
+          "source_path": "cfiles/keccak4x/KeccakP-1600-times4-SIMD256.c",
+          "source_sha256": "904bd88c30e4c67467a1714460581195ea238acae27682188cd16e1169c5ce30",
+          "source_start_line": 1,
+          "source_end_line": 18,
+          "origin": "pinned dependency source notice excerpt"
+        },
+        {
+          "path": "docs/licenses/pqcrypto/NOTICE-cfiles-keccak4x-KeccakP-1600-times4-SnP.h.txt",
+          "sha256": "8f0736f44915c65c86f7784f289ebca705f7c08043a4495b0f94790b6fb29f73",
+          "url": "https://raw.githubusercontent.com/rustpq/pqcrypto/ea05906fb47c99411b21ce3c2ead3fcffe4a365a/pqcrypto-internals/cfiles/keccak4x/KeccakP-1600-times4-SnP.h",
+          "source_path": "cfiles/keccak4x/KeccakP-1600-times4-SnP.h",
+          "source_sha256": "82b498f8e116b736cd77e1d1665300aa75606b354e02a90cb764c28936c7c0cb",
+          "source_start_line": 1,
+          "source_end_line": 14,
+          "origin": "pinned dependency source notice excerpt"
+        },
+        {
+          "path": "docs/licenses/pqcrypto/NOTICE-cfiles-keccak4x-KeccakP-1600-unrolling.macros.txt",
+          "sha256": "8f0736f44915c65c86f7784f289ebca705f7c08043a4495b0f94790b6fb29f73",
+          "url": "https://raw.githubusercontent.com/rustpq/pqcrypto/ea05906fb47c99411b21ce3c2ead3fcffe4a365a/pqcrypto-internals/cfiles/keccak4x/KeccakP-1600-unrolling.macros",
+          "source_path": "cfiles/keccak4x/KeccakP-1600-unrolling.macros",
+          "source_sha256": "0bf1a7910e7cf01cdb68d2f8f0886cf1ec306ad341f567f7bf9979f812a856df",
+          "source_start_line": 1,
+          "source_end_line": 14,
+          "origin": "pinned dependency source notice excerpt"
+        },
+        {
+          "path": "docs/licenses/pqcrypto/NOTICE-cfiles-keccak4x-align.h.txt",
+          "sha256": "8f0736f44915c65c86f7784f289ebca705f7c08043a4495b0f94790b6fb29f73",
+          "url": "https://raw.githubusercontent.com/rustpq/pqcrypto/ea05906fb47c99411b21ce3c2ead3fcffe4a365a/pqcrypto-internals/cfiles/keccak4x/align.h",
+          "source_path": "cfiles/keccak4x/align.h",
+          "source_sha256": "5033313cf7203ce3514cc22d8ce113b430237e8b15a6c66a79d3ee8b5e3d80b5",
+          "source_start_line": 1,
+          "source_end_line": 14,
+          "origin": "pinned dependency source notice excerpt"
+        },
+        {
+          "path": "docs/licenses/pqcrypto/NOTICE-cfiles-keccak4x-brg_endian.h.txt",
+          "sha256": "62af2a170ed71c10dfb598502448c39751a200cc84153139102b66cafc1826b6",
+          "url": "https://raw.githubusercontent.com/rustpq/pqcrypto/ea05906fb47c99411b21ce3c2ead3fcffe4a365a/pqcrypto-internals/cfiles/keccak4x/brg_endian.h",
+          "source_path": "cfiles/keccak4x/brg_endian.h",
+          "source_sha256": "5fbc8e476a28827e0fb764db47b4e94947fd9138cd9f26fce114cbc1ee507aa9",
+          "source_start_line": 1,
+          "source_end_line": 27,
+          "origin": "pinned dependency source notice excerpt"
+        },
+        {
+          "path": "docs/licenses/pqcrypto/NOTICE-cfiles-nistseedexpander.c.txt",
+          "sha256": "2099c49c24845f2ed24a5d38331ca0fa012be1f95b0c6208e4f8f0062ff9bcf5",
+          "url": "https://raw.githubusercontent.com/rustpq/pqcrypto/ea05906fb47c99411b21ce3c2ead3fcffe4a365a/pqcrypto-internals/cfiles/nistseedexpander.c",
+          "source_path": "cfiles/nistseedexpander.c",
+          "source_sha256": "b34355951ec666aa686dea37f639b0b097a043d1c365bfbf31de4705f5f6a898",
+          "source_start_line": 1,
+          "source_end_line": 7,
+          "origin": "pinned dependency source notice excerpt"
+        },
+        {
+          "path": "docs/licenses/pqcrypto/NOTICE-include-nistseedexpander.h.txt",
+          "sha256": "135edfbe8e7686cb27fc28c5577d77c9ca201b18373b8248cbcb79e0db2935ba",
+          "url": "https://raw.githubusercontent.com/rustpq/pqcrypto/ea05906fb47c99411b21ce3c2ead3fcffe4a365a/pqcrypto-internals/include/nistseedexpander.h",
+          "source_path": "include/nistseedexpander.h",
+          "source_sha256": "d82eb6d857c05604bd7672bd6c59759f6d28924bdf73acc2887906fded4e469c",
+          "source_start_line": 4,
+          "source_end_line": 10,
+          "origin": "pinned dependency source notice excerpt"
+        },
+        {
+          "path": "docs/licenses/pqcrypto/NOTICE-NIST.txt",
+          "sha256": "35da5dbe3107958ff910ed94250913ec9e73c73504850df9cb53454f04651b00",
+          "url": "https://csrc.nist.gov/CSRC/media/Projects/Post-Quantum-Cryptography/documents/archive/source-code-files-for-kats-dec2021.zip",
+          "origin": "original NIST source permission comment",
+          "archive_sha256": "84b73c1008e9dbb452606ab9eb8d25cdd6b4011c3c88f6fdafaab20957e07234",
+          "archive_member": "PQC-APIdocs-UpdatedCopyright/rng.c",
+          "archive_member_sha256": "2cc42477d95648f6f4900ce9906bb8840990290a410fa5206caed58663b6d5cd",
+          "archive_member_start_line": 1,
+          "archive_member_end_line": 7
+        },
+        {
+          "path": "docs/licenses/pqcrypto/NOTICE-NIST-PROVENANCE.txt",
+          "sha256": "2902c1e314e61a3d1eb6c9e6c90e81c206e5da68bd8b82fe026e155a385ae4d0",
+          "url": "https://csrc.nist.gov/Projects/post-quantum-cryptography/pqc-archive",
+          "origin": "OpenLit distribution attribution annotation; source evidence in audits/crypto-notices-2026-11-20.md"
+        }
+      ]
+    },
+    {
+      "name": "pqcrypto-traits",
+      "version": "0.3.5",
+      "revision": "2ba2d2a859c38270c9c1cd3adff8c02a1a9b0719",
+      "path_in_vcs": "pqcrypto-traits",
+      "selected_license": "Apache-2.0",
+      "notices": [
+        {
+          "path": "docs/licenses/pqcrypto/LICENSE-APACHE",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt",
+          "origin": "canonical license text selected from declared SPDX alternative"
+        }
+      ]
     }
   ]
 }

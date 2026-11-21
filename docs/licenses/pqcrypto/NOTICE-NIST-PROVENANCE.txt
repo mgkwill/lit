@@ -1,0 +1,23 @@
+OpenLit distribution annotation (not an upstream license or copyright notice)
+
+The pqcrypto-internals 0.2.11 source package includes a modified NIST seed
+expander in cfiles/nistseedexpander.c and include/nistseedexpander.h.
+We acknowledge the National Institute of Standards and Technology (NIST)
+as the source of the original seed-expander software. The full permission
+notice from NIST's December 2021 KAT source archive is included separately.
+
+The dependency retains the original attribution to Lawrence E. Bassham and
+states that Sebastian Verschoor modified the software for PQClean. PQClean's
+2020-04-01 commit 33232a0343c75947e5479c622930461a800ec7d9 introduced the
+common seed-expander files and records changes to maximum-length handling.
+Its 2020-04-06 commit 9944e6a81d3edd2dbc191a818a827086b3385ba8 renamed the
+AES key-expansion interface. Rustpq extracted the shared cryptography into
+pqcrypto-internals in commit fb4ea774b1c5e1233a826779cad5304c06a23b93 on
+2021-07-28. OpenLit has not modified these dependency source files.
+
+Source records:
+https://csrc.nist.gov/Projects/post-quantum-cryptography/pqc-archive
+https://csrc.nist.gov/CSRC/media/Projects/Post-Quantum-Cryptography/documents/archive/source-code-files-for-kats-dec2021.zip
+https://github.com/PQClean/PQClean/commit/33232a0343c75947e5479c622930461a800ec7d9
+https://github.com/PQClean/PQClean/commit/9944e6a81d3edd2dbc191a818a827086b3385ba8
+https://github.com/rustpq/pqcrypto/commit/fb4ea774b1c5e1233a826779cad5304c06a23b93

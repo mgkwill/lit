@@ -45,6 +45,13 @@ def render(metadata):
             if (vcs['git']['sha1'] != supplement['revision']
                     or vcs['path_in_vcs'] != supplement['path_in_vcs']):
                 raise ValueError('Supplement revision does not match package: ' + str(key))
+            if 'selected_license' in supplement:
+                # These selections use simple SPDX OR alternatives, not a general parser.
+                alternatives = (package['license'] or '').split(' OR ')
+                selected = supplement['selected_license']
+                if selected not in alternatives or any(' AND ' in x for x in alternatives):
+                    raise ValueError('Selected license is not a declared alternative: ' + str(key))
+                record['selected_license'] = selected
             for notice in supplement['notices']:
                 path = (ROOT / notice['path']).resolve()
                 path.relative_to((ROOT / 'docs/licenses').resolve())
@@ -52,8 +59,18 @@ def render(metadata):
                 digest = hashlib.sha256(data).hexdigest()
                 if digest != notice['sha256']:
                     raise ValueError('Supplement digest mismatch: ' + notice['path'])
+                if 'source_path' in notice:
+                    source = (root / notice['source_path']).resolve()
+                    source.relative_to(root.resolve())
+                    original = source.read_bytes()
+                    if hashlib.sha256(original).hexdigest() != notice['source_sha256']:
+                        raise ValueError('Notice source digest mismatch: ' + notice['source_path'])
+                    lines = original.splitlines(keepends=True)
+                    start, end = notice['source_start_line'], notice['source_end_line']
+                    if not (1 <= start <= end <= len(lines)) or b''.join(lines[start-1:end]) != data:
+                        raise ValueError('Notice excerpt mismatch: ' + notice['path'])
                 texts[digest] = data.decode('utf-8')
-                record['notices'].append(dict(notice, origin='pinned dependency repository',
+                record['notices'].append(dict(notice, origin=notice.get('origin', 'pinned dependency repository'),
                                               revision=supplement['revision']))
             used_supplements.add(key)
         records.append(record)
@@ -69,6 +86,9 @@ def render(metadata):
     for p in records:
         lines.extend(['', p['name'] + ' ' + p['version'], 'Declared license: ' + str(p['license']),
                       'Repository: ' + str(p['repository'])])
+        if 'selected_license' in p:
+            lines.append('Selected package license: ' + p['selected_license'] +
+                         '; separate bundled notices remain applicable.')
         lines.extend('Notice: ' + n['path'] + ' (SHA-256 ' + n['sha256'] + ')' for n in p['notices'])
         lines.extend('Notice source: ' + n['url'] for n in p['notices'] if 'url' in n)
     lines.extend(['', 'Full notice texts, grouped by SHA-256', '===================================='])

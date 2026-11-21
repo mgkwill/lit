@@ -67,6 +67,34 @@ class NoticeIntegrity(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.render()
 
+    def test_declared_license_selection_and_origin(self):
+        self.metadata['packages'][0]['license'] = 'MIT OR Apache-2.0'
+        self.entry['selected_license'] = 'Apache-2.0'
+        self.entry['notices'][0]['origin'] = 'official license text'
+        record = json.loads(self.render()[self.root / 'docs/dependencies.json'])['packages'][0]
+        self.assertEqual(record['selected_license'], 'Apache-2.0')
+        self.assertEqual(record['notices'][0]['origin'], 'official license text')
+
+    def test_undeclared_license_is_rejected(self):
+        self.entry['selected_license'] = 'Apache-2.0'
+        with self.assertRaisesRegex(ValueError, 'declared alternative'):
+            self.render()
+
+    def test_excerpt_must_match_pinned_source(self):
+        source = self.package / 'example.c'
+        source.write_bytes(self.license.read_bytes() + b'int example;\n')
+        n = self.entry['notices'][0]
+        n.update(source_path='example.c', source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
+                 source_start_line=1, source_end_line=1)
+        self.render()
+        n['source_end_line'] = 2
+        with self.assertRaisesRegex(ValueError, 'excerpt mismatch'):
+            self.render()
+        n['source_end_line'] = 1
+        source.write_bytes(source.read_bytes() + b'int added;\n')
+        with self.assertRaisesRegex(ValueError, 'source digest mismatch'):
+            self.render()
+
 
 if __name__ == '__main__':
     unittest.main()

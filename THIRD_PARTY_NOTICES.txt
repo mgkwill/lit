@@ -3,8 +3,6 @@ OpenLit third-party notices
 All resolved Cargo packages, including dev and non-native targets. This is an inventory, not a completed license compliance review.
 
 Packages without a collected notice need review before public distribution:
-pqcrypto-internals@0.2.11
-pqcrypto-traits@0.3.5
 
 Package inventory
 =================
@@ -663,6 +661,41 @@ Notice: LICENSE-MIT (SHA-256 4cada0bd02ea3692eee6f16400d86c6508bbd3bafb2b65fed04
 pqcrypto-internals 0.2.11
 Declared license: MIT OR Apache-2.0
 Repository: https://github.com/rustpq/pqcrypto
+Selected package license: Apache-2.0; separate bundled notices remain applicable.
+Notice: docs/licenses/pqcrypto/LICENSE-APACHE (SHA-256 cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30)
+Notice: docs/licenses/pqcrypto/NOTICE-cfiles-aes.c.txt (SHA-256 1024162fa6bd5f4b709114d83f231d0951e7d5abbe15b392f763929b17ed66ee)
+Notice: docs/licenses/pqcrypto/NOTICE-cfiles-randombytes.c.txt (SHA-256 6b9ea46cfe92b68605edb63ecf16af1485c17211e37c5bb4570c92bed78ac5f6)
+Notice: docs/licenses/pqcrypto/NOTICE-cfiles-fips202.c.txt (SHA-256 722fab2590a3e2fcf426c86d805f9aecd5320892d335551cabb198a37ec7f8f5)
+Notice: docs/licenses/pqcrypto/NOTICE-cfiles-sha2.c.txt (SHA-256 745a24cf09b799e3c418bca14119d6a34b55669709d59c196e946ab0accfe470)
+Notice: docs/licenses/pqcrypto/NOTICE-cfiles-keccak2x-fips202x2.c.txt (SHA-256 bf878cebd92e6db40fac69cb9546003a9a0eac8cb1f1c255bdd2f54f275b546b)
+Notice: docs/licenses/pqcrypto/NOTICE-cfiles-keccak2x-fips202x2.h.txt (SHA-256 b7165d7881b60df1566ce85aaf07efef7d412067916cd3ad98d2b384ec8165bc)
+Notice: docs/licenses/pqcrypto/NOTICE-cfiles-keccak2x-feat.S.txt (SHA-256 4db2491ae35ef3307b0f9fd3ff1bcea73d4fe6a8a44e584f5b490239383bfc3b)
+Notice: docs/licenses/pqcrypto/NOTICE-cfiles-keccak4x-KeccakP-1600-times4-SIMD256.c.txt (SHA-256 dd7072d401d53d1476f1206446e668b7ca4e799d9694338fd66f02617daa0083)
+Notice: docs/licenses/pqcrypto/NOTICE-cfiles-keccak4x-KeccakP-1600-times4-SnP.h.txt (SHA-256 8f0736f44915c65c86f7784f289ebca705f7c08043a4495b0f94790b6fb29f73)
+Notice: docs/licenses/pqcrypto/NOTICE-cfiles-keccak4x-KeccakP-1600-unrolling.macros.txt (SHA-256 8f0736f44915c65c86f7784f289ebca705f7c08043a4495b0f94790b6fb29f73)
+Notice: docs/licenses/pqcrypto/NOTICE-cfiles-keccak4x-align.h.txt (SHA-256 8f0736f44915c65c86f7784f289ebca705f7c08043a4495b0f94790b6fb29f73)
+Notice: docs/licenses/pqcrypto/NOTICE-cfiles-keccak4x-brg_endian.h.txt (SHA-256 62af2a170ed71c10dfb598502448c39751a200cc84153139102b66cafc1826b6)
+Notice: docs/licenses/pqcrypto/NOTICE-cfiles-nistseedexpander.c.txt (SHA-256 2099c49c24845f2ed24a5d38331ca0fa012be1f95b0c6208e4f8f0062ff9bcf5)
+Notice: docs/licenses/pqcrypto/NOTICE-include-nistseedexpander.h.txt (SHA-256 135edfbe8e7686cb27fc28c5577d77c9ca201b18373b8248cbcb79e0db2935ba)
+Notice: docs/licenses/pqcrypto/NOTICE-NIST.txt (SHA-256 35da5dbe3107958ff910ed94250913ec9e73c73504850df9cb53454f04651b00)
+Notice: docs/licenses/pqcrypto/NOTICE-NIST-PROVENANCE.txt (SHA-256 2902c1e314e61a3d1eb6c9e6c90e81c206e5da68bd8b82fe026e155a385ae4d0)
+Notice source: https://www.apache.org/licenses/LICENSE-2.0.txt
+Notice source: https://raw.githubusercontent.com/rustpq/pqcrypto/ea05906fb47c99411b21ce3c2ead3fcffe4a365a/pqcrypto-internals/cfiles/aes.c
+Notice source: https://raw.githubusercontent.com/rustpq/pqcrypto/ea05906fb47c99411b21ce3c2ead3fcffe4a365a/pqcrypto-internals/cfiles/randombytes.c
+Notice source: https://raw.githubusercontent.com/rustpq/pqcrypto/ea05906fb47c99411b21ce3c2ead3fcffe4a365a/pqcrypto-internals/cfiles/fips202.c
+Notice source: https://raw.githubusercontent.com/rustpq/pqcrypto/ea05906fb47c99411b21ce3c2ead3fcffe4a365a/pqcrypto-internals/cfiles/sha2.c
+Notice source: https://raw.githubusercontent.com/rustpq/pqcrypto/ea05906fb47c99411b21ce3c2ead3fcffe4a365a/pqcrypto-internals/cfiles/keccak2x/fips202x2.c
+Notice source: https://raw.githubusercontent.com/rustpq/pqcrypto/ea05906fb47c99411b21ce3c2ead3fcffe4a365a/pqcrypto-internals/cfiles/keccak2x/fips202x2.h
+Notice source: https://raw.githubusercontent.com/rustpq/pqcrypto/ea05906fb47c99411b21ce3c2ead3fcffe4a365a/pqcrypto-internals/cfiles/keccak2x/feat.S
+Notice source: https://raw.githubusercontent.com/rustpq/pqcrypto/ea05906fb47c99411b21ce3c2ead3fcffe4a365a/pqcrypto-internals/cfiles/keccak4x/KeccakP-1600-times4-SIMD256.c
+Notice source: https://raw.githubusercontent.com/rustpq/pqcrypto/ea05906fb47c99411b21ce3c2ead3fcffe4a365a/pqcrypto-internals/cfiles/keccak4x/KeccakP-1600-times4-SnP.h
+Notice source: https://raw.githubusercontent.com/rustpq/pqcrypto/ea05906fb47c99411b21ce3c2ead3fcffe4a365a/pqcrypto-internals/cfiles/keccak4x/KeccakP-1600-unrolling.macros
+Notice source: https://raw.githubusercontent.com/rustpq/pqcrypto/ea05906fb47c99411b21ce3c2ead3fcffe4a365a/pqcrypto-internals/cfiles/keccak4x/align.h
+Notice source: https://raw.githubusercontent.com/rustpq/pqcrypto/ea05906fb47c99411b21ce3c2ead3fcffe4a365a/pqcrypto-internals/cfiles/keccak4x/brg_endian.h
+Notice source: https://raw.githubusercontent.com/rustpq/pqcrypto/ea05906fb47c99411b21ce3c2ead3fcffe4a365a/pqcrypto-internals/cfiles/nistseedexpander.c
+Notice source: https://raw.githubusercontent.com/rustpq/pqcrypto/ea05906fb47c99411b21ce3c2ead3fcffe4a365a/pqcrypto-internals/include/nistseedexpander.h
+Notice source: https://csrc.nist.gov/CSRC/media/Projects/Post-Quantum-Cryptography/documents/archive/source-code-files-for-kats-dec2021.zip
+Notice source: https://csrc.nist.gov/Projects/post-quantum-cryptography/pqc-archive
 
 pqcrypto-mldsa 0.1.2
 Declared license: MIT OR Apache-2.0
@@ -756,6 +789,9 @@ Notice: pqclean/crypto_sign/sphincs-shake-256s-simple/clean/LICENSE (SHA-256 36f
 pqcrypto-traits 0.3.5
 Declared license: MIT OR Apache-2.0
 Repository: https://github.com/rustpq/pqclean/
+Selected package license: Apache-2.0; separate bundled notices remain applicable.
+Notice: docs/licenses/pqcrypto/LICENSE-APACHE (SHA-256 cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30)
+Notice source: https://www.apache.org/licenses/LICENSE-2.0.txt
 
 prettyplease 0.2.37
 Declared license: MIT OR Apache-2.0
@@ -2859,6 +2895,37 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 
+SHA-256 1024162fa6bd5f4b709114d83f231d0951e7d5abbe15b392f763929b17ed66ee
+
+/*
+ * AES implementation based on code from BearSSL (https://bearssl.org/)
+ * by Thomas Pornin.
+ *
+ *
+ * Copyright (c) 2016 Thomas Pornin <pornin@bolet.org>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+ * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+ * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+
 SHA-256 123a331b5dbf04c30097fa43b8f858bc85df671fe776de498d01f3d6b7c1f69e
 
 Copyright (c) The Rust Project Developers
@@ -2886,6 +2953,17 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
 IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
+
+
+SHA-256 135edfbe8e7686cb27fc28c5577d77c9ca201b18373b8248cbcb79e0db2935ba
+
+//
+//  rng.h
+//
+//  Created by Bassham, Lawrence E (Fed) on 8/29/17.
+//  Copyright © 2017 Bassham, Lawrence E (Fed). All rights reserved.
+//  Modified for PQClean by Sebastian Verschoor
+//
 
 
 SHA-256 1a2f5c12ddc934d58956aa5dbdd3255fe55fd957633ab7d0d39e4f0daa73f7df
@@ -2973,6 +3051,17 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+
+SHA-256 2099c49c24845f2ed24a5d38331ca0fa012be1f95b0c6208e4f8f0062ff9bcf5
+
+//
+//  rng.c
+//
+//  Created by Bassham, Lawrence E (Fed) on 8/29/17.
+//  Copyright © 2017 Bassham, Lawrence E (Fed). All rights reserved.
+//  Modified for PQClean by Sebastian Verschoor
+//
 
 
 SHA-256 209fbbe0ad52d9235e37badf9cadfe4dbdc87203179c0899e738b39ade42177b
@@ -3422,6 +3511,33 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 
+SHA-256 2902c1e314e61a3d1eb6c9e6c90e81c206e5da68bd8b82fe026e155a385ae4d0
+
+OpenLit distribution annotation (not an upstream license or copyright notice)
+
+The pqcrypto-internals 0.2.11 source package includes a modified NIST seed
+expander in cfiles/nistseedexpander.c and include/nistseedexpander.h.
+We acknowledge the National Institute of Standards and Technology (NIST)
+as the source of the original seed-expander software. The full permission
+notice from NIST's December 2021 KAT source archive is included separately.
+
+The dependency retains the original attribution to Lawrence E. Bassham and
+states that Sebastian Verschoor modified the software for PQClean. PQClean's
+2020-04-01 commit 33232a0343c75947e5479c622930461a800ec7d9 introduced the
+common seed-expander files and records changes to maximum-length handling.
+Its 2020-04-06 commit 9944e6a81d3edd2dbc191a818a827086b3385ba8 renamed the
+AES key-expansion interface. Rustpq extracted the shared cryptography into
+pqcrypto-internals in commit fb4ea774b1c5e1233a826779cad5304c06a23b93 on
+2021-07-28. OpenLit has not modified these dependency source files.
+
+Source records:
+https://csrc.nist.gov/Projects/post-quantum-cryptography/pqc-archive
+https://csrc.nist.gov/CSRC/media/Projects/Post-Quantum-Cryptography/documents/archive/source-code-files-for-kats-dec2021.zip
+https://github.com/PQClean/PQClean/commit/33232a0343c75947e5479c622930461a800ec7d9
+https://github.com/PQClean/PQClean/commit/9944e6a81d3edd2dbc191a818a827086b3385ba8
+https://github.com/rustpq/pqcrypto/commit/fb4ea774b1c5e1233a826779cad5304c06a23b93
+
+
 SHA-256 29e9fe5074bd27e0e5d5d110394fbbcd841baee2651a3c4b4560a632702cede4
 
 Copyright (c) 2018-2025 The rust-random Project Developers
@@ -3752,6 +3868,17 @@ TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
    of your accepting any such warranty or additional liability.
 
 END OF TERMS AND CONDITIONS
+
+
+SHA-256 35da5dbe3107958ff910ed94250913ec9e73c73504850df9cb53454f04651b00
+
+/*
+NIST-developed software is provided by NIST as a public service. You may use, copy, and distribute copies of the software in any medium, provided that you keep intact this entire notice. You may improve, modify, and create derivative works of the software or any portion of the software, and you may copy and distribute such modifications or works. Modified works should carry a notice stating that you changed the software and should note the date and nature of any such change. Please explicitly acknowledge the National Institute of Standards and Technology as the source of the software.
+ 
+NIST-developed software is expressly provided "AS IS." NIST MAKES NO WARRANTY OF ANY KIND, EXPRESS, IMPLIED, IN FACT, OR ARISING BY OPERATION OF LAW, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND DATA ACCURACY. NIST NEITHER REPRESENTS NOR WARRANTS THAT THE OPERATION OF THE SOFTWARE WILL BE UNINTERRUPTED OR ERROR-FREE, OR THAT ANY DEFECTS WILL BE CORRECTED. NIST DOES NOT WARRANT OR MAKE ANY REPRESENTATIONS REGARDING THE USE OF THE SOFTWARE OR THE RESULTS THEREOF, INCLUDING BUT NOT LIMITED TO THE CORRECTNESS, ACCURACY, RELIABILITY, OR USEFULNESS OF THE SOFTWARE.
+ 
+You are solely responsible for determining the appropriateness of using and distributing the software and you assume all risks associated with its use, including but not limited to the risks and costs of program errors, compliance with applicable laws, damage to or loss of data, programs or equipment, and the unavailability or interruption of operation. This software is not intended to be used in any situation where a failure could cause risk of injury or damage to property. The software developed by NIST employees is not subject to copyright protection within the United States.
+*/
 
 
 SHA-256 36ffd9dc085d529a7e60e1276d73ae5a030b020313e6c5408593a6ae2af39673
@@ -4606,6 +4733,34 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 
+SHA-256 4db2491ae35ef3307b0f9fd3ff1bcea73d4fe6a8a44e584f5b490239383bfc3b
+
+/*
+MIT License
+
+Copyright (c) 2020 Bas Westerbaan
+Copyright (c) 2023: Hanno Becker, Vincent Hwang, Matthias J. Kannwischer, Bo-Yin Yang, and Shang-Yi Yang
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+
 SHA-256 516b24e051bf5630880ebbd55c40a25ce9552ebaf8970a53e8976eb70e522406
 
                               Apache License
@@ -5055,6 +5210,37 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
 IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
+
+
+SHA-256 62af2a170ed71c10dfb598502448c39751a200cc84153139102b66cafc1826b6
+
+/*
+ ---------------------------------------------------------------------------
+ Copyright (c) 1998-2008, Brian Gladman, Worcester, UK. All rights reserved.
+
+ LICENSE TERMS
+
+ The redistribution and use of this software (with or without changes)
+ is allowed without the payment of fees or royalties provided that:
+
+  1. source code distributions include the above copyright notice, this
+     list of conditions and the following disclaimer;
+
+  2. binary distributions include the above copyright notice, this list
+     of conditions and the following disclaimer in their documentation;
+
+  3. the name of the copyright holder is not used to endorse products
+     built using this software without specific written permission.
+
+ DISCLAIMER
+
+ This software is provided 'as is' with no explicit or implied warranties
+ in respect of its properties, including, but not limited to, correctness
+ and/or fitness for purpose.
+ ---------------------------------------------------------------------------
+ Issue Date: 20/12/2007
+ Changes for ARM 9/9/2010
+*/
 
 
 SHA-256 62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a
@@ -5967,6 +6153,33 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 
+SHA-256 6b9ea46cfe92b68605edb63ecf16af1485c17211e37c5bb4570c92bed78ac5f6
+
+/*
+The MIT License
+
+Copyright (c) 2017 Daan Sprenkels <hello@dsprenkels.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
+
 SHA-256 6df43f6f4b5d4587f3d8d71e45532c688fd168afa5fe89d571cb32fa09c4ef51
 
                               Apache License
@@ -6237,6 +6450,16 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 
+SHA-256 722fab2590a3e2fcf426c86d805f9aecd5320892d335551cabb198a37ec7f8f5
+
+/* Based on the public domain implementation in
+ * crypto_hash/keccakc512/simple/ from http://bench.cr.yp.to/supercop.html
+ * by Ronny Van Keer
+ * and the public domain "TweetFips202" implementation
+ * from https://twitter.com/tweetfips202
+ * by Gilles Van Assche, Daniel J. Bernstein, and Peter Schwabe */
+
+
 SHA-256 7365cc8878a1d7ce155a58c4ca09c3d7a6be413efa5334a80ea842912b669349
 
 Copyright (c) 2016--2023
@@ -6264,6 +6487,13 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
 IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
+
+
+SHA-256 745a24cf09b799e3c418bca14119d6a34b55669709d59c196e946ab0accfe470
+
+/* Based on the public domain implementation in
+ * crypto_hash/sha512/ref/ from http://bench.cr.yp.to/supercop.html
+ * by D. J. Bernstein */
 
 
 SHA-256 74db5baf44a41b1000312c673544b3374e4198af5605c7f9080a402cec42cfa3
@@ -6913,6 +7143,24 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
 IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
+
+
+SHA-256 8f0736f44915c65c86f7784f289ebca705f7c08043a4495b0f94790b6fb29f73
+
+/*
+Implementation by the Keccak, Keyak and Ketje Teams, namely, Guido Bertoni,
+Joan Daemen, Michaël Peeters, Gilles Van Assche and Ronny Van Keer, hereby
+denoted as "the implementer".
+
+For more information, feedback or questions, please refer to our websites:
+http://keccak.noekeon.org/
+http://keyak.noekeon.org/
+http://ketje.noekeon.org/
+
+To the extent possible under law, the implementer has waived all copyright
+and related or neighboring rights to the source code in this file.
+http://creativecommons.org/publicdomain/zero/1.0/
+*/
 
 
 SHA-256 90a8b6622d5e3faa3055007a9ab99c4e99a51e6ebdccbada7530cb16dc2bd4fb
@@ -9106,6 +9354,16 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 
+SHA-256 b7165d7881b60df1566ce85aaf07efef7d412067916cd3ad98d2b384ec8165bc
+
+/*
+ * This file is licensed
+ * under Apache 2.0 (https://www.apache.org/licenses/LICENSE-2.0.html)
+ * at https://github.com/GMUCERG/PQC_NEON/blob/main/neon/kyber or
+ * public domain at https://github.com/cothan/kyber/blob/master/neon
+ */
+
+
 SHA-256 b7e650f3fce5c53249d1cdc608b54df156a97edd636cf9d23498d0cfe7aec63e
 
 The MIT License (MIT)
@@ -9156,6 +9414,43 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
 IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
+
+
+SHA-256 bf878cebd92e6db40fac69cb9546003a9a0eac8cb1f1c255bdd2f54f275b546b
+
+/*
+ * This file was originally licensed
+ * under Apache 2.0 (https://www.apache.org/licenses/LICENSE-2.0.html)
+ * at https://github.com/GMUCERG/PQC_NEON/blob/main/neon/kyber or
+ * public domain at https://github.com/cothan/kyber/blob/master/neon
+ *
+ * We offer
+ * CC0 1.0 Universal or the following MIT License for this file.
+ * You may freely choose one of them that applies.
+ *
+ * MIT License
+ *
+ * Copyright (c) 2023: Hanno Becker, Vincent Hwang, Matthias J. Kannwischer, Bo-Yin Yang, and Shang-Yi Yang
+ *
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 
 SHA-256 c09aae9d3c77b531f56351a9947bc7446511d6b025b3255312d3e3442a9a7583
@@ -10537,6 +10832,28 @@ DEALINGS IN THE SOFTWARE.
 SHA-256 db11fec9946737df39ca3898d9cd8c10ec6f6c3a884a6802b0ad0b81b4e8f23a
 
 MIT OR Apache-2.0
+
+SHA-256 dd7072d401d53d1476f1206446e668b7ca4e799d9694338fd66f02617daa0083
+
+/*
+Implementation by Gilles Van Assche and Ronny Van Keer, hereby denoted as "the implementer".
+
+For more information, feedback or questions, please refer to our website:
+https://keccak.team/
+
+To the extent possible under law, the implementer has waived all copyright
+and related or neighboring rights to the source code in this file.
+http://creativecommons.org/publicdomain/zero/1.0/
+
+---
+
+This file implements Keccak-p[1600]×4 in a PlSnP-compatible way.
+Please refer to PlSnP-documentation.h for more details.
+
+This implementation comes with KeccakP-1600-times4-SnP.h in the same folder.
+Please refer to LowLevel.build for the exact list of other files it must be combined with.
+*/
+
 
 SHA-256 e0dfaf44db452d5dc387e3a68f0e160ff94c2eaa94a99efae02db58f10b39703
 

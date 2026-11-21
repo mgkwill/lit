@@ -46,9 +46,14 @@ The collector now includes r-efi's `AUTHORS` permission text and pinned reposito
 licenses for seven WASI/wasm-tools packages. It checks supplemental notice hashes
 and source revisions. [Supplement records](licenses/README.md) explain the inputs.
 
-Two gaps remain: pqcrypto-internals 0.2.11 and pqcrypto-traits 0.3.5 declare
-MIT or Apache-2.0 but omit notice files from both their packages and pinned
-repository trees. The manifest lists them explicitly. Resolve required notices
-for distributed code before public release. This inventory is not a completed
-license-compliance review.
+The two PQCrypto notice gaps are resolved for the pinned versions. We select the
+Apache-2.0 alternative declared by each package and preserve the separate
+embedded MIT, Gladman, public-domain, and NIST notices. The collector checks
+source-comment excerpts against their exact registry files and hashes.
+[Notice review and limits](../audits/crypto-notices-2026-11-20.md) records the
+primary sources and the NIST permission lineage. No copyright holder was invented.
+
+Every resolved package now has collected notice text. That is a completed notice
+inventory, not certification of every contributor's rights. Dependency maintenance
+and the reported security advisory remain separate issues.
 Do not rewrite third-party license text into plain language.
