@@ -91,3 +91,18 @@ jobs:
 
       - name: Generate docs
         run: cargo doc --no-deps
+
+  provenance-evidence:
+    name: Verify sanitized provenance evidence
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python3 -B audits/evidence/tools/verify_archive.py
+      - run: python3 -B tests/provenance_export_regression.py
+      - run: python3 -B tests/provenance_redaction_regression.py
+      - run: python3 -B audits/privacy/verify_sanitized_history.py

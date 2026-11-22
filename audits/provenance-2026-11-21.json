@@ -177,14 +177,14 @@
   },
   "transcript_archive": {
     "manifest": "evidence/manifest.json",
-    "manifest_sha256": "80a004e9457dfbc2d5c3265c24e45b8c4df6d430cc31e695ce5fc9488d45e6d9",
+    "manifest_sha256": "97d27faad53f957af749fb23a416a1d583bff0801f839eba5d93d8dc49695a07",
     "sessions": 8,
     "records": 37169,
     "commits_with_output_receipts": 141,
     "format": "Minimized JSONL record exports, gzip mtime=0; bodies withheld; selected reviewed excerpts stored separately. Not verbatim transcripts.",
     "boundary": "3d2e318530bb7d08c6c98b7d0481625608810f7f"
   },
-  "history_inventory_sha256": "d3945a58a56b799d725d75f3c7cbc6a58e23ff0c6ca67dd827bb18ea8125db2d",
+  "history_inventory_sha256": "a06793f9a3785157a8ab26488755765c7b0541a01a21ea9bade3fbaa5989f295",
   "source_match_ledger_sha256": "f6fd2ead5ad276d6cca195d2959c8c7f3653785d794334c456d23243b7c5b563",
   "scanner_self_checks": {
     "identifier_sensitive_mode_distinguishes_rename": true,
@@ -201,5 +201,16 @@
     "candidates.json": "949baca7a1bf696446cf82c77ae64be56dbfc180fe7dda37d936ba3423bae74f",
     "formatting-replay.json": "edbda83eb1c8d9ffb9787c38f1e45d747b10b530f9769e4eb03f8365fb3d6ce7",
     "manifest.json": "733902c82450dd706b0e2f355ffc61e1121012cd0a1c145053e172c36c4ce170"
+  },
+  "original_byte_identities": {
+    "history_inventory_sha256": "d3945a58a56b799d725d75f3c7cbc6a58e23ff0c6ca67dd827bb18ea8125db2d",
+    "source_match_ledger_sha256": "f6fd2ead5ad276d6cca195d2959c8c7f3653785d794334c456d23243b7c5b563",
+    "transcript_archive_manifest_sha256": "80a004e9457dfbc2d5c3265c24e45b8c4df6d430cc31e695ce5fc9488d45e6d9"
+  },
+  "history_projection": {
+    "file": "audits/privacy/history-map.json",
+    "sha256": "33b921a79b024e07a7f816378f8d6ea2871138725883668d273f3f475b47596a",
+    "private_policy_sha256": "abed527df48eac5802f372041347dcbef098739ce4cd9616a8db2a1041f4a0ff",
+    "semantics": "Commit IDs remain original evidence identities; Git traversal resolves through the privacy projection. Original record hashes and gzip exports remain unchanged."
   }
 }

@@ -20,3 +20,8 @@ append_responses.ps1
 # Defense in depth; release private keys must live outside the checkout.
 *.key
 *.key.*
+
+# Private provenance custody never belongs in public Git history.
+/private-redaction-policy.json
+/replacement-plan.json
+*.private.bundle

@@ -63,3 +63,10 @@ actually performed and verified.
 The reviewed archive at [audits/evidence/README.md](audits/evidence/README.md)
 records its completed commit/session boundaries. Preserve those boundaries;
 later work needs an explicit archival update rather than inheriting coverage.
+
+For provenance work after the privacy rewrite, first read
+[audits/privacy/README.md](audits/privacy/README.md). Resolve historical source
+IDs through the projection map; preserve the unchanged MIT baseline and original
+record hashes. Keep deployment identifiers and original custody paths out of
+commits and evidence exports. Use neutral labels and configurable runtime inputs.
+Private redaction policies and original records remain outside Git.

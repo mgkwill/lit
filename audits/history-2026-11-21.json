@@ -2086,5 +2086,10 @@
       "classification": "openlit-development",
       "included_in_v0_1_0": false
     }
-  ]
+  ],
+  "privacy_projection": {
+    "file": "privacy/history-map.json",
+    "immutable_ids": "Original historical identities; resolve mapped IDs for Git traversal.",
+    "text_labels": "Privacy-redacted projection, not verbatim original commit subjects."
+  }
 }

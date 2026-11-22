@@ -468,5 +468,11 @@
     "Principal implementation record frozen at original record 35705, the exact current-HEAD commit receipt; later records excluded.",
     "Older provenance-audit root retained at its prior 375-record boundary; the newly resumed audit and its current children are ongoing and excluded.",
     "Eight historical sessions discovered by exact cwd and implementation/audit parent identifiers; deleted, unpersisted and external activity cannot be ruled out."
-  ]
+  ],
+  "history_projection": {
+    "file": "audits/privacy/history-map.json",
+    "sha256": "33b921a79b024e07a7f816378f8d6ea2871138725883668d273f3f475b47596a",
+    "private_policy_sha256": "abed527df48eac5802f372041347dcbef098739ce4cd9616a8db2a1041f4a0ff",
+    "semantics": "Commit IDs remain original evidence identities; Git traversal resolves through the privacy projection. Original record hashes and gzip exports remain unchanged."
+  }
 }

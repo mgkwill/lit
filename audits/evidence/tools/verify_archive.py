@@ -8,19 +8,26 @@ import re
 import subprocess
 
 from export_records import verify
+from history_projection import commit as projected_commit, verify_binding
+from redaction_policy import sanitize
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--originals', type=Path)
+    parser.add_argument('--redactions', type=Path, help='Private policy for reproducing redacted excerpts')
     args = parser.parse_args()
     base = Path(__file__).resolve().parents[1]
     repo = base.parents[1]
     manifest = json.loads((base / 'manifest.json').read_text())
+    verify_binding(repo, manifest)
+    redactions = json.loads(args.redactions.read_text()) if args.redactions else None
+    if redactions:
+        assert hashlib.sha256(args.redactions.read_bytes()).hexdigest() == manifest['history_projection']['private_policy_sha256']
     commits = json.loads((base / manifest['commit_record_index']).read_text())
     expected = subprocess.check_output(['git', 'rev-list',
-        '98c59bb2dbebcf7f575993a4ad89e1300a578c83..' + manifest['source_boundary']], cwd=repo, text=True)
-    assert set(expected.splitlines()) == {c['commit'] for c in commits}
+        '98c59bb2dbebcf7f575993a4ad89e1300a578c83..' + projected_commit(repo, manifest['source_boundary'])], cwd=repo, text=True)
+    assert set(expected.splitlines()) == {projected_commit(repo, c['commit']) for c in commits}
     sessions = {}
     count = 0
     for receipt in manifest['sessions']:
@@ -83,7 +90,9 @@ def main():
                 start = text.index("python3 - <<'PY'\n") + len("python3 - <<'PY'\n")
                 text = text[start:text.index('\nPY', start)]
             text = re.sub(r'/Users/[^\s`<>"\']+', '<private-local-path>', text)
-            assert text == excerpt['text']
+            if redactions:
+                text = sanitize(text.encode(), redactions).decode()
+            assert text == excerpt['text'], 'Redacted excerpts require the original private --redactions policy'
     for filename in ['reviewed-excerpts.json', 'source-selector-review.json', 'commit-records.json']:
         data = (base / filename).read_text()
         assert not re.search(r'(?:gh[opusr]_|github_pat_)[A-Za-z0-9]{15,}|-----BEGIN .*PRIVATE KEY|/Users/|10\.10\.', data), filename

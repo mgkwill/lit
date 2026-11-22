@@ -73,3 +73,13 @@ and a separate review of 17 dependency-source routes. These are heuristic screen
 and selected-statement reviews, not a semantic reading of every payload byte.
 Future implementation requires another explicit snapshot; these hashes do not
 silently cover later work.
+
+## Privacy projection
+
+The [privacy history map](../privacy/history-map.json) resolves original
+commit IDs to the sanitized Git graph. The gzip exports and original-record
+hashes are unchanged; public text labels/excerpts have privacy redactions.
+Git receipt coverage is checked against mapped IDs, while original transcript
+receipts continue to match original IDs. Full original reproduction additionally
+uses `--redactions /path/to/private-policy.json`. The policy remains outside Git.
+See [projection details](../privacy/README.md) for release-identity and cache limits.
