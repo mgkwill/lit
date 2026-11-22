@@ -1,6 +1,6 @@
 [package]
 name = "openlit"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["Marcus G.K. Williams", "OpenLit contributors", "Nervosys"]
 description = "Version control for people and coding agents, with JSON output and Git interoperability."

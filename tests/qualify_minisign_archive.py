@@ -34,7 +34,7 @@ def main():
     parser.add_argument("--output", type=Path, required=True, help="New directory for the signed test bundle")
     args = parser.parse_args()
     if args.archive.name != release.names([args.target])[0]:
-        parser.error("Archive must use the exact OpenLit 0.1.0 target name")
+        parser.error("Archive must use the exact OpenLit 0.1.1 target name")
     args.output.mkdir(parents=True, exist_ok=False)
     shutil.copy2(args.archive, args.output / args.archive.name)
     with tempfile.TemporaryDirectory(prefix="openlit-disposable-keys-") as temporary:

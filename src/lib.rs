@@ -4,8 +4,8 @@
 //! Rust library also keeps the `lit` import name for compatibility.
 //!
 //! OpenLit provides JSON command responses, JSONL batches with rollback,
-//! Git import and export, and an MCP server. The first OpenLit release is
-//! 0.1.0. It is based on the MIT-licensed Lit snapshot, with independent
+//! Git import and export, and an MCP server. This OpenLit version is
+//! 0.1.1. It is based on the MIT-licensed Lit snapshot, with independent
 //! recovery work. See the repository guides for tested limits.
 //!
 //! ## Usage

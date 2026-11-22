@@ -10,6 +10,9 @@ without sharing a working directory.
 OpenLit release, is available for Linux, macOS, and Windows. Verify downloads
 with [Minisign](docs/RELEASE_CREDENTIALS.md) before extracting or running them.
 
+Version 0.1.1 is in preparation and includes the updated copyright and project
+attribution in its archives. It has not been published.
+
 ## Start here
 
 Download and verify an archive using the [installation guide](docs/INSTALL.md),

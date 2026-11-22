@@ -61,7 +61,7 @@ jobs:
       - name: Retain verified signed candidate only
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: openlit-0.1.0-publisher-signed
+          name: openlit-0.1.1-publisher-signed
           path: ${{ runner.temp }}/publisher-output/
           if-no-files-found: error
           retention-days: 14

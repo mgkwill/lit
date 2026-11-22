@@ -17,7 +17,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
     env:
-      RELEASE_TAG: 0.1.0
+      RELEASE_TAG: 0.1.1
     strategy:
       fail-fast: false
       matrix:
@@ -67,13 +67,13 @@ jobs:
         if: runner.os != 'Windows'
         run: |
           mkdir release-package
-          cp target/${{ matrix.target }}/release/${{ matrix.artifact }} LICENSE THIRD_PARTY_NOTICES.txt release-package/
-          tar -czf "openlit-${RELEASE_TAG}-${{ matrix.target }}.tar.gz" -C release-package ${{ matrix.artifact }} LICENSE THIRD_PARTY_NOTICES.txt
+          cp target/${{ matrix.target }}/release/${{ matrix.artifact }} LICENSE NOTICE.md THIRD_PARTY_NOTICES.txt release-package/
+          tar -czf "openlit-${RELEASE_TAG}-${{ matrix.target }}.tar.gz" -C release-package ${{ matrix.artifact }} LICENSE NOTICE.md THIRD_PARTY_NOTICES.txt
 
       - name: Package artifact (windows)
         if: runner.os == 'Windows'
         run: |
-          Compress-Archive -LiteralPath 'target/${{ matrix.target }}/release/${{ matrix.artifact }}', 'LICENSE', 'THIRD_PARTY_NOTICES.txt' -DestinationPath "openlit-$env:RELEASE_TAG-${{ matrix.target }}.zip"
+          Compress-Archive -LiteralPath 'target/${{ matrix.target }}/release/${{ matrix.artifact }}', 'LICENSE', 'NOTICE.md', 'THIRD_PARTY_NOTICES.txt' -DestinationPath "openlit-$env:RELEASE_TAG-${{ matrix.target }}.zip"
 
       - name: Set up Python for package tests
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065

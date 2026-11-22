@@ -1,10 +1,13 @@
 # OpenLit release process
 
-The first OpenLit version is **0.1.0**. The product and Cargo package are
+The next OpenLit release is **0.1.1**. The product and Cargo package are
 `openlit`; the executable and Rust library are `lit`.
 
 [OpenLit 0.1.0 is published](https://github.com/mgkwill/lit/releases/tag/v0.1.0)
-from `67cbd625a372800b7f626de66a43310255c82b82`. See the
+with binary assets originally built from `67cbd625a372800b7f626de66a43310255c82b82`.
+The tag now points to its privacy-redacted projection; see
+[the history mapping](../audits/privacy/README.md). Version 0.1.1 must be built
+and signed against its own current source ID. See the
 [publication record](../audits/publication-0.1.0-2026-11-21.md). Future publication
 still requires the owner's explicit approval; do not move an existing release tag.
 
@@ -13,7 +16,7 @@ still requires the owner's explicit approval; do not move an existing release ta
 1. Build the same reviewed source revision for Linux x86-64 and arm64, macOS
    Intel and Apple Silicon, and Windows x86-64. Use the lockfile and retain each
    native build receipt.
-2. Package `lit` or `lit.exe`, `LICENSE`, and `THIRD_PARTY_NOTICES.txt`. Check the
+2. Package `lit` or `lit.exe`, `LICENSE`, `NOTICE.md`, and `THIRD_PARTY_NOTICES.txt`. Check the
    notices and version. Unix archives use `.tar.gz`; Windows uses `.zip`.
 3. Sign every archive, `SHA256SUMS`, and `RELEASE.json` with the encrypted
    OpenLit Minisign publisher key kept outside Git. Independently verify with
@@ -25,7 +28,7 @@ still requires the owner's explicit approval; do not move an existing release ta
 5. Review the source, target list, public key, hashes, tests, release notes,
    destination, and limitations with the owner. **Ask before publishing.**
 
-Minisign is the signing requirement for 0.1.0. Apple Developer ID/notarization,
+Minisign is the signing requirement for 0.1.1. Apple Developer ID/notarization,
 Windows Authenticode, and GitHub artifact attestations are optional later work.
 Minisign does not remove OS trust warnings or prove how a binary was built.
 Commit signatures and OpenLit's encrypted repository storage are separate.
@@ -60,7 +63,7 @@ merge rule stays unchanged: no manual statuses or bypass actors.
 
 ## Release evidence
 
-Use [the 0.1.0 release notes](../CHANGELOG.md). Retain exact source and archive
+Use [the 0.1.1 release notes](../CHANGELOG.md). Retain exact source and archive
 hashes, the trusted publisher public key, signatures, and verification receipts.
 Repeat qualification after rebuilding or changing the packaged bytes.
 

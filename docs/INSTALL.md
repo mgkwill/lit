@@ -15,7 +15,8 @@ cargo install --locked --path . --bin lit
 lit --version
 ```
 
-Expected version: `lit 0.1.0`. On Windows, use PowerShell with the Visual Studio
+Expected version when building this checkout: `lit 0.1.1` (not yet published).
+The current published archives report `lit 0.1.0`. On Windows, use PowerShell with the Visual Studio
 C++ build tools installed. `cargo install --path .` installs the local OpenLit
 package from this checkout.
 
@@ -37,6 +38,7 @@ runs before replacing it. On Unix use `command -v lit`; in PowerShell use
 Archives use `openlit-VERSION-TARGET.tar.gz` on Unix and `.zip` on Windows.
 Inside is `lit` or `lit.exe`, plus the original `LICENSE` and
 `THIRD_PARTY_NOTICES.txt`. Keep the license and notices with the installed binary.
+Version 0.1.1 packages will also include `NOTICE.md` with project attribution.
 Use the published release assets; separate CI qualification artifacts use
 disposable keys and are not publisher-signed releases.
 

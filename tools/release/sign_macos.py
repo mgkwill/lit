@@ -64,7 +64,7 @@ def main():
         payload.mkdir()
         binary = payload / 'lit'
         shutil.copy2(args.binary, binary)
-        for name in ('LICENSE', 'THIRD_PARTY_NOTICES.txt'):
+        for name in ('LICENSE', 'NOTICE.md', 'THIRD_PARTY_NOTICES.txt'):
             shutil.copy2(ROOT / name, payload / name)
         run('codesign', '--force', '--sign', args.certificate, '--options', 'runtime',
             '--timestamp', '--identifier', 'org.openlit.lit', binary)

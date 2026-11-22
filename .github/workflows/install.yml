@@ -14,6 +14,11 @@ on:
       - 'tests/release_signing_regression.py'
       - 'tests/minisign_release_regression.py'
       - 'tests/ci_minisign_regression.py'
+      - 'tests/release_attribution_regression.py'
+      - 'LICENSE'
+      - 'NOTICE.md'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
       - 'tests/qualify_minisign_archive.py'
       - 'tests/qualify_release_archive.py'
       - 'tools/release/**'
@@ -56,3 +61,4 @@ jobs:
         run: python -B tools/release/fetch_minisign.py "$RUNNER_TEMP/minisign" >> "$GITHUB_PATH"
       - run: python -B tests/minisign_release_regression.py
       - run: python -B tests/ci_minisign_regression.py
+      - run: python -B tests/release_attribution_regression.py

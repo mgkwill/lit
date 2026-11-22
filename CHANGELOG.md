@@ -1,5 +1,14 @@
 # OpenLit release notes
 
+## 0.1.1 — unreleased
+
+- Include the updated MIT copyright notice for Marcus G.K. Williams while
+  preserving Nervosys attribution.
+- Include `NOTICE.md` in every native archive and verify it against the build
+  source before running the extracted executable.
+- Build and sign from the current privacy-redacted source history. Previous
+  0.1.0 signatures remain historical evidence for their original build.
+
 ## 0.1.0 — 2026-11-21
 
 This is the first OpenLit release. Run it with `lit`.

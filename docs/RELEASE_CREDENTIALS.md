@@ -1,6 +1,6 @@
 # Sign OpenLit downloads with Minisign
 
-OpenLit 0.1.0 uses detached Minisign signatures. Each archive, `SHA256SUMS`, and
+OpenLit 0.1.1 uses detached Minisign signatures. Each archive, `SHA256SUMS`, and
 `RELEASE.json` gets a matching `.minisig` file. Signing does not change the archive.
 The executable is `lit` (`lit.exe` on Windows).
 
@@ -67,24 +67,24 @@ never puts secrets in command arguments, retained files, or logs.
 
 It then verifies all seven signatures and checks rejection of a wrong key,
 wrong source, altered archive, altered manifests, and broken signature. Only
-a fully verified result is uploaded as `openlit-0.1.0-publisher-signed`, retained
+a fully verified result is uploaded as `openlit-0.1.1-publisher-signed`, retained
 for 14 days. Inside are `bundle/` with the five archives, two manifests, and
 their signatures; the public key; and assembly, signing, and verification
 receipts. The artifact's source commit identifies the candidate being signed.
 
 This workflow has read-only repository permissions and cannot create a release
-or tag. Publishing `0.1.0` remains a separate, explicitly approved action.
+or tag. Publishing `0.1.1` remains a separate, explicitly approved action.
 Minisign signatures do not provide Apple notarization or Windows Authenticode.
 
 ## Sign the approved archives
 
 Put only the five fresh archives in a new directory outside the checkout:
 
-- `openlit-0.1.0-x86_64-unknown-linux-gnu.tar.gz`
-- `openlit-0.1.0-aarch64-unknown-linux-gnu.tar.gz`
-- `openlit-0.1.0-x86_64-apple-darwin.tar.gz`
-- `openlit-0.1.0-aarch64-apple-darwin.tar.gz`
-- `openlit-0.1.0-x86_64-pc-windows-msvc.zip`
+- `openlit-0.1.1-x86_64-unknown-linux-gnu.tar.gz`
+- `openlit-0.1.1-aarch64-unknown-linux-gnu.tar.gz`
+- `openlit-0.1.1-x86_64-apple-darwin.tar.gz`
+- `openlit-0.1.1-aarch64-apple-darwin.tar.gz`
+- `openlit-0.1.1-x86_64-pc-windows-msvc.zip`
 
 Replace `FULL_APPROVED_COMMIT_SHA` below with the reviewed 40-character commit.
 The source identity is the publisher's signed statement, not an independent
@@ -121,7 +121,7 @@ For one downloaded archive, Minisign alone verifies its detached signature:
 
 ```sh
 minisign -V -H -p /path/to/trusted/openlit.pub \
-  -m openlit-0.1.0-aarch64-apple-darwin.tar.gz
+  -m openlit-0.1.1-aarch64-apple-darwin.tar.gz
 ```
 
 The full helper additionally verifies the release metadata and complete target
@@ -133,7 +133,7 @@ on Apple Silicon, with the full candidate directory available:
 
 ```sh
 python3 tests/qualify_release_archive.py \
-  /path/to/candidate/openlit-0.1.0-aarch64-apple-darwin.tar.gz \
+  /path/to/candidate/openlit-0.1.1-aarch64-apple-darwin.tar.gz \
   aarch64-apple-darwin --minisign-public-key /path/to/trusted/openlit.pub \
   --source-commit FULL_APPROVED_COMMIT_SHA
 ```

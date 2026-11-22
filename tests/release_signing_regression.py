@@ -36,7 +36,7 @@ class ReleaseGates(unittest.TestCase):
         self.folder = Path(temp.name)
         self.lines = []
         for target, extension in attest.TARGETS.items():
-            name = f'openlit-0.1.0-{target}{extension}'
+            name = f'openlit-0.1.1-{target}{extension}'
             payload = name.encode()
             (self.folder / name).write_bytes(payload)
             self.lines.append(hashlib.sha256(payload).hexdigest() + '  ' + name)

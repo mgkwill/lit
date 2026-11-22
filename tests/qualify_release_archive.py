@@ -39,7 +39,7 @@ def digest(path):
 
 
 def unpack(archive, directory, name, team=None, certificate=None):
-    expected = sorted(["LICENSE", "THIRD_PARTY_NOTICES.txt", name])
+    expected = sorted(["LICENSE", "NOTICE.md", "THIRD_PARTY_NOTICES.txt", name])
     if archive.suffix == ".dmg":
         spec = importlib.util.spec_from_file_location("mac_signing", TESTS.parent / "tools/release/sign_macos.py")
         signing = importlib.util.module_from_spec(spec)
@@ -70,6 +70,7 @@ def unpack(archive, directory, name, team=None, certificate=None):
             assert sorted(member.name for member in members) == expected
             assert all(member.isfile() for member in members)
             package.extractall(directory, filter="data")
+    assert (directory / "NOTICE.md").read_bytes() == (TESTS.parent / "NOTICE.md").read_bytes()
     assert (directory / "LICENSE").read_bytes() == (TESTS.parent / "LICENSE").read_bytes()
     assert (directory / "THIRD_PARTY_NOTICES.txt").read_bytes() == (TESTS.parent / "THIRD_PARTY_NOTICES.txt").read_bytes()
     return directory / name

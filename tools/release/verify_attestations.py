@@ -25,11 +25,11 @@ def digest(path):
 
 
 def manifest_files(folder):
-    """Require all five 0.1.0 distributions, no duplicates or path escapes."""
+    """Require all five 0.1.1 distributions, no duplicates or path escapes."""
     manifest = folder / 'SHA256SUMS'
     if manifest.is_symlink():
         raise ValueError('Checksum manifest must not be a symlink')
-    expected = {f'openlit-0.1.0-{target}{ext}' for target, ext in TARGETS.items()}
+    expected = {f'openlit-0.1.1-{target}{ext}' for target, ext in TARGETS.items()}
     seen = set()
     for line in manifest.read_text().splitlines():
         match = re.fullmatch(r'([a-f0-9]{64})  ([A-Za-z0-9._-]+)', line)

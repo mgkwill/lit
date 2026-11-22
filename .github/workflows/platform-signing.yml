@@ -102,7 +102,7 @@ jobs:
       TIMESTAMP_URL: ${{ vars.OPENLIT_TIMESTAMP_URL }}
       TARGET: ${{ matrix.target }}
       BINARY: target/${{ matrix.target }}/release/${{ matrix.file }}
-      ARCHIVE: openlit-0.1.0-${{ matrix.target }}.${{ matrix.extension }}
+      ARCHIVE: openlit-0.1.1-${{ matrix.target }}.${{ matrix.extension }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -130,13 +130,13 @@ jobs:
         shell: pwsh
         run: |
           ./tools/release/sign_windows.ps1 -Binary $env:BINARY -Thumbprint $env:WINDOWS_CERT -Mode Sign -TimestampUrl $env:TIMESTAMP_URL
-          Compress-Archive -LiteralPath $env:BINARY, 'LICENSE', 'THIRD_PARTY_NOTICES.txt' -DestinationPath "dist/$env:ARCHIVE"
+          Compress-Archive -LiteralPath $env:BINARY, 'LICENSE', 'NOTICE.md', 'THIRD_PARTY_NOTICES.txt' -DestinationPath "dist/$env:ARCHIVE"
       - name: Package Linux distribution
         if: runner.os == 'Linux'
         run: |
           mkdir package
-          cp "$BINARY" LICENSE THIRD_PARTY_NOTICES.txt package/
-          tar -czf "dist/$ARCHIVE" -C package lit LICENSE THIRD_PARTY_NOTICES.txt
+          cp "$BINARY" LICENSE NOTICE.md THIRD_PARTY_NOTICES.txt package/
+          tar -czf "dist/$ARCHIVE" -C package lit LICENSE NOTICE.md THIRD_PARTY_NOTICES.txt
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: signed-${{ matrix.target }}
@@ -163,7 +163,7 @@ jobs:
       APPLE_CERT: ${{ vars.OPENLIT_APPLE_CERTIFICATE }}
       WINDOWS_CERT: ${{ vars.OPENLIT_WINDOWS_CERTIFICATE }}
       TARGET: ${{ matrix.target }}
-      ARCHIVE: openlit-0.1.0-${{ matrix.target }}.${{ matrix.extension }}
+      ARCHIVE: openlit-0.1.1-${{ matrix.target }}.${{ matrix.extension }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:

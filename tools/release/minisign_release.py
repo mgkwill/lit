@@ -1,4 +1,4 @@
-"""Sign or verify OpenLit 0.1.0 archives. This tool never publishes anything."""
+"""Sign or verify OpenLit 0.1.1 archives. This tool never publishes anything."""
 import argparse
 import hashlib
 import json
@@ -7,7 +7,7 @@ from pathlib import Path
 import re
 import subprocess
 
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 TARGETS = {
     "x86_64-unknown-linux-gnu": ".tar.gz",
     "aarch64-unknown-linux-gnu": ".tar.gz",
