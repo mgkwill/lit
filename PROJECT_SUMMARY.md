@@ -1,11 +1,11 @@
 # OpenLit at a glance
 
 OpenLit is a version-control tool for people and coding agents. The executable
-is `lit`; the first OpenLit release is being prepared as 0.1.0.
+is `lit`. Version 0.1.0 is published; 0.1.1 is being prepared with updated
+copyright and attribution in the archives.
 
-The project starts from the MIT-licensed Lit snapshot `98c59bb` and independent
-recovery work. Later upstream versions are black-box references, not source
-inputs. The original MIT attribution remains in [LICENSE](LICENSE).
+See [project attribution](NOTICE.md) for the original MIT source and contributor
+notices.
 
 The work focuses on reliable JSON operations, rollback and crash recovery,
 Git interoperability, separate agent workspaces, and controlled publication
@@ -16,6 +16,5 @@ Native candidate tests cover Linux x86-64 and arm64, macOS Intel and Apple
 Silicon, and Windows x86-64. Platform limits and exact evidence are in
 [installation](docs/INSTALL.md) and [testing](TESTING.md).
 
-Full upstream parity, blanket security certification, and a public signed release
-are not claimed. See [the release checklist](docs/RELEASING.md) and
+Full upstream parity and blanket security certification are not claimed. See [the release checklist](docs/RELEASING.md) and
 [the roadmap](ROADMAP.md) for what remains.

@@ -1,23 +1,22 @@
 # What is next for OpenLit
 
-The current goal is an honest, usable 0.1.0 release of the MIT-based recovery.
-We prioritize agent workflows over a checklist of every upstream feature.
+Version 0.1.0 is published. The next release, 0.1.1, carries updated copyright
+and attribution in every archive. We prioritize agent workflows over a checklist
+of every upstream feature.
 
 ## Release preparation
 
-- [x] Use the OpenLit product and package name while keeping `lit` at the command line.
-- [x] Rewrite active guides in plain language and check the examples against the binary.
-- [x] Rebuild the renamed version on all five native targets and save exact evidence.
-- [x] Resolve the known notice gaps and complete the bounded provenance/record
-  review through `7ed82dd`. [Scope and archived evidence](audits/provenance-2026-11-20.md).
-- [ ] Choose publisher identities, implement signing and attestations, and test the
-  final signed archives on clean machines.
-- [ ] Present the exact release to the owner and ask before tagging or publishing.
+- [x] Publish the first release with Minisign signatures and verified downloads.
+  [Publication record](audits/publication-0.1.0-2026-11-21.md).
+- [x] Update contributor attribution and include `NOTICE.md` in each archive.
+- [x] Add regression checks for missing or altered archive notices.
+- [ ] Build and test 0.1.1 on all five native targets from the current source.
+- [ ] Sign the fresh archives through the approval-protected publisher workflow
+  and independently verify signatures and tamper rejection.
+- [ ] Present the exact 0.1.1 candidate to the owner and ask before publishing.
 
-[Candidate evidence](tests/fixtures/release-qualification/2026-11-20-openlit-notices.md)
-records the exact tested sources and remaining limits.
-
-The publication workflow is disabled while those requirements remain open.
+The signing workflow cannot publish a release. Apple notarization, Windows
+Authenticode, and GitHub attestations remain optional future work.
 See [release requirements](docs/RELEASING.md).
 
 ## After the first release

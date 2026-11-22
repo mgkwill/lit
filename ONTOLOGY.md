@@ -17,7 +17,7 @@ arguments or every platform is supported.
 MCP clients use `tools/list` for tool-specific schemas. Tool names such as
 `lit_add`, `lit_status`, and `lit_schema` stay unchanged by the OpenLit rename.
 Use `lit mcp-serve --stdio` in the intended repository. The reported package
-version is 0.1.0; protocol versions are separate and do not change with branding.
+version follows the installed release; protocol versions are separate.
 
 The ontology is maintained in `src/ontology/mod.rs`. When a command changes,
 update its CLI, schema, MCP mapping, and behavioral tests together. Avoid listing
