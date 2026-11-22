@@ -19,6 +19,33 @@
   "git_fsck": "passed",
   "mapping_sha256": "33b921a79b024e07a7f816378f8d6ea2871138725883668d273f3f475b47596a",
   "published_binary_assets": "Unchanged; original signed source identity retained, not a rebuilt release",
-  "remote_verification": "Pending final fresh clone",
-  "hosted_cache_purge": "not performed; service-side cleanup cannot be claimed by a Git ref rewrite"
+  "remote_verification": {
+    "status": "passed",
+    "verified_snapshot": "f3f017beec4ef0f85e1c843429291e47821e5d00",
+    "fresh_clone_known_private_values": "absent across reachable blobs, paths and commit messages",
+    "superseded_original_objects_absent": 282,
+    "compressed_historical_versions": 9,
+    "git_integrity": "passed",
+    "archive_checksums": 23,
+    "full_original_archive_reproduction": "passed using owner-held originals and redaction policy",
+    "public_export_tests": 2,
+    "privacy_projection_tests": 6
+  },
+  "hosted_cache_purge": {
+    "status": "outstanding",
+    "observed_old_commit_public_api_status": 200,
+    "support_request": "prepared privately, not submitted",
+    "scope": "Advertised Git refs and fresh clones are sanitized. GitHub service-side old-object retention is separate."
+  },
+  "local_checkout_cleanup": {
+    "status": "passed",
+    "obsolete_local_refs_and_reflogs": "pruned",
+    "superseded_commit_objects_absent": 132
+  },
+  "release_verification": {
+    "assets": 15,
+    "asset_ids_sizes_and_sha256_digests": "unchanged",
+    "release_metadata_target": "902d7525008524ff2b214089263836032c797a45",
+    "source_identity_disclosure": "updated"
+  }
 }
