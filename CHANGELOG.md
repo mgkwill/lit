@@ -1,6 +1,6 @@
 # OpenLit release notes
 
-## 0.1.0 — unreleased
+## 0.1.0 — 2026-11-21
 
 This is the first OpenLit release line. The executable remains `lit`.
 OpenLit is based on the MIT-licensed Lit snapshot `98c59bb`, with independent
@@ -21,7 +21,9 @@ and Apple Silicon, and Windows x86-64. Windows strict sandbox mode refuses to
 launch because it has no confinement backend. Isolated workspaces and native
 repository migration currently require macOS or Linux.
 
-The 0.1.0 candidate has passed approval-protected publisher signing and final
-signature, tamper-rejection, and archive checks. Publication still requires
-the owner's approval. See the [signing evidence](audits/ci-publisher-signing-2026-11-21.md)
-and [release requirements](docs/RELEASING.md).
+[OpenLit 0.1.0 is published](https://github.com/mgkwill/lit/releases/tag/v0.1.0)
+from tested source `67cbd62`. It passed approval-protected publisher signing and
+final signature, tamper-rejection, and archive checks. Public downloads were
+verified against those exact bytes. See the
+[signing evidence](audits/ci-publisher-signing-2026-11-21.md) and
+[publication record](audits/publication-0.1.0-2026-11-21.md).

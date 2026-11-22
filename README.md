@@ -6,14 +6,16 @@ OpenLit is version control for people and coding agents. It saves file history,
 returns JSON that programs can read, and lets separate workers propose changes
 without sharing a working directory. The command is still **`lit`**.
 
-We are preparing **0.1.0**, the first OpenLit release. It is not published yet.
-Release downloads will use [Minisign verification](docs/RELEASE_CREDENTIALS.md).
+[OpenLit 0.1.0](https://github.com/mgkwill/lit/releases/tag/v0.1.0), the first
+OpenLit release, is available for Linux, macOS, and Windows. Verify downloads
+with [Minisign](docs/RELEASE_CREDENTIALS.md) before extracting or running them.
 OpenLit starts from the MIT-licensed Lit snapshot and adds independent recovery
 work. It does not claim full compatibility with every upstream feature.
 
 ## Start here
 
-Build from this checkout with Rust and a C compiler:
+Download and verify an archive using the [installation guide](docs/INSTALL.md),
+or build from this checkout with Rust and a C compiler:
 
 ```sh
 cargo build --locked --release
@@ -23,8 +25,8 @@ cargo install --locked --path . --bin lit
 
 On Windows, the executable is `target\release\lit.exe`. Install Git as well
 if you will use Git remotes. See [installation](docs/INSTALL.md) for platform
-requirements. No `cargo install openlit` or public download is available from
-this preparation work.
+requirements. The package is not published to crates.io; use a release archive
+or install from this checkout.
 
 Create a small repository:
 

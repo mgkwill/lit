@@ -1,10 +1,15 @@
-# Prepare OpenLit 0.1.0
+# OpenLit release process
 
 The first OpenLit version is **0.1.0**. The product and Cargo package are
 `openlit`; the executable and Rust library name stay `lit`. This is an independent
 release line built from the MIT baseline, not an upstream 1.8.0 patch.
 
-## Required for the first release
+[OpenLit 0.1.0 is published](https://github.com/mgkwill/lit/releases/tag/v0.1.0)
+from `67cbd625a372800b7f626de66a43310255c82b82`. See the
+[publication record](../audits/publication-0.1.0-2026-11-21.md). Future publication
+still requires the owner's explicit approval; do not move an existing release tag.
+
+## Release checks
 
 1. Build the same reviewed source revision for Linux x86-64 and arm64, macOS
    Intel and Apple Silicon, and Windows x86-64. Use the lockfile and retain each

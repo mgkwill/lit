@@ -1,7 +1,9 @@
 # Install OpenLit
 
-OpenLit 0.1.0 is being prepared. No public release or registry package has been
-published by this work. The command stays `lit`, and Windows uses `lit.exe`.
+[OpenLit 0.1.0 downloads](https://github.com/mgkwill/lit/releases/tag/v0.1.0) are
+available for Linux, macOS, and Windows. The command stays `lit`, and Windows
+uses `lit.exe`. There is no crates.io package; use a verified release archive
+or build this checkout.
 
 ## Build this checkout
 
@@ -30,14 +32,18 @@ If another `lit` executable is already on your PATH, check which one your shell
 runs before replacing it. On Unix use `command -v lit`; in PowerShell use
 `Get-Command lit`. Keep your old binary if you need to compare versions.
 
-## Candidate archives
+## Release archives
 
 Archives use `openlit-VERSION-TARGET.tar.gz` on Unix and `.zip` on Windows.
-Inside is `lit` or `lit.exe`, plus the original `LICENSE` and `THIRD_PARTY_NOTICES.txt`. Qualification builds use signed metadata marked `qualification` and disposable
-test keys. They are not publisher-signed releases. Keep the license with the installed binary.
+Inside is `lit` or `lit.exe`, plus the original `LICENSE` and
+`THIRD_PARTY_NOTICES.txt`. Keep the license and notices with the installed binary.
+Use the published release assets; separate CI qualification artifacts use
+disposable keys and are not publisher-signed releases.
 
-Once an approved release is available, verify its Minisign signature with the
-independently trusted OpenLit public key before unpacking:
+Download the archive for your platform and its matching `.minisig` file from
+the release page. Obtain the public key from the
+[reviewed source](https://github.com/mgkwill/lit/blob/67cbd625a372800b7f626de66a43310255c82b82/keys/openlit.pub).
+Verify the signature before unpacking:
 
 ```sh
 minisign -V -H -p /path/to/trusted/openlit.pub \
@@ -50,23 +56,22 @@ A checksum alone does not authenticate a download. See
 
 ## Platforms
 
-| Target | OpenLit 0.1.0 candidate evidence | Requirements |
+| Target | OpenLit 0.1.0 release qualification | Requirements |
 | --- | --- | --- |
-| Linux x86-64 | Ubuntu 22.04, glibc 2.35; host-a | glibc 2.35 or newer and libgcc_s |
-| Linux arm64 | Ubuntu 22.04 arm64, glibc 2.35; host-e and host-f | glibc 2.35 or newer and libgcc_s |
+| Linux x86-64 | Ubuntu 22.04, glibc 2.35 | glibc 2.35 or newer and libgcc_s |
+| Linux arm64 | Ubuntu 22.04 arm64, glibc 2.35 | glibc 2.35 or newer and libgcc_s |
 | macOS Intel | macOS 15 Intel | System libraries |
 | macOS Apple Silicon | macOS 15 arm64 and local Mac | System libraries |
 | Windows x86-64 | Windows Server 2022 | Universal CRT and Visual C++ v14 runtime |
 
-The candidate Linux binaries require symbols through glibc 2.34, but the tested
+The Linux binaries require symbols through glibc 2.34, but the tested
 runtime floor is 2.35. A macOS deployment-target field is not proof that an older
 macOS release works. Windows desktop versions and Windows arm64 are not covered
-by that matrix. [Exact candidate evidence](../tests/fixtures/release-qualification/2026-11-20-openlit-notices.md)
+by that matrix. See the [exact release qualification evidence](../audits/ci-publisher-signing-2026-11-21.md).
 
 If Windows reports a missing `VCRUNTIME140.dll`, install the
 [Microsoft x64 Visual C++ Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist/).
 Git remotes need the system Git executable; SSH remotes also need SSH.
 
-Do not disable Gatekeeper or other platform checks to make an unsigned candidate
-look like a signed release. Minisign verifies the download but does not supply Apple notarization or
+Minisign verifies the download but does not supply Apple notarization or
 Windows publisher trust; OS warnings may remain.
