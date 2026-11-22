@@ -1,0 +1,36 @@
+{
+  "discovery_method": "Local JSONL first-record metadata searched for exact Lit cwd or direct implementation/audit parent session identifiers; original paths retained only privately.",
+  "archived_sessions": [
+    "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+    "01a1e816-fb63-7bf1-9dba-455df09539c2",
+    "01a1e817-14e6-7c90-a93c-5ecf1d102ea5",
+    "01a1e819-1df7-7751-b96d-e9c40c75e091",
+    "01a1ed36-7f65-7033-9af9-2b9075365bc7",
+    "01a1ed38-d484-77a3-95a4-d6e35b0f49cc",
+    "01a1fbf5-93ca-7103-a7c1-c086823f2e37",
+    "01a1fbfa-ec71-7a21-bb5c-eb991f2a5d03"
+  ],
+  "ongoing_excluded_sessions": [
+    {
+      "session_id": "01a20179-7103-7cc0-b8d3-80ffce484317",
+      "reason": "Current incomplete provenance audit child; excluded from historical archive"
+    }
+  ],
+  "resumed_audit": {
+    "session_id": "01a1ed36-7f65-7033-9af9-2b9075365bc7",
+    "archived_through_record": 375,
+    "excluded": "All resumed current-audit records after375 and any newly discovered current-audit children"
+  },
+  "principal_boundary": {
+    "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+    "records": 35705,
+    "last_utc": "2026-11-22T04:04:23.548Z",
+    "excluded": "Live implementation/principal records after exact current-HEAD receipt; no claim that later activity is archived"
+  },
+  "gaps": [
+    "Deleted or unpersisted sessions cannot be discovered from retained metadata.",
+    "External/manual activity and tool outputs that were not persisted are outside transcript custody.",
+    "Original upstream MIT history is Git inventory evidence, not claimed transcript-authored recovery work.",
+    "This archive update and ongoing audit have no self-covering commit receipt; their eventual commit requires a later evidence boundary."
+  ]
+}

@@ -1,0 +1,2090 @@
+{
+  "schema_version": 1,
+  "baseline": "98c59bb2dbebcf7f575993a4ad89e1300a578c83",
+  "release_source": "67cbd625a372800b7f626de66a43310255c82b82",
+  "reviewed_head": "3d2e318530bb7d08c6c98b7d0481625608810f7f",
+  "total_commits": 160,
+  "inherited_mit_commits": 19,
+  "openlit_commits": 141,
+  "note": "Git metadata is history evidence; commit receipts in evidence/commit-records.json separately link OpenLit commits to reviewed local session records. No transcript authorship claim is made for inherited MIT commits.",
+  "commits": [
+    {
+      "commit": "37ace21d90750b7aebfd2f7591c4398f46bd609b",
+      "tree": "96580b4fb3238106213057d00e511784aa39a5db",
+      "parents": [],
+      "authored_utc": "2026-03-13T21:23:28Z",
+      "committed_utc": "2026-03-13T21:23:28Z",
+      "author": "Adam Erickson",
+      "subject": "Initial commit: Lit v1.0.0 \u2014 Agentic-First Distributed VCS",
+      "classification": "inherited-mit-history",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "673cd1947234e63319b1e7f91567cca47ac64275",
+      "tree": "e081d05fb7f8e20ba5027ff382ee9a38b8eac58d",
+      "parents": [
+        "37ace21d90750b7aebfd2f7591c4398f46bd609b"
+      ],
+      "authored_utc": "2026-03-19T04:40:08Z",
+      "committed_utc": "2026-03-19T04:40:08Z",
+      "author": "Adam Erickson",
+      "subject": "Complete agentic-first ontology, wire structured errors, fix airgap race condition",
+      "classification": "inherited-mit-history",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "f1963486d27a1ea77c9a4ac4b863dcd623c3715e",
+      "tree": "02648f2de50a4f344284f492b98cea19320283f6",
+      "parents": [
+        "673cd1947234e63319b1e7f91567cca47ac64275"
+      ],
+      "authored_utc": "2026-03-19T15:40:11Z",
+      "committed_utc": "2026-03-19T15:40:11Z",
+      "author": "Adam Erickson",
+      "subject": "fix: clippy warnings, migrate to LitError, add Deserialize, JSON Schema generation",
+      "classification": "inherited-mit-history",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "84655071da48dc55b8028a8a953b536c9ec3ac6a",
+      "tree": "0faa3c29b073b09fce54dffdb47dd6bf2947b602",
+      "parents": [
+        "f1963486d27a1ea77c9a4ac4b863dcd623c3715e"
+      ],
+      "authored_utc": "2026-03-19T16:08:12Z",
+      "committed_utc": "2026-03-19T16:08:12Z",
+      "author": "Adam Erickson",
+      "subject": "style: rustfmt formatting pass",
+      "classification": "inherited-mit-history",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "ceee553483420f50efab968e06b6c1ea934e4225",
+      "tree": "fad0367fdc7ecd294431da1ab4e7bc490c544693",
+      "parents": [
+        "84655071da48dc55b8028a8a953b536c9ec3ac6a"
+      ],
+      "authored_utc": "2026-03-19T16:28:50Z",
+      "committed_utc": "2026-03-19T16:28:50Z",
+      "author": "Adam Erickson",
+      "subject": "feat: auto-generated MCP schemas, schema tests, README docs, release build",
+      "classification": "inherited-mit-history",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "a5318c059758ca80e86f5c620efaa3d130c32ed6",
+      "tree": "c2a21f876018d08d83aaff23125672519fecd89e",
+      "parents": [
+        "ceee553483420f50efab968e06b6c1ea934e4225"
+      ],
+      "authored_utc": "2026-03-19T19:58:00Z",
+      "committed_utc": "2026-03-19T19:58:00Z",
+      "author": "Adam Erickson",
+      "subject": "style: rustfmt formatting",
+      "classification": "inherited-mit-history",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "47625956c7f41bcacbc834de4a4aa687469e3e44",
+      "tree": "89e676ea9f33f6ba0d02aa4f4615fd11bd2c7ed7",
+      "parents": [
+        "a5318c059758ca80e86f5c620efaa3d130c32ed6"
+      ],
+      "authored_utc": "2026-03-19T20:07:37Z",
+      "committed_utc": "2026-03-19T20:07:37Z",
+      "author": "Adam Erickson",
+      "subject": "feat: expand MCP to 30 tools, add release workflow, enhance CI, add crate docs",
+      "classification": "inherited-mit-history",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "b8646674fa3867c33a7bbb676fa383945220b88a",
+      "tree": "a3ca5e2eb4a1387ac458176d85444098eea57885",
+      "parents": [
+        "47625956c7f41bcacbc834de4a4aa687469e3e44"
+      ],
+      "authored_utc": "2026-03-19T22:39:31Z",
+      "committed_utc": "2026-03-19T22:39:31Z",
+      "author": "Adam Erickson",
+      "subject": "feat: configure OTEL and Lit env vars during installation",
+      "classification": "inherited-mit-history",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "d011afe21777949a6144a4fdd5f490e8badb2b79",
+      "tree": "277383bb9503f3465e29a19140834b7f2e3e18d4",
+      "parents": [
+        "b8646674fa3867c33a7bbb676fa383945220b88a"
+      ],
+      "authored_utc": "2026-03-20T00:56:08Z",
+      "committed_utc": "2026-03-20T00:56:08Z",
+      "author": "Adam Erickson",
+      "subject": "fix: prevent lit status from freezing on large repos",
+      "classification": "inherited-mit-history",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "de86c8379af9feca4f6df8c0d7892587c7afc14c",
+      "tree": "a427b24dc2cffee7d34ef6abc8db8542e171bcdb",
+      "parents": [
+        "d011afe21777949a6144a4fdd5f490e8badb2b79"
+      ],
+      "authored_utc": "2026-03-20T01:02:40Z",
+      "committed_utc": "2026-03-20T01:02:40Z",
+      "author": "Adam Erickson",
+      "subject": "feat: colorize human-readable status output",
+      "classification": "inherited-mit-history",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "849dc63db9e7479c800b735fd7886904b2407a25",
+      "tree": "ed921a0405a2655ef6ac59ffcfc187e2e133f871",
+      "parents": [
+        "de86c8379af9feca4f6df8c0d7892587c7afc14c"
+      ],
+      "authored_utc": "2026-03-20T01:05:42Z",
+      "committed_utc": "2026-03-20T01:05:42Z",
+      "author": "Adam Erickson",
+      "subject": "style: use orange for unstaged modified files in status output",
+      "classification": "inherited-mit-history",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "4c087e4bc22ae391efcde02410516f6a3ce1b68d",
+      "tree": "c6cb93b734e053aab080bb2d96ddc626b931a64c",
+      "parents": [
+        "849dc63db9e7479c800b735fd7886904b2407a25"
+      ],
+      "authored_utc": "2026-03-20T01:30:42Z",
+      "committed_utc": "2026-03-20T01:30:42Z",
+      "author": "Adam Erickson",
+      "subject": "feat: add sandbox command for isolated repo execution",
+      "classification": "inherited-mit-history",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "2df37b8d1e7a5cf51f314541d92b9c000616c17f",
+      "tree": "6553950b519a5cea5ec2892558b2f1f917d748c2",
+      "parents": [
+        "4c087e4bc22ae391efcde02410516f6a3ce1b68d"
+      ],
+      "authored_utc": "2026-03-20T02:34:35Z",
+      "committed_utc": "2026-03-20T02:34:35Z",
+      "author": "Adam Erickson",
+      "subject": "docs: add sandbox demo scripts and Example 19",
+      "classification": "inherited-mit-history",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "784edbfa27dd09b1a8d4e9fdbb3607b6cb0cd828",
+      "tree": "9f9d757f6c43a9ae53d03ba6d51d3eb75a2e7e2c",
+      "parents": [
+        "2df37b8d1e7a5cf51f314541d92b9c000616c17f"
+      ],
+      "authored_utc": "2026-03-20T22:33:41Z",
+      "committed_utc": "2026-03-20T22:33:41Z",
+      "author": "Adam Erickson",
+      "subject": "security: address all 14 DoD security audit findings",
+      "classification": "inherited-mit-history",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "9ecbb3538cd5a59ad2e76116d3a092ec2a09b15d",
+      "tree": "4f38ca963a015f54563de4fd7c9d3908aeac0ebc",
+      "parents": [
+        "784edbfa27dd09b1a8d4e9fdbb3607b6cb0cd828"
+      ],
+      "authored_utc": "2026-03-21T01:14:04Z",
+      "committed_utc": "2026-03-21T01:14:04Z",
+      "author": "Adam Erickson",
+      "subject": "style: formatting cleanup in docs and demo scripts",
+      "classification": "inherited-mit-history",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "941b122582604f334a752206c0fd9540175e9e11",
+      "tree": "8d5b3a2e2f0354495e2efa5c60e31ec80d5f1a34",
+      "parents": [
+        "9ecbb3538cd5a59ad2e76116d3a092ec2a09b15d"
+      ],
+      "authored_utc": "2026-03-21T03:56:27Z",
+      "committed_utc": "2026-03-21T03:56:27Z",
+      "author": "Adam Erickson",
+      "subject": "feat: FIPS auto-self-test, pqcrypto-mldsa migration, API rate limiting, stack overflow fix",
+      "classification": "inherited-mit-history",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "611a1eb58d900076552f98525b1f6f94fdd94da8",
+      "tree": "d332cc71926967c4e50f00cbf66e263276fb8609",
+      "parents": [
+        "941b122582604f334a752206c0fd9540175e9e11"
+      ],
+      "authored_utc": "2026-03-21T04:43:20Z",
+      "committed_utc": "2026-03-21T04:43:20Z",
+      "author": "Adam Erickson",
+      "subject": "style: collapse thread builder chain to single line",
+      "classification": "inherited-mit-history",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "e3ace9df74a4138f4b163420d199bbf46825af0c",
+      "tree": "463148b910816e3eeca46ec08bcb4b1b0972b36c",
+      "parents": [
+        "611a1eb58d900076552f98525b1f6f94fdd94da8"
+      ],
+      "authored_utc": "2026-03-21T16:19:44Z",
+      "committed_utc": "2026-03-21T16:19:44Z",
+      "author": "Adam Erickson",
+      "subject": "docs: update ML-DSA-87 references, create ONTOLOGY.md, cargo update",
+      "classification": "inherited-mit-history",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "98c59bb2dbebcf7f575993a4ad89e1300a578c83",
+      "tree": "64e07dc147f1da66356701525968929b99d0eb0d",
+      "parents": [
+        "e3ace9df74a4138f4b163420d199bbf46825af0c"
+      ],
+      "authored_utc": "2026-03-21T16:38:38Z",
+      "committed_utc": "2026-03-21T16:38:38Z",
+      "author": "Adam Erickson",
+      "subject": "style: markdown table alignment formatting",
+      "classification": "inherited-mit-history",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "2e23eaeca16e0d48b50809a56091ada9abb9bf99",
+      "tree": "05512784db10ab034a7930ec0346bd1d42eb54bf",
+      "parents": [
+        "98c59bb2dbebcf7f575993a4ad89e1300a578c83"
+      ],
+      "authored_utc": "2026-11-17T06:06:49Z",
+      "committed_utc": "2026-11-17T06:06:49Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Recover Lit agent workflows from the MIT baseline",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "908199d0480603cc5536dc806300ad0b6e0d2ff9",
+      "tree": "7b240a925271b14aa512e2d7da64e5ff1c2c4f5d",
+      "parents": [
+        "2e23eaeca16e0d48b50809a56091ada9abb9bf99"
+      ],
+      "authored_utc": "2026-11-17T06:09:24Z",
+      "committed_utc": "2026-11-17T06:09:24Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Confine swarm agent registration to repository metadata",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "293315d77bfbe962c71a57db9accd5d0c5395ee8",
+      "tree": "bffeccedf9b73a5d5e18b5086b0e6c64e648d1b7",
+      "parents": [
+        "908199d0480603cc5536dc806300ad0b6e0d2ff9"
+      ],
+      "authored_utc": "2026-11-17T06:11:50Z",
+      "committed_utc": "2026-11-17T06:11:50Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Serialize advisory swarm lease updates without path collisions",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "b96c2325a16861ab71409038ecc38a977dd7d4a2",
+      "tree": "a179939e2d958ce43d32ad6e322af5b1bd89e1df",
+      "parents": [
+        "293315d77bfbe962c71a57db9accd5d0c5395ee8"
+      ],
+      "authored_utc": "2026-11-17T06:13:23Z",
+      "committed_utc": "2026-11-17T06:13:23Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Expose mixed batch failures through opt-in exit status",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "09c6267eaf667ea0fe89311622db50ee34d5476f",
+      "tree": "3b7e6e2122ec57ba44e854636279de519363de0f",
+      "parents": [
+        "b96c2325a16861ab71409038ecc38a977dd7d4a2"
+      ],
+      "authored_utc": "2026-11-17T06:40:21Z",
+      "committed_utc": "2026-11-17T06:40:21Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Roll back failed batches under the repository write lock",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "3b6f5deb0ae738b2cafbfdc1d8071da397bf0072",
+      "tree": "b2c1390bd7d7347f02d7d4869c6c66a8ac378414",
+      "parents": [
+        "09c6267eaf667ea0fe89311622db50ee34d5476f"
+      ],
+      "authored_utc": "2026-11-17T06:44:25Z",
+      "committed_utc": "2026-11-17T06:44:25Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Qualify the Git-backed workflow with 100 concurrent agents",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "bafdc65301ae2980e3ce4f7e0eeb7a517d263fe4",
+      "tree": "701e85c52e682500fffdbb4aef70faf0098f73b6",
+      "parents": [
+        "3b6f5deb0ae738b2cafbfdc1d8071da397bf0072"
+      ],
+      "authored_utc": "2026-11-17T07:01:54Z",
+      "committed_utc": "2026-11-17T07:01:54Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Add exact-candidate checks for GitHub merge queues",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "1fb3a7e1902d2259d71ff4bdc5b828904fd4a918",
+      "tree": "f40691c35f4e2d28e4d51a0e1f51eaec903fdad0",
+      "parents": [
+        "bafdc65301ae2980e3ce4f7e0eeb7a517d263fe4"
+      ],
+      "authored_utc": "2026-11-17T07:50:43Z",
+      "committed_utc": "2026-11-17T07:50:43Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Preserve hosted GitHub queue qualification fixtures",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "5ed1a3a92a7e44f81be8c3683fb8817c9354da5a",
+      "tree": "1230bdffa495b6f124285171970367067fe1e08f",
+      "parents": [
+        "1fb3a7e1902d2259d71ff4bdc5b828904fd4a918"
+      ],
+      "authored_utc": "2026-11-17T08:23:13Z",
+      "committed_utc": "2026-11-17T08:23:13Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Document verified Actions-only merge queue qualification",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "59d9214184e294e2fbd0d66ba0d20551f9655d84",
+      "tree": "6c7ca341a2a8a462edf965b95f08689c3cf1f901",
+      "parents": [
+        "5ed1a3a92a7e44f81be8c3683fb8817c9354da5a"
+      ],
+      "authored_utc": "2026-11-17T08:55:51Z",
+      "committed_utc": "2026-11-17T08:55:51Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Document verified multi-host GitHub merge queue qualification",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "645f81cee19a49e4b70bdc67c21903b75a5e1770",
+      "tree": "633252dfc931907410eeda2ecae93353c30a4b44",
+      "parents": [
+        "59d9214184e294e2fbd0d66ba0d20551f9655d84"
+      ],
+      "authored_utc": "2026-11-17T17:06:42Z",
+      "committed_utc": "2026-11-17T17:06:42Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Preserve verified GitHub App branch ownership pilot",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "e96e0cb4e1447673da14aabfaac748f39b4ba895",
+      "tree": "d9d41c6b7972f0d8cd03a9506657a1b330208dd5",
+      "parents": [
+        "645f81cee19a49e4b70bdc67c21903b75a5e1770"
+      ],
+      "authored_utc": "2026-11-18T00:56:58Z",
+      "committed_utc": "2026-11-18T00:56:58Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Qualify three-App PR burst and record queue cleanup limitation",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "64d873505241bfee1f473b14138db6aee12b24b3",
+      "tree": "cf0466dadc97c4bea958969686e41442a1eac9c7",
+      "parents": [
+        "e96e0cb4e1447673da14aabfaac748f39b4ba895"
+      ],
+      "authored_utc": "2026-11-18T03:46:15Z",
+      "committed_utc": "2026-11-18T03:46:15Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Add durable GitHub queue coordination and recovery",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "cfdf7e69aa7f267ebe56c56c33de8bd427f8cd7a",
+      "tree": "c269a6fb305491a7133243ad985894addb96877e",
+      "parents": [
+        "64d873505241bfee1f473b14138db6aee12b24b3"
+      ],
+      "authored_utc": "2026-11-18T05:44:40Z",
+      "committed_utc": "2026-11-18T05:44:40Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Verify live stale withdrawal and handle queued conflicts",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "b53c7cbc106c4f19d65741e7925190b5ce8fd969",
+      "tree": "42694fa5835cc0eed4363cc28e0564d59de38eae",
+      "parents": [
+        "cfdf7e69aa7f267ebe56c56c33de8bd427f8cd7a"
+      ],
+      "authored_utc": "2026-11-18T06:13:25Z",
+      "committed_utc": "2026-11-18T06:13:25Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Fence task ownership and reassignment through queue retirement",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "6159a48b949167f5304b276c740e98cddfcc123f",
+      "tree": "7f36acba668e513ad95966a25010350a17ff26f2",
+      "parents": [
+        "b53c7cbc106c4f19d65741e7925190b5ce8fd969"
+      ],
+      "authored_utc": "2026-11-18T06:59:51Z",
+      "committed_utc": "2026-11-18T06:59:51Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Document MIT-baseline provenance rules and audit findings",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "49834391be072651ae6ab4150c6d783e374ae1bb",
+      "tree": "bfa879b5f400e10597697c4c1f07343e5343b78b",
+      "parents": [
+        "6159a48b949167f5304b276c740e98cddfcc123f"
+      ],
+      "authored_utc": "2026-11-18T08:58:28Z",
+      "committed_utc": "2026-11-18T08:58:28Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Deploy authenticated task broker with fenced GitHub publication",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "f1b5c8551bafc6dcaa03ae07e0c42f45ec7377a7",
+      "tree": "dcad7f03bb8c86c4a70cc418551410239e7b8084",
+      "parents": [
+        "49834391be072651ae6ab4150c6d783e374ae1bb"
+      ],
+      "authored_utc": "2026-11-18T09:47:55Z",
+      "committed_utc": "2026-11-18T09:47:55Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Qualify 30 authenticated broker agents across lab hosts",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "f74b9401071f0d730bf119687abf0558f73ab4d5",
+      "tree": "f23f16160be1a2a856cd5ed3e8d994920f351c71",
+      "parents": [
+        "f1b5c8551bafc6dcaa03ae07e0c42f45ec7377a7"
+      ],
+      "authored_utc": "2026-11-18T15:38:05Z",
+      "committed_utc": "2026-11-18T15:38:05Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Add durable fair broker admission and explicit retry contracts",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "3c9b942f65d76cf344e245c3341e8171303bfaa2",
+      "tree": "76cbc3ac38b8c700bb037dbc50e74e7a9cc8b9a6",
+      "parents": [
+        "f74b9401071f0d730bf119687abf0558f73ab4d5"
+      ],
+      "authored_utc": "2026-11-18T17:09:01Z",
+      "committed_utc": "2026-11-18T17:09:01Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Qualify live 60-client v2 broker burst and merge integrity",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "bb059297b726824c48185d90b2f540849df0bef9",
+      "tree": "b1a6c4bb4b992b0c8f1c902a39503c2930e96bbc",
+      "parents": [
+        "3c9b942f65d76cf344e245c3341e8171303bfaa2"
+      ],
+      "authored_utc": "2026-11-18T17:15:25Z",
+      "committed_utc": "2026-11-18T17:15:25Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Verify broker integration receipts against Git and Actions",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "4b6889f766ac6384ee916b1c58339513d15d5860",
+      "tree": "9f281bb505fe16b906461ee6c8d8c8063df4f054",
+      "parents": [
+        "bb059297b726824c48185d90b2f540849df0bef9"
+      ],
+      "authored_utc": "2026-11-19T01:54:23Z",
+      "committed_utc": "2026-11-19T01:54:23Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Queue broker registrations fairly across owners",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "924dc161e80b440fd70d1673c0e1419a0333c9a2",
+      "tree": "40833b6d63e138159cdfedbc01a856cca664d4c0",
+      "parents": [
+        "4b6889f766ac6384ee916b1c58339513d15d5860"
+      ],
+      "authored_utc": "2026-11-19T02:53:02Z",
+      "committed_utc": "2026-11-19T02:53:02Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Pace broker polling and prioritize revoked attempts",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "c6ace8eb98e3a8960012ecfd157b7699af90e7ed",
+      "tree": "9d6ab5bdd2c1b76d6b32b7090ac8a26beaa7ab85",
+      "parents": [
+        "924dc161e80b440fd70d1673c0e1419a0333c9a2"
+      ],
+      "authored_utc": "2026-11-19T03:46:10Z",
+      "committed_utc": "2026-11-19T03:46:10Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Record live 100-identity API v3 broker qualification",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "5c69e8f1c9d7162bd2c7678bbc48a7f62d09e763",
+      "tree": "000bee4831f863feec0ff024cf9e05f6ebac3b23",
+      "parents": [
+        "c6ace8eb98e3a8960012ecfd157b7699af90e7ed"
+      ],
+      "authored_utc": "2026-11-19T04:12:18Z",
+      "committed_utc": "2026-11-19T04:12:18Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Support binary edits, deletions, and modes in broker publication",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "b6dbcaf93a20325e1675bf82a4dfe343c4c33688",
+      "tree": "4a77a33d0879b89e0e9b0a4374e2e08416220890",
+      "parents": [
+        "5c69e8f1c9d7162bd2c7678bbc48a7f62d09e763"
+      ],
+      "authored_utc": "2026-11-19T04:50:32Z",
+      "committed_utc": "2026-11-19T04:50:32Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Record live mixed-file broker publication through GitHub Actions",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "d5c85f06c0e2636c70daa6a3932e71f602862ed4",
+      "tree": "57e8cbd7ee738a21c0ea2a94ac3d11691d13c25f",
+      "parents": [
+        "b6dbcaf93a20325e1675bf82a4dfe343c4c33688"
+      ],
+      "authored_utc": "2026-11-19T04:55:53Z",
+      "committed_utc": "2026-11-19T04:55:53Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Gate task assignments on verified prerequisite merges",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "3d12f4c61e60eaf63dbcd138de56b939b938419a",
+      "tree": "0c8881b4478232ee4dd7ac885a5c92b24d95560b",
+      "parents": [
+        "d5c85f06c0e2636c70daa6a3932e71f602862ed4"
+      ],
+      "authored_utc": "2026-11-19T04:59:48Z",
+      "committed_utc": "2026-11-19T04:59:48Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Qualify 100-client broker recovery from provider faults",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "b3a563b60f1beffae52086a31bf127676e0ae18a",
+      "tree": "94eae3a13bedbf7abf67f185c747345bc01b84e3",
+      "parents": [
+        "3d12f4c61e60eaf63dbcd138de56b939b938419a"
+      ],
+      "authored_utc": "2026-11-19T05:05:22Z",
+      "committed_utc": "2026-11-19T05:05:22Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Recover broker publication receipts from exact GitHub evidence",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "0be68f20ae100e138b5076c920db1c7002b81ad9",
+      "tree": "d7c6d64e9ef00245bad55c7aca540191750a6061",
+      "parents": [
+        "b3a563b60f1beffae52086a31bf127676e0ae18a"
+      ],
+      "authored_utc": "2026-11-19T05:08:53Z",
+      "committed_utc": "2026-11-19T05:08:53Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Expose advisory task path overlaps to the scheduler",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "cc36a28eaa68c072a62cc9fea246ec10c981f863",
+      "tree": "7b0ab2972182f371da35678b29e75983aa38cf60",
+      "parents": [
+        "0be68f20ae100e138b5076c920db1c7002b81ad9"
+      ],
+      "authored_utc": "2026-11-19T05:13:11Z",
+      "committed_utc": "2026-11-19T05:13:11Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Coalesce scoped GitHub installation token refreshes",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "b32527b338e227e7458e1f01d44ded81fd8a9799",
+      "tree": "81f328fbb0056528a73ab07f68757f108c07290b",
+      "parents": [
+        "cc36a28eaa68c072a62cc9fea246ec10c981f863"
+      ],
+      "authored_utc": "2026-11-19T05:46:08Z",
+      "committed_utc": "2026-11-19T05:46:08Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Add guarded broker authority snapshots and restore",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "b7e45f6d2335b14736e3d88780fcad2d1a2498d3",
+      "tree": "58b2017bc5f739e99c970fd5477ea7eafce2b4b3",
+      "parents": [
+        "b32527b338e227e7458e1f01d44ded81fd8a9799"
+      ],
+      "authored_utc": "2026-11-19T05:49:58Z",
+      "committed_utc": "2026-11-19T05:49:58Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Record live broker failover and certificate renewal rehearsal",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "86f7a4f3205b1ab3fe6d2efe8cf5ea8506f73dc0",
+      "tree": "36bdbd6f87c73d9ae8e40f35d441f0d95f2e4659",
+      "parents": [
+        "b7e45f6d2335b14736e3d88780fcad2d1a2498d3"
+      ],
+      "authored_utc": "2026-11-19T05:50:11Z",
+      "committed_utc": "2026-11-19T05:50:11Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Prepare verified client certificate renewal configs",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "a73d23ead7b6fef2e2fcfee8ffc3198216a91da4",
+      "tree": "372e5b35a4b00fe932e47aef945c5249e9bf6202",
+      "parents": [
+        "86f7a4f3205b1ab3fe6d2efe8cf5ea8506f73dc0"
+      ],
+      "authored_utc": "2026-11-19T05:51:12Z",
+      "committed_utc": "2026-11-19T05:51:12Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Verify guarded checkpoint against the sandbox backup",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "115faa4ec78b99e4eeb46e503c69e840144253c5",
+      "tree": "caf2c9f2fa434c92aab17da4dc6181dbf1ba7c1f",
+      "parents": [
+        "a73d23ead7b6fef2e2fcfee8ffc3198216a91da4"
+      ],
+      "authored_utc": "2026-11-19T06:39:50Z",
+      "committed_utc": "2026-11-19T06:39:50Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Record rotation of all standing broker TLS leaves",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "bcc4437a9505907f457974d491928de698850672",
+      "tree": "347771647127a52948562bfe8133d0fb61e06abf",
+      "parents": [
+        "115faa4ec78b99e4eeb46e503c69e840144253c5"
+      ],
+      "authored_utc": "2026-11-19T06:54:30Z",
+      "committed_utc": "2026-11-19T06:54:30Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Fence and restore broker authority during unattended takeover",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "fdff529d7d15c83fcffd37fa159e609ab6b0ac1a",
+      "tree": "80289f574a9fb3800639c15ac9bb45bf5c922849",
+      "parents": [
+        "bcc4437a9505907f457974d491928de698850672"
+      ],
+      "authored_utc": "2026-11-19T06:59:45Z",
+      "committed_utc": "2026-11-19T06:59:45Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Follow broker claims and policy observations to a trusted standby",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "018e1fbe261d0c36db5ae823b797627178513434",
+      "tree": "dc8fa706c0d93cfb966b0b5c7e93bfb7ebe28273",
+      "parents": [
+        "fdff529d7d15c83fcffd37fa159e609ab6b0ac1a"
+      ],
+      "authored_utc": "2026-11-19T07:00:52Z",
+      "committed_utc": "2026-11-19T07:00:52Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Verify unattended takeover against the live 100latent sandbox",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "7a0d7bc651d4c55dd7af809bb11f1381f59adcea",
+      "tree": "93dfaf091c8221b1f076b358bd9642774475a2bd",
+      "parents": [
+        "018e1fbe261d0c36db5ae823b797627178513434"
+      ],
+      "authored_utc": "2026-11-19T07:35:27Z",
+      "committed_utc": "2026-11-19T07:35:27Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Replicate broker authority and fence writer independently of the source host",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "8d228e49434e348c2425e0fbd87e034c1c34be95",
+      "tree": "cf99daae43d8d23f3888fb35d3ac9c1d7431732c",
+      "parents": [
+        "7a0d7bc651d4c55dd7af809bb11f1381f59adcea"
+      ],
+      "authored_utc": "2026-11-19T15:25:45Z",
+      "committed_utc": "2026-11-19T15:25:45Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Rearm replicated standby after failback",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "30a3b00c5e1255dcfd4182b79a1048d745d6250b",
+      "tree": "02ed78ddfc5eb699efd6ac2d591b083a771d210e",
+      "parents": [
+        "8d228e49434e348c2425e0fbd87e034c1c34be95"
+      ],
+      "authored_utc": "2026-11-19T15:27:24Z",
+      "committed_utc": "2026-11-19T15:27:24Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Resume broker reads when the primary is fenced",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "920b9e14326ce588d0f6336ab9d56bf8e2a6ae6c",
+      "tree": "07427d58dec708d523ad0254d5f38b71580d17ff",
+      "parents": [
+        "30a3b00c5e1255dcfd4182b79a1048d745d6250b"
+      ],
+      "authored_utc": "2026-11-19T15:34:20Z",
+      "committed_utc": "2026-11-19T15:34:20Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Record live replicated broker cutover and Actions failover proof",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "4dbf53c2e5f4dc4e4d433fc904501bad5edcc54d",
+      "tree": "ee27ea539aec298debc5e3d43455e98613842a31",
+      "parents": [
+        "920b9e14326ce588d0f6336ab9d56bf8e2a6ae6c"
+      ],
+      "authored_utc": "2026-11-19T15:36:12Z",
+      "committed_utc": "2026-11-19T15:36:12Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Preserve authenticated watcher baseline across restarts",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "2bc16b11943598011ff36ae6b3f2c7db87944cdc",
+      "tree": "639d1f407852f913ef5133f7156cfd3ad84df6ec",
+      "parents": [
+        "4dbf53c2e5f4dc4e4d433fc904501bad5edcc54d"
+      ],
+      "authored_utc": "2026-11-19T15:40:08Z",
+      "committed_utc": "2026-11-19T15:40:08Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Record live watcher restart and supervision proof",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "664299b088a2701327e736480a3986d8e39ce65a",
+      "tree": "3473193caa603bd70f0c91f816963ca347da8e1e",
+      "parents": [
+        "2bc16b11943598011ff36ae6b3f2c7db87944cdc"
+      ],
+      "authored_utc": "2026-11-19T16:26:05Z",
+      "committed_utc": "2026-11-19T16:26:05Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Verify expiry of legacy sandbox writer tokens",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "06dee2a4be4405e466545b4148dfa7ea9cc9d5c8",
+      "tree": "7e4e69777a4e973f2cbe051e813673586c4fcde9",
+      "parents": [
+        "664299b088a2701327e736480a3986d8e39ce65a"
+      ],
+      "authored_utc": "2026-11-19T16:44:49Z",
+      "committed_utc": "2026-11-19T16:44:49Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Add quorum authority and independently scoped policy observation",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "76935ad227398564670e0647fae502d38c88684e",
+      "tree": "0632d861388b1cfc5fa99036e0893c965605905c",
+      "parents": [
+        "06dee2a4be4405e466545b4148dfa7ea9cc9d5c8"
+      ],
+      "authored_utc": "2026-11-19T16:55:28Z",
+      "committed_utc": "2026-11-19T16:55:28Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Run broker authority and failover regressions in CI",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "cbe0787ffccaabcf41c641fd369d7b773b2baab4",
+      "tree": "86791d770ff97fc7fe38e56bebbe9ac3be8a67fc",
+      "parents": [
+        "76935ad227398564670e0647fae502d38c88684e"
+      ],
+      "authored_utc": "2026-11-19T16:58:58Z",
+      "committed_utc": "2026-11-19T16:58:58Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Record live quorum operation through host-c outage",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "fc5f4613a9d0480afae1f6146be40cdd85b58bc2",
+      "tree": "7b762354f9dd2f6488c646b858a06099a64278fe",
+      "parents": [
+        "cbe0787ffccaabcf41c641fd369d7b773b2baab4"
+      ],
+      "authored_utc": "2026-11-19T17:02:15Z",
+      "committed_utc": "2026-11-19T17:02:15Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Verify quorum gateway retry safety",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "2be102a049841bebdb1d8dad026e0b695cfadcdb",
+      "tree": "df60d16cb5419635407b125ff7217d540002cc42",
+      "parents": [
+        "fc5f4613a9d0480afae1f6146be40cdd85b58bc2"
+      ],
+      "authored_utc": "2026-11-19T17:12:09Z",
+      "committed_utc": "2026-11-19T17:12:09Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Record Mac-independent failover and joint outage evidence",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "698f6f0a3e784c1296bbde03f1a0dd4eb16fe2ac",
+      "tree": "74fa0be39909d439e1c7273ebc7dcccb73267a99",
+      "parents": [
+        "2be102a049841bebdb1d8dad026e0b695cfadcdb"
+      ],
+      "authored_utc": "2026-11-19T23:11:52Z",
+      "committed_utc": "2026-11-19T23:11:52Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Back up and recover broker authority into a new quorum",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "1043f1ae5f7d3d8b7f215f3262b26583e3041064",
+      "tree": "1437280897be8523d34fc0771329ec453c805f58",
+      "parents": [
+        "698f6f0a3e784c1296bbde03f1a0dd4eb16fe2ac"
+      ],
+      "authored_utc": "2026-11-19T23:12:43Z",
+      "committed_utc": "2026-11-19T23:12:43Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Record encrypted recovery after permanent two-voter loss",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "eb6bd334b87be27381badad762cb065b01cc7ef1",
+      "tree": "ec7469a842a1c9a437156d910aad416eaf5ffff1",
+      "parents": [
+        "1043f1ae5f7d3d8b7f215f3262b26583e3041064"
+      ],
+      "authored_utc": "2026-11-19T23:19:36Z",
+      "committed_utc": "2026-11-19T23:19:36Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Verify quorum recovery on three lab hosts and seal live backup",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "a541678963b36b4122f86347b72ef40fc1e08e28",
+      "tree": "f7e7c4a44b29967499c75aa7de2639f4d6389d2e",
+      "parents": [
+        "eb6bd334b87be27381badad762cb065b01cc7ef1"
+      ],
+      "authored_utc": "2026-11-19T23:45:06Z",
+      "committed_utc": "2026-11-19T23:45:06Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Seal scheduled quorum backups off the voter hosts",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "9f915326a1ce38ebc4943e4c31a50220faa05ef7",
+      "tree": "f4719bb51b8d82a3c36a47a3baf0e8cb1106c1e4",
+      "parents": [
+        "a541678963b36b4122f86347b72ef40fc1e08e28"
+      ],
+      "authored_utc": "2026-11-19T23:48:22Z",
+      "committed_utc": "2026-11-19T23:48:22Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Retry transient writer reservations before scheduled backup",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "0cbfb7c5faf89da2b6a4194e42dc8a3b075ef2a4",
+      "tree": "d1fbb91a7232e35c29972b87724ef1df5c93c9f7",
+      "parents": [
+        "9f915326a1ce38ebc4943e4c31a50220faa05ef7"
+      ],
+      "authored_utc": "2026-11-19T23:52:28Z",
+      "committed_utc": "2026-11-19T23:52:28Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Verify timed quorum backup restores after losing two lab voters",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "e25de42b3ff0b532ba94b8eb75ed21fb03634549",
+      "tree": "5daa152822b7eff41f52729191078120e722c881",
+      "parents": [
+        "0cbfb7c5faf89da2b6a4194e42dc8a3b075ef2a4"
+      ],
+      "authored_utc": "2026-11-20T00:11:31Z",
+      "committed_utc": "2026-11-20T00:11:31Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Scope off-voter backup clients to read-only archive access",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "ce743d1b934c80526439dd84a268d2fe59c5db74",
+      "tree": "d770c5c67d1de8ef39006a33ce349b3bf0cad921",
+      "parents": [
+        "e25de42b3ff0b532ba94b8eb75ed21fb03634549"
+      ],
+      "authored_utc": "2026-11-20T00:21:13Z",
+      "committed_utc": "2026-11-20T00:21:13Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Verify independent host-e backups and restore with Mac services offline",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "d18f856f7baf5fa61d7f33f9ec6831649ed2e0f8",
+      "tree": "27841ca8b36f82a8d8507a808fe33a80c7044d3e",
+      "parents": [
+        "ce743d1b934c80526439dd84a268d2fe59c5db74"
+      ],
+      "authored_utc": "2026-11-20T01:03:27Z",
+      "committed_utc": "2026-11-20T01:03:27Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Add verified native repository migration and rollback",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "d7e1f581f43c276885ffce3c9b99b9332b7f755a",
+      "tree": "d45db11cbf43f4569011421e0de90242a8c270bb",
+      "parents": [
+        "d18f856f7baf5fa61d7f33f9ec6831649ed2e0f8"
+      ],
+      "authored_utc": "2026-11-20T01:04:02Z",
+      "committed_utc": "2026-11-20T01:04:02Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Record macOS and Linux arm64 repository migration evidence",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "cb07236d99363e32f701d830e4748c770ebf5411",
+      "tree": "e3b31486641b1e13e0145c4384862bdc745ec758",
+      "parents": [
+        "d7e1f581f43c276885ffce3c9b99b9332b7f755a"
+      ],
+      "authored_utc": "2026-11-20T01:06:13Z",
+      "committed_utc": "2026-11-20T01:06:13Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Qualify release assets and strict sandbox refusal on arm64 lab hosts",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "b705e961e40f6a2613113d554a659f0565902a4d",
+      "tree": "148d9c1b08c23437b8fa6fe8b27fa76be7992590",
+      "parents": [
+        "cb07236d99363e32f701d830e4748c770ebf5411"
+      ],
+      "authored_utc": "2026-11-20T01:25:28Z",
+      "committed_utc": "2026-11-20T01:25:28Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Support authenticated Git remotes over HTTPS and SSH",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "6ff58175560ccb865af6c9c63186203efb528a4b",
+      "tree": "23e051c701972d7d8e1e5d9bf7d42317ea6f28bc",
+      "parents": [
+        "b705e961e40f6a2613113d554a659f0565902a4d"
+      ],
+      "authored_utc": "2026-11-20T01:26:23Z",
+      "committed_utc": "2026-11-20T01:26:23Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Record authenticated Git remote evidence on macOS and arm64 Linux",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "95b1195a950b2e1c4066b13d4716f4571ca76182",
+      "tree": "3c0fee267e4576809d8f85234a6f4f251336ae26",
+      "parents": [
+        "6ff58175560ccb865af6c9c63186203efb528a4b"
+      ],
+      "authored_utc": "2026-11-20T01:27:12Z",
+      "committed_utc": "2026-11-20T01:27:12Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Verify read-only credentials on both Git transports",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "74b0495aca0c01fd3e25d2d0fd58914acfd1177f",
+      "tree": "0336297f7f200bd87da13ba130326ccf473d178c",
+      "parents": [
+        "95b1195a950b2e1c4066b13d4716f4571ca76182"
+      ],
+      "authored_utc": "2026-11-20T02:21:39Z",
+      "committed_utc": "2026-11-20T02:21:39Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Create private agent workspaces from pinned Lit commits",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "f51308d4828134b83fe0e95eeb2bf724c45aac29",
+      "tree": "058941c656c244f44276832ddf01ae74d06d41bc",
+      "parents": [
+        "74b0495aca0c01fd3e25d2d0fd58914acfd1177f"
+      ],
+      "authored_utc": "2026-11-20T02:23:44Z",
+      "committed_utc": "2026-11-20T02:23:44Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Record pinned workspace verification on macOS and both Linux architectures",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "6daf65302f0b93212834d3365f53b02fae04267d",
+      "tree": "7c19ea6bbc5bed95ee906aa358909d5af3ab9148",
+      "parents": [
+        "f51308d4828134b83fe0e95eeb2bf724c45aac29"
+      ],
+      "authored_utc": "2026-11-20T02:27:03Z",
+      "committed_utc": "2026-11-20T02:27:03Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Preserve published Git identities in pinned workspaces",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "1c1fb805369e2234db9eac75e5e9319d6e2945b2",
+      "tree": "bca8bca4dbc5c16f84b75f630395df2319bbc740",
+      "parents": [
+        "6daf65302f0b93212834d3365f53b02fae04267d"
+      ],
+      "authored_utc": "2026-11-20T02:28:57Z",
+      "committed_utc": "2026-11-20T02:28:57Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Record 100-workspace bursts and Git handoff verification",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "511711a904c6ac315659be7dec4d88b79508f85d",
+      "tree": "e775f1e8cf4bccfbc8d59870142c0ecc8bb1fc3f",
+      "parents": [
+        "1c1fb805369e2234db9eac75e5e9319d6e2945b2"
+      ],
+      "authored_utc": "2026-11-20T02:45:01Z",
+      "committed_utc": "2026-11-20T02:45:01Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Derive broker proposals from pinned Lit workspaces",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "3a782b59d254a5ed3385df9316c909fedc60c0e6",
+      "tree": "a0c719657db1aa9cd18e5eea0470d4a21f124757",
+      "parents": [
+        "511711a904c6ac315659be7dec4d88b79508f85d"
+      ],
+      "authored_utc": "2026-11-20T03:02:28Z",
+      "committed_utc": "2026-11-20T03:02:28Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Preserve completed broker burst receipts after worker failure",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "c7239ddc3a6b78280262faead03629bf29d85143",
+      "tree": "25bd907fdfffb0800350ac9e1e70eb0ddb5885d3",
+      "parents": [
+        "3a782b59d254a5ed3385df9316c909fedc60c0e6"
+      ],
+      "authored_utc": "2026-11-20T03:16:18Z",
+      "committed_utc": "2026-11-20T03:16:18Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Record live pinned workspace burst and fencing evidence",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "46fa531e0e36fd66f549af9f00bf1eabf91203e8",
+      "tree": "22bbb9edde3a6422606e411d463e8d7c0912809f",
+      "parents": [
+        "c7239ddc3a6b78280262faead03629bf29d85143"
+      ],
+      "authored_utc": "2026-11-20T03:31:17Z",
+      "committed_utc": "2026-11-20T03:31:17Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Stage tracked deletions in pinned Lit workspaces",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "02ef381b5ae25324a05c91961b18fedb5b4cf7a7",
+      "tree": "cea887eba42cf48753a48ec2baa6a8e28e041bde",
+      "parents": [
+        "46fa531e0e36fd66f549af9f00bf1eabf91203e8"
+      ],
+      "authored_utc": "2026-11-20T03:52:16Z",
+      "committed_utc": "2026-11-20T03:52:16Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Verify merge-queue closure receipts against Git and Actions",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "858a331b1586c9d15d223c03ae42a0039810a8aa",
+      "tree": "d16a8e97d349330bde9073777925424b5b030860",
+      "parents": [
+        "02ef381b5ae25324a05c91961b18fedb5b4cf7a7"
+      ],
+      "authored_utc": "2026-11-20T04:00:47Z",
+      "committed_utc": "2026-11-20T04:00:47Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Release freeze rules after verified proposal settlement",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "4b241fe53edd44a620c6ca3319f8a049d380aeb9",
+      "tree": "1b00a00935f4fa8160f5e797802ac2fec60ee59d",
+      "parents": [
+        "858a331b1586c9d15d223c03ae42a0039810a8aa"
+      ],
+      "authored_utc": "2026-11-20T04:02:13Z",
+      "committed_utc": "2026-11-20T04:02:13Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Record completed Actions-only workspace burst and cleanup",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "d55b5c29da07b66b357ac19ad81b1be32cf58298",
+      "tree": "5378e43383f628fae2496785187c67eca3e0bfd2",
+      "parents": [
+        "4b241fe53edd44a620c6ca3319f8a049d380aeb9"
+      ],
+      "authored_utc": "2026-11-20T04:37:12Z",
+      "committed_utc": "2026-11-20T04:37:12Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Add confined Pi pilot for pinned Lit workspaces",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "30a8d1dbc3b5a5b03aede2bec09bbc7fe3880549",
+      "tree": "671ac92ed13e275a20dd70afc381fa85b2467cd3",
+      "parents": [
+        "d55b5c29da07b66b357ac19ad81b1be32cf58298"
+      ],
+      "authored_utc": "2026-11-20T04:43:56Z",
+      "committed_utc": "2026-11-20T04:43:56Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Run all Pi pilot inference through host-a",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "3c19031ca9f3de7fc0c09fbca814c1732e0ebb0b",
+      "tree": "e9449764aa637689662a1d340edb1af7dc005e8c",
+      "parents": [
+        "30a8d1dbc3b5a5b03aede2bec09bbc7fe3880549"
+      ],
+      "authored_utc": "2026-11-20T05:06:20Z",
+      "committed_utc": "2026-11-20T05:06:20Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Record real Pi agent pilot with centralized host-a inference",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "bed61afa7f64bb41d5fb933ceaac522d7f58fd46",
+      "tree": "ae1b9d7e0f8dcdeada1ed801a154a4755faa2402",
+      "parents": [
+        "3c19031ca9f3de7fc0c09fbca814c1732e0ebb0b"
+      ],
+      "authored_utc": "2026-11-20T05:18:58Z",
+      "committed_utc": "2026-11-20T05:18:58Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Support multiple work units in pinned Pi pilots",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "929628e733db13ad20382c6e6a1e7ba2d36d3708",
+      "tree": "ba272e5ab7b87da9b01814dc966d842fa1cb227d",
+      "parents": [
+        "bed61afa7f64bb41d5fb933ceaac522d7f58fd46"
+      ],
+      "authored_utc": "2026-11-20T05:46:41Z",
+      "committed_utc": "2026-11-20T05:46:41Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Record ten-agent Pi pilot with centralized host-a inference",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "9bf78757e2d3cfd57ccebc5765fc2ca6c53deef1",
+      "tree": "a3f9d8da28398658fbac3685d8a2adfc24f21cf0",
+      "parents": [
+        "929628e733db13ad20382c6e6a1e7ba2d36d3708"
+      ],
+      "authored_utc": "2026-11-20T06:11:38Z",
+      "committed_utc": "2026-11-20T06:11:38Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Resume pinned Pi pilot publication after controller restart",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "bf1c9de7c1d6bed4019a01328cbe60fd43f8df10",
+      "tree": "1328497f6f624705a2dcadc9deaef16605ab5201",
+      "parents": [
+        "9bf78757e2d3cfd57ccebc5765fc2ca6c53deef1"
+      ],
+      "authored_utc": "2026-11-20T06:37:31Z",
+      "committed_utc": "2026-11-20T06:37:31Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Record live ten-agent Pi restart and Actions-only integration",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "5c122b5c101455d176ea446bbf0be6285bf2988d",
+      "tree": "383653a7d2e658c93abee01da1fee531b78af18c",
+      "parents": [
+        "bf1c9de7c1d6bed4019a01328cbe60fd43f8df10"
+      ],
+      "authored_utc": "2026-11-20T06:37:44Z",
+      "committed_utc": "2026-11-20T06:37:44Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Make Pi fixture prompts match the required JSON shape",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "3cdecf4c9a341d787be7b1bf75171ba44943e0bf",
+      "tree": "4fad9eabcd9e88e624027f894059536306426ea0",
+      "parents": [
+        "5c122b5c101455d176ea446bbf0be6285bf2988d"
+      ],
+      "authored_utc": "2026-11-20T06:54:13Z",
+      "committed_utc": "2026-11-20T06:54:13Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Resume Pi cohorts across reassignment and cleanup",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "170151109b64ac74d0d2694ef0a99d868d870de3",
+      "tree": "2c1fd089e5276de29f71b76566b1701c8fd2b9a0",
+      "parents": [
+        "3cdecf4c9a341d787be7b1bf75171ba44943e0bf"
+      ],
+      "authored_utc": "2026-11-20T06:59:03Z",
+      "committed_utc": "2026-11-20T06:59:03Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Document the resumable Pi cohort command",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "65d5c5d9f1b9eb57634b604691b7939fa8e1a451",
+      "tree": "8da255daeb949e500ae57e2cc81dbbf48217a2ad",
+      "parents": [
+        "170151109b64ac74d0d2694ef0a99d868d870de3"
+      ],
+      "authored_utc": "2026-11-20T07:27:54Z",
+      "committed_utc": "2026-11-20T07:27:54Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Record live 25-agent Pi cohort recovery and cleanup",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "01b750d116f5235177d1136e8c9734472508cb28",
+      "tree": "e40af2092dc64f7ca17f19b4c6ba51be180152b6",
+      "parents": [
+        "65d5c5d9f1b9eb57634b604691b7939fa8e1a451"
+      ],
+      "authored_utc": "2026-11-20T07:37:04Z",
+      "committed_utc": "2026-11-20T07:37:04Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Run resumable Pi cohorts with a configured lab adapter",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "a444ac51f3b615aca34f293f09cd2d80ad96dbc4",
+      "tree": "d9312e198491b172e545caea68d63e193dab70f3",
+      "parents": [
+        "01b750d116f5235177d1136e8c9734472508cb28"
+      ],
+      "authored_utc": "2026-11-20T07:39:58Z",
+      "committed_utc": "2026-11-20T07:39:58Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Document configuration for the checked-in Pi lab adapter",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "626a79f64a7ab4d0fb7c3737106f678f5a8e71ec",
+      "tree": "35c8ad27f5a718cde0be4fd6bffa26aca32e71cc",
+      "parents": [
+        "a444ac51f3b615aca34f293f09cd2d80ad96dbc4"
+      ],
+      "authored_utc": "2026-11-20T07:48:08Z",
+      "committed_utc": "2026-11-20T07:48:08Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Reject adapter changes when resuming a saved Pi run",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "eb64628ec1aab730394db27be5e04154f515fe12",
+      "tree": "37daada89a477199fe936df292ef51cafbb142e0",
+      "parents": [
+        "626a79f64a7ab4d0fb7c3737106f678f5a8e71ec"
+      ],
+      "authored_utc": "2026-11-20T08:45:59Z",
+      "committed_utc": "2026-11-20T08:45:59Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Record 50-agent source pilot and fresh controller recovery",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "ba618326e2e1f15c551d4977eeb1bd49976f75d1",
+      "tree": "a279405747c8661f3e9c61cb889d0e46517db124",
+      "parents": [
+        "eb64628ec1aab730394db27be5e04154f515fe12"
+      ],
+      "authored_utc": "2026-11-20T08:58:30Z",
+      "committed_utc": "2026-11-20T08:58:30Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Support fenced Pi controller handoffs and shared Rust workloads",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "abaa79646f5ea079e7274c40033d0f5c9874df11",
+      "tree": "32612aaecb258aada96a6d48858dd0031e2c8cce",
+      "parents": [
+        "ba618326e2e1f15c551d4977eeb1bd49976f75d1"
+      ],
+      "authored_utc": "2026-11-20T11:21:23Z",
+      "committed_utc": "2026-11-20T11:21:23Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Record Linux controller failover and 100-agent Lit source pilot",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "e72ef2d4e1264956bb8c7a4c8f8706d410b7c574",
+      "tree": "aede876fe9fb7e1259c50271ced1a093ab83b293",
+      "parents": [
+        "abaa79646f5ea079e7274c40033d0f5c9874df11"
+      ],
+      "authored_utc": "2026-11-20T15:44:34Z",
+      "committed_utc": "2026-11-20T15:44:34Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Replicate Pi checkpoints and bound worker admission",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "580c8082dc189b6fe02eac471d13acd5cff39e41",
+      "tree": "641f89394542330ee5933f3f97147710487bf7bb",
+      "parents": [
+        "e72ef2d4e1264956bb8c7a4c8f8706d410b7c574"
+      ],
+      "authored_utc": "2026-11-20T15:53:23Z",
+      "committed_utc": "2026-11-20T15:53:23Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Fail closed on ambiguous Pi authority and default to bounded launches",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "83501d40d39bd3269acf187d6371df4e1fcd20f6",
+      "tree": "a02dc9aed23c05ece82cc763a3b6c4a0bdce99fc",
+      "parents": [
+        "580c8082dc189b6fe02eac471d13acd5cff39e41"
+      ],
+      "authored_utc": "2026-11-20T16:12:13Z",
+      "committed_utc": "2026-11-20T16:12:13Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Record Pi checkpoint takeover and bounded launch canary",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "0500c68ff8d66dbd32e7be0c37f73cdc6c3beb51",
+      "tree": "b4e6309b9e59db578c3696d1750be1050a4674b7",
+      "parents": [
+        "83501d40d39bd3269acf187d6371df4e1fcd20f6"
+      ],
+      "authored_utc": "2026-11-20T16:37:51Z",
+      "committed_utc": "2026-11-20T16:37:51Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Qualify Pi recovery without live inference",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "8099119d4c92575d2aa22e15abee1d81eebe9767",
+      "tree": "2fd2a7216ea67bf9f72b922a7199c0d5ac7c6532",
+      "parents": [
+        "0500c68ff8d66dbd32e7be0c37f73cdc6c3beb51"
+      ],
+      "authored_utc": "2026-11-20T16:50:12Z",
+      "committed_utc": "2026-11-20T16:50:12Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Align MCP discovery with accepted tool inputs",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "b327208b18b21fe34d14e5e3d865ade8ea1191df",
+      "tree": "0d92d0bfb92b8d81f06a13edf0f4639ac768e5c1",
+      "parents": [
+        "8099119d4c92575d2aa22e15abee1d81eebe9767"
+      ],
+      "authored_utc": "2026-11-20T16:55:08Z",
+      "committed_utc": "2026-11-20T16:55:08Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Smoke-test optimized Lit binaries in CI",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "97ffa0d35388b4eab76f925c1411e4e922117d4d",
+      "tree": "43a3acdb87bb21a6bc3b5cff9bfd996cd5597fa4",
+      "parents": [
+        "b327208b18b21fe34d14e5e3d865ade8ea1191df"
+      ],
+      "authored_utc": "2026-11-20T16:57:14Z",
+      "committed_utc": "2026-11-20T16:57:14Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Include MIT attribution and checksums in release assets",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "ba6bc04d5a6771cbca6c8051e8f01a991874436d",
+      "tree": "f2a9da3ba9217eaa8ed658edf9120a4847f475a2",
+      "parents": [
+        "97ffa0d35388b4eab76f925c1411e4e922117d4d"
+      ],
+      "authored_utc": "2026-11-20T16:59:54Z",
+      "committed_utc": "2026-11-20T16:59:54Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Record cross-platform release candidate qualification",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "d8d0d0759865a438b074dd7b773e8ca2bb032d5d",
+      "tree": "a2a7a32e2c43e749f918da9b50789eb33e14f282",
+      "parents": [
+        "ba6bc04d5a6771cbca6c8051e8f01a991874436d"
+      ],
+      "authored_utc": "2026-11-20T17:35:25Z",
+      "committed_utc": "2026-11-20T17:35:25Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Qualify release packages on native compatibility runners",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "af0dfa68ef254690928e9d390379b849fd283af4",
+      "tree": "4faf7cd5d7d7668c0dff96eabc606bc7ee361efd",
+      "parents": [
+        "d8d0d0759865a438b074dd7b773e8ca2bb032d5d"
+      ],
+      "authored_utc": "2026-11-20T17:39:20Z",
+      "committed_utc": "2026-11-20T17:39:20Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Decode native file remotes with platform URL paths",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "fabaf3fa1350bd8b45e4fb069e5bb65ece074f31",
+      "tree": "82ec7afe66de83e1e06330c1cfe9c7f8ae0f8172",
+      "parents": [
+        "af0dfa68ef254690928e9d390379b849fd283af4"
+      ],
+      "authored_utc": "2026-11-20T17:45:00Z",
+      "committed_utc": "2026-11-20T17:45:00Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Honor isolated home directories for LAN configuration",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "729fd4a7fb0e1d738cbda8bf456aed6182c44733",
+      "tree": "3e64448585debb621346ce544d7048830124d694",
+      "parents": [
+        "fabaf3fa1350bd8b45e4fb069e5bb65ece074f31"
+      ],
+      "authored_utc": "2026-11-20T17:52:55Z",
+      "committed_utc": "2026-11-20T17:52:55Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Record Actions proof for older glibc, Intel macOS and Windows",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "2c068030f6ab469b94d6fac40446e3fb80e2cd35",
+      "tree": "cfcea142dfc0377534e196ff0082b38b709d9265",
+      "parents": [
+        "729fd4a7fb0e1d738cbda8bf456aed6182c44733"
+      ],
+      "authored_utc": "2026-11-20T17:53:56Z",
+      "committed_utc": "2026-11-20T17:53:56Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Document release candidate installation requirements",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "5b8e1dffc88d82f12bdc547a96030f245be12934",
+      "tree": "922d49bb52a43a09a3055a685db1e3db3bbed0dc",
+      "parents": [
+        "2c068030f6ab469b94d6fac40446e3fb80e2cd35"
+      ],
+      "authored_utc": "2026-11-20T20:33:25Z",
+      "committed_utc": "2026-11-20T20:33:25Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Prepare OpenLit 0.1.0 with plain-language guides and gated publication",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "0bd93f95b31a014b26e5adee4409460f912a84c1",
+      "tree": "b2f554b5df86e89cfd6da1fa7cdee97201d4adf7",
+      "parents": [
+        "5b8e1dffc88d82f12bdc547a96030f245be12934"
+      ],
+      "authored_utc": "2026-11-20T20:41:03Z",
+      "committed_utc": "2026-11-20T20:41:03Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Harden release dependencies and verify portable ML-DSA behavior",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "2e34a3e115be44d03de299fcd1d8197effed3aea",
+      "tree": "0281c02919791fcc0c588d1d0dfd6c301a90261c",
+      "parents": [
+        "0bd93f95b31a014b26e5adee4409460f912a84c1"
+      ],
+      "authored_utc": "2026-11-20T20:43:53Z",
+      "committed_utc": "2026-11-20T20:43:53Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Clear formatting and Clippy release gates and retain signature reproducer",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "53a23ccc9caedbd86a38e5b059348d78c1f42b56",
+      "tree": "b48ebd992ae0f1cb20f5e8e5db4058bc7367de7a",
+      "parents": [
+        "2e34a3e115be44d03de299fcd1d8197effed3aea"
+      ],
+      "authored_utc": "2026-11-20T20:44:39Z",
+      "committed_utc": "2026-11-20T20:44:39Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Include adversarial test formatting in the release candidate",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "8aed154b80f0b26bcf02b61c9063bb7b04648c5b",
+      "tree": "21ca50746a7d162405e1d25a4843053b3895a622",
+      "parents": [
+        "53a23ccc9caedbd86a38e5b059348d78c1f42b56"
+      ],
+      "authored_utc": "2026-11-20T20:53:55Z",
+      "committed_utc": "2026-11-20T20:53:55Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Simplify OpenLit installation and correct configuration and sandbox examples",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "e89b8443f00a776f621ef322f1cf8213840a1c65",
+      "tree": "7cd799552d0d8885cce2978682069c75c64543a6",
+      "parents": [
+        "8aed154b80f0b26bcf02b61c9063bb7b04648c5b"
+      ],
+      "authored_utc": "2026-11-20T20:54:48Z",
+      "committed_utc": "2026-11-20T20:54:48Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Cover default installer arguments and Bash 3 compatibility",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "83a6ec1a19ba37215863a3464aa9b8fecde14b80",
+      "tree": "cdc0763ef1e33e7eb4b9aa0d6ebb5cb9bb54d128",
+      "parents": [
+        "e89b8443f00a776f621ef322f1cf8213840a1c65"
+      ],
+      "authored_utc": "2026-11-20T20:56:24Z",
+      "committed_utc": "2026-11-20T20:56:24Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Normalize Windows installer paths and read structured sandbox errors",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "4d6a1dbb206d6d363c872ac1ba4dc845a9afb903",
+      "tree": "923f5e12db5f32bddae27e0aaab3e215e530e845",
+      "parents": [
+        "83a6ec1a19ba37215863a3464aa9b8fecde14b80"
+      ],
+      "authored_utc": "2026-11-20T20:57:42Z",
+      "committed_utc": "2026-11-20T20:57:42Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Separate PowerShell runtime caches from installer settings checks",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "8b4d427d786c8fa4ca783964a9ec531049f1e439",
+      "tree": "66db1b529497cd1034245a951ae44caa2d9d7d62",
+      "parents": [
+        "4d6a1dbb206d6d363c872ac1ba4dc845a9afb903"
+      ],
+      "authored_utc": "2026-11-20T21:05:18Z",
+      "committed_utc": "2026-11-20T21:05:18Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Record OpenLit 0.1.0 native and lab qualification evidence",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "b466f3efccf42ef679f5c2f145d125b748cc7eee",
+      "tree": "c665249ac901b317356ec96ab0f67bc68ddee94a",
+      "parents": [
+        "8b4d427d786c8fa4ca783964a9ec531049f1e439"
+      ],
+      "authored_utc": "2026-11-20T21:07:10Z",
+      "committed_utc": "2026-11-20T21:07:10Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Pin supplemental dependency notices and verify distribution inventory",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "3fff588e7ed848ec30d021c6b467d20e11b199cb",
+      "tree": "607ee1a1b348bac80a6014d87c60b9c55cb6a856",
+      "parents": [
+        "b466f3efccf42ef679f5c2f145d125b748cc7eee"
+      ],
+      "authored_utc": "2026-11-20T21:07:19Z",
+      "committed_utc": "2026-11-20T21:07:19Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Preserve original third-party license bytes across checkouts",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "83b2fe963e8bc6d2d1fa68e6354e9e6a15bedad4",
+      "tree": "772ccf8c4104c1364e3b43342e3f6ea6b79132a6",
+      "parents": [
+        "3fff588e7ed848ec30d021c6b467d20e11b199cb"
+      ],
+      "authored_utc": "2026-11-20T21:07:33Z",
+      "committed_utc": "2026-11-20T21:07:33Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Retain embedded dependency notice line endings in Git",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "f9f49c9503c043bb51228a347f43db7a4f1fad95",
+      "tree": "d83c0a2f25632991dfa927f125aa43a5b495a466",
+      "parents": [
+        "83b2fe963e8bc6d2d1fa68e6354e9e6a15bedad4"
+      ],
+      "authored_utc": "2026-11-20T21:17:18Z",
+      "committed_utc": "2026-11-20T21:17:18Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Record final OpenLit archive qualification and remaining release gates",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "7ed82dd4c3a16f8f93cb84f9f5c7366adf1dcdd3",
+      "tree": "55e2f2b935cfda54be7eb475f628497a88c56019",
+      "parents": [
+        "f9f49c9503c043bb51228a347f43db7a4f1fad95"
+      ],
+      "authored_utc": "2026-11-21T02:44:38Z",
+      "committed_utc": "2026-11-21T02:44:38Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Resolve PQCrypto notice gaps with pinned embedded and NIST notices",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "844f520d486241d67763e96bc6702e899f496d38",
+      "tree": "c2bf0221678fef7cdf61f78f5b94ef3fc6dd5fec",
+      "parents": [
+        "7ed82dd4c3a16f8f93cb84f9f5c7366adf1dcdd3"
+      ],
+      "authored_utc": "2026-11-21T02:53:14Z",
+      "committed_utc": "2026-11-21T02:53:14Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Archive reviewed provenance records and close bounded release evidence review",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "d71c16897148a6cd9213a1fbd5345ec9c2fe7f80",
+      "tree": "ef5e2975651d30ed77649f8ce006e96c8088bb2c",
+      "parents": [
+        "844f520d486241d67763e96bc6702e899f496d38"
+      ],
+      "authored_utc": "2026-11-21T02:55:04Z",
+      "committed_utc": "2026-11-21T02:55:04Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Check exact notice bytes across Windows and Unix line endings",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "4665ccbb94397c5191c40097800e351ad378667d",
+      "tree": "c25d10d0aff9245bdbd753682cc14116f6ca34c4",
+      "parents": [
+        "d71c16897148a6cd9213a1fbd5345ec9c2fe7f80"
+      ],
+      "authored_utc": "2026-11-21T02:57:26Z",
+      "committed_utc": "2026-11-21T02:57:26Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Record native notice and transcript validation with preserved adverse evidence",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "1918abb390f648b8419cf70717655def1bce3cdc",
+      "tree": "c385291d4dcca27cc02b6403cd81118d6ef59f62",
+      "parents": [
+        "4665ccbb94397c5191c40097800e351ad378667d"
+      ],
+      "authored_utc": "2026-11-21T04:14:33Z",
+      "committed_utc": "2026-11-21T04:14:33Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Prepare gated publisher signing and exact-source attestations",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "feb5ca525bffd10e05d0e0e7d6414f24d623f58a",
+      "tree": "84878ebad09124de4ea939599999f6625e224679",
+      "parents": [
+        "1918abb390f648b8419cf70717655def1bce3cdc"
+      ],
+      "authored_utc": "2026-11-21T04:16:18Z",
+      "committed_utc": "2026-11-21T04:16:18Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Record signing gate tests and outstanding publisher credentials",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "f467904ba2382488128aee767765f28e4c0215ce",
+      "tree": "f8742c2557a9d1f2addf4e7a6b24c14c6d2c0be6",
+      "parents": [
+        "feb5ca525bffd10e05d0e0e7d6414f24d623f58a"
+      ],
+      "authored_utc": "2026-11-21T05:15:42Z",
+      "committed_utc": "2026-11-21T05:15:42Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Fix Cargo verbosity placement in recovery CI",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "71392a24083576ab7472d639d790cf39553c548c",
+      "tree": "b93dd49879287ba95b457a5b1b8bfa7702fbcc44",
+      "parents": [
+        "f467904ba2382488128aee767765f28e4c0215ce"
+      ],
+      "authored_utc": "2026-11-21T05:20:00Z",
+      "committed_utc": "2026-11-21T05:20:00Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Match migration helper platform guards and retain all CI results",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "81fea360b223f79c86a34bc4b8e724c43c0f2c12",
+      "tree": "97340d30bf1a9f0aa963fbafe59b4ba244a5650e",
+      "parents": [
+        "71392a24083576ab7472d639d790cf39553c548c"
+      ],
+      "authored_utc": "2026-11-21T05:24:53Z",
+      "committed_utc": "2026-11-21T05:24:53Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Capture broker startup stalls before running the CI suite",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "2895620cc06e97df800c75cef2b7ffeba71b5abe",
+      "tree": "f806661e99b21fbd3194c27f8ed5cd9a648d8864",
+      "parents": [
+        "81fea360b223f79c86a34bc4b8e724c43c0f2c12"
+      ],
+      "authored_utc": "2026-11-21T05:28:38Z",
+      "committed_utc": "2026-11-21T05:28:38Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Remove reverse DNS from broker readiness and fixture listeners",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "17a45d04d6bd8fb19a64eedf3b391e8de98bd868",
+      "tree": "39ec4e9fb3398f0cbae30fb51b6304e65635763b",
+      "parents": [
+        "2895620cc06e97df800c75cef2b7ffeba71b5abe"
+      ],
+      "authored_utc": "2026-11-21T05:28:38Z",
+      "committed_utc": "2026-11-21T05:28:38Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Flush rotation staging keys through writable file handles",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "2cb429327bffde33766c5f84940500c2a1b83ce7",
+      "tree": "534aa8d8ff72c50f8f65892e6fd391a855819633",
+      "parents": [
+        "17a45d04d6bd8fb19a64eedf3b391e8de98bd868"
+      ],
+      "authored_utc": "2026-11-21T05:30:36Z",
+      "committed_utc": "2026-11-21T05:30:36Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Run full CI regressions in the qualified release configuration",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "5ded3d611fde0d0801033c90b30d023faf195589",
+      "tree": "7413386c0c38ec248484075d962ad0ca82f91d03",
+      "parents": [
+        "2cb429327bffde33766c5f84940500c2a1b83ce7"
+      ],
+      "authored_utc": "2026-11-21T05:37:56Z",
+      "committed_utc": "2026-11-21T05:37:56Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Use Cargo-selected binaries in transport and batch regressions",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "89e46d31babfc2d14b276febb05af0ee945fa39f",
+      "tree": "282c6e8c1a68475cd158c3e38c1e93217f20084b",
+      "parents": [
+        "5ded3d611fde0d0801033c90b30d023faf195589"
+      ],
+      "authored_utc": "2026-11-21T05:58:40Z",
+      "committed_utc": "2026-11-21T05:58:40Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Avoid treating user log directories as repositories",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "d6195afdda70152c124943dff92b4b162d7da37c",
+      "tree": "b55c9786f21f8fa603e8126790d15506f95e07b5",
+      "parents": [
+        "89e46d31babfc2d14b276febb05af0ee945fa39f"
+      ],
+      "authored_utc": "2026-11-21T17:33:53Z",
+      "committed_utc": "2026-11-21T17:33:53Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Use Minisign for OpenLit 0.1.0 archive signing",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "ec260ccf6b12d0e08aff45fa4a835b8030935e18",
+      "tree": "a424b610d090e9aedb4b5b039f663985a195d2a9",
+      "parents": [
+        "d6195afdda70152c124943dff92b4b162d7da37c"
+      ],
+      "authored_utc": "2026-11-21T17:42:45Z",
+      "committed_utc": "2026-11-21T17:42:45Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Use native Minisign on Intel macOS qualification workers",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "a1459c7f3865495eeda83c065859363b14130e60",
+      "tree": "51decd35b0fc3178f29ed187eeeb4d95b48c7fbd",
+      "parents": [
+        "ec260ccf6b12d0e08aff45fa4a835b8030935e18"
+      ],
+      "authored_utc": "2026-11-21T17:45:09Z",
+      "committed_utc": "2026-11-21T17:45:09Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Retry MCP smoke-test startup timeouts within the readiness deadline",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "ca57a8f6e3b4ea914f20614f805bfa14f0faa3ec",
+      "tree": "c8f2dcd441869cf66abbe318cf9a4e063e7c5d2f",
+      "parents": [
+        "a1459c7f3865495eeda83c065859363b14130e60"
+      ],
+      "authored_utc": "2026-11-21T17:58:14Z",
+      "committed_utc": "2026-11-21T17:58:14Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Record five-platform Minisign qualification and lab verification",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "67cbd625a372800b7f626de66a43310255c82b82",
+      "tree": "63931d8a0e2fa11a39c7c6458a1943669f13009b",
+      "parents": [
+        "ca57a8f6e3b4ea914f20614f805bfa14f0faa3ec"
+      ],
+      "authored_utc": "2026-11-21T22:50:16Z",
+      "committed_utc": "2026-11-21T22:50:16Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Add approval-protected Minisign publisher signing in CI",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": true
+    },
+    {
+      "commit": "351d1305998b8c894f7ee041bfba4acf2289551d",
+      "tree": "93bb809faf0dc5264cfbb5f1eaa8e4b112d3bbd7",
+      "parents": [
+        "67cbd625a372800b7f626de66a43310255c82b82"
+      ],
+      "authored_utc": "2026-11-21T23:40:27Z",
+      "committed_utc": "2026-11-21T23:40:27Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Record approved CI publisher signing and independent verification",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": false
+    },
+    {
+      "commit": "86777c92c07bf638d50ef80e03b07412eea70f9e",
+      "tree": "4ec9087ea88d7576e5c8071e6faf8c271d73aea0",
+      "parents": [
+        "351d1305998b8c894f7ee041bfba4acf2289551d"
+      ],
+      "authored_utc": "2026-11-22T00:28:05Z",
+      "committed_utc": "2026-11-22T00:28:05Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Document OpenLit 0.1.0 publication and verified public downloads",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": false
+    },
+    {
+      "commit": "3d2e318530bb7d08c6c98b7d0481625608810f7f",
+      "tree": "94a9e0b90b10d1e68c7e95585987a92c45f56bf1",
+      "parents": [
+        "86777c92c07bf638d50ef80e03b07412eea70f9e"
+      ],
+      "authored_utc": "2026-11-22T04:04:22Z",
+      "committed_utc": "2026-11-22T04:04:22Z",
+      "author": "Marcus G.K. Williams",
+      "subject": "Credit OpenLit contributions and consolidate project attribution",
+      "classification": "openlit-development",
+      "included_in_v0_1_0": false
+    }
+  ]
+}

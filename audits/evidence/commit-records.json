@@ -1438,5 +1438,257 @@
         "utc": "2026-11-21T02:44:38.260Z"
       }
     ]
+  },
+  {
+    "commit": "844f520d486241d67763e96bc6702e899f496d38",
+    "committed_utc": "2026-11-20T18:53:14-08:00",
+    "subject": "Archive reviewed provenance records and close bounded release evidence review",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 32175,
+        "utc": "2026-11-21T02:53:44.178Z"
+      }
+    ]
+  },
+  {
+    "commit": "d71c16897148a6cd9213a1fbd5345ec9c2fe7f80",
+    "committed_utc": "2026-11-20T18:55:04-08:00",
+    "subject": "Check exact notice bytes across Windows and Unix line endings",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 32215,
+        "utc": "2026-11-21T02:55:23.891Z"
+      }
+    ]
+  },
+  {
+    "commit": "4665ccbb94397c5191c40097800e351ad378667d",
+    "committed_utc": "2026-11-20T18:57:26-08:00",
+    "subject": "Record native notice and transcript validation with preserved adverse evidence",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 32256,
+        "utc": "2026-11-21T02:57:45.039Z"
+      }
+    ]
+  },
+  {
+    "commit": "1918abb390f648b8419cf70717655def1bce3cdc",
+    "committed_utc": "2026-11-20T20:14:33-08:00",
+    "subject": "Prepare gated publisher signing and exact-source attestations",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 32373,
+        "utc": "2026-11-21T04:14:35.010Z"
+      }
+    ]
+  },
+  {
+    "commit": "feb5ca525bffd10e05d0e0e7d6414f24d623f58a",
+    "committed_utc": "2026-11-20T20:16:18-08:00",
+    "subject": "Record signing gate tests and outstanding publisher credentials",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 32412,
+        "utc": "2026-11-21T04:16:25.907Z"
+      }
+    ]
+  },
+  {
+    "commit": "f467904ba2382488128aee767765f28e4c0215ce",
+    "committed_utc": "2026-11-20T21:15:42-08:00",
+    "subject": "Fix Cargo verbosity placement in recovery CI",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 32617,
+        "utc": "2026-11-21T05:15:43.503Z"
+      }
+    ]
+  },
+  {
+    "commit": "71392a24083576ab7472d639d790cf39553c548c",
+    "committed_utc": "2026-11-20T21:20:00-08:00",
+    "subject": "Match migration helper platform guards and retain all CI results",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 32731,
+        "utc": "2026-11-21T05:20:06.576Z"
+      }
+    ]
+  },
+  {
+    "commit": "81fea360b223f79c86a34bc4b8e724c43c0f2c12",
+    "committed_utc": "2026-11-20T21:24:53-08:00",
+    "subject": "Capture broker startup stalls before running the CI suite",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 32840,
+        "utc": "2026-11-21T05:24:54.999Z"
+      }
+    ]
+  },
+  {
+    "commit": "2895620cc06e97df800c75cef2b7ffeba71b5abe",
+    "committed_utc": "2026-11-20T21:28:38-08:00",
+    "subject": "Remove reverse DNS from broker readiness and fixture listeners",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 32954,
+        "utc": "2026-11-21T05:28:39.629Z"
+      }
+    ]
+  },
+  {
+    "commit": "17a45d04d6bd8fb19a64eedf3b391e8de98bd868",
+    "committed_utc": "2026-11-20T21:28:38-08:00",
+    "subject": "Flush rotation staging keys through writable file handles",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 32954,
+        "utc": "2026-11-21T05:28:39.629Z"
+      }
+    ]
+  },
+  {
+    "commit": "2cb429327bffde33766c5f84940500c2a1b83ce7",
+    "committed_utc": "2026-11-20T21:30:36-08:00",
+    "subject": "Run full CI regressions in the qualified release configuration",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 32989,
+        "utc": "2026-11-21T05:30:37.654Z"
+      }
+    ]
+  },
+  {
+    "commit": "5ded3d611fde0d0801033c90b30d023faf195589",
+    "committed_utc": "2026-11-20T21:37:56-08:00",
+    "subject": "Use Cargo-selected binaries in transport and batch regressions",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 33161,
+        "utc": "2026-11-21T05:37:57.847Z"
+      }
+    ]
+  },
+  {
+    "commit": "89e46d31babfc2d14b276febb05af0ee945fa39f",
+    "committed_utc": "2026-11-20T21:58:40-08:00",
+    "subject": "Avoid treating user log directories as repositories",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 33629,
+        "utc": "2026-11-21T05:58:41.453Z"
+      }
+    ]
+  },
+  {
+    "commit": "d6195afdda70152c124943dff92b4b162d7da37c",
+    "committed_utc": "2026-11-21T09:33:53-08:00",
+    "subject": "Use Minisign for OpenLit 0.1.0 archive signing",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 34019,
+        "utc": "2026-11-21T17:33:53.282Z"
+      }
+    ]
+  },
+  {
+    "commit": "ec260ccf6b12d0e08aff45fa4a835b8030935e18",
+    "committed_utc": "2026-11-21T09:42:45-08:00",
+    "subject": "Use native Minisign on Intel macOS qualification workers",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 34195,
+        "utc": "2026-11-21T17:42:46.579Z"
+      }
+    ]
+  },
+  {
+    "commit": "a1459c7f3865495eeda83c065859363b14130e60",
+    "committed_utc": "2026-11-21T09:45:09-08:00",
+    "subject": "Retry MCP smoke-test startup timeouts within the readiness deadline",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 34256,
+        "utc": "2026-11-21T17:45:09.047Z"
+      }
+    ]
+  },
+  {
+    "commit": "ca57a8f6e3b4ea914f20614f805bfa14f0faa3ec",
+    "committed_utc": "2026-11-21T09:58:14-08:00",
+    "subject": "Record five-platform Minisign qualification and lab verification",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 34489,
+        "utc": "2026-11-21T17:58:14.059Z"
+      }
+    ]
+  },
+  {
+    "commit": "67cbd625a372800b7f626de66a43310255c82b82",
+    "committed_utc": "2026-11-21T14:50:16-08:00",
+    "subject": "Add approval-protected Minisign publisher signing in CI",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 35092,
+        "utc": "2026-11-21T22:50:16.406Z"
+      }
+    ]
+  },
+  {
+    "commit": "351d1305998b8c894f7ee041bfba4acf2289551d",
+    "committed_utc": "2026-11-21T15:40:27-08:00",
+    "subject": "Record approved CI publisher signing and independent verification",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 35491,
+        "utc": "2026-11-21T23:40:29.051Z"
+      }
+    ]
+  },
+  {
+    "commit": "86777c92c07bf638d50ef80e03b07412eea70f9e",
+    "committed_utc": "2026-11-21T16:28:05-08:00",
+    "subject": "Document OpenLit 0.1.0 publication and verified public downloads",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 35604,
+        "utc": "2026-11-22T00:28:06.755Z"
+      }
+    ]
+  },
+  {
+    "commit": "3d2e318530bb7d08c6c98b7d0481625608810f7f",
+    "committed_utc": "2026-11-21T20:04:22-08:00",
+    "subject": "Credit OpenLit contributions and consolidate project attribution",
+    "records": [
+      {
+        "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+        "line": 35705,
+        "utc": "2026-11-22T04:04:23.548Z"
+      }
+    ]
   }
 ]

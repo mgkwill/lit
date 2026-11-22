@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "source_boundary": "7ed82dd4c3a16f8f93cb84f9f5c7366adf1dcdd3",
+  "source_boundary": "3d2e318530bb7d08c6c98b7d0481625608810f7f",
   "earlier_full_similarity_audit_boundary": "cfdf7e69aa7f267ebe56c56c33de8bd427f8cd7a",
   "incremental_source_review_boundary": "f9f49c9503c043bb51228a347f43db7a4f1fad95",
   "export_format": "Minimized JSONL record exports, gzip mtime=0; bodies withheld; selected reviewed excerpts stored separately. Not verbatim transcripts.",
@@ -41,6 +41,12 @@
         1,
         155
       ],
+      "previous_prefix": {
+        "records": 155,
+        "bytes": 986139,
+        "sha256": "467f8a0fba7b034147019ea5c33e8baf3541170594390ee9ef2dc3e4c1c49d7a",
+        "prefix_reverified": true
+      },
       "commits_observed": []
     },
     {
@@ -72,6 +78,12 @@
         1,
         164
       ],
+      "previous_prefix": {
+        "records": 164,
+        "bytes": 1108189,
+        "sha256": "664afc033edda0a7669148aaa70075bbcfdb5ddf3ff223a452cec2222e337803",
+        "prefix_reverified": true
+      },
       "commits_observed": []
     },
     {
@@ -103,38 +115,50 @@
         1,
         109
       ],
+      "previous_prefix": {
+        "records": 109,
+        "bytes": 971752,
+        "sha256": "e869247a88a5fef00a0de2d17b39dd48215494e8c257388da1c6edc784d788fa",
+        "prefix_reverified": true
+      },
       "commits_observed": []
     },
     {
       "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
       "classification": "implementation",
-      "original_name": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f-through-7ed82dd.jsonl",
-      "original_records": 32051,
-      "original_bytes": 111149705,
-      "original_sha256": "ead1975af1e5a836b7fb73ac658eac66432446fe298473226115addc94f228db",
+      "original_name": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f-through-3d2e318.jsonl",
+      "original_records": 35705,
+      "original_bytes": 125570000,
+      "original_sha256": "ae6653044f22c1077ef12b40d88e89b6069a426b7f608c8814701e7bdf09c36f",
       "first_utc": "2026-11-16T16:23:38.964Z",
-      "last_utc": "2026-11-21T02:44:38.260Z",
+      "last_utc": "2026-11-22T04:04:23.548Z",
       "export_file": "implementation/01a1e52b-d71a-7fd0-9edc-6d82560ebd8f.jsonl.gz",
-      "export_bytes": 1874799,
-      "export_sha256": "5ad83f3aae5cd18308eaf9b1213b9630ea31dfe29f3cdf6eecb3b653564b72d9",
-      "uncompressed_sha256": "d26b16a93d412530d26fad52a8a358232aa38ff7949379d1e9dccb26373fa58d",
+      "export_bytes": 2088162,
+      "export_sha256": "75ea547008aed896d6d30a2f8d5b65bae021459e2074f1a1ae6eb5536aab93d7",
+      "uncompressed_sha256": "cccad27db53e5fe25dfcd980d195462d24f3683d52662ba7dab7cf91711fdfd1",
       "record_types": {
         "session_meta": 1,
-        "event_msg": 14128,
-        "response_item": 13593,
-        "world_state": 44,
-        "turn_context": 84,
-        "token_usage_record": 4167,
-        "compacted": 13,
-        "inter_agent_communication_metadata": 21
+        "event_msg": 15775,
+        "response_item": 15093,
+        "world_state": 50,
+        "turn_context": 102,
+        "token_usage_record": 4645,
+        "compacted": 16,
+        "inter_agent_communication_metadata": 23
       },
       "redactions": {
-        "body-withheld": 32051
+        "body-withheld": 35705
       },
       "original_record_boundary": [
         1,
-        32051
+        35705
       ],
+      "previous_prefix": {
+        "records": 32051,
+        "bytes": 111149705,
+        "sha256": "ead1975af1e5a836b7fb73ac658eac66432446fe298473226115addc94f228db",
+        "prefix_reverified": true
+      },
       "commits_observed": [
         "2e23eaeca16e0d48b50809a56091ada9abb9bf99",
         "908199d0480603cc5536dc806300ad0b6e0d2ff9",
@@ -254,7 +278,28 @@
         "3fff588e7ed848ec30d021c6b467d20e11b199cb",
         "83b2fe963e8bc6d2d1fa68e6354e9e6a15bedad4",
         "f9f49c9503c043bb51228a347f43db7a4f1fad95",
-        "7ed82dd4c3a16f8f93cb84f9f5c7366adf1dcdd3"
+        "7ed82dd4c3a16f8f93cb84f9f5c7366adf1dcdd3",
+        "844f520d486241d67763e96bc6702e899f496d38",
+        "d71c16897148a6cd9213a1fbd5345ec9c2fe7f80",
+        "4665ccbb94397c5191c40097800e351ad378667d",
+        "1918abb390f648b8419cf70717655def1bce3cdc",
+        "feb5ca525bffd10e05d0e0e7d6414f24d623f58a",
+        "f467904ba2382488128aee767765f28e4c0215ce",
+        "71392a24083576ab7472d639d790cf39553c548c",
+        "81fea360b223f79c86a34bc4b8e724c43c0f2c12",
+        "2895620cc06e97df800c75cef2b7ffeba71b5abe",
+        "17a45d04d6bd8fb19a64eedf3b391e8de98bd868",
+        "2cb429327bffde33766c5f84940500c2a1b83ce7",
+        "5ded3d611fde0d0801033c90b30d023faf195589",
+        "89e46d31babfc2d14b276febb05af0ee945fa39f",
+        "d6195afdda70152c124943dff92b4b162d7da37c",
+        "ec260ccf6b12d0e08aff45fa4a835b8030935e18",
+        "a1459c7f3865495eeda83c065859363b14130e60",
+        "ca57a8f6e3b4ea914f20614f805bfa14f0faa3ec",
+        "67cbd625a372800b7f626de66a43310255c82b82",
+        "351d1305998b8c894f7ee041bfba4acf2289551d",
+        "86777c92c07bf638d50ef80e03b07412eea70f9e",
+        "3d2e318530bb7d08c6c98b7d0481625608810f7f"
       ]
     },
     {
@@ -286,6 +331,12 @@
         1,
         246
       ],
+      "previous_prefix": {
+        "records": 246,
+        "bytes": 1341876,
+        "sha256": "559d83298c554ef32cd66eafc240c5267661cf4f12ecb7face2d5266b4814259",
+        "prefix_reverified": true
+      },
       "commits_observed": []
     },
     {
@@ -317,6 +368,12 @@
         1,
         375
       ],
+      "previous_prefix": {
+        "records": 375,
+        "bytes": 1676042,
+        "sha256": "3add1ef204692d6e2ea5b67ee9177115e430e0ec0ff7676b1e9b940b31ba9c66",
+        "prefix_reverified": true
+      },
       "commits_observed": [
         "6159a48b949167f5304b276c740e98cddfcc123f"
       ]
@@ -350,6 +407,12 @@
         1,
         179
       ],
+      "previous_prefix": {
+        "records": 179,
+        "bytes": 1117683,
+        "sha256": "4dee3af3cf9950fd415351ade50bfc1cf73eace6fa767b39e1d62ad24b01e4f4",
+        "prefix_reverified": true
+      },
       "commits_observed": []
     },
     {
@@ -381,17 +444,29 @@
         1,
         236
       ],
+      "previous_prefix": {
+        "records": 236,
+        "bytes": 1115458,
+        "sha256": "50f352ec84a56be0d3d4620930c970b7fe10ce4a5ba66f422bb455cc1f373cca",
+        "prefix_reverified": true
+      },
       "commits_observed": []
     }
   ],
   "commit_record_index": "commit-records.json",
-  "covered_recovery_commits": 120,
-  "original_records": 33515,
+  "covered_recovery_commits": 141,
+  "original_records": 37169,
   "prior_prefix": {
     "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
     "records": 9216,
     "bytes": 31812676,
     "sha256": "b8ecc3fdbae2c0fbf2e16ab2901097608cc98e18b5daef1d6cab20fe46e15d2b",
     "reverified": true
-  }
+  },
+  "release_boundary": "67cbd625a372800b7f626de66a43310255c82b82",
+  "snapshot_limitations": [
+    "Principal implementation record frozen at original record 35705, the exact current-HEAD commit receipt; later records excluded.",
+    "Older provenance-audit root retained at its prior 375-record boundary; the newly resumed audit and its current children are ongoing and excluded.",
+    "Eight historical sessions discovered by exact cwd and implementation/audit parent identifiers; deleted, unpersisted and external activity cannot be ruled out."
+  ]
 }

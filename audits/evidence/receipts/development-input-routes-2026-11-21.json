@@ -1,0 +1,221 @@
+{
+  "scope": "Historical recovery and release transcript source-input corroboration; bodies withheld; no upstream source comparison performed by this records review",
+  "dependency_downloads": {
+    "session_id": "01a1fbf5-93ca-7103-a7c1-c086823f2e37",
+    "records": [
+      46,
+      74,
+      89,
+      151,
+      159,
+      167,
+      184,
+      193,
+      206,
+      213,
+      220
+    ],
+    "classification": "Separately licensed crypto dependencies and NIST source; explicitly not Lit upstream implementation",
+    "private_artifact_hashes": [
+      {
+        "name": "traits-tree.json",
+        "bytes": 37077,
+        "sha256": "2a71e37b3565f248bc53e43d534f1b8930afb58517ef67c2608cfffc1033a918"
+      },
+      {
+        "name": "LICENSE-APACHE",
+        "bytes": 11358,
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+      },
+      {
+        "name": "nist-rng.h",
+        "bytes": 2951,
+        "sha256": "df44ce6c84abd83fed1f4966fba667856de38227d15fe98f4c0a650b21a0cd5e"
+      },
+      {
+        "name": "nist-kat.zip",
+        "bytes": 18570,
+        "sha256": "84b73c1008e9dbb452606ab9eb8d25cdd6b4011c3c88f6fdafaab20957e07234"
+      },
+      {
+        "name": "traits-Cargo.toml",
+        "bytes": 462,
+        "sha256": "c687263f2e21e8b1b4938b39e7dbc3539d5299163dff2038d5f9cdbcb322079a"
+      },
+      {
+        "name": "traits-README.md",
+        "bytes": 1042,
+        "sha256": "43fa47765fd275ee33fcc57b53202b3f62fa81ba6a17dbe38f5d4b2a5df33107"
+      },
+      {
+        "name": "nist-rng.c",
+        "bytes": 7078,
+        "sha256": "2cc42477d95648f6f4900ce9906bb8840990290a410fa5206caed58663b6d5cd"
+      },
+      {
+        "name": "internals-Cargo.toml",
+        "bytes": 463,
+        "sha256": "273ca5fcb63aea1da82b2d74b6101bbc5391dc6ec47bd132febd34166260408b"
+      },
+      {
+        "name": "internals-README.md",
+        "bytes": 1042,
+        "sha256": "43fa47765fd275ee33fcc57b53202b3f62fa81ba6a17dbe38f5d4b2a5df33107"
+      },
+      {
+        "name": "excerpts.json",
+        "bytes": 7955,
+        "sha256": "365bdd0cca7c12824b40778bf4d9b3543d7825f9be794786c800d458cc466e85"
+      },
+      {
+        "name": "internals-tree.json",
+        "bytes": 38934,
+        "sha256": "47b4357bd4beaf1e0bd1a93ce680c098134b151cb3eb751afb161b7590f04f91"
+      }
+    ],
+    "original_records": [
+      {
+        "record": 46,
+        "utc": "2026-11-21T02:36:24.703Z",
+        "sha256": "06f56fd5c6f80fb6ad3c072c2748478cb0455fba361f97f2238fb3d4d21ee128"
+      },
+      {
+        "record": 74,
+        "utc": "2026-11-21T02:37:08.139Z",
+        "sha256": "de5f9e9112144a8a162bcdd269e5b40d6d8ad2f4a7fff54d3bb4a767aa7a82ea"
+      },
+      {
+        "record": 89,
+        "utc": "2026-11-21T02:37:35.022Z",
+        "sha256": "0a7178f6e13d78f33eee9f7b8dcf0fbd66fd72cc1e4a1ad3010d9afa066f11d9"
+      },
+      {
+        "record": 151,
+        "utc": "2026-11-21T02:39:43.298Z",
+        "sha256": "b3988c2ff307c6f6d824d13ee3ceb65dd96a43de8b810c9d853c30adebffa549"
+      },
+      {
+        "record": 159,
+        "utc": "2026-11-21T02:39:57.705Z",
+        "sha256": "9bbec61adf7f964d393e43ed421bc7bf80c92b902964151971f94d530fd16b27"
+      },
+      {
+        "record": 167,
+        "utc": "2026-11-21T02:40:11.020Z",
+        "sha256": "e7770ab439c09741e53c55e12ad20b1a9ff12eb68d1583c11e8c673aeae2cb37"
+      },
+      {
+        "record": 184,
+        "utc": "2026-11-21T02:40:36.855Z",
+        "sha256": "ca91f10903445ade42cb78e2298ee4050acf9b241686c2fdae59ea08d0567475"
+      },
+      {
+        "record": 193,
+        "utc": "2026-11-21T02:40:52.026Z",
+        "sha256": "e81542b71b12ecb55f0da236cc3915168c19bfbcd23bc7b2388e0c89defe9a3b"
+      },
+      {
+        "record": 206,
+        "utc": "2026-11-21T02:41:48.699Z",
+        "sha256": "86b4b8fb81a6852096c700bcad76abbf885b2f0646f23d926962070e05c37946"
+      },
+      {
+        "record": 213,
+        "utc": "2026-11-21T02:41:59.233Z",
+        "sha256": "3afd3a90a01fd714f121523cb3714d5ef73a2ad8d9c4f0c45119982deeaec276"
+      },
+      {
+        "record": 220,
+        "utc": "2026-11-21T02:42:27.294Z",
+        "sha256": "140e82cdfba9e594e1d1d4278e324da9b64fff3f441b538ceb5882b7fe1225e4"
+      }
+    ]
+  },
+  "independent_edit_routes": [
+    {
+      "commit": "2e34a3e115be44d03de299fcd1d8197effed3aea",
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "diagnostic_record": 30879,
+      "edit_records": [
+        30918,
+        30935
+      ],
+      "finding": "Recorded local Clippy diagnostic for unused non-Windows removable-drive helper precedes authored removal and Windows-gated Path import.",
+      "classification": "implementation diagnostic and authored recovery edit corroboration",
+      "original_records": [
+        {
+          "record": 30879,
+          "utc": "2026-11-20T20:39:29.095Z",
+          "sha256": "168fa0077d4494f1bbef966f3c4715147236c475e6bf95fc17c31aa8888beb3f"
+        },
+        {
+          "record": 30918,
+          "utc": "2026-11-20T20:41:26.824Z",
+          "sha256": "a4edafbe4dff1f2a3b511351f8b93b99ae4ac3578984e3f88f25ff147382c29d"
+        },
+        {
+          "record": 30935,
+          "utc": "2026-11-20T20:41:55.648Z",
+          "sha256": "510058c460919b749a9d8b7d9f73885efbb544f7aa157c297a5c6e0e840701d4"
+        }
+      ]
+    },
+    {
+      "commit": "f467904ba2382488128aee767765f28e4c0215ce",
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "diagnostic_records": [
+        32595,
+        32604
+      ],
+      "receipt_record": 32617,
+      "finding": "Recorded CI command places verbosity after separator; local workflow and Cargo help inspection precede fix commit receipt.",
+      "classification": "implementation diagnostic and authored recovery edit corroboration",
+      "original_records": [
+        {
+          "record": 32595,
+          "utc": "2026-11-21T05:14:55.129Z",
+          "sha256": "4f8c8040e175b545ffcefd702c2f752efee638498600dd00aa0ac50e93532404"
+        },
+        {
+          "record": 32604,
+          "utc": "2026-11-21T05:15:13.424Z",
+          "sha256": "2678bd9c674214a0c28268e454c9631b4ea38afaf5a19790c4ccd910c2221cf7"
+        },
+        {
+          "record": 32617,
+          "utc": "2026-11-21T05:15:43.503Z",
+          "sha256": "c643eac7d247bc34ca83e895a5c300a646e06b93b344aeab0e9c9c5b5dc998c0"
+        }
+      ]
+    },
+    {
+      "commit": "71392a24083576ab7472d639d790cf39553c548c",
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "edit_record": 32700,
+      "receipt_record": 32731,
+      "finding": "Recorded authored workflow edit adds fail-fast false alongside local platform guard fixes.",
+      "classification": "implementation diagnostic and authored recovery edit corroboration",
+      "original_records": [
+        {
+          "record": 32700,
+          "utc": "2026-11-21T05:19:09.697Z",
+          "sha256": "de82899ad50c26b0e810ac360d9389c9088a1fe455f8c8e3689748701c8e680b"
+        },
+        {
+          "record": 32731,
+          "utc": "2026-11-21T05:20:06.576Z",
+          "sha256": "4dd508e0ff8e77f3c02d2c4043f0b43c8d214145664b51124dadd655a3d14bbb"
+        }
+      ]
+    }
+  ],
+  "limits": "Record routes establish contemporaneous associations, not complete authorship or external attestation.",
+  "historical_audit_exception": {
+    "session_ids": [
+      "01a1ed36-7f65-7033-9af9-2b9075365bc7",
+      "01a1ed38-d484-77a3-95a4-d6e35b0f49cc"
+    ],
+    "classification": "provenance-audit, separately archived",
+    "finding": "The November17 provenance audit explicitly examined post-MIT upstream implementation after recoverycfdf7e6; this is audit-only exposure and must not be characterized as total historical source isolation. Source-bearing payloads withheld and never implementation inputs. This records extension did not open upstream source."
+  }
+}

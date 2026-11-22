@@ -1,0 +1,15 @@
+{
+  "sessions": 8,
+  "records": 37169,
+  "commits": 141,
+  "normal_verifier": "passed",
+  "original_reproduction": "passed",
+  "commit_receipts": "passed",
+  "prior_frozen_prefixes": "8 passed",
+  "november17_prefix": "passed",
+  "live_prefix_identity": "8 passed",
+  "minimized_export_regressions": "2 passed",
+  "new_json_privacy_screen": "passed",
+  "diagnostic_route_original_hashes": "passed",
+  "scope": "Originals frozen through3d2e318receipt; excludes ongoingaudit and laterprincipalrecords"
+}

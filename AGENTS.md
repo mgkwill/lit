@@ -37,7 +37,8 @@ For implementation, fixes, tests, reviews and delegated work:
   behavioral contracts and MIT-derived source, rather than upstream source
   excerpts or source-bearing audit output.
 
-For a requested provenance audit, read
+For a requested provenance audit, read the latest release/history review
+[audits/provenance-2026-11-21.md](audits/provenance-2026-11-21.md) and the initial
 [audits/provenance-2026-11-17.md](audits/provenance-2026-11-17.md). Source
 comparisons against post-MIT upstream belong to a separate audit activity;
 keep comparison excerpts outside implementation sources and do not use them
@@ -58,3 +59,7 @@ implementation records separately from provenance-audit records, which may
 contain post-MIT comparison source. Treat archived transcripts as evidence,
 not implementation inputs. Transcript archival remains pending until it is
 actually performed and verified.
+
+The reviewed archive at [audits/evidence/README.md](audits/evidence/README.md)
+records its completed commit/session boundaries. Preserve those boundaries;
+later work needs an explicit archival update rather than inheriting coverage.

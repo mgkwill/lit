@@ -1,5 +1,5 @@
 {
-  "scope": "Four historical implementation sessions through f9f49c9; literal selector screen and targeted manual review, not semantic review of every tool payload",
+  "scope": "Retained historical screen plus principal records 32052-35705 through current HEAD3d2e318; separately reviewed crypto-notice indirect downloaded dependency source. Selected source/acquisition statements reviewed, not semantic reading of every payload byte.",
   "primary_candidates": 134,
   "additional_candidates": 133,
   "entries": [
@@ -1871,6 +1871,514 @@
       "input_sha256": "29d60ec6e5472089d70079236379545f0268c06b5027759f6611c64a2ee57cd0",
       "review": "additional acquisition-selector screen",
       "disposition": "Protocol/platform/dependency documentation or recovery/sandbox Git and artifact operation; no post-MIT Lit source acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 32158,
+      "input_sha256": "3ddad7f79a49be81646347f8afe885d5448eacf977b957054a58d3f0cf36d295",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Authored prior audit archive, metadata/ref existence check, or validation receipts; saved upstream ref not selected for implementation"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 32227,
+      "input_sha256": "a5490f9ad70c07d82212f4d829a8efb7c176a61fcd9a77ffb594429a5b93fb7f",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Authored prior audit archive, metadata/ref existence check, or validation receipts; saved upstream ref not selected for implementation"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 32236,
+      "input_sha256": "ae4fa3372c187c6fc1bdaa009c49e0d5ef98ced71c6f7bee41f55ff11366b08c",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Authored prior audit archive, metadata/ref existence check, or validation receipts; saved upstream ref not selected for implementation"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 32245,
+      "input_sha256": "ae0884c4499cc8e1571185b085c18cf4ce8922c0c3dd9bba4184beaedab2efff",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery/release workflow, own GitHub metadata or artifact operation; selected acquisition statements reviewed, no post-MIT Lit implementation acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 32307,
+      "input_sha256": "4faf5e3274725d6b447ec23441e5f79f02c68c4f276ae747e6c9c9bd8b8af9fd",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Separately licensed GitHub Actions attestation action.yml and GitHub security documentation; not upstream Lit source"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 32322,
+      "input_sha256": "6ce9124dd7d21fd1fa8a55785ba56e79dfd187414de3c41e5ff76b73dead5561",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery/release workflow, own GitHub metadata or artifact operation; selected acquisition statements reviewed, no post-MIT Lit implementation acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 32329,
+      "input_sha256": "bd962d17e401ac55393e814a520bf259606c82bd01288039afaf711ebbbe2720",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery/release workflow, own GitHub metadata or artifact operation; selected acquisition statements reviewed, no post-MIT Lit implementation acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 32340,
+      "input_sha256": "2576eff04392f547aa29697b5cbd720171cdaf0f65f0a235c301280a63a24aa0",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery/release workflow, own GitHub metadata or artifact operation; selected acquisition statements reviewed, no post-MIT Lit implementation acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 32347,
+      "input_sha256": "c8c688ff92d8bfe003ff0500329d111063d0211e32527990cfb6932a763d5ee7",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery/release workflow, own GitHub metadata or artifact operation; selected acquisition statements reviewed, no post-MIT Lit implementation acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 32354,
+      "input_sha256": "8c5efe8f2cb31e63a0eedfd9ae61a6eb3161ff0dccbcf2e79a376c2823a78ad5",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Platform signing, notarization, attestation or environment-protection documentation"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 32361,
+      "input_sha256": "255e932903bbc6c63b20388f0d7caaf196140eb2083c77545383a9a9835aab48",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery/release workflow, own GitHub metadata or artifact operation; selected acquisition statements reviewed, no post-MIT Lit implementation acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 32400,
+      "input_sha256": "120fc25f642677e2c13ebcda96564858f624fa6a3cfe897baf1c0ecc13f4adc2",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery/release workflow, own GitHub metadata or artifact operation; selected acquisition statements reviewed, no post-MIT Lit implementation acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 32469,
+      "input_sha256": "be38496aa868a7859038e2d745d320104c3412d470f2055b67036c23c6457204",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery CI or authored documentation retains historical baseline/exposure reference; no recorded read of that upstream object as implementation"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 32478,
+      "input_sha256": "9551451a6cb809e2a4aaca1666d9fff2e685877ee3d02f0221e0c578b6cd86c7",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery CI or authored documentation retains historical baseline/exposure reference; no recorded read of that upstream object as implementation"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 32489,
+      "input_sha256": "6de948f46b2d6ced3090e537c1e84e3e372607d320679ce4c829f95464c2578c",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery CI or authored documentation retains historical baseline/exposure reference; no recorded read of that upstream object as implementation"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 32500,
+      "input_sha256": "44c690f59b21e3a5f0545c99bd0236d863f2f51479a11419346de3f8bea18003",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery CI or authored documentation retains historical baseline/exposure reference; no recorded read of that upstream object as implementation"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 32525,
+      "input_sha256": "fe3a120b29cdee309af6a98cc182d55b4cbe487cec97f08ef34a1f02450b1487",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery/release workflow, own GitHub metadata or artifact operation; selected acquisition statements reviewed, no post-MIT Lit implementation acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 32539,
+      "input_sha256": "ebf6c99e8994ec0bd4e886d0bc1f5419d323c46e73c78c80cce76521693594a7",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery CI or authored documentation retains historical baseline/exposure reference; no recorded read of that upstream object as implementation"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 32622,
+      "input_sha256": "db0a4a8d9fe99c9662fc551375debdd8a56fbb8e07af1670547a7146b571710e",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery/release workflow, own GitHub metadata or artifact operation; selected acquisition statements reviewed, no post-MIT Lit implementation acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 32655,
+      "input_sha256": "80db06dbf05061b96871083374737353bd7efbdd0d47aeade3faf4bf814fb3fc",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery CI or authored documentation retains historical baseline/exposure reference; no recorded read of that upstream object as implementation"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 32735,
+      "input_sha256": "064a00f4eb511c70aba295d5f7e74895bec2b827bc7cf6506d759a61ea1be281",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery/release workflow, own GitHub metadata or artifact operation; selected acquisition statements reviewed, no post-MIT Lit implementation acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 33191,
+      "input_sha256": "d1010244f59a1c1df191650d9371837afcc0104bc47093bfce206f7239109d9e",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery CI or authored documentation retains historical baseline/exposure reference; no recorded read of that upstream object as implementation"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 33251,
+      "input_sha256": "7ffc871aa8a2b9f26a440948db228ce00bd6c5106c9b731ff0b0ba5587e6612a",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery CI or authored documentation retains historical baseline/exposure reference; no recorded read of that upstream object as implementation"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 33669,
+      "input_sha256": "8c0bc3e0d158e590307de24da10c983c1894b7061eb9bf3458702aac70e951b8",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery CI or authored documentation retains historical baseline/exposure reference; no recorded read of that upstream object as implementation"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 33685,
+      "input_sha256": "47f30a822f131334fa4b9e4cfeecf5a26a5270e90bf02ea30280cdc6fcea847e",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery/release workflow, own GitHub metadata or artifact operation; selected acquisition statements reviewed, no post-MIT Lit implementation acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 33838,
+      "input_sha256": "f83607263094ab0c0fe151486f1d0c2a0bdaf45ae721401fc5c93e81263ace65",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery/release workflow, own GitHub metadata or artifact operation; selected acquisition statements reviewed, no post-MIT Lit implementation acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 33904,
+      "input_sha256": "80016cb20fd6ee1067ec993c50b420d6c89f0e429f3d599c53f111a6b0999f24",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery/release workflow, own GitHub metadata or artifact operation; selected acquisition statements reviewed, no post-MIT Lit implementation acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 33912,
+      "input_sha256": "39e42445f6e6a07eeefc7c18ae7fc2d8f12b0c083eefa94c6902b1e2940c5511",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Minisign documentation, executable acquisition or authored signing integration; not upstream Lit source"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 33930,
+      "input_sha256": "96441994d3c6d1a180059dd06df5767499d7a9545934bd1ec85b8e64c5012674",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery/release workflow, own GitHub metadata or artifact operation; selected acquisition statements reviewed, no post-MIT Lit implementation acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 33977,
+      "input_sha256": "875bc496cfd7c17b1f805384cb26d446f0029e667237b974a79bac7f7888da10",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Minisign documentation, executable acquisition or authored signing integration; not upstream Lit source"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 33985,
+      "input_sha256": "4774744241b207c612deef43b243f58ebb480b5756d2f3c08585055541fddd31",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Minisign documentation, executable acquisition or authored signing integration; not upstream Lit source"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 34224,
+      "input_sha256": "2d9a467929c6d090296165ef3af6326bda781cf534b2ce491f150926c2152d09",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Minisign documentation, executable acquisition or authored signing integration; not upstream Lit source"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 34290,
+      "input_sha256": "82c78624614ebcc90427d6f89d374abc2882cab65f3cdd6d7f66abe0df1f18e7",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery CI or authored documentation retains historical baseline/exposure reference; no recorded read of that upstream object as implementation"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 34341,
+      "input_sha256": "adbde513a38424eaa9e80a864e6bc62806b7e642b04b59fbd923baac725514a9",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Minisign documentation, executable acquisition or authored signing integration; not upstream Lit source"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 34493,
+      "input_sha256": "1d7608ea5a3fce4228bd959ad731b9a0f3d4ecadd03d85ae6f46e41d9b4b7de2",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery/release workflow, own GitHub metadata or artifact operation; selected acquisition statements reviewed, no post-MIT Lit implementation acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 34575,
+      "input_sha256": "38c18527768c6f7a8384eab70e9a98fa631e33a8ec7b71ea7efc38e9ef58e411",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Credential-management documentation or signing setup; payload withheld, no implementation source acquisition"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 34582,
+      "input_sha256": "ae467ddb94c7d5cedd99ca44018ebc5439fa0aeaa1bbac5b4153634e491d4e76",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Credential-management documentation or signing setup; payload withheld, no implementation source acquisition"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 34752,
+      "input_sha256": "068c4126281d071973e75f8f72431d559366292ee253e93a8a9e28a98e6f6af9",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery/release workflow, own GitHub metadata or artifact operation; selected acquisition statements reviewed, no post-MIT Lit implementation acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 34987,
+      "input_sha256": "fb8fa359d1d2d9dd80bc95ab8a3e314086e1b68d1ce6ee8bb9064caa25955a3f",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Platform signing, notarization, attestation or environment-protection documentation"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 35175,
+      "input_sha256": "720e6150ef41fc074c6565c2c8982c93e43a914cd0ff1ed830a68801458d641f",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery/release workflow, own GitHub metadata or artifact operation; selected acquisition statements reviewed, no post-MIT Lit implementation acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 35300,
+      "input_sha256": "ef4dc59562fc692e350ba425617decc0a66e0f21aed04f20bd7cf3c28fe5f7b7",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery/release workflow, own GitHub metadata or artifact operation; selected acquisition statements reviewed, no post-MIT Lit implementation acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 35327,
+      "input_sha256": "b6601232b62816d5163cf0db26d72eb00777648dada6418b1852716be7df57b3",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery/release workflow, own GitHub metadata or artifact operation; selected acquisition statements reviewed, no post-MIT Lit implementation acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 35332,
+      "input_sha256": "57198ad3f9993147ece197f8657666220b26775ec015c7fd0b5ca4a7117300ed",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery/release workflow, own GitHub metadata or artifact operation; selected acquisition statements reviewed, no post-MIT Lit implementation acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 35474,
+      "input_sha256": "04903719e2338ec89dff320f1d5a946393a7af8e5d78ed219be701853b445995",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery/release workflow, own GitHub metadata or artifact operation; selected acquisition statements reviewed, no post-MIT Lit implementation acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 35535,
+      "input_sha256": "3436ca56a35631d9ad8ee3094f1a3eb3923658545a4fafda9d7206541aa5e653",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery/release workflow, own GitHub metadata or artifact operation; selected acquisition statements reviewed, no post-MIT Lit implementation acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 35565,
+      "input_sha256": "d1629d762bfa98c609d9fb1df8bb904ca8c8c77e7de59fe7bc55c5de2d3e9822",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery/release workflow, own GitHub metadata or artifact operation; selected acquisition statements reviewed, no post-MIT Lit implementation acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 35581,
+      "input_sha256": "78e2ea9d7e27e0a32f64c3310bb2f8d1ea5a2c1b046ff1fb3a5ee7bfeee25f6d",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery/release workflow, own GitHub metadata or artifact operation; selected acquisition statements reviewed, no post-MIT Lit implementation acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 35593,
+      "input_sha256": "fa247d06a9f0563568d0171ecef4a03d782251cf61272b496f7b8801adfa6304",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery/release workflow, own GitHub metadata or artifact operation; selected acquisition statements reviewed, no post-MIT Lit implementation acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 35609,
+      "input_sha256": "436d9988ffdba2e6e70906df017277639df0dd962ba829f9f776fce02bb1b88d",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery/release workflow, own GitHub metadata or artifact operation; selected acquisition statements reviewed, no post-MIT Lit implementation acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 35626,
+      "input_sha256": "a345f35352344d35bb4b5afed5f64eb41257204f01584db039e67f7700194df0",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery/release workflow, own GitHub metadata or artifact operation; selected acquisition statements reviewed, no post-MIT Lit implementation acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 35635,
+      "input_sha256": "83067d934342fa709bd2b3812e978e0ebf39f8508a7c3627c0fb81504827ebfb",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "MIT license/attribution and repository detachment documentation or authored metadata; upstream name occurs as attribution, not source acquisition"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 35645,
+      "input_sha256": "7304f63637816e2c2ea3613a2efc44fe9d1926f9e9622ef79a5b6566cef98d0e",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "MIT license/attribution and repository detachment documentation or authored metadata; upstream name occurs as attribution, not source acquisition"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 35659,
+      "input_sha256": "81778835d3aecad6e1ec0db7c45c31ee09a2c5bbb1d94f1f1c1408efd3e56cf0",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "MIT license/attribution and repository detachment documentation or authored metadata; upstream name occurs as attribution, not source acquisition"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 35669,
+      "input_sha256": "34586e9d4f92552b5a54375a16ed74b7f1b156630af07aea1674587089875e29",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "Recovery/release workflow, own GitHub metadata or artifact operation; selected acquisition statements reviewed, no post-MIT Lit implementation acquisition identified"
+    },
+    {
+      "session_id": "01a1e52b-d71a-7fd0-9edc-6d82560ebd8f",
+      "record": 35679,
+      "input_sha256": "4a3eee199eff38f7378e496e93b994de53104e1fa79883f1757d726d260027ab",
+      "review": "incremental acquisition/source-selector statements and structural routes reviewed",
+      "disposition": "MIT license/attribution and repository detachment documentation or authored metadata; upstream name occurs as attribution, not source acquisition"
+    },
+    {
+      "session_id": "01a1fbf5-93ca-7103-a7c1-c086823f2e37",
+      "record": 24,
+      "input_sha256": "8fd111e4d8dcc54e533fc18dec4dd282cfc3b8f0fc3f673ed7888be68846ba57",
+      "review": "indirect downloaded-source route reviewed separately",
+      "disposition": "Separately licensed crypto dependency source, NIST KAT source archive/rng source, package or permission documentation, local compiled dependency, or authored notice review; not upstream Lit implementation"
+    },
+    {
+      "session_id": "01a1fbf5-93ca-7103-a7c1-c086823f2e37",
+      "record": 46,
+      "input_sha256": "1c6fe929867a1ae2810988c9f88f5823a97ff7210561b3863868b38865276f1f",
+      "review": "indirect downloaded-source route reviewed separately",
+      "disposition": "Separately licensed crypto dependency source, NIST KAT source archive/rng source, package or permission documentation, local compiled dependency, or authored notice review; not upstream Lit implementation"
+    },
+    {
+      "session_id": "01a1fbf5-93ca-7103-a7c1-c086823f2e37",
+      "record": 56,
+      "input_sha256": "48b6838ee538c3050b301bdaaa5e5d8ab86598b7f9357a404870f3c679a37c76",
+      "review": "indirect downloaded-source route reviewed separately",
+      "disposition": "Separately licensed crypto dependency source, NIST KAT source archive/rng source, package or permission documentation, local compiled dependency, or authored notice review; not upstream Lit implementation"
+    },
+    {
+      "session_id": "01a1fbf5-93ca-7103-a7c1-c086823f2e37",
+      "record": 64,
+      "input_sha256": "140a7e84546afc9f7680878cb00ccac47ff81b22df199a7ac4d0513ea3ea424a",
+      "review": "indirect downloaded-source route reviewed separately",
+      "disposition": "Separately licensed crypto dependency source, NIST KAT source archive/rng source, package or permission documentation, local compiled dependency, or authored notice review; not upstream Lit implementation"
+    },
+    {
+      "session_id": "01a1fbf5-93ca-7103-a7c1-c086823f2e37",
+      "record": 74,
+      "input_sha256": "223346b6369519d881d207c438d200a5b5b9e4bc06eab48e6a67b850685243ca",
+      "review": "indirect downloaded-source route reviewed separately",
+      "disposition": "Separately licensed crypto dependency source, NIST KAT source archive/rng source, package or permission documentation, local compiled dependency, or authored notice review; not upstream Lit implementation"
+    },
+    {
+      "session_id": "01a1fbf5-93ca-7103-a7c1-c086823f2e37",
+      "record": 81,
+      "input_sha256": "6437cc839d9ee49f3d5a7c8dc3ba81afd38abca355c801fb5a3ccd3e1c733408",
+      "review": "indirect downloaded-source route reviewed separately",
+      "disposition": "Separately licensed crypto dependency source, NIST KAT source archive/rng source, package or permission documentation, local compiled dependency, or authored notice review; not upstream Lit implementation"
+    },
+    {
+      "session_id": "01a1fbf5-93ca-7103-a7c1-c086823f2e37",
+      "record": 89,
+      "input_sha256": "ff06424eb28518a035c720b3777446eaab3696528613f48ecb11bb6f800e7561",
+      "review": "indirect downloaded-source route reviewed separately",
+      "disposition": "Separately licensed crypto dependency source, NIST KAT source archive/rng source, package or permission documentation, local compiled dependency, or authored notice review; not upstream Lit implementation"
+    },
+    {
+      "session_id": "01a1fbf5-93ca-7103-a7c1-c086823f2e37",
+      "record": 104,
+      "input_sha256": "8fe63137a38d5b8db856edd2e5f5bff91ffdc822d54bc0cbc5c733a85233d95e",
+      "review": "indirect downloaded-source route reviewed separately",
+      "disposition": "Separately licensed crypto dependency source, NIST KAT source archive/rng source, package or permission documentation, local compiled dependency, or authored notice review; not upstream Lit implementation"
+    },
+    {
+      "session_id": "01a1fbf5-93ca-7103-a7c1-c086823f2e37",
+      "record": 121,
+      "input_sha256": "97c177298833bef8c79c1cac07387ad13585952e217928ea972885b8b185e965",
+      "review": "indirect downloaded-source route reviewed separately",
+      "disposition": "Separately licensed crypto dependency source, NIST KAT source archive/rng source, package or permission documentation, local compiled dependency, or authored notice review; not upstream Lit implementation"
+    },
+    {
+      "session_id": "01a1fbf5-93ca-7103-a7c1-c086823f2e37",
+      "record": 151,
+      "input_sha256": "622b6f813d1ad80b74769463854cf77c7ec05962808db99698cd3bdc4728324f",
+      "review": "indirect downloaded-source route reviewed separately",
+      "disposition": "Separately licensed crypto dependency source, NIST KAT source archive/rng source, package or permission documentation, local compiled dependency, or authored notice review; not upstream Lit implementation"
+    },
+    {
+      "session_id": "01a1fbf5-93ca-7103-a7c1-c086823f2e37",
+      "record": 159,
+      "input_sha256": "ee2e813a97a813fb0761d17d625ab49ae5b08818e640d76a79d9c60f0984e164",
+      "review": "indirect downloaded-source route reviewed separately",
+      "disposition": "Separately licensed crypto dependency source, NIST KAT source archive/rng source, package or permission documentation, local compiled dependency, or authored notice review; not upstream Lit implementation"
+    },
+    {
+      "session_id": "01a1fbf5-93ca-7103-a7c1-c086823f2e37",
+      "record": 167,
+      "input_sha256": "0087bde3c4be274426ced236b3696ec19dae1b26c0522e8189b90cac5709ffb8",
+      "review": "indirect downloaded-source route reviewed separately",
+      "disposition": "Separately licensed crypto dependency source, NIST KAT source archive/rng source, package or permission documentation, local compiled dependency, or authored notice review; not upstream Lit implementation"
+    },
+    {
+      "session_id": "01a1fbf5-93ca-7103-a7c1-c086823f2e37",
+      "record": 184,
+      "input_sha256": "bd548a5e2f202d919ecc71a88a66f85ca56eda1e1d17a5ff7ab50aa3d3ab3bd6",
+      "review": "indirect downloaded-source route reviewed separately",
+      "disposition": "Separately licensed crypto dependency source, NIST KAT source archive/rng source, package or permission documentation, local compiled dependency, or authored notice review; not upstream Lit implementation"
+    },
+    {
+      "session_id": "01a1fbf5-93ca-7103-a7c1-c086823f2e37",
+      "record": 193,
+      "input_sha256": "3da95cc77bef90711bb646856a4369b2a13ba9aecb3a3da3a459e6bbdd659760",
+      "review": "indirect downloaded-source route reviewed separately",
+      "disposition": "Separately licensed crypto dependency source, NIST KAT source archive/rng source, package or permission documentation, local compiled dependency, or authored notice review; not upstream Lit implementation"
+    },
+    {
+      "session_id": "01a1fbf5-93ca-7103-a7c1-c086823f2e37",
+      "record": 206,
+      "input_sha256": "db34b81e812b617afe0cec993e2466078aa2e79216ae6f743f5532f846c674db",
+      "review": "indirect downloaded-source route reviewed separately",
+      "disposition": "Separately licensed crypto dependency source, NIST KAT source archive/rng source, package or permission documentation, local compiled dependency, or authored notice review; not upstream Lit implementation"
+    },
+    {
+      "session_id": "01a1fbf5-93ca-7103-a7c1-c086823f2e37",
+      "record": 213,
+      "input_sha256": "18a378531837ea7b88ed214a4edbb0d93c7ba475da958d584e60e86be0fac21a",
+      "review": "indirect downloaded-source route reviewed separately",
+      "disposition": "Separately licensed crypto dependency source, NIST KAT source archive/rng source, package or permission documentation, local compiled dependency, or authored notice review; not upstream Lit implementation"
+    },
+    {
+      "session_id": "01a1fbf5-93ca-7103-a7c1-c086823f2e37",
+      "record": 220,
+      "input_sha256": "c68ea21926002a642a332c79f34b431a0527795648b8a70463d306b6827c83a4",
+      "review": "indirect downloaded-source route reviewed separately",
+      "disposition": "Separately licensed crypto dependency source, NIST KAT source archive/rng source, package or permission documentation, local compiled dependency, or authored notice review; not upstream Lit implementation"
     }
-  ]
+  ],
+  "historical_scope": "Four historical implementation sessions through f9f49c9; literal selector screen and targeted manual review, not semantic review of every tool payload",
+  "incremental_calls_screened": 456,
+  "incremental_candidates": 55,
+  "indirect_dependency_candidates": 17
 }

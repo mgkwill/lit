@@ -48,7 +48,25 @@ def main():
                 raw = sessions[reference['session_id']][reference['line'] - 1]
                 item = json.loads(raw)
                 assert item['timestamp'] == reference['utc']
-                assert '[codex/mit-lit-recovery ' + commit['commit'][:7] in json.dumps(item['payload'])
+                assert item['type'] == 'response_item'
+                assert item['payload']['type'] in ('custom_tool_call_output', 'function_call_output')
+                assert re.search(r'\[(?:codex/mit-lit-recovery|main) ' + commit['commit'][:7] + r'\]',
+                                 json.dumps(item['payload']))
+        for receipt in manifest['sessions']:
+            previous = receipt.get('previous_prefix')
+            if previous:
+                old = b''.join(sessions[receipt['session_id']][:previous['records']])
+                assert len(old) == previous['bytes']
+                assert hashlib.sha256(old).hexdigest() == previous['sha256']
+        routes_file = base / 'receipts/development-input-routes-2026-11-21.json'
+        if routes_file.exists():
+            routes = json.loads(routes_file.read_text())
+            groups = routes['independent_edit_routes'] + [routes['dependency_downloads']]
+            for group in groups:
+                for reference in group['original_records']:
+                    raw = sessions[group['session_id']][reference['record'] - 1]
+                    assert hashlib.sha256(raw).hexdigest() == reference['sha256']
+                    assert json.loads(raw)['timestamp'] == reference['utc']
         prefix = manifest['prior_prefix']
         data = b''.join(sessions[prefix['session_id']][:prefix['records']])
         assert len(data) == prefix['bytes']

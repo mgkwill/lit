@@ -1,0 +1,205 @@
+{
+  "schema_version": 1,
+  "audit_date_pacific": "2026-11-21",
+  "boundaries": {
+    "baseline": "98c59bb2dbebcf7f575993a4ad89e1300a578c83",
+    "head": "3d2e318530bb7d08c6c98b7d0481625608810f7f",
+    "release_source": "67cbd625a372800b7f626de66a43310255c82b82",
+    "upstream": "66b2c771e38d3355fba9e0cc77751410d156c23e",
+    "total_git_commits": 160,
+    "baseline_commits": 19,
+    "recovery_commits": 141,
+    "release_recovery_commits": 138,
+    "upstream_postbaseline_commits": 134,
+    "merge_base": "98c59bb2dbebcf7f575993a4ad89e1300a578c83",
+    "recovery_merges": [],
+    "shared_patch_ids": [],
+    "upstream_license_change_in_recovery": false,
+    "remote_upstream_heads": [
+      "a930e44490c83af9cdb9f643979344ca51e737ff\trefs/heads/docs/ironstack-manifest",
+      "66b2c771e38d3355fba9e0cc77751410d156c23e\trefs/heads/master"
+    ],
+    "notice_preserved_in_release": true,
+    "notice_preserved_in_head": true
+  },
+  "source_screen": {
+    "script": "tools/source_history_screen.py",
+    "script_sha256": "6fe233e7bd3208ab3fcc432a236619d0c5cea3621610c155da7527246d8d22d9",
+    "corpus_counts": {
+      "baseline": 318,
+      "upstream": 519,
+      "ours": 708
+    },
+    "corpus_manifest_sha256": "733902c82450dd706b0e2f355ffc61e1121012cd0a1c145053e172c36c4ce170",
+    "stats": {
+      "lines": {
+        "window": 4,
+        "baseline_windows": 23164,
+        "novel_upstream_windows": 17411,
+        "candidate_pairs": 145
+      },
+      "tokens": {
+        "window": 40,
+        "baseline_windows": 268222,
+        "novel_upstream_windows": 138441,
+        "candidate_pairs": 182
+      },
+      "renamed": {
+        "window": 70,
+        "baseline_windows": 284536,
+        "novel_upstream_windows": 146074,
+        "candidate_pairs": 175
+      },
+      "shape": {
+        "window": 100,
+        "baseline_windows": 289150,
+        "novel_upstream_windows": 140096,
+        "candidate_pairs": 171
+      }
+    },
+    "total_candidate_pairs": 673,
+    "candidate_paths": 44,
+    "whole_blob_matches": 37,
+    "exact_mit_formatter_replays": 37,
+    "long_line_matches": 24,
+    "long_literal_matches": 1,
+    "exclusions": [
+      "Cargo.lock and package-lock.json",
+      "generated GUI gen/schemas files",
+      "extensions outside the explicitly listed source/config/Markdown set",
+      "blobs >=2MB",
+      "binary/media files"
+    ],
+    "limit": "Lexical fingerprints and manual match classification cannot rule out unrecorded copying or extensive semantic adaptations. Raw matching excerpts remain outside Git."
+  },
+  "release_recheck": {
+    "checked_at_utc": "2026-11-22T04:18:57.139068+00:00",
+    "head": "3d2e318530bb7d08c6c98b7d0481625608810f7f",
+    "release_source": "67cbd625a372800b7f626de66a43310255c82b82",
+    "release_url": "https://github.com/mgkwill/lit/releases/tag/v0.1.0",
+    "published_at_utc": "2026-11-22T00:25:06Z",
+    "draft": false,
+    "prerelease": false,
+    "assets": [
+      {
+        "name": "openlit-0.1.0-aarch64-apple-darwin.tar.gz",
+        "bytes": 3701864,
+        "api_sha256": "9ff1ca70fa064c06e8dabf4b0f18b863204c3b9f2d6947bd42a3b3f5bf01e527",
+        "matches_committed_receipt": true
+      },
+      {
+        "name": "openlit-0.1.0-aarch64-apple-darwin.tar.gz.minisig",
+        "bytes": 341,
+        "api_sha256": "65b75815165b57af600b9465fbd18227597a1e71ec68f6dc983e87172700c7a5",
+        "matches_committed_receipt": true
+      },
+      {
+        "name": "openlit-0.1.0-aarch64-unknown-linux-gnu.tar.gz",
+        "bytes": 4035935,
+        "api_sha256": "6f5cc99104d8fce3afdc6da03f3510a1462c0c4d0ba43c6d35f143760c29f21c",
+        "matches_committed_receipt": true
+      },
+      {
+        "name": "openlit-0.1.0-aarch64-unknown-linux-gnu.tar.gz.minisig",
+        "bytes": 341,
+        "api_sha256": "5bbfd290f5d4a76a8e91fc75f84c7874b3469a2a60c3812e9559609870cba86c",
+        "matches_committed_receipt": true
+      },
+      {
+        "name": "openlit-0.1.0-x86_64-apple-darwin.tar.gz",
+        "bytes": 3925261,
+        "api_sha256": "6a82357bc3c42e716a217e4264f2269031ff370be0e3ac830b26155f1c3ca458",
+        "matches_committed_receipt": true
+      },
+      {
+        "name": "openlit-0.1.0-x86_64-apple-darwin.tar.gz.minisig",
+        "bytes": 341,
+        "api_sha256": "5691b23936d542af8f8c4baa1e0e39bc660721a2352894fdc2390877796a45ba",
+        "matches_committed_receipt": true
+      },
+      {
+        "name": "openlit-0.1.0-x86_64-pc-windows-msvc.zip",
+        "bytes": 3755405,
+        "api_sha256": "6df90930b7c98cdd7cdf4c19c52677a9b2d98e0dee3b0bef9edbc4b59ed982c1",
+        "matches_committed_receipt": true
+      },
+      {
+        "name": "openlit-0.1.0-x86_64-pc-windows-msvc.zip.minisig",
+        "bytes": 341,
+        "api_sha256": "6856bdc9ff61d2288a0d5c980c9c3893649bc3914e86a023b77b9fc742606732",
+        "matches_committed_receipt": true
+      },
+      {
+        "name": "openlit-0.1.0-x86_64-unknown-linux-gnu.tar.gz",
+        "bytes": 4133620,
+        "api_sha256": "23017456b99bcfe78a58641ad15d1c19d858588f9db9c2f31541fc0cafec1fbe",
+        "matches_committed_receipt": true
+      },
+      {
+        "name": "openlit-0.1.0-x86_64-unknown-linux-gnu.tar.gz.minisig",
+        "bytes": 341,
+        "api_sha256": "e5f05e65bc2e3d95862c6c4406fa337f048ca91da07b0c17bbf67980cee794d1",
+        "matches_committed_receipt": true
+      },
+      {
+        "name": "openlit.pub",
+        "bytes": 113,
+        "api_sha256": "020727c93e30003cbab9f902459465e55ed6db37e951b2d006b9ec95ac4d77c3",
+        "matches_committed_receipt": true
+      },
+      {
+        "name": "RELEASE.json",
+        "bytes": 758,
+        "api_sha256": "54158221288f98c8df5d322aff79a562d25846535471c318129427942aade782",
+        "matches_committed_receipt": true
+      },
+      {
+        "name": "RELEASE.json.minisig",
+        "bytes": 341,
+        "api_sha256": "7eae00d1d5c109addb65fab6be75c4daa4a069558ec006547165250a4cb18a25",
+        "matches_committed_receipt": true
+      },
+      {
+        "name": "SHA256SUMS",
+        "bytes": 547,
+        "api_sha256": "9a579f9d271b748d0e66410360f9c3ad96a635f67a10c7bac0673d07c4481fa1",
+        "matches_committed_receipt": true
+      },
+      {
+        "name": "SHA256SUMS.minisig",
+        "bytes": 341,
+        "api_sha256": "0a6ee40906c6bdc4995c8b4997e934fc79994a6e8bfd8352c68cdb706b74f24a",
+        "matches_committed_receipt": true
+      }
+    ],
+    "verification": "Live GitHub asset digest metadata compared with committed publication receipt; this audit does not claim a fresh download/signature verification.",
+    "repository_is_private": false
+  },
+  "transcript_archive": {
+    "manifest": "evidence/manifest.json",
+    "manifest_sha256": "80a004e9457dfbc2d5c3265c24e45b8c4df6d430cc31e695ce5fc9488d45e6d9",
+    "sessions": 8,
+    "records": 37169,
+    "commits_with_output_receipts": 141,
+    "format": "Minimized JSONL record exports, gzip mtime=0; bodies withheld; selected reviewed excerpts stored separately. Not verbatim transcripts.",
+    "boundary": "3d2e318530bb7d08c6c98b7d0481625608810f7f"
+  },
+  "history_inventory_sha256": "d3945a58a56b799d725d75f3c7cbc6a58e23ff0c6ca67dd827bb18ea8125db2d",
+  "source_match_ledger_sha256": "f6fd2ead5ad276d6cca195d2959c8c7f3653785d794334c456d23243b7c5b563",
+  "scanner_self_checks": {
+    "identifier_sensitive_mode_distinguishes_rename": true,
+    "renaming_detected": true,
+    "renaming_and_literal_changes_detected": true,
+    "window_match_survives_renaming": true,
+    "rust_lifetimes_do_not_swallow_intervening_code": true,
+    "line_mapping": true
+  },
+  "retained_private_evidence_sha256": {
+    "additional-matches.json": "b7824b7ef28be1ca2a00545c2bf70c8c94d71ae38edc99906b29f8d7472d4008",
+    "baseline-overlap-diffs.json": "488b9eb52d5ccc16a02f6cbb9217cfd349a369e399c8f0b4ce69e9370584bc00",
+    "candidate-review.md": "2088243947a806cc4937b74d2d056f91bb91f9097c3b7d5f088a131d32ca7972",
+    "candidates.json": "949baca7a1bf696446cf82c77ae64be56dbfc180fe7dda37d936ba3423bae74f",
+    "formatting-replay.json": "edbda83eb1c8d9ffb9787c38f1e45d747b10b530f9769e4eb03f8365fb3d6ce7",
+    "manifest.json": "733902c82450dd706b0e2f355ffc61e1121012cd0a1c145053e172c36c4ce170"
+  }
+}
