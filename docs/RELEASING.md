@@ -1,8 +1,7 @@
 # OpenLit release process
 
 The first OpenLit version is **0.1.0**. The product and Cargo package are
-`openlit`; the executable and Rust library name stay `lit`. This is an independent
-release line built from the MIT baseline, not an upstream 1.8.0 patch.
+`openlit`; the executable and Rust library are `lit`.
 
 [OpenLit 0.1.0 is published](https://github.com/mgkwill/lit/releases/tag/v0.1.0)
 from `67cbd625a372800b7f626de66a43310255c82b82`. See the

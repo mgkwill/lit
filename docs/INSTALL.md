@@ -1,8 +1,8 @@
 # Install OpenLit
 
 [OpenLit 0.1.0 downloads](https://github.com/mgkwill/lit/releases/tag/v0.1.0) are
-available for Linux, macOS, and Windows. The command stays `lit`, and Windows
-uses `lit.exe`. There is no crates.io package; use a verified release archive
+available for Linux, macOS, and Windows. Run OpenLit with `lit` (`lit.exe` on
+Windows). There is no crates.io package; use a verified release archive
 or build this checkout.
 
 ## Build this checkout
@@ -17,7 +17,7 @@ lit --version
 
 Expected version: `lit 0.1.0`. On Windows, use PowerShell with the Visual Studio
 C++ build tools installed. `cargo install --path .` installs the local OpenLit
-package. It does not download the upstream Lit package.
+package from this checkout.
 
 The build path above assumes Cargo's default target directory. If you set
 `CARGO_TARGET_DIR` or a Cargo `target-dir`, use that directory instead of `target`.

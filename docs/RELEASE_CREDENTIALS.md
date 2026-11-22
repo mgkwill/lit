@@ -2,7 +2,7 @@
 
 OpenLit 0.1.0 uses detached Minisign signatures. Each archive, `SHA256SUMS`, and
 `RELEASE.json` gets a matching `.minisig` file. Signing does not change the archive.
-The command inside is still `lit` (`lit.exe` on Windows).
+The executable is `lit` (`lit.exe` on Windows).
 
 You need Minisign and Python 3.12 or newer. There is no Apple certificate,
 Windows publisher certificate, paid signing service, or GitHub Enterprise

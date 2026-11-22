@@ -2,11 +2,9 @@
 
 ## 0.1.0 — 2026-11-21
 
-This is the first OpenLit release line. The executable remains `lit`.
-OpenLit is based on the MIT-licensed Lit snapshot `98c59bb`, with independent
-implementation and regression work. It is not a relicense of later upstream code.
+This is the first OpenLit release. Run it with `lit`.
 
-The recovery work covers batch rollback and interrupted transactions, merge
+This release includes batch rollback and interrupted transactions, merge
 integrity and abort, packed objects and verification, encrypted packing and key
 rotation, Git round trips and remotes, and strict sandbox refusal when isolation
 is unavailable. Separate broker tools add task ownership, reassignment checks,

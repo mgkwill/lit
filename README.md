@@ -4,13 +4,11 @@
 
 OpenLit is version control for people and coding agents. It saves file history,
 returns JSON that programs can read, and lets separate workers propose changes
-without sharing a working directory. The command is still **`lit`**.
+without sharing a working directory.
 
 [OpenLit 0.1.0](https://github.com/mgkwill/lit/releases/tag/v0.1.0), the first
 OpenLit release, is available for Linux, macOS, and Windows. Verify downloads
 with [Minisign](docs/RELEASE_CREDENTIALS.md) before extracting or running them.
-OpenLit starts from the MIT-licensed Lit snapshot and adds independent recovery
-work. It does not claim full compatibility with every upstream feature.
 
 ## Start here
 
@@ -107,11 +105,8 @@ on host-a, with workers on host-a, host-e, and host-f.
 - [Testing](TESTING.md) · [Release requirements](docs/RELEASING.md) · [Next work](ROADMAP.md)
 - [All guides](docs/README.md)
 
-## Source and license
+## License
 
-OpenLit uses the MIT-licensed upstream snapshot
-`98c59bb2dbebcf7f575993a4ad89e1300a578c83` and our independent changes.
-Post-MIT upstream versions are used only as black-box references.
-The original [MIT license and attribution](LICENSE) are preserved.
-Read [AGENTS.md](AGENTS.md) before contributing and keep historical test
-records separate from current feature claims.
+OpenLit is maintained by Marcus G.K. Williams and licensed under the
+[MIT license](LICENSE). See [project attribution](NOTICE.md) for its origin
+and copyright credits. Read [AGENTS.md](AGENTS.md) before contributing.

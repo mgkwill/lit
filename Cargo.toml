@@ -2,7 +2,7 @@
 name = "openlit"
 version = "0.1.0"
 edition = "2021"
-authors = ["Nervosys", "OpenLit contributors"]
+authors = ["Marcus G.K. Williams", "OpenLit contributors", "Nervosys"]
 description = "Version control for people and coding agents, with JSON output and Git interoperability."
 license = "MIT"
 repository = "https://github.com/mgkwill/Lit"
