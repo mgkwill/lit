@@ -63,6 +63,9 @@ merge rule stays unchanged: no manual statuses or bypass actors.
 
 ## Release evidence
 
+[The signed 0.1.1 candidate](../audits/release-0.1.1-2026-11-22.md) passed
+regression and native archive checks. Publication still needs owner approval.
+
 Use [the 0.1.1 release notes](../CHANGELOG.md). Retain exact source and archive
 hashes, the trusted publisher public key, signatures, and verification receipts.
 Repeat qualification after rebuilding or changing the packaged bytes.
