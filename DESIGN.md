@@ -35,7 +35,7 @@ Do not turn a timeout into either an invented success or a duplicate write.
 
 Git provides remotes, history tools, and forge interoperability. OpenLit supplies
 machine-readable operations and recovery contracts. Full replacement of every
-Git workflow is not a 0.1.0 promise.
+Git workflow is not a 0.1.1 promise.
 
 ## Keep claims tied to evidence
 

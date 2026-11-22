@@ -1,6 +1,6 @@
 # OpenLit release notes
 
-## 0.1.1 — unreleased
+## 0.1.1 — 2026-11-22
 
 - Include the updated MIT copyright notice for Marcus G.K. Williams while
   preserving Nervosys attribution.
@@ -8,6 +8,11 @@
   source before running the extracted executable.
 - Build and sign from the current privacy-redacted source history. Previous
   0.1.0 signatures remain historical evidence for their original build.
+
+[OpenLit 0.1.1 is published](https://github.com/mgkwill/lit/releases/tag/v0.1.1)
+from signed source `777acec`. All 15 public assets match the approved candidate.
+See the [qualification evidence](audits/release-0.1.1-2026-11-22.md) and
+[publication record](audits/publication-0.1.1-2026-11-22.md).
 
 ## 0.1.0 — 2026-11-21
 

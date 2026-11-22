@@ -1,6 +1,6 @@
 # Install OpenLit
 
-[OpenLit 0.1.0 downloads](https://github.com/mgkwill/lit/releases/tag/v0.1.0) are
+[OpenLit 0.1.1 downloads](https://github.com/mgkwill/lit/releases/tag/v0.1.1) are
 available for Linux, macOS, and Windows. Run OpenLit with `lit` (`lit.exe` on
 Windows). There is no crates.io package; use a verified release archive
 or build this checkout.
@@ -15,10 +15,9 @@ cargo install --locked --path . --bin lit
 lit --version
 ```
 
-Expected version when building this checkout: `lit 0.1.1` (not yet published).
-The current published archives report `lit 0.1.0`. On Windows, use PowerShell with the Visual Studio
-C++ build tools installed. `cargo install --path .` installs the local OpenLit
-package from this checkout.
+Expected version: `lit 0.1.1`, for both the published archives and this checkout.
+On Windows, use PowerShell with the Visual Studio C++ build tools installed.
+`cargo install --path .` installs the local OpenLit package from this checkout.
 
 The build path above assumes Cargo's default target directory. If you set
 `CARGO_TARGET_DIR` or a Cargo `target-dir`, use that directory instead of `target`.
@@ -36,20 +35,19 @@ runs before replacing it. On Unix use `command -v lit`; in PowerShell use
 ## Release archives
 
 Archives use `openlit-VERSION-TARGET.tar.gz` on Unix and `.zip` on Windows.
-Inside is `lit` or `lit.exe`, plus the original `LICENSE` and
+Inside is `lit` or `lit.exe`, plus `LICENSE`, `NOTICE.md`, and
 `THIRD_PARTY_NOTICES.txt`. Keep the license and notices with the installed binary.
-Version 0.1.1 packages will also include `NOTICE.md` with project attribution.
 Use the published release assets; separate CI qualification artifacts use
 disposable keys and are not publisher-signed releases.
 
 Download the archive for your platform and its matching `.minisig` file from
 the release page. Obtain the public key from the
-[reviewed source](https://github.com/mgkwill/lit/blob/67cbd625a372800b7f626de66a43310255c82b82/keys/openlit.pub).
+[reviewed source](https://github.com/mgkwill/lit/blob/777acec2002a69b2429c91a58f9f8371f12724bd/keys/openlit.pub).
 Verify the signature before unpacking:
 
 ```sh
 minisign -V -H -p /path/to/trusted/openlit.pub \
-  -m openlit-0.1.0-aarch64-apple-darwin.tar.gz
+  -m openlit-0.1.1-aarch64-apple-darwin.tar.gz
 ```
 
 Use the archive for your platform and keep its matching `.minisig` beside it.
@@ -58,7 +56,7 @@ A checksum alone does not authenticate a download. See
 
 ## Platforms
 
-| Target | OpenLit 0.1.0 release qualification | Requirements |
+| Target | OpenLit 0.1.1 release qualification | Requirements |
 | --- | --- | --- |
 | Linux x86-64 | Ubuntu 22.04, glibc 2.35 | glibc 2.35 or newer and libgcc_s |
 | Linux arm64 | Ubuntu 22.04 arm64, glibc 2.35 | glibc 2.35 or newer and libgcc_s |
@@ -69,7 +67,7 @@ A checksum alone does not authenticate a download. See
 The Linux binaries require symbols through glibc 2.34, but the tested
 runtime floor is 2.35. A macOS deployment-target field is not proof that an older
 macOS release works. Windows desktop versions and Windows arm64 are not covered
-by that matrix. See the [exact release qualification evidence](../audits/ci-publisher-signing-2026-11-21.md).
+by that matrix. See the [exact release qualification evidence](../audits/release-0.1.1-2026-11-22.md).
 
 If Windows reports a missing `VCRUNTIME140.dll`, install the
 [Microsoft x64 Visual C++ Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist/).

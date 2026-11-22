@@ -73,7 +73,9 @@ their signatures; the public key; and assembly, signing, and verification
 receipts. The artifact's source commit identifies the candidate being signed.
 
 This workflow has read-only repository permissions and cannot create a release
-or tag. Publishing `0.1.1` remains a separate, explicitly approved action.
+or tag. Publication always needs a separate, explicit approval.
+[OpenLit 0.1.1](../audits/publication-0.1.1-2026-11-22.md) was published after
+that approval.
 Minisign signatures do not provide Apple notarization or Windows Authenticode.
 
 ## Sign the approved archives

@@ -1,6 +1,6 @@
 # OpenLit security
 
-OpenLit 0.1.0 is an early release. Its tests check specific behaviors; they do
+OpenLit 0.1.1 is an early release. Its tests check specific behaviors; they do
 not establish that every command or deployment is safe for hostile input.
 OpenLit is not a FIPS-validated cryptographic module.
 

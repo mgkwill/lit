@@ -1,15 +1,18 @@
 # OpenLit release process
 
-The next OpenLit release is **0.1.1**. The product and Cargo package are
+The current OpenLit release is **0.1.1**. The product and Cargo package are
 `openlit`; the executable and Rust library are `lit`.
 
-[OpenLit 0.1.0 is published](https://github.com/mgkwill/lit/releases/tag/v0.1.0)
-with binary assets originally built from `67cbd625a372800b7f626de66a43310255c82b82`.
-The tag now points to its privacy-redacted projection; see
-[the history mapping](../audits/privacy/README.md). Version 0.1.1 must be built
-and signed against its own current source ID. See the
-[publication record](../audits/publication-0.1.0-2026-11-21.md). Future publication
+[OpenLit 0.1.1 is published](https://github.com/mgkwill/lit/releases/tag/v0.1.1)
+from signed source `777acec2002a69b2429c91a58f9f8371f12724bd`. Its public downloads
+match the approved candidate. See the
+[publication record](../audits/publication-0.1.1-2026-11-22.md). Future publication
 still requires the owner's explicit approval; do not move an existing release tag.
+
+The older 0.1.0 binary assets and signatures still identify their original
+source. Its tag points to the privacy-redacted projection; see
+[the history mapping](../audits/privacy/README.md). Do not relabel historical
+signatures as evidence for a different source revision.
 
 ## Release checks
 
@@ -64,7 +67,9 @@ merge rule stays unchanged: no manual statuses or bypass actors.
 ## Release evidence
 
 [The signed 0.1.1 candidate](../audits/release-0.1.1-2026-11-22.md) passed
-regression and native archive checks. Publication still needs owner approval.
+regression and native archive checks. The owner subsequently approved publication;
+[public download verification](../audits/publication-0.1.1-2026-11-22.md) records
+that separate step.
 
 Use [the 0.1.1 release notes](../CHANGELOG.md). Retain exact source and archive
 hashes, the trusted publisher public key, signatures, and verification receipts.

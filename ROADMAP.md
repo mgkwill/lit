@@ -1,8 +1,7 @@
 # What is next for OpenLit
 
-Version 0.1.0 is published. The next release, 0.1.1, carries updated copyright
-and attribution in every archive. We prioritize agent workflows over a checklist
-of every upstream feature.
+Version 0.1.1 is published with updated copyright and attribution in every
+archive. We prioritize agent workflows over a checklist of every upstream feature.
 
 ## Release preparation
 
@@ -13,14 +12,16 @@ of every upstream feature.
 - [x] Build and test 0.1.1 on all five native targets from the current source.
 - [x] Sign the fresh archives through the approval-protected publisher workflow
   and independently verify signatures and tamper rejection.
-- [ ] Present the exact 0.1.1 candidate to the owner and ask before publishing.
+- [x] Obtain owner approval, publish the exact 0.1.1 candidate, and verify all
+  public downloads. [Publication record](audits/publication-0.1.1-2026-11-22.md).
 
 [Verified 0.1.1 candidate](audits/release-0.1.1-2026-11-22.md) records the signed
-source and completed checks. The signing workflow cannot publish a release. Apple notarization, Windows
-Authenticode, and GitHub attestations remain optional future work.
+source and completed checks. The signing workflow cannot publish a release.
+Apple notarization, Windows Authenticode, and GitHub attestations remain optional
+future work.
 See [release requirements](docs/RELEASING.md).
 
-## After the first release
+## Next work
 
 Use actual user failures to choose the next work. Good candidates are simpler
 setup for broker deployments, clearer recovery diagnostics, dependency maintenance,

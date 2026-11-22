@@ -9,6 +9,6 @@ do not establish a certificate, module boundary, or approved deployment.
 This filename remains so existing links reach an accurate statement. The project
 makes no ISO/IEC 19790 certification claim either. A future validation effort
 would need its own defined boundary, evidence, and external assessment; it is
-not part of the 0.1.0 release claim.
+not part of the 0.1.1 release claim.
 
 See [cryptography](CRYPTOGRAPHY.md) and [security](SECURITY.md).

@@ -1,0 +1,271 @@
+{
+  "assets": [
+    {
+      "asset_id": 779839770,
+      "download_url": "https://github.com/mgkwill/lit/releases/download/v0.1.1/RELEASE.json",
+      "name": "RELEASE.json",
+      "sha256": "2360fa89d0e810fe24fd99eb7eb888e1a36b5ade17c837debbd89f60a9a1a449",
+      "size": 758
+    },
+    {
+      "asset_id": 779839769,
+      "download_url": "https://github.com/mgkwill/lit/releases/download/v0.1.1/RELEASE.json.minisig",
+      "name": "RELEASE.json.minisig",
+      "sha256": "22ddba9c01e960e014aec30554df63d9e94261be4d8cdd74f562863208bb6b72",
+      "size": 341
+    },
+    {
+      "asset_id": 779839771,
+      "download_url": "https://github.com/mgkwill/lit/releases/download/v0.1.1/SHA256SUMS",
+      "name": "SHA256SUMS",
+      "sha256": "0ec2f6ef02f6e86504aee07dd526032dfd2236a3526c793983e2422c0b14b4f8",
+      "size": 547
+    },
+    {
+      "asset_id": 779839757,
+      "download_url": "https://github.com/mgkwill/lit/releases/download/v0.1.1/SHA256SUMS.minisig",
+      "name": "SHA256SUMS.minisig",
+      "sha256": "fbe70a6e1d83cadace4331cae4d46d2f64b875ba7bfb7154e2ca94aad88191d2",
+      "size": 341
+    },
+    {
+      "asset_id": 779839772,
+      "download_url": "https://github.com/mgkwill/lit/releases/download/v0.1.1/openlit-0.1.1-aarch64-apple-darwin.tar.gz",
+      "name": "openlit-0.1.1-aarch64-apple-darwin.tar.gz",
+      "sha256": "988e9884824666701f9a755ba5dddf58d9654ae5ae94f52b9e3f3fb0c288b737",
+      "size": 3702092
+    },
+    {
+      "asset_id": 779839985,
+      "download_url": "https://github.com/mgkwill/lit/releases/download/v0.1.1/openlit-0.1.1-aarch64-apple-darwin.tar.gz.minisig",
+      "name": "openlit-0.1.1-aarch64-apple-darwin.tar.gz.minisig",
+      "sha256": "1033c0e5d80ba910b925af802220a90ca9ad560446686eab2ca2c22109e5cd14",
+      "size": 341
+    },
+    {
+      "asset_id": 779839990,
+      "download_url": "https://github.com/mgkwill/lit/releases/download/v0.1.1/openlit-0.1.1-aarch64-unknown-linux-gnu.tar.gz",
+      "name": "openlit-0.1.1-aarch64-unknown-linux-gnu.tar.gz",
+      "sha256": "f3324a93146aa96ab0ad75f43040197478af238381efe7e43c150da20e83538e",
+      "size": 4036703
+    },
+    {
+      "asset_id": 779840029,
+      "download_url": "https://github.com/mgkwill/lit/releases/download/v0.1.1/openlit-0.1.1-aarch64-unknown-linux-gnu.tar.gz.minisig",
+      "name": "openlit-0.1.1-aarch64-unknown-linux-gnu.tar.gz.minisig",
+      "sha256": "9d4d23aeb596cf06832b206c156c417b28de9214ed15df3ee2688d17d76ef64e",
+      "size": 341
+    },
+    {
+      "asset_id": 779840032,
+      "download_url": "https://github.com/mgkwill/lit/releases/download/v0.1.1/openlit-0.1.1-x86_64-apple-darwin.tar.gz",
+      "name": "openlit-0.1.1-x86_64-apple-darwin.tar.gz",
+      "sha256": "92d30f5878311185453083d2042e2e9e310508a38129f7930f5a5caf1b432413",
+      "size": 3926196
+    },
+    {
+      "asset_id": 779840104,
+      "download_url": "https://github.com/mgkwill/lit/releases/download/v0.1.1/openlit-0.1.1-x86_64-apple-darwin.tar.gz.minisig",
+      "name": "openlit-0.1.1-x86_64-apple-darwin.tar.gz.minisig",
+      "sha256": "78b2383852cda6436036bfbdde34eef36fe510cb2a3efc7174d77673d4977452",
+      "size": 341
+    },
+    {
+      "asset_id": 779840101,
+      "download_url": "https://github.com/mgkwill/lit/releases/download/v0.1.1/openlit-0.1.1-x86_64-pc-windows-msvc.zip",
+      "name": "openlit-0.1.1-x86_64-pc-windows-msvc.zip",
+      "sha256": "df0ec113f152e0587923674a92a0b120feb42c1d377c1786378cbd72eca492cd",
+      "size": 3756051
+    },
+    {
+      "asset_id": 779840108,
+      "download_url": "https://github.com/mgkwill/lit/releases/download/v0.1.1/openlit-0.1.1-x86_64-pc-windows-msvc.zip.minisig",
+      "name": "openlit-0.1.1-x86_64-pc-windows-msvc.zip.minisig",
+      "sha256": "29c028723b4af0a1e2fef0a8a65d7c9b66da7ba1c7787b58120176417bea301a",
+      "size": 341
+    },
+    {
+      "asset_id": 779840158,
+      "download_url": "https://github.com/mgkwill/lit/releases/download/v0.1.1/openlit-0.1.1-x86_64-unknown-linux-gnu.tar.gz",
+      "name": "openlit-0.1.1-x86_64-unknown-linux-gnu.tar.gz",
+      "sha256": "780489d1193a014efeddb2c8e7f4ba28bc47fad4c826cedc05d93d134504b736",
+      "size": 4133607
+    },
+    {
+      "asset_id": 779840168,
+      "download_url": "https://github.com/mgkwill/lit/releases/download/v0.1.1/openlit-0.1.1-x86_64-unknown-linux-gnu.tar.gz.minisig",
+      "name": "openlit-0.1.1-x86_64-unknown-linux-gnu.tar.gz.minisig",
+      "sha256": "defde059dc33ed35441f8df58cac17cc34c09b0a9ef53b0868d71ef647ddb24d",
+      "size": 341
+    },
+    {
+      "asset_id": 779840211,
+      "download_url": "https://github.com/mgkwill/lit/releases/download/v0.1.1/openlit.pub",
+      "name": "openlit.pub",
+      "sha256": "020727c93e30003cbab9f902459465e55ed6db37e951b2d006b9ec95ac4d77c3",
+      "size": 113
+    }
+  ],
+  "download_method": "Unauthenticated HTTPS with no Authorization header",
+  "draft": false,
+  "draft_downloads_verified": 15,
+  "latest": true,
+  "owner_authorized_publication": true,
+  "prerelease": false,
+  "public_archive_attribution": [
+    {
+      "archive": "openlit-0.1.1-aarch64-apple-darwin.tar.gz",
+      "notice_comparisons": {
+        "LICENSE": "byte-identical",
+        "NOTICE.md": "byte-identical",
+        "THIRD_PARTY_NOTICES.txt": "byte-identical"
+      }
+    },
+    {
+      "archive": "openlit-0.1.1-aarch64-unknown-linux-gnu.tar.gz",
+      "notice_comparisons": {
+        "LICENSE": "byte-identical",
+        "NOTICE.md": "byte-identical",
+        "THIRD_PARTY_NOTICES.txt": "byte-identical"
+      }
+    },
+    {
+      "archive": "openlit-0.1.1-x86_64-apple-darwin.tar.gz",
+      "notice_comparisons": {
+        "LICENSE": "byte-identical",
+        "NOTICE.md": "byte-identical",
+        "THIRD_PARTY_NOTICES.txt": "byte-identical"
+      }
+    },
+    {
+      "archive": "openlit-0.1.1-x86_64-pc-windows-msvc.zip",
+      "notice_comparisons": {
+        "LICENSE": "identical after Windows CRLF conversion",
+        "NOTICE.md": "identical after Windows CRLF conversion",
+        "THIRD_PARTY_NOTICES.txt": "byte-identical"
+      }
+    },
+    {
+      "archive": "openlit-0.1.1-x86_64-unknown-linux-gnu.tar.gz",
+      "notice_comparisons": {
+        "LICENSE": "byte-identical",
+        "NOTICE.md": "byte-identical",
+        "THIRD_PARTY_NOTICES.txt": "byte-identical"
+      }
+    }
+  ],
+  "public_macos_native_qualification": {
+    "archive": "openlit-0.1.1-aarch64-apple-darwin.tar.gz",
+    "archive_sha256": "988e9884824666701f9a755ba5dddf58d9654ae5ae94f52b9e3f3fb0c288b737",
+    "batch_and_mcp": {
+      "arch": "arm64",
+      "batch": {
+        "dry_run_reports_invalid_line": true,
+        "retry_committed": true,
+        "rollback_restores_head_and_index": true,
+        "working_bytes_preserved": true
+      },
+      "candidate_sha256": "58a35e0686f2829aa9c231480f91b1b836086abe22254eeacedf9943de06f97f",
+      "mcp": {
+        "http": {
+          "invalid_tool_and_ping": true,
+          "legacy_arguments_preserved": true,
+          "notification_silent": true,
+          "ref_diff_and_branch_creation": true,
+          "tool_discovery_and_staged_write": true
+        },
+        "stdio": {
+          "invalid_tool_and_ping": true,
+          "legacy_arguments_preserved": true,
+          "notification_silent": true,
+          "ref_diff_and_branch_creation": true,
+          "tool_discovery_and_staged_write": true
+        }
+      },
+      "platform": "Darwin",
+      "version": "lit 0.1.1"
+    },
+    "binary_sha256": "58a35e0686f2829aa9c231480f91b1b836086abe22254eeacedf9943de06f97f",
+    "expected_certificate_sha1": null,
+    "final_candidate_policy": true,
+    "git": "git version 2.56.0",
+    "head": "d37505aa96588533140f61ceb461aeb0dcf96eea",
+    "minisign": {
+      "archives": {
+        "openlit-0.1.1-aarch64-apple-darwin.tar.gz": "988e9884824666701f9a755ba5dddf58d9654ae5ae94f52b9e3f3fb0c288b737",
+        "openlit-0.1.1-aarch64-unknown-linux-gnu.tar.gz": "f3324a93146aa96ab0ad75f43040197478af238381efe7e43c150da20e83538e",
+        "openlit-0.1.1-x86_64-apple-darwin.tar.gz": "92d30f5878311185453083d2042e2e9e310508a38129f7930f5a5caf1b432413",
+        "openlit-0.1.1-x86_64-pc-windows-msvc.zip": "df0ec113f152e0587923674a92a0b120feb42c1d377c1786378cbd72eca492cd",
+        "openlit-0.1.1-x86_64-unknown-linux-gnu.tar.gz": "780489d1193a014efeddb2c8e7f4ba28bc47fad4c826cedc05d93d134504b736"
+      },
+      "product": "OpenLit",
+      "purpose": "release-candidate",
+      "source_commit": "777acec2002a69b2429c91a58f9f8371f12724bd",
+      "version": "0.1.1"
+    },
+    "mldsa_features": [
+      "std"
+    ],
+    "package": "openlit",
+    "platform_signature_required": false,
+    "remotes": [
+      "Native: first push, legacy bare clone, dirty refusal, fast-forward, clean index",
+      "lit://: native first push and bare clone",
+      "file: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+      "http: clone, fetch, pull, push, no-op push, cross-format ancestry, divergence refusal",
+      "Smart HTTP upload-pack and receive-pack requests observed: 12 2"
+    ],
+    "rustc": "rustc 1.99.0 (b940084d7 2026-09-28) (Homebrew)",
+    "target": "aarch64-apple-darwin",
+    "version": "lit 0.1.1"
+  },
+  "public_signature_verification": {
+    "file_sha256": {
+      "RELEASE.json": "2360fa89d0e810fe24fd99eb7eb888e1a36b5ade17c837debbd89f60a9a1a449",
+      "RELEASE.json.minisig": "22ddba9c01e960e014aec30554df63d9e94261be4d8cdd74f562863208bb6b72",
+      "SHA256SUMS": "0ec2f6ef02f6e86504aee07dd526032dfd2236a3526c793983e2422c0b14b4f8",
+      "SHA256SUMS.minisig": "fbe70a6e1d83cadace4331cae4d46d2f64b875ba7bfb7154e2ca94aad88191d2",
+      "openlit-0.1.1-aarch64-apple-darwin.tar.gz": "988e9884824666701f9a755ba5dddf58d9654ae5ae94f52b9e3f3fb0c288b737",
+      "openlit-0.1.1-aarch64-apple-darwin.tar.gz.minisig": "1033c0e5d80ba910b925af802220a90ca9ad560446686eab2ca2c22109e5cd14",
+      "openlit-0.1.1-aarch64-unknown-linux-gnu.tar.gz": "f3324a93146aa96ab0ad75f43040197478af238381efe7e43c150da20e83538e",
+      "openlit-0.1.1-aarch64-unknown-linux-gnu.tar.gz.minisig": "9d4d23aeb596cf06832b206c156c417b28de9214ed15df3ee2688d17d76ef64e",
+      "openlit-0.1.1-x86_64-apple-darwin.tar.gz": "92d30f5878311185453083d2042e2e9e310508a38129f7930f5a5caf1b432413",
+      "openlit-0.1.1-x86_64-apple-darwin.tar.gz.minisig": "78b2383852cda6436036bfbdde34eef36fe510cb2a3efc7174d77673d4977452",
+      "openlit-0.1.1-x86_64-pc-windows-msvc.zip": "df0ec113f152e0587923674a92a0b120feb42c1d377c1786378cbd72eca492cd",
+      "openlit-0.1.1-x86_64-pc-windows-msvc.zip.minisig": "29c028723b4af0a1e2fef0a8a65d7c9b66da7ba1c7787b58120176417bea301a",
+      "openlit-0.1.1-x86_64-unknown-linux-gnu.tar.gz": "780489d1193a014efeddb2c8e7f4ba28bc47fad4c826cedc05d93d134504b736",
+      "openlit-0.1.1-x86_64-unknown-linux-gnu.tar.gz.minisig": "defde059dc33ed35441f8df58cac17cc34c09b0a9ef53b0868d71ef647ddb24d"
+    },
+    "public_key_sha256": "020727c93e30003cbab9f902459465e55ed6db37e951b2d006b9ec95ac4d77c3",
+    "published": false,
+    "signed_identity": {
+      "archives": {
+        "openlit-0.1.1-aarch64-apple-darwin.tar.gz": "988e9884824666701f9a755ba5dddf58d9654ae5ae94f52b9e3f3fb0c288b737",
+        "openlit-0.1.1-aarch64-unknown-linux-gnu.tar.gz": "f3324a93146aa96ab0ad75f43040197478af238381efe7e43c150da20e83538e",
+        "openlit-0.1.1-x86_64-apple-darwin.tar.gz": "92d30f5878311185453083d2042e2e9e310508a38129f7930f5a5caf1b432413",
+        "openlit-0.1.1-x86_64-pc-windows-msvc.zip": "df0ec113f152e0587923674a92a0b120feb42c1d377c1786378cbd72eca492cd",
+        "openlit-0.1.1-x86_64-unknown-linux-gnu.tar.gz": "780489d1193a014efeddb2c8e7f4ba28bc47fad4c826cedc05d93d134504b736"
+      },
+      "product": "OpenLit",
+      "purpose": "release-candidate",
+      "source_commit": "777acec2002a69b2429c91a58f9f8371f12724bd",
+      "version": "0.1.1"
+    },
+    "tamper_tests": {
+      "archive": "rejected",
+      "checksums": "rejected",
+      "release_identity": "rejected",
+      "signature": "rejected",
+      "wrong_key": "rejected",
+      "wrong_source": "rejected"
+    }
+  },
+  "published_at": "2026-11-22T17:21:43Z",
+  "qualification_checker_commit": "d37505aa96588533140f61ceb461aeb0dcf96eea",
+  "qualification_checker_note": "The checker head is the later evidence-only commit; signed_identity.source_commit is the binary build source.",
+  "release_id": 454614985,
+  "release_url": "https://github.com/mgkwill/lit/releases/tag/v0.1.1",
+  "source_commit": "777acec2002a69b2429c91a58f9f8371f12724bd",
+  "tag": "v0.1.1",
+  "verified_at": "2026-11-22T17:22:16.010458+00:00"
+}

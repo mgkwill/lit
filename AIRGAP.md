@@ -35,7 +35,7 @@ copied from another repository.
 Use `lit sandbox --help` for sandbox commands and select strict mode for enforced
 filesystem and network restrictions. A strict run must refuse before executing
 its payload if isolation cannot be prepared. Default mode does not provide those
-guarantees. Windows has no strict backend in 0.1.0.
+guarantees. Windows has no strict backend in 0.1.1.
 
 See [security](SECURITY.md) and [deployment](DEPLOYMENT.md) for the boundaries
 between transport policy, process isolation, and repository migration.

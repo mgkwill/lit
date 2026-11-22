@@ -6,12 +6,10 @@ OpenLit is version control for people and coding agents. It saves file history,
 returns JSON that programs can read, and lets separate workers propose changes
 without sharing a working directory.
 
-[OpenLit 0.1.0](https://github.com/mgkwill/lit/releases/tag/v0.1.0), the first
-OpenLit release, is available for Linux, macOS, and Windows. Verify downloads
-with [Minisign](docs/RELEASE_CREDENTIALS.md) before extracting or running them.
-
-Version 0.1.1 is in preparation and includes the updated copyright and project
-attribution in its archives. It has not been published.
+[OpenLit 0.1.1](https://github.com/mgkwill/lit/releases/tag/v0.1.1) is available
+for Linux, macOS, and Windows. Its archives include the updated copyright and
+project attribution. Verify downloads with [Minisign](docs/RELEASE_CREDENTIALS.md)
+before extracting or running them.
 
 ## Start here
 

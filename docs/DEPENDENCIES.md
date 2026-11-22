@@ -1,4 +1,4 @@
-# Dependencies in the 0.1.0 candidate
+# OpenLit dependencies
 
 The Cargo lockfile pins the build inputs. Dependency licensing is separate from
 the upstream Lit source boundary: independently licensed dependencies may be

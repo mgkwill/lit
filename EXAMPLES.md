@@ -1,6 +1,6 @@
 # OpenLit examples
 
-These examples use the `lit` command from OpenLit 0.1.0. Paths and repository
+These examples use the `lit` command from OpenLit 0.1.1. Paths and repository
 URLs are examples. Run writes in a disposable repository while learning.
 
 ## Validate a batch before running it

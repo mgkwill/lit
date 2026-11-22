@@ -5,8 +5,7 @@ shell on macOS or Linux. On Windows, create and edit the files in your editor
 and run the same `lit` commands in PowerShell.
 
 Build and install using [the installation guide](docs/INSTALL.md). Check that
-`lit --version` reports the version you installed: `lit 0.1.0` for the published
-release, or `lit 0.1.1` when building this checkout.
+`lit --version` reports `lit 0.1.1`.
 
 ## Save your first file
 

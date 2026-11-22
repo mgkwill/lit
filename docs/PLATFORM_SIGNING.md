@@ -1,7 +1,7 @@
 # Optional platform signing and attestations
 
-This is an optional future path, not a requirement for OpenLit 0.1.0.
-The first release uses [Minisign](RELEASE_CREDENTIALS.md). Apple notarization,
+This is an optional future path, not a requirement for OpenLit 0.1.1.
+The current release uses [Minisign](RELEASE_CREDENTIALS.md). Apple notarization,
 Windows Authenticode, and GitHub attestations can be added separately.
 This workflow remains disabled until its credentials and workers are configured.
 It has no release or tag creation step.

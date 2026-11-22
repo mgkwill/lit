@@ -1,8 +1,8 @@
 # OpenLit at a glance
 
 OpenLit is a version-control tool for people and coding agents. The executable
-is `lit`. Version 0.1.0 is published; 0.1.1 is being prepared with updated
-copyright and attribution in the archives.
+is `lit`. [Version 0.1.1](https://github.com/mgkwill/lit/releases/tag/v0.1.1)
+is published with updated copyright and attribution in the archives.
 
 See [project attribution](NOTICE.md) for the original MIT source and contributor
 notices.
